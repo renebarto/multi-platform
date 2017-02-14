@@ -1,0 +1,6 @@
+function(setup_target_properties_executable)
+    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE_DIR}/${CONFIG_DIR}/bin)
+    if (UNIX)
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS -Wl,-rpath,'\$ORIGIN/../lib/')
+    endif()
+endfunction()

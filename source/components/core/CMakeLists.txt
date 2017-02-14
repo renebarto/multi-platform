@@ -1,0 +1,58 @@
+project(core CXX)
+
+include(${CMAKE_SOURCE_DIR}/cmake/setup_target_properties_library.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
+
+message("\ncore\n")
+
+set(COMPONENTS_OS_DEFINITIONS
+        CORE_DYNAMIC
+        CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)
+
+set(COMPONENTS_CORE_INCLUDE
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/export
+        CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+
+set(CORE_DEPENDENCIES
+        osal)
+
+set(COMPONENTS_CORE_LIBS
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${CORE_DEPENDENCIES}
+        CACHE INTERNAL "${PROJECT_NAME}: Link libraries" FORCE)
+
+file(GLOB_RECURSE COMPONENTS_CORE_SOURCES src/*.cpp)
+file(GLOB_RECURSE COMPONENTS_CORE_INCLUDES_EXPORT export/*.h)
+file(GLOB_RECURSE COMPONENTS_CORE_INCLUDES include/*.h)
+
+set(COMPONENTS_CORE_SOURCES
+        ${COMPONENTS_CORE_SOURCES}
+        ${COMPONENTS_CORE_INCLUDES_EXPORT}
+        ${COMPONENTS_CORE_INCLUDES}
+        CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
+
+MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})
+MESSAGE(STATUS "CMAKE_CXX_FLAGS_DEBUG:              " ${CMAKE_CXX_FLAGS_DEBUG} )
+MESSAGE(STATUS "CMAKE_CXX_FLAGS_RELEASE:            " ${CMAKE_CXX_FLAGS_RELEASE} )
+MESSAGE(STATUS "CMAKE_CXX_FLAGS_MINSIZEREL:         " ${CMAKE_CXX_FLAGS_MINSIZEREL} )
+MESSAGE(STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO:     " ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} )
+list_to_string(COMPONENTS_CORE_INCLUDE STR)
+MESSAGE(STATUS "Include files:                      " ${STR} )
+list_to_string(COMPONENTS_CORE_SOURCES STR)
+MESSAGE(STATUS "Source files:                       " ${STR} )
+list_to_string(COMPONENTS_CORE_LIBS STR)
+MESSAGE(STATUS "Link libraries:                     " ${STR} )
+
+# add the library
+add_library(${PROJECT_NAME} SHARED ${COMPONENTS_CORE_SOURCES})
+target_link_libraries(${PROJECT_NAME} ${COMPONENTS_CORE_LIBS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${COMPONENTS_CORE_INCLUDE})
+target_compile_definitions(${PROJECT_NAME} PRIVATE CORE_BUILD)
+target_compile_definitions(${PROJECT_NAME} PUBLIC ${COMPONENTS_CORE_DEFINITIONS})
+setup_target_properties_library()
+
+show_target_properties()
+
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+

@@ -1,0 +1,12 @@
+add_subdirectory(osal)
+add_subdirectory(unit-test-c++)
+add_subdirectory(core)
+# add_subdirectory(os)
+
+if(BUILD_TESTS)
+    message(STATUS "Building tests")
+#     add_subdirectory(unit-test-c++/test)
+     add_subdirectory(osal/test)
+#     add_subdirectory(core/test)
+#     add_subdirectory(os/test)
+endif(BUILD_TESTS)
