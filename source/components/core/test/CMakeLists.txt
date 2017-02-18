@@ -1,7 +1,7 @@
 project(core.test CXX)
 
-include(${CMAKE_SOURCE_DIR}/cmake/setup_target_properties_executable.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
+include(setup_target_properties_executable.cmake)
+include(show_target_properties.cmake)
 
 message("\ncore.test\n")
 

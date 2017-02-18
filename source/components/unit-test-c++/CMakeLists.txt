@@ -1,9 +1,11 @@
 project(unit-test-c++ CXX)
 
-include(${CMAKE_SOURCE_DIR}/cmake/setup_target_properties_library.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
+include(setup_target_properties_library)
+include(show_target_properties)
 
 message("\nunit-test-c++\n")
+
+find_package(Threads REQUIRED)
 
 set(COMPONENTS_UNITTESTCPP_DEFINITIONS 
     UNITTESTCPP_DYNAMIC

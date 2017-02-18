@@ -1,7 +1,13 @@
 #include "osal/osal.h"
 
+#if defined(WIN_MSVC)
+
+#pragma warning(push)
+#pragma warning(disable:4091)
+#include <Dbghelp.h>
+#pragma warning(pop)
+
 #include <sys/utsname.h>
-#include <cxxabi.h>
 
 using namespace OSAL;
 
@@ -36,15 +42,17 @@ String OS::Platform()
     return nameInfo.machine;
 }
 
-String OS::DemangleName(const String & mangledName)
+String OS::ConvertTypeName(String mangledName)
 {
     String result;
-    int status;
-    char * demangledName = abi::__cxa_demangle(mangledName.c_str(), 0, 0, &status);
-    if (status == 0)
+    SymSetOptions(SYMOPT_UNDNAME);
+    char demangledName[_MAX_PATH];
+    size_t size = UnDecorateSymbolName(mangledName.c_str() + 1, demangledName, _MAX_PATH, UNDNAME_32_BIT_DECODE | UNDNAME_NAME_ONLY);
+    if (size > 0)
     {
         result = demangledName;
-        std::free(demangledName);
     }
     return result;
 }
+
+#endif // defined(WIN_MSVC)

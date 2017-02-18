@@ -1,6 +1,6 @@
 #include "osal/console-darwin.h"
 
-#if defined(LINUX)
+#if defined(WIN_MINGW)
 
 using namespace OSAL;
 
@@ -14,4 +14,4 @@ OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColorType color)
 	return{ color };
 }
 
-#endif // defined(LINUX)
+#endif // defined(WIN_MINGW)

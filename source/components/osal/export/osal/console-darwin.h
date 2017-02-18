@@ -8,19 +8,19 @@
 #elif defined(DARWIN)
 #include "osal/darwin/console.h"
 #elif defined(LINUX)
-#include "osal/linux/console.h"
+#include "osal/linux/console-mingw.h"
 #endif
 
 namespace OSAL {
 
 template<class CharT>
-void ConsoleBase<CharT>::SetForegroundColor(ConsoleColor foregroundColor)
+void ConsoleBase<CharT>::SetForegroundColor(ConsoleColorType foregroundColor)
 {
     SetTerminalColor(foregroundColor, _currentBackgroundColor);
 }
 
 template<class CharT>
-void ConsoleBase<CharT>::SetBackgroundColor(ConsoleColor backgroundColor)
+void ConsoleBase<CharT>::SetBackgroundColor(ConsoleColorType backgroundColor)
 {
     SetTerminalColor(_currentForegroundColor, backgroundColor);
 }

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "core/CommandLineOption.h"
-#include "osal/console.h"
+#include "osal/console-darwin.h"
 
 namespace Core {
 

@@ -17,7 +17,12 @@ OSAL_EXPORT String DemangleName(const String & mangledName);
 template <class T>
 inline String TypeName(const T & x)
 {
-    return DemangleName(typeid(x).name());
+    String name = typeid(x).name();
+    const String classPrefix = _("class ");
+    size_t pos = name.find(classPrefix, 0);
+    if (pos == 0)
+        name = name.substr(classPrefix.length());
+    return name;
 }
 
 } // namespace OS

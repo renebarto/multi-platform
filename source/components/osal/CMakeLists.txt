@@ -5,6 +5,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
 
 message("\nosal\n")
 
+find_package(Threads REQUIRED)
+
 set(COMPONENTS_OS_DEFINITIONS
         OSAL_DYNAMIC
         CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)
@@ -31,21 +33,29 @@ set(COMPONENTS_OSAL_LIBS
         CACHE INTERNAL "${PROJECT_NAME}: Link libraries" FORCE)
 
 file(GLOB COMPONENTS_OSAL_SOURCES_BASE src/*.cpp)
-file(GLOB_RECURSE COMPONENTS_OSAL_INCLUDES_EXPORT export/*.h)
-file(GLOB_RECURSE COMPONENTS_OSAL_INCLUDES include/*.h)
+file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_BASE export/osal/*.h)
+file(GLOB COMPONENTS_OSAL_INCLUDES_BASE include/osal/*.h)
 
 if (WIN_MSVC)
     message(STATUS "Building on Windows with MSVC")
     file(GLOB COMPONENTS_OSAL_SOURCES src/windows/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/windows/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/windows/*.h)
 elseif(MINGW)
     message(STATUS "Building on Windows with MinGW")
     file(GLOB COMPONENTS_OSAL_SOURCES src/mingw/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/mingw/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/mingw/*.h)
 elseif(LINUX)
     message(STATUS "Building on Linux")
     file(GLOB COMPONENTS_OSAL_SOURCES src/linux/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/linux/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/linux/*.h)
 elseif(APPLE)
     message(STATUS "Building on OS X")
     file(GLOB COMPONENTS_OSAL_SOURCES src/darwin/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/darwin/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/darwin/*.h)
 else()
     message(STATUS "Unsupported platform " ${CMAKE_HOST_SYSTEM})
     _return()
@@ -54,7 +64,9 @@ endif()
 set(COMPONENTS_OSAL_SOURCES
         ${COMPONENTS_OSAL_SOURCES_BASE}
         ${COMPONENTS_OSAL_SOURCES}
+        ${COMPONENTS_OSAL_INCLUDES_EXPORT_BASE}
         ${COMPONENTS_OSAL_INCLUDES_EXPORT}
+        ${COMPONENTS_OSAL_INCLUDES_BASE}
         ${COMPONENTS_OSAL_INCLUDES}
         CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
 

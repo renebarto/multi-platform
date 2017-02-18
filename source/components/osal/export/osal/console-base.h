@@ -51,10 +51,12 @@ enum class ConsoleColor : int
     Bold = 0,
 };
 #endif
+
+using ConsoleColorType = Flag<ConsoleColor, int>;
 DEFINE_FLAG_OPERATORS(ConsoleColor, int);
 
 template<class CharT>
-OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColor value);
+OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColorType value);
 
 template<class CharT>
 class ConsoleBase
@@ -70,10 +72,10 @@ public:
     ConsoleBase(int handle = OSAL::Files::FileNo(stdout));
     ConsoleBase(std::basic_ostream<CharT> & stream);
 
-    void SetForegroundColor(ConsoleColor foregroundColor);
-    void SetBackgroundColor(ConsoleColor backgroundColor);
-    void SetTerminalColor(ConsoleColor foregroundColor = ConsoleColor::Default,
-                          ConsoleColor backgroundColor = ConsoleColor::Default);
+    void SetForegroundColor(ConsoleColorType foregroundColor);
+    void SetBackgroundColor(ConsoleColorType backgroundColor);
+    void SetTerminalColor(ConsoleColorType foregroundColor = ConsoleColor::Default,
+                          ConsoleColorType backgroundColor = ConsoleColor::Default);
     void ResetTerminalColor();
     bool ShouldUseColor();
 
@@ -97,8 +99,8 @@ public:
 protected:
     std::basic_ostream<CharT> * _stream;
     int _handle;
-    ConsoleColor _currentForegroundColor;
-    ConsoleColor _currentBackgroundColor;
+    ConsoleColorType _currentForegroundColor;
+    ConsoleColorType _currentBackgroundColor;
 #if defined(WIN_MSVC) || defined(WIN_MINGW)
     WORD _defaultColorAttributes;
 #endif
@@ -107,12 +109,12 @@ protected:
 
 struct _SetForegroundColor
 {
-    ConsoleColor color;
+    ConsoleColorType color;
 };
 
 struct _SetBackgroundColor
 {
-    ConsoleColor color;
+    ConsoleColorType color;
 };
 
 template<class CharT>
@@ -122,6 +124,6 @@ OSAL_EXPORT ConsoleBase<CharT> & operator << (ConsoleBase<CharT> & stream, _SetB
 
 } // namespace OSAL
 
-OSAL_EXPORT OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColor color);
-OSAL_EXPORT OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColor color);
+OSAL_EXPORT OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColorType color);
+OSAL_EXPORT OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColorType color);
 

@@ -1,5 +1,7 @@
 #include "osal/osal.h"
 
+#if defined(DARWIN)
+
 #include <sys/utsname.h>
 #include <cxxabi.h>
 
@@ -48,3 +50,5 @@ String OS::DemangleName(const String & mangledName)
     }
     return result;
 }
+
+#endif // defined(DARWIN)

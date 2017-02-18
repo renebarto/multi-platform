@@ -1,5 +1,7 @@
+include (${CMAKE_SOURCE_DIR}/cmake/list_to_string.cmake)
+
 function(show_target_properties)
-    message(STATUS "Build type:                         " ${CMAKE_BUILD_TYPE})
+    message(STATUS "Properties for ${target}")
 
     get_target_property(DEFINES ${PROJECT_NAME} COMPILE_DEFINITIONS)
     list_to_string(DEFINES STR)
@@ -53,6 +55,4 @@ function(show_target_properties)
 
     get_target_property(RUNTIME_LOCATION ${PROJECT_NAME} RUNTIME_OUTPUT_DIRECTORY)
     message(STATUS "Target binary location:             " ${RUNTIME_LOCATION})
-
-
 endfunction()

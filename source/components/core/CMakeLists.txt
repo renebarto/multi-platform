@@ -1,7 +1,7 @@
 project(core CXX)
 
-include(${CMAKE_SOURCE_DIR}/cmake/setup_target_properties_library.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
+include(setup_target_properties_library)
+include(show_target_properties)
 
 message("\ncore\n")
 

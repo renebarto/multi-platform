@@ -1,7 +1,7 @@
 project(osal.test CXX)
 
-include(${CMAKE_SOURCE_DIR}/cmake/setup_target_properties_executable.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/show_target_properties.cmake)
+include(setup_target_properties_executable)
+include(show_target_properties)
 
 message("\nosal.test\n")
 

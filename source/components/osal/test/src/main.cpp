@@ -5,7 +5,7 @@
 //#include <core/DefaultLogger.h>
 #include "CommandLineOptionsParser.h"
 #include "osal/osal.h"
-#include "osal/console.h"
+#include "osal/console-darwin.h"
 
 static const std::string moduleName = "osal";
 

@@ -1,32 +1,5 @@
-# Converts a CMake list to a CMake string. Items in the string are separated by spaces.
-# in  input list variable, referenced by name (so X, not S{X} or "S{X}")
-# out resulting string variable, referenced by name (so X, not S{X} or "S{X}")
-function(list_to_string in out)
-    set(tmp "")
-    foreach(VAL ${${in}})
-        string(APPEND tmp "${VAL} ")
-    endforeach()
-    set(${out} "${tmp}" PARENT_SCOPE)
-endfunction()
-
-# Adds the definitions in defines to the compiler options in result, by prepending them with -D or /D depending on the platform
-# defines Input list variable containing definitions to be added, referenced by name (so X, not S{X} or "S{X}")
-# result  Output list variable contining compiler options, to which the definitions are added, referenced by name (so X, not S{X} or "S{X}")
-function(add_defines result defines)
-    set(tmp)
-    foreach(VAL ${${result}})
-        list(APPEND tmp ${VAL})
-    endforeach()
-
-    foreach(VAL ${${defines}})
-    if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
-        list(APPEND tmp -D${VAL})
-    else()
-        list(APPEND tmp /D${VAL})
-    endif()
-    endforeach()
-    set(${result} ${tmp} PARENT_SCOPE)
-endfunction()
+include(${CMAKE_SOURCE_DIR}/cmake/list_to_string.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/add_defines.cmake)
 
 # Sets up the default compiler options, based on a number of defined variables:
 # FLAGS_CXX                 Compiler flags for all platforms, for langurage C++
