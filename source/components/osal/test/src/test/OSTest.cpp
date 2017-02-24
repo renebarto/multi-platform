@@ -1,6 +1,6 @@
 #include <unit-test-c++/UnitTestC++.h>
 
-#include "osal/osal.h"
+#include "osal/os.h"
 
 namespace OSAL {
 namespace Test {

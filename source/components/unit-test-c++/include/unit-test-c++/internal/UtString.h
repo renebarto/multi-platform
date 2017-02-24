@@ -330,7 +330,7 @@ bool String::CaseInsensitiveWideCStringEquals(const wchar_t* lhs, const wchar_t*
     if (rhs == nullptr)
         return false;
 
-    return OSAL::Strings::WcsCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
 }
 
 // Returns true iff str ends with the given suffix, ignoring case.

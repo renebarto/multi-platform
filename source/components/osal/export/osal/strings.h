@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <osal/exports.h>
 
 namespace OSAL
 {
@@ -11,6 +12,13 @@ using Char=char;
 #endif
 
 using String=std::basic_string<Char>;
+
+OSAL_EXPORT String Trim(const String & value, const String & stripChars);
+OSAL_EXPORT String TrimSpaces(const String & value);
+OSAL_EXPORT String TrimLeft(const String & value, const String & stripChars);
+OSAL_EXPORT String TrimSpacesLeft(const String & value);
+OSAL_EXPORT String TrimRight(const String & value, const String & stripChars);
+OSAL_EXPORT String TrimSpacesRight(const String & value);
 
 } // namespace OSAL
 

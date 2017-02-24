@@ -12,7 +12,7 @@ bool IsEqualIgnoreCase(const char * lhs, const char * rhs)
 
 bool IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return OSAL::Strings::WcsCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
 }
 
 namespace internal

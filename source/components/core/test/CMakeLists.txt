@@ -1,7 +1,7 @@
 project(core.test CXX)
 
-include(setup_target_properties_executable.cmake)
-include(show_target_properties.cmake)
+include(setup_target_properties_executable)
+include(show_target_properties)
 
 message("\ncore.test\n")
 
@@ -23,14 +23,13 @@ set(COMPONENTS_CORE_TEST_LIBS
         ${CORE_TEST_DEPENDENCIES}
         CACHE INTERNAL "${PROJECT_NAME}: Link libararies" FORCE)
 
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_TEST_INCLUDES include/*.h)
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_TEST_SOURCES src/*.cpp)
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_TEST_SOURCES_TEST src/Test/*.cpp)
+file(GLOB_RECURSE COMPONENTS_CORE_TEST_INCLUDES include/*.h)
+file(GLOB_RECURSE COMPONENTS_CORE_TEST_SOURCES src/*.cpp)
 
-set(COMPONENTS_UNITTESTCPP_TEST_SOURCES
-        ${COMPONENTS_UNITTESTCPP_TEST_SOURCES}
-        ${COMPONENTS_UNITTESTCPP_TEST_SOURCES_TEST}
-        ${COMPONENTS_UNITTESTCPP_TEST_INCLUDES}
+set(COMPONENTS_CORE_TEST_SOURCES
+        ${COMPONENTS_CORE_TEST_SOURCES}
+        ${COMPONENTS_CORE_TEST_SOURCES_TEST}
+        ${COMPONENTS_CORE_TEST_INCLUDES}
         CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})

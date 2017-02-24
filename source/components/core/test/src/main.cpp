@@ -9,7 +9,7 @@
 
 static const std::string moduleName = "osal";
 
-int main(int argc, const char* argv[])
+int main(int argc, const char * argv[])
 {
     OSAL::Console console;
 
@@ -26,6 +26,7 @@ int main(int argc, const char* argv[])
         exit(1);
     }
 
+    console << "Application: " << applicationName << std::endl;
     console << "XML output : " << parser.xmlOutput << std::endl;
     console << "Suite      : " << parser.testSuiteName << std::endl;
     console << "Fixture    : " << parser.testFixtureName << std::endl;

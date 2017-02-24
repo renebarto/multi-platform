@@ -33,25 +33,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/add_defines.cmake)
 # CMAKE_C_FLAGS_RELWITHDEBINFO      FLAGS_C FLAGS_C_RELWITHDEBINFO DEFINES DEFINES_RELWITHDEBINFO
 
 function(setup_default_options)
-    if (FLAGS_CXX)
-        list(INSERT FLAGS_CXX_DEBUG 0 ${FLAGS_CXX})
-        list(INSERT FLAGS_CXX_RELEASE 0 ${FLAGS_CXX})
-        list(INSERT FLAGS_CXX_MINSIZEREL 0 ${FLAGS_CXX})
-        list(INSERT FLAGS_CXX_RELWITHDEBINFO 0 ${FLAGS_CXX})
-    endif()
-    if (FLAGS_C)
-        list(INSERT FLAGS_C_DEBUG 0 ${FLAGS_C})
-        list(INSERT FLAGS_C_RELEASE 0 ${FLAGS_C})
-        list(INSERT FLAGS_C_MINSIZEREL 0 ${FLAGS_C})
-        list(INSERT FLAGS_C_RELWITHDEBINFO 0 ${FLAGS_C})
-    endif()
-    if (DEFINES)
-        list(INSERT DEFINES_DEBUG 0 ${DEFINES})
-        list(INSERT DEFINES_RELEASE 0 ${DEFINES})
-        list(INSERT DEFINES_MINSIZEREL 0 ${DEFINES})
-        list(INSERT DEFINES_RELWITHDEBINFO 0 ${DEFINES})
-    endif()
-
     set(OPTIONS_CXX ${FLAGS_CXX})
     set(OPTIONS_CXX_DEBUG ${FLAGS_CXX_DEBUG})
     set(OPTIONS_CXX_RELEASE ${FLAGS_CXX_RELEASE})
@@ -100,7 +81,7 @@ function(setup_default_options)
     message(STATUS "C Options - release min size:       " ${OPTIONS_C_MINSIZEREL_STRING})
     message(STATUS "C Options - release debug info:     " ${OPTIONS_C_RELWITHDEBINFO_STRING})
 
-    set(CMAKE_CXX_FLAGS ${OPTIONS_CXX_STRING} 
+    set(CMAKE_CXX_FLAGS ${OPTIONS_CXX_STRING}
         CACHE STRING
         "Standard compiler options" FORCE)
     set(CMAKE_CXX_FLAGS_DEBUG ${OPTIONS_CXX_DEBUG_STRING}
@@ -116,7 +97,7 @@ function(setup_default_options)
         CACHE STRING
         "Flags used by the compiler during release builds with debug info." FORCE)
 
-    set(CMAKE_C_FLAGS ${OPTIONS_C_STRING} 
+    set(CMAKE_C_FLAGS ${OPTIONS_C_STRING}
         CACHE STRING
         "Standard compiler options" FORCE)
     set(CMAKE_C_FLAGS_DEBUG ${OPTIONS_C_DEBUG_STRING}
