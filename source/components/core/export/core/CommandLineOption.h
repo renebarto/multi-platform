@@ -145,44 +145,4 @@ private:
     T _value;
 };
 
-template <class T, class Deserializer = StringDeserializer<T>>
-class CommandLineOptionWithArgument : public CommandLineOption
-{
-public:
-    CommandLineOptionWithArgument() = delete;
-    CommandLineOptionWithArgument(const CommandLineOptionWithArgument &) = delete;
-    CommandLineOptionWithArgument & operator = (const CommandLineOptionWithArgument &) = delete;
-
-    CommandLineOptionWithArgument(const OSAL::String & longName, OSAL::Char shortName,
-                                  const OSAL::String & description,
-                                  T & argument, bool requiredArgument = true)
-        : CommandLineOption(longName, shortName, description,
-                            requiredArgument
-                            ? CommandLineArgumentType::RequiredArgument
-                            : CommandLineArgumentType::OptionalArgument)
-        , _argument(argument)
-    {
-    }
-    virtual ~CommandLineOptionWithArgument() {}
-
-    T & Argument() { return _argument; }
-    const T & Argument() const { return _argument; }
-
-    virtual void Argument(const OSAL::String & value) override
-    {
-        _value = value;
-        if (nullptr == _argument)
-            return;
-        Deserializer deserializer;
-        if (!deserializer.Deserialize(value, *_argument))
-        {
-            *_argument = T{};
-        }
-    }
-
-private:
-    T & _argument;
-    OSAL::String _value;
-};
-
 } // namespace Core

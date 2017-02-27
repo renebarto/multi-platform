@@ -1295,5 +1295,51 @@ TEST_FIXTURE(CommandLineParserTest, ParseQuotedString)
     delete [] argv;
 }
 
+TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableBrief)
+{
+    int argc = 2;
+    const char * * argv = new const char *[argc];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = "--brief";
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    bool verboseFlag = true;
+    parser.AddSwitchWithVariable("verbose", verboseFlag, true, "Verbose output");
+    parser.AddSwitchWithVariable("brief", verboseFlag, false, "Brief output");
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_FALSE(verboseFlag);
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedVerboseBrief(parser);
+    CheckNotFoundVerbose(parser);
+    CheckFoundBrief(parser);
+
+    delete [] argv;
+}
+
+TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableVerbose)
+{
+    int argc = 2;
+    const char * * argv = new const char *[argc];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = "--verbose";
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    bool verboseFlag {};
+    parser.AddSwitchWithVariable("verbose", verboseFlag, true, "Verbose output");
+    parser.AddSwitchWithVariable("brief", verboseFlag, false, "Brief output");
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_TRUE(verboseFlag);
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedVerboseBrief(parser);
+    CheckFoundVerbose(parser);
+    CheckNotFoundBrief(parser);
+
+    delete [] argv;
+}
+
 } // namespace Test
 } // namespace Core

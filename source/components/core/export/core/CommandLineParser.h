@@ -162,11 +162,6 @@ namespace Core {
                               bool printErrors);
         int GetOpt(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
                    size_t & optionIndex);
-//        bool InternalParseOriginal(int argc, const OSAL::Char * argv[]);
-//        void ExchangeOptionOriginal(const OSAL::Char ** argv);
-//        const OSAL::Char * InitializeOriginal(const OSAL::Char * optionString);
-//        int GetOptOriginal(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
-//                           const OptionDefinition * options, size_t & optionIndex);
         void ShowHelp(const OSAL::String & applicationName);
         size_t MatchShortOption(OSAL::Char name) const;
         size_t MatchLongOption(const OSAL::String & name) const;
