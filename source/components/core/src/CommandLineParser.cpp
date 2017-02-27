@@ -22,7 +22,7 @@ CommandLineParser::CommandLineParser(OSAL::Console & console,
     , _description(description)
     , _nonOptions()
     , _options()
-    , _getoptData()
+    , _getOptData()
 {
 
 }
@@ -31,68 +31,6 @@ CommandLineParser::~CommandLineParser()
 {
     _nonOptions.clear();
     _options.clear();
-}
-
-void CommandLineParser::AddOptionNoArgument(const OSAL::String & longName, int & variable, int value,
-                                            const OSAL::String & description)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, description, variable, value));
-//    AddOption(std::make_shared<CommandLineOptionNoArgumentWithVariable<int>>(longName, variable, value, description));
-}
-
-//void CommandLineParser::AddOptionNoArgument(const OSAL::String longName, bool &variable, bool value,
-//                                            const OSAL::String & description)
-//{
-//    AddOption(std::make_shared<CommandLineOption>(longName, description, variable, value));
-////    AddOption(std::make_shared<CommandLineOptionNoArgumentWithVariable<bool>>(longName, variable, value, description));
-//}
-
-void CommandLineParser::AddOptionNoArgument(OSAL::Char shortName, const OSAL::String & longName,
-                                            const OSAL::String & description)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, shortName, description));
-//    AddOption(std::make_shared<CommandLineOptionNoArgument>(shortName, longName, description));
-}
-
-void CommandLineParser::AddOptionOptionalArgument(OSAL::Char shortName, const OSAL::String & longName,
-                                                  const OSAL::String & description, OSAL::String & textVariable)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, shortName, description, textVariable,
-                                                  CommandLineArgumentType::OptionalArgument));
-}
-
-void CommandLineParser::AddOptionOptionalArgument(const OSAL::String & longName,
-                                                  const OSAL::String & description, OSAL::String & textVariable)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
-                                                  CommandLineArgumentType::OptionalArgument));
-}
-
-void CommandLineParser::AddOptionRequiredArgument(OSAL::Char shortName, OSAL::String longName,
-                                                  const OSAL::String & description, OSAL::String & textVariable)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, shortName, description, textVariable,
-                                                  CommandLineArgumentType::RequiredArgument));
-}
-
-void CommandLineParser::AddOptionRequiredArgument(OSAL::String longName,
-                                                  const OSAL::String & description, OSAL::String & textVariable)
-{
-    AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
-                                                  CommandLineArgumentType::RequiredArgument));
-}
-
-//void CommandLineParser::AddOptionWithArgument(OSAL::Char shortName, OSAL::String longName, OSAL::String &variable,
-//                                              const OSAL::String & description)
-//{
-//
-//}
-
-OSAL::String CommandLineParser::GetNonOption(size_t index) const
-{
-    if (index < _nonOptions.size())
-        return _nonOptions[index];
-    return "";
 }
 
 bool CommandLineParser::HaveOption(OSAL::Char shortName) const
@@ -165,7 +103,7 @@ OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName) co
 {
     OSAL::String strippedPath = OSAL::Path::LastPartOfPath(applicationName);
     const int indentOptions = 2;
-    const int indentDescription = 18;
+    const int indentDescription = 25;
     std::ostringstream stream;
     stream << _("Usage:") << std::endl;
     stream << _name << _(": ") << _description << std::endl << std::endl;
@@ -178,6 +116,14 @@ OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName) co
                                  ? OSAL::String("-") + option->ShortName() + _(", ")
                                  : _("");
             optionsText += _("--") + option->LongName();
+            if (option->ArgType() == CommandLineArgumentType::OptionalArgument)
+            {
+                optionsText += _(" [argument]");
+            }
+            else if (option->ArgType() == CommandLineArgumentType::RequiredArgument)
+            {
+                optionsText += _(" <argument>");
+            }
             stream << OSAL::String(indentOptions, ' ') << optionsText;
             if (optionsText.length() < indentDescription)
                 stream << OSAL::String(indentDescription - optionsText.length(), _(' '));
@@ -190,21 +136,12 @@ OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName) co
 
 bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
 {
-    size_t numOptions = _options.size();
-    std::vector<std::string> strings(numOptions);
-    std::vector<option_a> options;
+    size_t argCount = size_t(argc);
     OSAL::String optionString;
     for (auto opt : _options)
     {
-        option_a long_option;
-        long_option.name = opt->LongName().c_str();
-        long_option.argumentType = opt->ArgType();
-        long_option.flag = opt->Variable();
-        long_option.val = !opt->Variable()
-                          ? static_cast<int>(opt->ShortName())
-                          : opt->Value();
-        options.push_back(long_option);
-        if (!opt->Variable())
+        auto optionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(opt);
+        if (!optionWithVariable)
         {
             if (opt->ShortName())
             {
@@ -219,26 +156,20 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
 
     int result = 0;
     size_t optionIndex;
+    _getOptData.Initialize();
     while (result != -1)
     {
-        result = GetOpt(argc, argv, optionString, &(options[0]), optionIndex);
+        result = GetOpt(argc, argv, optionString, optionIndex);
         if (result == 0)
         {
-            size_t index = optionIndex;
-            CommandLineOptionPtr option = _options[index];
-            if (options[optionIndex].flag != 0)
+            CommandLineOption::Ptr option = _options[optionIndex];
+            auto optionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(option);
+            if (optionWithVariable)
             {
                 SelectOption(option, nullptr);
-                _console << "Option " << options[optionIndex].name << " automatically set" << std::endl;
             } else
             {
-                if (_getoptData.optarg && (*_getoptData.optarg == '='))
-                    _getoptData.optarg++;
-                SelectOption(option, _getoptData.optarg);
-                _console << "Option " << options[optionIndex].name;
-                if (_getoptData.optarg)
-                    _console << " with arg " << _getoptData.optarg;
-                _console << std::endl;
+                SelectOption(option, _getOptData.optionArgument);
             }
         } else if (result == '?')
         {
@@ -248,37 +179,19 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
             size_t index = MatchShortOption(static_cast<char>(result));
             if (index < std::numeric_limits<size_t>::max())
             {
-                CommandLineOptionPtr option = _options[index];
+                CommandLineOption::Ptr option = _options[index];
                 switch (option->ArgType())
                 {
                     case CommandLineArgumentType::NoArgument:
                         SelectOption(option, nullptr);
-                        _console << "Option " << option->LongName() << " found" << std::endl;
                         break;
                     case CommandLineArgumentType::OptionalArgument:
-                        if (_getoptData.optarg && (*_getoptData.optarg == '='))
-                            _getoptData.optarg++;
-                        SelectOption(option, _getoptData.optarg);
-                        _console << "Option " << option->LongName() << " found";
-                        if (_getoptData.optarg)
-                            _console << " with arg " << _getoptData.optarg;
-                        else
-                            _console << " with no argument";
-                        _console << std::endl;
+                        SelectOption(option, _getOptData.optionArgument);
                         break;
                     case CommandLineArgumentType::RequiredArgument:
-                        if (_getoptData.optarg && (*_getoptData.optarg == '='))
-                            _getoptData.optarg++;
-                        SelectOption(option, _getoptData.optarg);
-                        _console << "Option " << option->LongName() << " found";
-                        if (_getoptData.optarg)
-                            _console << " with arg " << _getoptData.optarg;
-                        else
-                            _console << " without required argument!";
-                        _console << std::endl;
+                        SelectOption(option, _getOptData.optionArgument);
                         break;
                     default:
-                        _console << "Invalid result " << option->ArgType() << " for argument type found" << std::endl;
                         break;
                 }
             }
@@ -286,428 +199,781 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
 
     }
 
-    while (_getoptData.optind < argc)
+    while (_getOptData.optionIndex < argCount)
     {
-        AddNonOption(argv[_getoptData.optind]);
-        _console << "Extra argument " << argv[_getoptData.optind] << std::endl;
-        _getoptData.optind++;
+        AddNonOption(argv[_getOptData.optionIndex]);
+        _getOptData.optionIndex++;
     }
 
     return (result != '?');
 }
 
-int CommandLineParser::GetOpt(int argc, const OSAL::Char ** argv, const OSAL::String & optionString, const option_a *long_options,
-                              size_t & optionIndex)
-{
-    int result;
-    result = GetOptInternal(argc, argv, optionString.c_str(), long_options, optionIndex);
-    return result;
-}
-
 void CommandLineParser::ExchangeOption(const OSAL::Char ** argv)
 {
-    int bottom = _getoptData.__first_nonopt;
-    int middle = _getoptData.__last_nonopt;
-    int top = _getoptData.optind;
-    const OSAL::Char * tem;
-    while (top > middle && middle > bottom)
+    size_t bottom = _getOptData.firstNonOption;
+    size_t middle = _getOptData.lastNonOption;
+    size_t top = _getOptData.optionIndex;
+    const OSAL::Char * tmp;
+    while ((top > middle) && (middle > bottom))
     {
-        if (top - middle > middle - bottom)
+        if ((top - middle) > (middle - bottom))
         {
-            int len = middle - bottom;
-            register int i;
-            for (i = 0; i < len; i++)
+            size_t len = middle - bottom;
+            for (size_t i = 0; i < len; i++)
             {
-                tem = argv[bottom + i];
+                tmp = argv[bottom + i];
                 argv[bottom + i] = argv[top - (middle - bottom) + i];
-                argv[top - (middle - bottom) + i] = tem;
+                argv[top - (middle - bottom) + i] = tmp;
             }
             top -= len;
         }
         else
         {
-            int len = top - middle;
-            register int i;
-            for (i = 0; i < len; i++)
+            size_t len = top - middle;
+            for (size_t i = 0; i < len; i++)
             {
-                tem = argv[bottom + i];
+                tmp = argv[bottom + i];
                 argv[bottom + i] = argv[middle + i];
-                argv[middle + i] = tem;
+                argv[middle + i] = tmp;
             }
             bottom += len;
         }
     }
-    _getoptData.__first_nonopt += (_getoptData.optind - _getoptData.__last_nonopt);
-    _getoptData.__last_nonopt = _getoptData.optind;
+    _getOptData.firstNonOption += (_getOptData.optionIndex - _getOptData.lastNonOption);
+    _getOptData.lastNonOption = _getOptData.optionIndex;
 }
 
-const OSAL::Char * CommandLineParser::Initialize(const OSAL::Char *optstring)
+bool CommandLineParser::AtNonOption(size_t argCount, const OSAL::Char ** argv) const
 {
-    _getoptData.__first_nonopt = _getoptData.__last_nonopt = _getoptData.optind;
-    _getoptData.__nextchar = nullptr;
-    if (optstring[0] == '-')
-    {
-        _getoptData.__ordering = CommandLineParser::ENUM_ORDERING::RETURN_IN_ORDER;
-        ++optstring;
-    }
-    else if (optstring[0] == '+')
-    {
-        _getoptData.__ordering = CommandLineParser::ENUM_ORDERING::REQUIRE_ORDER;
-        ++optstring;
-    }
-    else
-        _getoptData.__ordering = CommandLineParser::ENUM_ORDERING::PERMUTE;
-    return optstring;
+    return (_getOptData.optionIndex < argCount) &&
+           (('-' != argv[_getOptData.optionIndex][0]) || ('\0' == argv[_getOptData.optionIndex][1]));
 }
 
-int CommandLineParser::GetOptInternal(int argc, const OSAL::Char ** argv, const OSAL::String &optionString,
-                                      const CommandLineParser::option_a *longopts,
-                                      size_t &longind)
+bool CommandLineParser::AtLongOption(size_t argCount, const OSAL::Char ** argv) const
 {
-    const OSAL::Char * optstring = optionString.c_str();
-    int print_errors = _getoptData.opterr;
-    if (argc < 1)
-        return -1;
-    _getoptData.optarg = nullptr;
-    if (_getoptData.optind == 0 || !_getoptData.initialized)
+    return (_getOptData.optionIndex < argCount) &&
+           (('-' == argv[_getOptData.optionIndex][0]) && ('-' == argv[_getOptData.optionIndex][1]));
+}
+
+int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** argv, const OSAL::Char * optionString,
+                                        size_t & optionIndex, bool printErrors)
+{
+    // Long option
+    const OSAL::Char * nameEnd;
+    size_t nameLength;
+    CommandLineOption::Ptr optionFound = nullptr;
+    struct OptionList
     {
-        if (_getoptData.optind == 0)
-            _getoptData.optind = 1;
-        optstring = Initialize(optstring);
-        _getoptData.initialized = true;
+        CommandLineOption::Ptr option;
+        struct OptionList * next;
+    } * amiguousOptionsList = nullptr;
+
+    bool exact = false;
+    size_t indexFound {};
+    for (nameEnd = _getOptData.nextChar; *nameEnd && ('=' != *nameEnd); nameEnd++)
+        ;
+
+    nameLength = (nameEnd - _getOptData.nextChar);
+    size_t currentOptionIndex = 0;
+    for (auto currentOption : _options)
+    {
+        if (!OSAL::Strings::StrCmp(currentOption->LongName().c_str(), _getOptData.nextChar, nameLength))
+        {
+            auto currentOptionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(currentOption);
+            auto optionFoundWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
+            if (nameLength == currentOption->LongName().length())
+            {
+                optionFound = currentOption;
+                indexFound = currentOptionIndex;
+                exact = true;
+                break;
+            } else if (nullptr == optionFound)
+            {
+                optionFound = currentOption;
+                indexFound = currentOptionIndex;
+            } else if (currentOption->IsNotEqual(optionFound))
+            {
+                struct OptionList *newOption = new OptionList;
+                newOption->option = currentOption;
+                newOption->next = amiguousOptionsList;
+                amiguousOptionsList = newOption;
+            }
+        }
+        currentOptionIndex++;
     }
-    else if (optstring[0] == '-' || optstring[0] == '+')
-        optstring++;
-    if (optstring[0] == ':')
-        print_errors = 0;
-    if (_getoptData.__nextchar == nullptr || *_getoptData.__nextchar == '\0')
+    if ((nullptr != amiguousOptionsList) && !exact)
     {
-        if (_getoptData.__last_nonopt > _getoptData.optind)
-            _getoptData.__last_nonopt = _getoptData.optind;
-        if (_getoptData.__first_nonopt > _getoptData.optind)
-            _getoptData.__first_nonopt = _getoptData.optind;
-        if (_getoptData.__ordering == CommandLineParser::ENUM_ORDERING::PERMUTE)
+        if (printErrors)
         {
-            if (_getoptData.__first_nonopt != _getoptData.__last_nonopt && _getoptData.__last_nonopt != _getoptData.optind)
-                ExchangeOption(argv);
-            else if (_getoptData.__last_nonopt != _getoptData.optind)
-                _getoptData.__first_nonopt = _getoptData.optind;
-            while (_getoptData.optind < argc && (argv[_getoptData.optind][0] != '-' || argv[_getoptData.optind][1] == '\0'))
-                _getoptData.optind++;
-            _getoptData.__last_nonopt = _getoptData.optind;
-        }
-        if (_getoptData.optind != argc && !strcmp(argv[_getoptData.optind], "--"))
-        {
-            _getoptData.optind++;
-            if (_getoptData.__first_nonopt != _getoptData.__last_nonopt && _getoptData.__last_nonopt != _getoptData.optind)
-                ExchangeOption(argv);
-            else if (_getoptData.__first_nonopt == _getoptData.__last_nonopt)
-                _getoptData.__first_nonopt = _getoptData.optind;
-            _getoptData.__last_nonopt = argc;
-            _getoptData.optind = argc;
-        }
-        if (_getoptData.optind == argc)
-        {
-            if (_getoptData.__first_nonopt != _getoptData.__last_nonopt)
-                _getoptData.optind = _getoptData.__first_nonopt;
-            return -1;
-        }
-        if ((argv[_getoptData.optind][0] != '-' || argv[_getoptData.optind][1] == '\0'))
-        {
-            if (_getoptData.__ordering == CommandLineParser::ENUM_ORDERING::REQUIRE_ORDER)
-                return -1;
-            _getoptData.optarg = argv[_getoptData.optind++];
-            return 1;
-        }
-        _getoptData.__nextchar = (argv[_getoptData.optind] + 1 + (longopts != nullptr && argv[_getoptData.optind][1] == '-'));
-    }
-    if ((longopts != nullptr) && (argv[_getoptData.optind][1] == '-'))
-    {
-        const OSAL::Char *nameend;
-        unsigned int namelen;
-        const CommandLineParser::option_a *p;
-        const CommandLineParser::option_a *pfound = nullptr;
-        struct option_list
-        {
-            const CommandLineParser::option_a *p;
-            struct option_list *next;
-        } *ambig_list = nullptr;
-        int exact = 0;
-        ssize_t indfound = -1;
-        size_t option_index;
-        for (nameend = _getoptData.__nextchar; *nameend && *nameend != '='; nameend++);
-        namelen = (unsigned int)(nameend - _getoptData.__nextchar);
-        for (p = longopts, option_index = 0; p->name; p++, option_index++)
-            if (!strncmp(p->name, _getoptData.__nextchar, namelen))
+            struct OptionList first;
+            first.option = optionFound;
+            first.next = amiguousOptionsList;
+            amiguousOptionsList = &first;
+            _console << fgcolor(OSAL::ConsoleColor::Red) << argv[0] << ": option '" << argv[_getOptData.optionIndex] << "' is ambiguous; possibilities:";
+            do
             {
-                if (namelen == (unsigned int)strlen(p->name))
-                {
-                    pfound = p;
-                    indfound = option_index;
-                    exact = 1;
-                    break;
-                }
-                else if (pfound == nullptr)
-                {
-                    pfound = p;
-                    indfound = option_index;
-                }
-                else if (pfound->argumentType != p->argumentType || pfound->flag != p->flag || pfound->val != p->val)
-                {
-                    struct option_list *newp = (struct option_list*)alloca(sizeof(*newp));
-                    newp->p = p;
-                    newp->next = ambig_list;
-                    ambig_list = newp;
-                }
+                _console << " '--" << amiguousOptionsList->option->LongName() << "'";
+                amiguousOptionsList = amiguousOptionsList->next;
             }
-        if (ambig_list != nullptr && !exact)
-        {
-            if (print_errors)
-            {
-                struct option_list first;
-                first.p = pfound;
-                first.next = ambig_list;
-                ambig_list = &first;
-                fprintf (stderr, "%s: option '%s' is ambiguous; possibilities:", argv[0], argv[_getoptData.optind]);
-                do
-                {
-                    fprintf (stderr, " '--%s'", ambig_list->p->name);
-                    ambig_list = ambig_list->next;
-                }
-                while (ambig_list != nullptr);
-                fputc ('\n', stderr);
-            }
-            _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-            _getoptData.optind++;
-            _getoptData.optopt = 0;
-            return '?';
+            while (nullptr != amiguousOptionsList);
+            _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
         }
-        if (pfound != nullptr)
-        {
-            option_index = indfound;
-            _getoptData.optind++;
-            if (*nameend)
-            {
-                if (pfound->argumentType != CommandLineArgumentType::NoArgument)
-                    _getoptData.optarg = nameend + 1;
-                else
-                {
-                    if (print_errors)
-                    {
-                        if (argv[_getoptData.optind - 1][1] == '-')
-                        {
-                            fprintf(stderr, "%s: option '--%s' doesn't allow an argument\n",argv[0], pfound->name);
-                        }
-                        else
-                        {
-                            fprintf(stderr, "%s: option '%c%s' doesn't allow an argument\n",argv[0], argv[_getoptData.optind - 1][0],pfound->name);
-                        }
-                    }
-                    _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                    _getoptData.optopt = pfound->val;
-                    return '?';
-                }
-            }
-            else if (pfound->argumentType == CommandLineArgumentType::RequiredArgument)
-            {
-                if (_getoptData.optind < argc)
-                    _getoptData.optarg = argv[_getoptData.optind++];
-                else
-                {
-                    if (print_errors)
-                    {
-                        fprintf(stderr,"%s: option '--%s' requires an argument\n",argv[0], pfound->name);
-                    }
-                    _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                    _getoptData.optopt = pfound->val;
-                    return optstring[0] == ':' ? ':' : '?';
-                }
-            }
-            _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-            longind = option_index;
-            if (pfound->flag)
-            {
-                *(pfound->flag) = pfound->val;
-                return 0;
-            }
-            return pfound->val;
-        }
-        if (print_errors)
-        {
-            if (argv[_getoptData.optind][1] == '-')
-            {
-                fprintf(stderr, "%s: unrecognized option '--%s'\n",argv[0], _getoptData.__nextchar);
-            }
-            else
-            {
-                fprintf(stderr, "%s: unrecognized option '%c%s'\n",argv[0], argv[_getoptData.optind][0], _getoptData.__nextchar);
-            }
-        }
-        _getoptData.__nextchar = (OSAL::Char *)"";
-        _getoptData.optind++;
-        _getoptData.optopt = 0;
+        _getOptData.nextChar += strlen(_getOptData.nextChar);
+        _getOptData.optionIndex++;
+        _getOptData.optopt = 0;
         return '?';
     }
+    if (nullptr != optionFound)
     {
-        OSAL::Char c = *_getoptData.__nextchar++;
-        OSAL::Char *temp = (OSAL::Char*)strchr(optstring, c);
-        if (*_getoptData.__nextchar == '\0')
-            ++_getoptData.optind;
-        if (temp == nullptr || c == ':' || c == ';')
+        currentOptionIndex = indexFound;
+        _getOptData.optionIndex++;
+        if (*nameEnd)
         {
-            if (print_errors)
-            {
-                fprintf(stderr, "%s: invalid option -- '%c'\n", argv[0], c);
-            }
-            _getoptData.optopt = c;
-            return '?';
-        }
-        if (temp[0] == 'W' && temp[1] == ';')
-        {
-            const OSAL::Char *nameend;
-            const CommandLineParser::option_a *p;
-            const CommandLineParser::option_a *pfound = nullptr;
-            int exact = 0;
-            int ambig = 0;
-            int indfound = 0;
-            size_t option_index;
-            if (longopts == nullptr)
-                goto no_longs;
-            if (*_getoptData.__nextchar != '\0')
-            {
-                _getoptData.optarg = _getoptData.__nextchar;
-                _getoptData.optind++;
-            }
-            else if (_getoptData.optind == argc)
-            {
-                if (print_errors)
-                {
-                    fprintf(stderr,"%s: option requires an argument -- '%c'\n",argv[0], c);
-                }
-                _getoptData.optopt = c;
-                if (optstring[0] == ':')
-                    c = ':';
-                else
-                    c = '?';
-                return c;
-            }
+            // We have an argument after the equals sign.
+            if (CommandLineArgumentType::NoArgument != optionFound->ArgType())
+                _getOptData.optionArgument = nameEnd + 1;
             else
-                _getoptData.optarg = argv[_getoptData.optind++];
-            for (_getoptData.__nextchar = nameend = _getoptData.optarg; *nameend && *nameend != '='; nameend++);
-            for (p = longopts, option_index = 0; p->name; p++, option_index++)
-                if (!strncmp(p->name, _getoptData.__nextchar, nameend - _getoptData.__nextchar))
-                {
-                    if ((unsigned int) (nameend - _getoptData.__nextchar) == strlen(p->name))
-                    {
-                        pfound = p;
-                        indfound = option_index;
-                        exact = 1;
-                        break;
-                    }
-                    else if (pfound == nullptr)
-                    {
-                        pfound = p;
-                        indfound = option_index;
-                    }
-                    else if (pfound->argumentType != p->argumentType || pfound->flag != p->flag || pfound->val != p->val)
-                        ambig = 1;
-                }
-            if (ambig && !exact)
             {
-                if (print_errors)
+                if (printErrors)
                 {
-                    fprintf(stderr, "%s: option '-W %s' is ambiguous\n",argv[0], _getoptData.optarg);
+                    _console << fgcolor(OSAL::ConsoleColor::Red);
+                    if ('-' == argv[_getOptData.optionIndex - 1][1])
+                    {
+                        _console << argv[0] << ": option '--" << optionFound->LongName() << "' doesn't allow an argument";
+                    }
+                    else
+                    {
+                        _console << argv[0] << ": option '--" << argv[_getOptData.optionIndex - 1][0] << optionFound->LongName() << "' doesn't allow an argument";
+                    }
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
                 }
-                _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                _getoptData.optind++;
+                _getOptData.nextChar += strlen(_getOptData.nextChar);
+                auto optionFoundWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
+                _getOptData.optopt = optionFound->ShortName();
+                if (optionFoundWithVariable)
+                {
+                    _getOptData.optopt = optionFoundWithVariable->Value();
+                }
                 return '?';
             }
-            if (pfound != nullptr)
-            {
-                option_index = indfound;
-                if (*nameend)
-                {
-                    if (pfound->argumentType != CommandLineArgumentType::NoArgument)
-                        _getoptData.optarg = nameend + 1;
-                    else
-                    {
-                        if (print_errors)
-                        {
-                            fprintf(stderr, "%s: option '-W %s' doesn't allow an argument\n",argv[0], pfound->name);
-                        }
-                        _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                        return '?';
-                    }
-                }
-                else if (pfound->argumentType == CommandLineArgumentType::RequiredArgument)
-                {
-                    if (_getoptData.optind < argc)
-                        _getoptData.optarg = argv[_getoptData.optind++];
-                    else
-                    {
-                        if (print_errors)
-                        {
-                            fprintf(stderr, "%s: option '-W %s' requires an argument\n",argv[0], pfound->name);
-                        }
-                        _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                        return optstring[0] == ':' ? ':' : '?';
-                    }
-                }
-                else
-                    _getoptData.optarg = nullptr;
-                _getoptData.__nextchar += strlen(_getoptData.__nextchar);
-                longind = option_index;
-                if (pfound->flag)
-                {
-                    *(pfound->flag) = pfound->val;
-                    return 0;
-                }
-                return pfound->val;
-            }
-            no_longs:
-            _getoptData.__nextchar = nullptr;
-            return 'W';
         }
-        if (temp[1] == ':')
+        else if (CommandLineArgumentType::RequiredArgument == optionFound->ArgType())
         {
-            if (temp[2] == ':')
-            {
-                if (*_getoptData.__nextchar != '\0')
-                {
-                    _getoptData.optarg = _getoptData.__nextchar;
-                    _getoptData.optind++;
-                }
-                else
-                    _getoptData.optarg = nullptr;
-                _getoptData.__nextchar = nullptr;
-            }
+            if (_getOptData.optionIndex < argCount)
+                _getOptData.optionArgument = argv[_getOptData.optionIndex++];
             else
             {
-                if (*_getoptData.__nextchar != '\0')
+                if (printErrors)
                 {
-                    _getoptData.optarg = _getoptData.__nextchar;
-                    _getoptData.optind++;
+                    _console << fgcolor(OSAL::ConsoleColor::Red);
+                    _console <<  argv[0] << ": option '--" << optionFound->LongName() << "' requires an argument";
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
                 }
-                else if (_getoptData.optind == argc)
-                {
-                    if (print_errors)
-                    {
-                        fprintf(stderr,"%s: option requires an argument -- '%c'\n",argv[0], c);
-                    }
-                    _getoptData.optopt = c;
-                    if (optstring[0] == ':')
-                        c = ':';
-                    else
-                        c = '?';
-                }
-                else
-                    _getoptData.optarg = argv[_getoptData.optind++];
-                _getoptData.__nextchar = nullptr;
+                _getOptData.nextChar += strlen(_getOptData.nextChar);
+                _getOptData.optopt = optionFound->ShortName();
+                return optionString[0] == ':' ? ':' : '?';
             }
         }
-        return c;
+        _getOptData.nextChar += strlen(_getOptData.nextChar);
+        optionIndex = currentOptionIndex;
+        optionFound->SetOptionFound();
+        if (optionFound->IsSwitchWithVariable())
+        {
+            return 0;
+        }
+        return optionFound->ShortName();
     }
+    if (printErrors)
+    {
+        _console << fgcolor(OSAL::ConsoleColor::Red);
+        if ('-' == argv[_getOptData.optionIndex][1])
+        {
+            _console <<  argv[0] << ": unrecognized option '--" << _getOptData.nextChar << "'";
+        }
+        else
+        {
+            _console <<  argv[0] << ": unrecognized option '--" << argv[_getOptData.optionIndex][0] << _getOptData.nextChar << "'";
+        }
+        _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+    }
+    _getOptData.nextChar = (OSAL::Char *)"";
+    _getOptData.optionIndex++;
+    _getOptData.optopt = 0;
+    return '?';
 }
+
+void CommandLineParser::SetArgument()
+{
+    if ('=' == *_getOptData.nextChar)
+        _getOptData.nextChar++;
+    _getOptData.optionArgument = _getOptData.nextChar;
+    _getOptData.optionIndex++;
+}
+
+int CommandLineParser::HandleShortOption(size_t argCount, const OSAL::Char ** argv, const OSAL::Char * optionString,
+                                         bool printErrors)
+{
+    OSAL::Char c = *_getOptData.nextChar++;
+    OSAL::Char * foundShortOption = (OSAL::Char *)strchr(optionString, c);
+    if ('\0' == *_getOptData.nextChar)
+        // No argument in this command line parameter
+        ++_getOptData.optionIndex;
+    if ((nullptr == foundShortOption) || (':' == c))
+    {
+        if (printErrors)
+        {
+            _console << fgcolor(OSAL::ConsoleColor::Red);
+            _console <<  argv[0] << ": invalid option -- '" << c << "'";
+            _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+        }
+        _getOptData.optopt = c;
+        return '?';
+    }
+    if (foundShortOption[1] == ':')
+    {
+        // We could expect an argument
+        if (foundShortOption[2] == ':')
+        {
+            // The argument is optional
+            if ('\0' != *_getOptData.nextChar)
+                // We have an argument
+                SetArgument();
+            else
+                // No argument
+                _getOptData.optionArgument = nullptr;
+            _getOptData.nextChar = nullptr;
+        }
+        else
+        {
+            // The argument is required
+            if ('\0' != *_getOptData.nextChar)
+                // We have an argument in this command line parameter
+                SetArgument();
+            else if (_getOptData.optionIndex == argCount)
+            {
+                // No argument
+                if (printErrors)
+                {
+                    _console << fgcolor(OSAL::ConsoleColor::Red);
+                    _console <<  argv[0] << ": option '--" << c << "' requires an argument";
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+                }
+                _getOptData.optopt = c;
+                c = (optionString[0] == ':') ? ':' : '?';
+            }
+            else
+                // We have an argument in next command line parameter
+                _getOptData.optionArgument = argv[_getOptData.optionIndex++];
+            _getOptData.nextChar = nullptr;
+        }
+    }
+    return c;
+}
+
+int CommandLineParser::GetOpt(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
+                              size_t & optionIndex)
+{
+    if (argCount < 1)
+        return -1;
+
+    const OSAL::Char * optionStringPtr = optionString.c_str();
+    bool printErrors = _getOptData.printErrors;
+    _getOptData.optionArgument = nullptr;
+
+    if (('-' == *optionStringPtr) || ('+' == *optionStringPtr))
+        optionStringPtr++;
+
+    if (*optionStringPtr == ':')
+        printErrors = false;
+    if ((nullptr == _getOptData.nextChar) || ('\0' == *_getOptData.nextChar))
+    {
+        _getOptData.lastNonOption = std::min(_getOptData.lastNonOption, _getOptData.optionIndex);
+        _getOptData.firstNonOption = std::min(_getOptData.firstNonOption, _getOptData.optionIndex);
+        if (CommandLineParser::Ordering::Permute == _getOptData.ordering)
+        {
+            if ((_getOptData.firstNonOption != _getOptData.lastNonOption) &&
+                (_getOptData.lastNonOption != _getOptData.optionIndex))
+                ExchangeOption(argv);
+            else if (_getOptData.lastNonOption != _getOptData.optionIndex)
+                _getOptData.firstNonOption = _getOptData.optionIndex;
+            // Skip non-_options and empty _options
+            while (AtNonOption(argCount, argv))
+                _getOptData.optionIndex++;
+            _getOptData.lastNonOption = _getOptData.optionIndex;
+        }
+        if ((_getOptData.optionIndex < argCount ) && !OSAL::Strings::StrCmp(argv[_getOptData.optionIndex], "--"))
+        {
+            // We are apparently using stdin as input?
+            _getOptData.optionIndex++;
+            if ((_getOptData.firstNonOption != _getOptData.lastNonOption) &&
+                (_getOptData.lastNonOption != _getOptData.optionIndex))
+                ExchangeOption(argv);
+            else if (_getOptData.firstNonOption == _getOptData.lastNonOption)
+                _getOptData.firstNonOption = _getOptData.optionIndex;
+            _getOptData.lastNonOption = _getOptData.optionIndex = argCount;
+        }
+        if (_getOptData.optionIndex == argCount)
+        {
+            // Point to first non-option
+            if (_getOptData.firstNonOption != _getOptData.lastNonOption)
+                _getOptData.optionIndex = _getOptData.firstNonOption;
+                return -1;
+        }
+        if (AtNonOption(argCount, argv))
+        {
+            if (_getOptData.ordering == CommandLineParser::Ordering::RequireOrder)
+                // There ar no more options
+                return -1;
+            _getOptData.optionArgument = argv[_getOptData.optionIndex++];
+            return 1;
+        }
+        _getOptData.nextChar = (argv[_getOptData.optionIndex] + 1 +
+                                (('-' == argv[_getOptData.optionIndex][1])? 1 : 0));
+    }
+    if (AtLongOption(argCount, argv))
+    {
+        return HandleLongOption(argCount, argv, optionStringPtr, optionIndex, printErrors);
+    }
+    return HandleShortOption(argCount, argv, optionStringPtr, printErrors);
+}
+
+//struct OptionDefinition
+//{
+//    const OSAL::Char * name;
+//    CommandLineArgumentType argumentType;
+//    int * flag;
+//    int val;
+//};
+
+//bool CommandLineParser::InternalParseOriginal(int argc, const OSAL::Char * argv[])
+//{
+//    size_t argCount = size_t(argc);
+//    size_t numOptions = _options.size();
+//    std::vector<std::string> strings(numOptions);
+//    std::vector<OptionDefinition> options;
+//    OSAL::String optionString;
+//    for (auto opt : _options)
+//    {
+//        OptionDefinition long_option;
+//        long_option.name = opt->LongName().c_str();
+//        long_option.argumentType = opt->ArgType();
+//        auto optionWithVariable = std::static_pointer_cast<CommandLineSwitchWithVariable<int>>(opt);
+//        if (optionWithVariable)
+//        {
+//            long_option.flag = &optionWithVariable->Variable();
+//            long_option.val = optionWithVariable->Value();
+//        }
+//        else
+//        {
+//            long_option.flag = nullptr;
+//            long_option.val = static_cast<int>(opt->ShortName());
+//        }
+//        options.push_back(long_option);
+//        if (!optionWithVariable)
+//        {
+//            if (opt->ShortName())
+//            {
+//                optionString += opt->ShortName();
+//                if (opt->ArgType() != CommandLineArgumentType::NoArgument)
+//                    optionString += ':';
+//                if (opt->ArgType() == CommandLineArgumentType::OptionalArgument)
+//                    optionString += ':';
+//            }
+//        }
+//    }
+//
+//    int result = 0;
+//    size_t optionIndex;
+//    while (result != -1)
+//    {
+//        result = GetOptOriginal(argCount, argv, optionString, &(options[0]), optionIndex);
+//        if (result == 0)
+//        {
+//            size_t index = optionIndex;
+//            CommandLineOption::Ptr option = _options[index];
+//            if (options[optionIndex].flag != 0)
+//            {
+//                SelectOption(option, nullptr);
+//                _console << "Option " << options[optionIndex].name << " automatically set" << std::endl;
+//            } else
+//            {
+//                if (_getOptData.optionArgument && (*_getOptData.optionArgument == '='))
+//                    _getOptData.optionArgument++;
+//                SelectOption(option, _getOptData.optionArgument);
+//                _console << "Option " << options[optionIndex].name;
+//                if (_getOptData.optionArgument)
+//                    _console << " with arg " << _getOptData.optionArgument;
+//                _console << std::endl;
+//            }
+//        } else if (result == '?')
+//        {
+//            break;
+//        } else if (result != -1)
+//        {
+//            size_t index = MatchShortOption(static_cast<char>(result));
+//            if (index < std::numeric_limits<size_t>::max())
+//            {
+//                CommandLineOption::Ptr option = _options[index];
+//                switch (option->ArgType())
+//                {
+//                    case CommandLineArgumentType::NoArgument:
+//                        SelectOption(option, nullptr);
+//                        _console << "Option " << option->LongName() << " found" << std::endl;
+//                        break;
+//                    case CommandLineArgumentType::OptionalArgument:
+//                        if (_getOptData.optionArgument && (*_getOptData.optionArgument == '='))
+//                            _getOptData.optionArgument++;
+//                        SelectOption(option, _getOptData.optionArgument);
+//                        _console << "Option " << option->LongName() << " found";
+//                        if (_getOptData.optionArgument)
+//                            _console << " with arg " << _getOptData.optionArgument;
+//                        else
+//                            _console << " with no argument";
+//                        _console << std::endl;
+//                        break;
+//                    case CommandLineArgumentType::RequiredArgument:
+//                        if (_getOptData.optionArgument && (*_getOptData.optionArgument == '='))
+//                            _getOptData.optionArgument++;
+//                        SelectOption(option, _getOptData.optionArgument);
+//                        _console << "Option " << option->LongName() << " found";
+//                        if (_getOptData.optionArgument)
+//                            _console << " with arg " << _getOptData.optionArgument;
+//                        else
+//                            _console << " without required argument!";
+//                        _console << std::endl;
+//                        break;
+//                    default:
+//                        _console << "Invalid result " << option->ArgType() << " for argument type found" << std::endl;
+//                        break;
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    while (_getOptData.optionIndex < argCount)
+//    {
+//        AddNonOption(argv[_getOptData.optionIndex]);
+//        _console << "Extra argument " << argv[_getOptData.optionIndex] << std::endl;
+//        _getOptData.optionIndex++;
+//    }
+//
+//    return (result != '?');
+//}
+//
+//void CommandLineParser::ExchangeOptionOriginal(const OSAL::Char ** argv)
+//{
+//    size_t bottom = _getOptData.firstNonOption;
+//    size_t middle = _getOptData.lastNonOption;
+//    size_t top = _getOptData.optionIndex;
+//    const OSAL::Char * tmp;
+//    while (top > middle && middle > bottom)
+//    {
+//        if (top - middle > middle - bottom)
+//        {
+//            size_t len = middle - bottom;
+//            for (size_t i = 0; i < len; i++)
+//            {
+//                tmp = argv[bottom + i];
+//                argv[bottom + i] = argv[top - (middle - bottom) + i];
+//                argv[top - (middle - bottom) + i] = tmp;
+//            }
+//            top -= len;
+//        }
+//        else
+//        {
+//            size_t len = top - middle;
+//            for (size_t i = 0; i < len; i++)
+//            {
+//                tmp = argv[bottom + i];
+//                argv[bottom + i] = argv[middle + i];
+//                argv[middle + i] = tmp;
+//            }
+//            bottom += len;
+//        }
+//    }
+//    _getOptData.firstNonOption += (_getOptData.optionIndex - _getOptData.lastNonOption);
+//    _getOptData.lastNonOption = _getOptData.optionIndex;
+//}
+//
+//const OSAL::Char * CommandLineParser::InitializeOriginal(const OSAL::Char * optionString)
+//{
+//    if (0 == _getOptData.optionIndex)
+//        _getOptData.optionIndex = 1;
+//
+//    _getOptData.firstNonOption = _getOptData.lastNonOption = _getOptData.optionIndex;
+//    _getOptData.nextChar = nullptr;
+//    _getOptData.initialized = true;
+//
+//    if ('-' == optionString[0])
+//    {
+//        _getOptData.ordering = CommandLineParser::Ordering::ReturnInOrder;
+//        ++optionString;
+//    }
+//    else if ('+' == optionString[0])
+//    {
+//        _getOptData.ordering = CommandLineParser::Ordering::RequireOrder;
+//        ++optionString;
+//    }
+//    else
+//        _getOptData.ordering = CommandLineParser::Ordering::Permute;
+//    return optionString;
+//}
+//
+//int CommandLineParser::GetOptOriginal(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
+//                                      const CommandLineParser::OptionDefinition * options, size_t & optionIndex)
+//{
+//    if (argCount < 1)
+//        return -1;
+//
+//    const OSAL::Char * optionStringPtr = optionString.c_str();
+//    bool printErrors = _getOptData.printErrors;
+//    _getOptData.optionArgument = nullptr;
+//    if ((0 == _getOptData.optionIndex) || !_getOptData.initialized)
+//    {
+//        optionStringPtr = InitializeOriginal(optionStringPtr);
+//    }
+//    else if (('-' == optionStringPtr[0]) || ('+' == optionStringPtr[0]))
+//        optionStringPtr++;
+//    if (optionStringPtr[0] == ':')
+//        printErrors = false;
+//    if ((nullptr == _getOptData.nextChar) || ('\0' == *_getOptData.nextChar))
+//    {
+//        _getOptData.lastNonOption = std::min(_getOptData.lastNonOption, _getOptData.optionIndex);
+//        _getOptData.firstNonOption = std::min(_getOptData.firstNonOption, _getOptData.optionIndex);
+//        if (CommandLineParser::Ordering::Permute == _getOptData.ordering)
+//        {
+//            if ((_getOptData.firstNonOption != _getOptData.lastNonOption) &&
+//                (_getOptData.lastNonOption != _getOptData.optionIndex))
+//                ExchangeOptionOriginal(argv);
+//            else if (_getOptData.lastNonOption != _getOptData.optionIndex)
+//                _getOptData.firstNonOption = _getOptData.optionIndex;
+//            while ((_getOptData.optionIndex < argCount) &&
+//                   (('-' != argv[_getOptData.optionIndex][0]) || ('\0' == argv[_getOptData.optionIndex][1])))
+//                _getOptData.optionIndex++;
+//            _getOptData.lastNonOption = _getOptData.optionIndex;
+//        }
+//        if ((_getOptData.optionIndex < argCount ) && !strcmp(argv[_getOptData.optionIndex], "--"))
+//        {
+//            _getOptData.optionIndex++;
+//            if ((_getOptData.firstNonOption != _getOptData.lastNonOption) &&
+//                (_getOptData.lastNonOption != _getOptData.optionIndex))
+//                ExchangeOptionOriginal(argv);
+//            else if (_getOptData.firstNonOption == _getOptData.lastNonOption)
+//                _getOptData.firstNonOption = _getOptData.optionIndex;
+//            _getOptData.lastNonOption = _getOptData.optionIndex = argCount;
+//        }
+//        if (_getOptData.optionIndex == argCount)
+//        {
+//            if (_getOptData.firstNonOption != _getOptData.lastNonOption)
+//                _getOptData.optionIndex = _getOptData.firstNonOption;
+//            return -1;
+//        }
+//        if (('-' != argv[_getOptData.optionIndex][0]) || ('\0' == argv[_getOptData.optionIndex][1]))
+//        {
+//            if (_getOptData.ordering == CommandLineParser::Ordering::RequireOrder)
+//                return -1;
+//            _getOptData.optionArgument = argv[_getOptData.optionIndex++];
+//            return 1;
+//        }
+//        _getOptData.nextChar = (argv[_getOptData.optionIndex] + 1 +
+//                                (((options != nullptr) && ('-' == argv[_getOptData.optionIndex][1]))? 1 : 0));
+//    }
+//    if ((nullptr != options) && ('-' == argv[_getOptData.optionIndex][1]))
+//    {
+//        const OSAL::Char * nameEnd;
+//        size_t nameLength;
+//        const CommandLineParser::OptionDefinition * optionFound = nullptr;
+//        struct OptionList
+//        {
+//            const CommandLineParser::OptionDefinition * option;
+//            struct OptionList * next;
+//        } * amiguousOptionsList = nullptr;
+//
+//        bool exact = false;
+//        ssize_t indexFound = -1;
+//        for (nameEnd = _getOptData.nextChar; *nameEnd && ('=' != *nameEnd); nameEnd++)
+//            ;
+//
+//        nameLength = (nameEnd - _getOptData.nextChar);
+//        size_t currentOptionIndex = 0;
+//        for (const CommandLineParser::OptionDefinition * currentOption = options; currentOption->name; currentOption++, currentOptionIndex++)
+//        {
+//            if (!strncmp(currentOption->name, _getOptData.nextChar, nameLength))
+//            {
+//                if (nameLength == strlen(currentOption->name))
+//                {
+//                    optionFound = currentOption;
+//                    indexFound = currentOptionIndex;
+//                    exact = 1;
+//                    break;
+//                } else if (nullptr == optionFound)
+//                {
+//                    optionFound = currentOption;
+//                    indexFound = currentOptionIndex;
+//                } else if ((optionFound->argumentType != currentOption->argumentType) ||
+//                           (optionFound->flag != currentOption->flag) ||
+//                           (optionFound->val != currentOption->val))
+//                {
+//                    struct OptionList *newOption = new OptionList;
+//                    newOption->option = currentOption;
+//                    newOption->next = amiguousOptionsList;
+//                    amiguousOptionsList = newOption;
+//                }
+//            }
+//        }
+//        if ((nullptr != amiguousOptionsList) && !exact)
+//        {
+//            if (printErrors)
+//            {
+//                struct OptionList first;
+//                first.option = optionFound;
+//                first.next = amiguousOptionsList;
+//                amiguousOptionsList = &first;
+//                _console << fgcolor(OSAL::ConsoleColor::Red) << argv[0] << ": option '" << argv[_getOptData.optionIndex] << "' is ambiguous; possibilities:";
+//                do
+//                {
+//                    _console << " '--" << amiguousOptionsList->option->name << "'";
+//                    amiguousOptionsList = amiguousOptionsList->next;
+//                }
+//                while (nullptr != amiguousOptionsList);
+//                _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//            }
+//            _getOptData.nextChar += strlen(_getOptData.nextChar);
+//            _getOptData.optionIndex++;
+//            _getOptData.optopt = 0;
+//            return '?';
+//        }
+//        if (nullptr != optionFound)
+//        {
+//            currentOptionIndex = indexFound;
+//            _getOptData.optionIndex++;
+//            if (*nameEnd)
+//            {
+//                if (CommandLineArgumentType::NoArgument != optionFound->argumentType)
+//                    _getOptData.optionArgument = nameEnd + 1;
+//                else
+//                {
+//                    if (printErrors)
+//                    {
+//                        _console << fgcolor(OSAL::ConsoleColor::Red);
+//                        if ('-' == argv[_getOptData.optionIndex - 1][1])
+//                        {
+//                            _console << argv[0] << ": option '--" << optionFound->name << "' doesn't allow an argument";
+//                        }
+//                        else
+//                        {
+//                            _console << argv[0] << ": option '--" << argv[_getOptData.optionIndex - 1][0] << optionFound->name << "' doesn't allow an argument";
+//                        }
+//                        _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//                    }
+//                    _getOptData.nextChar += strlen(_getOptData.nextChar);
+//                    _getOptData.optopt = optionFound->val;
+//                    return '?';
+//                }
+//            }
+//            else if (CommandLineArgumentType::RequiredArgument == optionFound->argumentType)
+//            {
+//                if (_getOptData.optionIndex < argCount)
+//                    _getOptData.optionArgument = argv[_getOptData.optionIndex++];
+//                else
+//                {
+//                    if (printErrors)
+//                    {
+//                        _console << fgcolor(OSAL::ConsoleColor::Red);
+//                        _console <<  argv[0] << ": option '--" << optionFound->name << "' requires an argument";
+//                        _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//                    }
+//                    _getOptData.nextChar += strlen(_getOptData.nextChar);
+//                    _getOptData.optopt = optionFound->val;
+//                    return optionStringPtr[0] == ':' ? ':' : '?';
+//                }
+//            }
+//            _getOptData.nextChar += strlen(_getOptData.nextChar);
+//            optionIndex = currentOptionIndex;
+//            if (optionFound->flag)
+//            {
+//                *(optionFound->flag) = optionFound->val;
+//                return 0;
+//            }
+//            return optionFound->val;
+//        }
+//        if (printErrors)
+//        {
+//            _console << fgcolor(OSAL::ConsoleColor::Red);
+//            if ('-' == argv[_getOptData.optionIndex][1])
+//            {
+//                _console <<  argv[0] << ": unrecognized option '--" << _getOptData.nextChar << "'";
+//            }
+//            else
+//            {
+//                _console <<  argv[0] << ": unrecognized option '--" << argv[_getOptData.optionIndex][0] << _getOptData.nextChar << "'";
+//            }
+//            _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//        }
+//        _getOptData.nextChar = (OSAL::Char *)"";
+//        _getOptData.optionIndex++;
+//        _getOptData.optopt = 0;
+//        return '?';
+//    }
+//    {
+//        OSAL::Char c = *_getOptData.nextChar++;
+//        OSAL::Char * foundShortOption = (OSAL::Char *)strchr(optionStringPtr, c);
+//        if ('\0' == *_getOptData.nextChar)
+//            ++_getOptData.optionIndex;
+//        if ((nullptr == foundShortOption) || (':' == c))
+//        {
+//            if (printErrors)
+//            {
+//                _console << fgcolor(OSAL::ConsoleColor::Red);
+//                _console <<  argv[0] << ": invalid option -- '" << c << "'";
+//                _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//            }
+//            _getOptData.optopt = c;
+//            return '?';
+//        }
+//        if (foundShortOption[1] == ':')
+//        {
+//            if (foundShortOption[2] == ':')
+//            {
+//                if ('\0' != *_getOptData.nextChar)
+//                {
+//                    _getOptData.optionArgument = _getOptData.nextChar;
+//                    _getOptData.optionIndex++;
+//                }
+//                else
+//                    _getOptData.optionArgument = nullptr;
+//                _getOptData.nextChar = nullptr;
+//            }
+//            else
+//            {
+//                if ('\0' != *_getOptData.nextChar)
+//                {
+//                    _getOptData.optionArgument = _getOptData.nextChar;
+//                    _getOptData.optionIndex++;
+//                }
+//                else if (_getOptData.optionIndex == argCount)
+//                {
+//                    if (printErrors)
+//                    {
+//                        _console << fgcolor(OSAL::ConsoleColor::Red);
+//                        _console <<  argv[0] << ": option '--" << c << "' requires an argument";
+//                        _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+//                    }
+//                    _getOptData.optopt = c;
+//                    if (optionStringPtr[0] == ':')
+//                        c = ':';
+//                    else
+//                        c = '?';
+//                }
+//                else
+//                    _getOptData.optionArgument = argv[_getOptData.optionIndex++];
+//                _getOptData.nextChar = nullptr;
+//            }
+//        }
+//        return c;
+//    }
+//}
 
 void CommandLineParser::ShowHelp(const OSAL::String & applicationName)
 {
@@ -716,7 +982,7 @@ void CommandLineParser::ShowHelp(const OSAL::String & applicationName)
     _console << fgcolor(OSAL::ConsoleColor::Default);
 }
 
-void CommandLineParser::AddOption(const CommandLineOptionPtr option)
+void CommandLineParser::AddOption(const CommandLineOption::Ptr option)
 {
     _options.push_back(option);
 }
@@ -755,9 +1021,9 @@ size_t CommandLineParser::MatchLongOption(const OSAL::Char * name, size_t nameLe
     return std::numeric_limits<size_t>::max();
 }
 
-void CommandLineParser::SelectOption(CommandLineOptionPtr option, const OSAL::Char * value)
+void CommandLineParser::SelectOption(CommandLineOption::Ptr option, const OSAL::Char * value)
 {
-    option->FoundOption(true);
+    option->SetOptionFound();
     OSAL::String argument = (value != nullptr) ? value : "";
     argument = OSAL::Trim(argument, "\"");
     switch (option->ArgType())

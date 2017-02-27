@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <osal/console-darwin.h>
+#include <osal/console.h>
 #include <unit-test-c++/exports.h>
 #include <unit-test-c++/StreamTestReporter.h>
 

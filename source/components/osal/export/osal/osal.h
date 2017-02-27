@@ -11,7 +11,7 @@
 #elif defined(DARWIN)
 #include "osal/darwin/osal.h"
 #elif defined(LINUX)
-#include "osal/linux/osal-darwin.h"
+#include "osal/linux/osal.h"
 #endif
 
 #include "osal/os.h"

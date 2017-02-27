@@ -7,11 +7,11 @@ CommandLineOptionsParser::CommandLineOptionsParser(OSAL::Console & console)
     , testName()
     , xmlOutput()
 {
-    AddOptionRequiredArgument('s', "runsuite", "Run only specified test suite (default = all)",
+    AddOptionRequiredArgument("runsuite", 's', "Run only specified test suite (default = all)",
                               testSuiteName);
-    AddOptionRequiredArgument('f', "runfixture",  "Run only specified test fixture (default = all)",
+    AddOptionRequiredArgument("runfixture", 'f', "Run only specified test fixture (default = all)",
                               testFixtureName);
-    AddOptionRequiredArgument('t', "runtest", "Run only specified test (default = all)",
+    AddOptionRequiredArgument("runtest", 't', "Run only specified test (default = all)",
                               testName);
     AddOptionRequiredArgument("xmloutput", "Send output to specified XML file",
                               xmlOutput);

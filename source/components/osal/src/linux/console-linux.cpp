@@ -1,4 +1,4 @@
-#include "osal/console-darwin.h"
+#include "osal/console.h"
 
 #if defined(LINUX)
 

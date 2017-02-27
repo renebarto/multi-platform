@@ -3,14 +3,14 @@
 #include <string>
 #include <vector>
 #include "core/CommandLineOption.h"
-#include "osal/console-darwin.h"
+#include "osal/console.h"
 
 namespace Core {
 
     class CommandLineParser
     {
     private:
-        using CommandLineOptionsList = std::vector<CommandLineOptionPtr>;
+        using CommandLineOptionsList = std::vector<CommandLineOption::Ptr>;
         using CommandLineNonOptionsList = std::vector<OSAL::String>;
         static const OSAL::String DefaultMainOptionsGroupName;
 
@@ -23,48 +23,59 @@ namespace Core {
 
         ~CommandLineParser();
 
-        void AddOptionNoArgument(const OSAL::String & longName, int &variable, int value,
-                                 const OSAL::String & description);
+        void AddSwitch(const OSAL::String &longName, OSAL::Char shortName,
+                       const OSAL::String &description)
+        {
+            AddOption(std::make_shared<CommandLineSwitchNoVariable>(longName, shortName, description));
+        }
 
-//        void AddOptionNoArgument(const OSAL::String longName, bool &variable, bool value,
-//                                 const OSAL::String & description);
+        template <class T>
+        void AddSwitchWithVariable(const OSAL::String &longName, T &variable, T value,
+                                   const OSAL::String &description)
+        {
+            AddOption(std::make_shared<CommandLineSwitchWithVariable<T>>(longName, description, variable, value));
+        }
 
-        void AddOptionNoArgument(OSAL::Char shortName, const OSAL::String & longName,
-                                 const OSAL::String & description);
 
-        void AddOptionOptionalArgument(OSAL::Char shortName, const OSAL::String & longName,
-                                       const OSAL::String & description, OSAL::String & textVariable);
+        void AddOptionOptionalArgument(const OSAL::String & longName, OSAL::Char shortName,
+                                       const OSAL::String & description, OSAL::String & textVariable)
+        {
+            AddOption(std::make_shared<CommandLineOption>(longName, shortName, description, textVariable,
+                                                          CommandLineArgumentType::OptionalArgument));
+        }
+
         void AddOptionOptionalArgument(const OSAL::String & longName,
-                                       const OSAL::String & description, OSAL::String & textVariable);
+                                       const OSAL::String & description, OSAL::String & textVariable)
+        {
+            AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
+                                                          CommandLineArgumentType::OptionalArgument));
+        }
 
-        void AddOptionRequiredArgument(OSAL::Char shortName, OSAL::String longName,
-                                       const OSAL::String & description, OSAL::String & textVariable);
+        void AddOptionRequiredArgument(OSAL::String longName, OSAL::Char shortName,
+                                       const OSAL::String & description, OSAL::String & textVariable)
+        {
+            AddOption(std::make_shared<CommandLineOption>(longName, shortName, description, textVariable,
+                                                          CommandLineArgumentType::RequiredArgument));
+        }
+
         void AddOptionRequiredArgument(OSAL::String longName,
-                                       const OSAL::String & description, OSAL::String & textVariable);
-
-//        template <class T>
-//        void AddOptionOptionalArgument(OSAL::Char shortName, const OSAL::String & longName,
-//                                       const OSAL::String & description, T * argument)
-//        {
-//            AddOption(std::make_shared<CommandLineOptionWithArgument<T>>(shortName, longName, description, argument, false));
-//        }
-//
-//        template <class T>
-//        void AddOptionRequiredArgument(OSAL::Char shortName, const OSAL::String & longName,
-//                                       const OSAL::String & description, T * argument)
-//        {
-//            AddOption(std::make_shared<CommandLineOptionWithArgument<T>>(shortName, longName, description, argument));
-//        }
-
-
-//        void AddOptionWithArgument(OSAL::Char shortName, OSAL::String longName, OSAL::String &variable,
-//                                   const OSAL::String & description);
+                                       const OSAL::String & description, OSAL::String & textVariable)
+        {
+            AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
+                                                          CommandLineArgumentType::RequiredArgument));
+        }
 
         size_t NumNonOptions() const
         {
             return _nonOptions.size();
         }
-        OSAL::String GetNonOption(size_t index) const;
+
+        OSAL::String GetNonOption(size_t index) const
+        {
+            if (index < _nonOptions.size())
+                return _nonOptions[index];
+            return "";
+        }
 
         bool HaveOption(OSAL::Char shortName) const;
         bool HaveOption(OSAL::String longName) const;
@@ -88,33 +99,47 @@ namespace Core {
             return _showHelp;
         }
         OSAL::String GetHelp(const OSAL::String & applicationName) const;
-        void AddOption(const CommandLineOptionPtr option);
+        void AddOption(const CommandLineOption::Ptr option);
 
-        virtual void OnParseOption(const CommandLineOptionPtr option)
+        virtual void OnParseOption(const CommandLineOption::Ptr option)
         {
             _console << "Option " << option->LongName() << " argument " << option->Argument() << std::endl;
         }
-        virtual void OnParseNonOption(const std::string UNUSED(parameter)) {}
+        virtual void OnParseNonOption(const std::string UNUSED(parameter))
+        {
+            _console << "Non-option " << parameter << std::endl;
+        }
 
-        struct option_a
+        enum class Ordering { RequireOrder, Permute, ReturnInOrder };
+        class GetOptData
         {
-            const OSAL::Char * name;
-            CommandLineArgumentType argumentType;
-            int * flag;
-            int val;
-        };
-        enum ENUM_ORDERING { REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER };
-        struct GetOptData
-        {
-            int optind;
-            int opterr;
+        public:
+            GetOptData()
+                : optionIndex()
+                , printErrors(true)
+                , optopt()
+                , optionArgument()
+                , nextChar()
+                , ordering()
+                , firstNonOption()
+                , lastNonOption()
+            {
+            }
+            void Initialize()
+            {
+                optionIndex = firstNonOption = lastNonOption = 1;
+                nextChar = nullptr;
+                ordering = CommandLineParser::Ordering::Permute;
+            }
+            size_t optionIndex;
+            bool printErrors;
             int optopt;
-            const OSAL::Char * optarg;
+            const OSAL::Char * optionArgument;
             bool initialized;
-            const OSAL::Char *__nextchar;
-            ENUM_ORDERING __ordering;
-            int __first_nonopt;
-            int __last_nonopt;
+            const OSAL::Char * nextChar;
+            Ordering ordering;
+            size_t firstNonOption;
+            size_t lastNonOption;
         };
     private:
         OSAL::Console & _console;
@@ -124,20 +149,29 @@ namespace Core {
         OSAL::String _description;
         CommandLineNonOptionsList _nonOptions;
         CommandLineOptionsList _options;
-        struct GetOptData _getoptData;
+        struct GetOptData _getOptData;
 
-        void ExchangeOption(const OSAL::Char ** argv);
-        const OSAL::Char * Initialize(const OSAL::Char * optstring);
-        int GetOptInternal(int argc, const OSAL::Char ** argv, const OSAL::String &optionString,
-                           const CommandLineParser::option_a *longopts,
-                           size_t &longind);
-        int GetOpt(int argc, const OSAL::Char ** argv, const OSAL::String & optionString, const option_a *long_options, size_t & optionIndex);
         bool InternalParse(int argc, const OSAL::Char * argv[]);
+        void ExchangeOption(const OSAL::Char ** argv);
+        bool AtNonOption(size_t argCount, const OSAL::Char ** argv) const;
+        bool AtLongOption(size_t argCount, const OSAL::Char ** argv) const;
+        int HandleLongOption(size_t argCount, const OSAL::Char ** argv, const OSAL::Char * optionString,
+                             size_t & optionIndex, bool printErrors);
+        void SetArgument();
+        int HandleShortOption(size_t argCount, const OSAL::Char ** argv, const OSAL::Char * optionString,
+                              bool printErrors);
+        int GetOpt(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
+                   size_t & optionIndex);
+//        bool InternalParseOriginal(int argc, const OSAL::Char * argv[]);
+//        void ExchangeOptionOriginal(const OSAL::Char ** argv);
+//        const OSAL::Char * InitializeOriginal(const OSAL::Char * optionString);
+//        int GetOptOriginal(size_t argCount, const OSAL::Char ** argv, const OSAL::String & optionString,
+//                           const OptionDefinition * options, size_t & optionIndex);
         void ShowHelp(const OSAL::String & applicationName);
         size_t MatchShortOption(OSAL::Char name) const;
         size_t MatchLongOption(const OSAL::String & name) const;
         size_t MatchLongOption(const OSAL::Char * name, size_t nameLength) const;
-        void SelectOption(CommandLineOptionPtr option, const OSAL::Char * value);
+        void SelectOption(CommandLineOption::Ptr option, const OSAL::Char * value);
         void AddNonOption(const OSAL::Char * value);
     };
 

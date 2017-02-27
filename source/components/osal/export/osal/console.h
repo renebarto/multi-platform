@@ -8,7 +8,7 @@
 #elif defined(DARWIN)
 #include "osal/darwin/console.h"
 #elif defined(LINUX)
-#include "osal/linux/console-mingw.h"
+#include "osal/linux/console.h"
 #endif
 
 namespace OSAL {
