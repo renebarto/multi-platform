@@ -7,7 +7,7 @@
 #include "osal/osal.h"
 #include "osal/console.h"
 
-static const std::string moduleName = "osal";
+static const std::string moduleName = "core";
 
 int main(int argc, const char * argv[])
 {

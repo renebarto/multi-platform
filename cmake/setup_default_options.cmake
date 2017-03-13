@@ -69,19 +69,19 @@ function(setup_default_options)
     list_to_string(OPTIONS_C_MINSIZEREL OPTIONS_C_MINSIZEREL_STRING)
     list_to_string(OPTIONS_C_RELWITHDEBINFO OPTIONS_C_RELWITHDEBINFO_STRING)
 
-    message(STATUS "C++ Options:                        " ${OPTIONS_CXX_STRING})
-    message(STATUS "C++ Options - debug:                " ${OPTIONS_CXX_DEBUG_STRING})
-    message(STATUS "C++ Options - release:              " ${OPTIONS_CXX_RELEASE_STRING})
-    message(STATUS "C++ Options - release min size:     " ${OPTIONS_CXX_MINSIZEREL_STRING})
-    message(STATUS "C++ Options - release debug info:   " ${OPTIONS_CXX_RELWITHDEBINFO_STRING})
+#    message(STATUS "C++ Options:                        " ${OPTIONS_CXX_STRING})
+#    message(STATUS "C++ Options - debug:                " ${OPTIONS_CXX_DEBUG_STRING})
+#    message(STATUS "C++ Options - release:              " ${OPTIONS_CXX_RELEASE_STRING})
+#    message(STATUS "C++ Options - release min size:     " ${OPTIONS_CXX_MINSIZEREL_STRING})
+#    message(STATUS "C++ Options - release debug info:   " ${OPTIONS_CXX_RELWITHDEBINFO_STRING})
+#
+#    message(STATUS "C Options:                          " ${OPTIONS_C_STRING})
+#    message(STATUS "C Options - debug:                  " ${OPTIONS_C_DEBUG_STRING})
+#    message(STATUS "C Options - release:                " ${OPTIONS_C_RELEASE_STRING})
+#    message(STATUS "C Options - release min size:       " ${OPTIONS_C_MINSIZEREL_STRING})
+#    message(STATUS "C Options - release debug info:     " ${OPTIONS_C_RELWITHDEBINFO_STRING})
 
-    message(STATUS "C Options:                          " ${OPTIONS_C_STRING})
-    message(STATUS "C Options - debug:                  " ${OPTIONS_C_DEBUG_STRING})
-    message(STATUS "C Options - release:                " ${OPTIONS_C_RELEASE_STRING})
-    message(STATUS "C Options - release min size:       " ${OPTIONS_C_MINSIZEREL_STRING})
-    message(STATUS "C Options - release debug info:     " ${OPTIONS_C_RELWITHDEBINFO_STRING})
-
-    set(CMAKE_CXX_FLAGS ${OPTIONS_CXX_STRING}
+    set(CMAKE_CXX_FLAGS ${OPTIONS_CXX_STRING} 
         CACHE STRING
         "Standard compiler options" FORCE)
     set(CMAKE_CXX_FLAGS_DEBUG ${OPTIONS_CXX_DEBUG_STRING}
@@ -97,7 +97,7 @@ function(setup_default_options)
         CACHE STRING
         "Flags used by the compiler during release builds with debug info." FORCE)
 
-    set(CMAKE_C_FLAGS ${OPTIONS_C_STRING}
+    set(CMAKE_C_FLAGS ${OPTIONS_C_STRING} 
         CACHE STRING
         "Standard compiler options" FORCE)
     set(CMAKE_C_FLAGS_DEBUG ${OPTIONS_C_DEBUG_STRING}

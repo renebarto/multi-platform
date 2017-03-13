@@ -89,6 +89,11 @@ set(CMAKE_MACOSX_RPATH ../lib)
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
 message(STATUS "Install directory: " ${CMAKE_INSTALL_PREFIX})
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/multi-platform.pc.in"
+    "${CMAKE_BINARY_DIR}/multi-platform.pc"
+    @ONLY)
+
 # uninstall target
 configure_file(
     ${CMAKE_SOURCE_DIR}/cmake/uninstall.cmake.in
@@ -98,11 +103,11 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/uninstall.cmake)
 
-# install target
-# add_custom_target(install_${PROJECT_NAME}
-    # make install
-    # DEPENDS ${PROJECT_NAME}
-    # COMMENT "Installing ${PROJECT_NAME}")
+add_custom_target(install_${PROJECT_NAME}
+    $(MAKE) install
+    COMMENT "Installing ${PROJECT_NAME}")
+
+install(FILES ${CMAKE_BINARY_DIR}/multi-platform.pc DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
 
 if(WIN_MSVC)
     # Important! do not keep warning 4251 4275 ignored!

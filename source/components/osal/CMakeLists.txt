@@ -8,13 +8,11 @@ message("\nosal\n")
 find_package(Threads REQUIRED)
 
 set(COMPONENTS_OS_DEFINITIONS
-        OSAL_DYNAMIC
-        CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)
+        OSAL_DYNAMIC)
 
 set(COMPONENTS_OSAL_INCLUDE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/export
-        CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+        ${PROJECT_SOURCE_DIR}/export)
 
 if (WIN_MSVC OR MINGW)
     set(OSAL_DEPENDENCIES
@@ -29,8 +27,7 @@ endif()
 
 set(COMPONENTS_OSAL_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
-    ${OSAL_DEPENDENCIES}
-    CACHE INTERNAL "${PROJECT_NAME}: Link libraries" FORCE)
+    ${OSAL_DEPENDENCIES})
 
 file(GLOB COMPONENTS_OSAL_SOURCES_BASE src/*.cpp)
 file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_BASE export/osal/*.h)
@@ -67,8 +64,7 @@ set(COMPONENTS_OSAL_SOURCES
         ${COMPONENTS_OSAL_INCLUDES_EXPORT_BASE}
         ${COMPONENTS_OSAL_INCLUDES_EXPORT}
         ${COMPONENTS_OSAL_INCLUDES_BASE}
-        ${COMPONENTS_OSAL_INCLUDES}
-        CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
+        ${COMPONENTS_OSAL_INCLUDES})
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})
 MESSAGE(STATUS "CMAKE_CXX_FLAGS_DEBUG:              " ${CMAKE_CXX_FLAGS_DEBUG} )
@@ -88,9 +84,9 @@ target_link_libraries(${PROJECT_NAME} ${COMPONENTS_OSAL_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${COMPONENTS_OSAL_INCLUDE})
 target_compile_definitions(${PROJECT_NAME} PRIVATE OSAL_BUILD)
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${COMPONENTS_OSAL_DEFINITIONS})
-setup_target_properties_library()
+setup_target_properties_library(${PROJECT_NAME})
 
-show_target_properties()
+show_target_properties(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

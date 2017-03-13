@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "core/CommandLineOption.h"
+#include "core/CommandLineOptionGroup.h"
 #include "osal/console.h"
 
 namespace Core {
@@ -13,6 +14,7 @@ namespace Core {
         using CommandLineOptionsList = std::vector<CommandLineOption::Ptr>;
         using CommandLineNonOptionsList = std::vector<OSAL::String>;
         static const OSAL::String DefaultMainOptionsGroupName;
+        static const OSAL::String HelpOptionsGroupName;
 
     public:
         CommandLineParser(OSAL::Console & console,
@@ -84,9 +86,17 @@ namespace Core {
         OSAL::String GetOption(OSAL::Char shortName) const;
         OSAL::String GetOption(OSAL::String longName) const;
 
+        void AddOption(const CommandLineOption::Ptr option);
+
+        void AddGroup(const CommandLineOptionGroup::Ptr group);
+        const CommandLineOptionGroup::Ptr MainGroup() const { return _mainGroup; }
+        void MainGroup(const CommandLineOptionGroup::Ptr group);
+        const CommandLineOptionGroup::List & Groups() const { return _groups; }
+        bool IsInGroups(const CommandLineOptionGroup::Ptr group) const;
+
         bool Parse(int argc, const OSAL::Char * argv[]);
 
-        bool AutoHandleHelp()
+        bool AutoHandleHelp() const
         {
             return _autoHelp;
         }
@@ -94,12 +104,13 @@ namespace Core {
         {
             this->_autoHelp = autoHelp;
         }
-        bool ShouldShowHelp()
+        bool ShouldShowHelp() const
         {
             return _showHelp;
         }
-        OSAL::String GetHelp(const OSAL::String & applicationName) const;
-        void AddOption(const CommandLineOption::Ptr option);
+        OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp = true) const;
+        OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp __attribute__((unused)),
+                             const CommandLineOptionGroup::Ptr group) const;
 
         virtual void OnParseOption(const CommandLineOption::Ptr option)
         {
@@ -141,6 +152,11 @@ namespace Core {
             size_t firstNonOption;
             size_t lastNonOption;
         };
+
+    protected:
+        CommandLineOptionGroup::List _groups;
+        CommandLineOptionGroup::Ptr _mainGroup;
+
     private:
         OSAL::Console & _console;
         bool _autoHelp;
@@ -148,7 +164,7 @@ namespace Core {
         OSAL::String _name;
         OSAL::String _description;
         CommandLineNonOptionsList _nonOptions;
-        CommandLineOptionsList _options;
+        CommandLineOption::List _options;
         struct GetOptData _getOptData;
 
         bool InternalParse(int argc, const OSAL::Char * argv[]);
@@ -168,6 +184,9 @@ namespace Core {
         size_t MatchLongOption(const OSAL::Char * name, size_t nameLength) const;
         void SelectOption(CommandLineOption::Ptr option, const OSAL::Char * value);
         void AddNonOption(const OSAL::Char * value);
+
+        void FillOptionsList();
+        void SetupStandardGroups();
     };
 
 } // namespace Core

@@ -223,11 +223,14 @@ TEST_FIXTURE(CommandLineParserTest, Construct)
 {
     OSAL::Console console;
     CommandLineParser parser(console);
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckNotDefinedAdd(parser);
     EXPECT_TRUE(parser.AutoHandleHelp());
     EXPECT_FALSE(parser.ShouldShowHelp());
-    EXPECT_EQ("Usage:\nMain: \n\n  CommandLineParserTest [OPTION...]\n\n", parser.GetHelp(ApplicationName));
+    EXPECT_EQ("Usage:\nMain: \n\n  CommandLineParserTest [OPTION...]\n\n\n  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentNoValue)
@@ -235,12 +238,17 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentNoValue)
     OSAL::Console console;
     CommandLineParser parser(console);
     parser.AddSwitch("add", 'a', "Add me");
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedAdd(parser);
     CheckNotFoundAdd(parser);
     EXPECT_TRUE(parser.AutoHandleHelp());
     EXPECT_FALSE(parser.ShouldShowHelp());
-    EXPECT_EQ("Usage:\nMain: \n\n  CommandLineParserTest [OPTION...]\n\n  -a, --add                 Add me\n\n", parser.GetHelp(ApplicationName));
+    EXPECT_EQ("Usage:\nMain: \n\n  CommandLineParserTest [OPTION...]\n\n"
+              "  -a, --add                 Add me\n\n"
+              "  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentWithValue)
@@ -249,6 +257,9 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentWithValue)
     CommandLineParser parser(console);
     int variable;
     parser.AddSwitchWithVariable("add", variable, 1, "Add me");
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedAddOnly(parser);
     CheckNotFoundAdd(parser);
@@ -256,7 +267,8 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentWithValue)
     EXPECT_FALSE(parser.ShouldShowHelp());
     EXPECT_EQ("Usage:\nMain: \n\n"
               "  CommandLineParserTest [OPTION...]\n\n"
-              "  --add                     Add me\n\n", parser.GetHelp(ApplicationName));
+              "  --add                     Add me\n\n"
+              "  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionOptionalArgument)
@@ -265,6 +277,9 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionOptionalArgument)
     CommandLineParser parser(console);
     OSAL::String argument;
     parser.AddOptionOptionalArgument("add", 'a', "Add me", argument);
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedAdd(parser);
     CheckNotFoundAdd(parser);
@@ -272,7 +287,8 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionOptionalArgument)
     EXPECT_FALSE(parser.ShouldShowHelp());
     EXPECT_EQ("Usage:\nMain: \n\n"
               "  CommandLineParserTest [OPTION...]\n\n"
-              "  -a, --add [argument]      Add me\n\n", parser.GetHelp(ApplicationName));
+              "  -a, --add [argument]      Add me\n\n"
+              "  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionRequiredArgument)
@@ -281,6 +297,9 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionRequiredArgument)
     CommandLineParser parser(console);
     OSAL::String argument;
     parser.AddOptionRequiredArgument("add", 'a', "Add me", argument);
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedAdd(parser);
     CheckNotFoundAdd(parser);
@@ -288,7 +307,8 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionRequiredArgument)
     EXPECT_FALSE(parser.ShouldShowHelp());
     EXPECT_EQ("Usage:\nMain: \n\n"
               "  CommandLineParserTest [OPTION...]\n\n"
-              "  -a, --add <argument>      Add me\n\n", parser.GetHelp(ApplicationName));
+              "  -a, --add <argument>      Add me\n\n"
+              "  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
@@ -306,20 +326,24 @@ TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
     parser.AddOptionOptionalArgument("delete", 'd', "Delete", deleteString);
     parser.AddOptionOptionalArgument("create", 'c', "Create", createString);
     parser.AddOptionRequiredArgument("file", 'f', "File", fileString);
+
+    parser.Parse(0, nullptr);
+
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedOptions(parser);
     CheckNotFoundOptions(parser);
     EXPECT_TRUE(parser.AutoHandleHelp());
     EXPECT_FALSE(parser.ShouldShowHelp());
     EXPECT_EQ("Usage:\nMain: \n\n"
-                  "  CommandLineParserTest [OPTION...]\n\n"
-                  "  --verbose                 Verbose output\n"
-                  "  --brief                   Brief output\n"
-                  "  -a, --add                 Add\n"
-                  "  -b, --append              Append\n"
-                  "  -d, --delete [argument]   Delete\n"
-                  "  -c, --create [argument]   Create\n"
-                  "  -f, --file <argument>     File\n\n", parser.GetHelp(ApplicationName));
+              "  CommandLineParserTest [OPTION...]\n\n"
+              "  --verbose                 Verbose output\n"
+              "  --brief                   Brief output\n"
+              "  -a, --add                 Add\n"
+              "  -b, --append              Append\n"
+              "  -d, --delete [argument]   Delete\n"
+              "  -c, --create [argument]   Create\n"
+              "  -f, --file <argument>     File\n\n"
+              "  --help                    Show help options\n\n", parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, ParseNoArguments)

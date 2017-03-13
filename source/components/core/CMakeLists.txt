@@ -5,22 +5,19 @@ include(show_target_properties)
 
 message("\ncore\n")
 
-set(COMPONENTS_OS_DEFINITIONS
-        CORE_DYNAMIC
-        CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)
+set(COMPONENTS_CORE_DEFINITIONS
+        CORE_DYNAMIC)
 
 set(COMPONENTS_CORE_INCLUDE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/export
-        CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+        ${PROJECT_SOURCE_DIR}/export)
 
-set(CORE_DEPENDENCIES
+set(COMPONENTS_CORE_DEPENDENCIES
         osal)
 
 set(COMPONENTS_CORE_LIBS
         ${CMAKE_THREAD_LIBS_INIT}
-        ${CORE_DEPENDENCIES}
-        CACHE INTERNAL "${PROJECT_NAME}: Link libraries" FORCE)
+        ${COMPONENTS_CORE_DEPENDENCIES})
 
 file(GLOB_RECURSE COMPONENTS_CORE_SOURCES src/*.cpp)
 file(GLOB_RECURSE COMPONENTS_CORE_INCLUDES_EXPORT export/*.h)
@@ -29,8 +26,7 @@ file(GLOB_RECURSE COMPONENTS_CORE_INCLUDES include/*.h)
 set(COMPONENTS_CORE_SOURCES
         ${COMPONENTS_CORE_SOURCES}
         ${COMPONENTS_CORE_INCLUDES_EXPORT}
-        ${COMPONENTS_CORE_INCLUDES}
-        CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
+        ${COMPONENTS_CORE_INCLUDES})
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})
 MESSAGE(STATUS "CMAKE_CXX_FLAGS_DEBUG:              " ${CMAKE_CXX_FLAGS_DEBUG} )
@@ -50,9 +46,9 @@ target_link_libraries(${PROJECT_NAME} ${COMPONENTS_CORE_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${COMPONENTS_CORE_INCLUDE})
 target_compile_definitions(${PROJECT_NAME} PRIVATE CORE_BUILD)
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${COMPONENTS_CORE_DEFINITIONS})
-setup_target_properties_library()
+setup_target_properties_library(${PROJECT_NAME})
 
-show_target_properties()
+show_target_properties(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

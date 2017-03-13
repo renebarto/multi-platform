@@ -25,6 +25,7 @@ class CommandLineOption
 {
 public:
     using Ptr = std::shared_ptr<CommandLineOption>;
+    using List = std::vector<Ptr>;
 
     CommandLineOption() = delete;
     CommandLineOption(const CommandLineOption & other) = delete;

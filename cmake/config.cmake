@@ -12,6 +12,7 @@ set_property(GLOBAL PROPERTY INCLUDE_GUARD true)
 
 cmake_policy(SET CMP0007 NEW)
 cmake_policy(SET CMP0012 NEW)
+cmake_policy(SET CMP0022 NEW)
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 OLD)
 endif()

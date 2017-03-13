@@ -8,14 +8,18 @@
 #include "osal/osal.h"
 #include "osal/path.h"
 
+using namespace std;
 using namespace Core;
 
 const OSAL::String CommandLineParser::DefaultMainOptionsGroupName = "Main";
+const OSAL::String CommandLineParser::HelpOptionsGroupName = "Help Options";
 
 CommandLineParser::CommandLineParser(OSAL::Console & console,
                                      const OSAL::String & name,
                                      const OSAL::String & description)
-    : _console(console)
+    : _groups()
+    , _mainGroup()
+    , _console(console)
     , _autoHelp(true)
     , _showHelp(false)
     , _name(name)
@@ -24,43 +28,43 @@ CommandLineParser::CommandLineParser(OSAL::Console & console,
     , _options()
     , _getOptData()
 {
-
+    SetupStandardGroups();
 }
 
 CommandLineParser::~CommandLineParser()
 {
     _nonOptions.clear();
-    _options.clear();
+    _groups.clear();
 }
 
 bool CommandLineParser::HaveOption(OSAL::Char shortName) const
 {
     size_t index = MatchShortOption(shortName);
-    return (index < std::numeric_limits<size_t>::max());
+    return (index < numeric_limits<size_t>::max());
 }
 
 bool CommandLineParser::HaveOption(OSAL::String longName) const
 {
     size_t index = MatchLongOption(longName.c_str(), longName.length());
-    return (index < std::numeric_limits<size_t>::max());
+    return (index < numeric_limits<size_t>::max());
 }
 
 bool CommandLineParser::FoundOption(OSAL::Char shortName) const
 {
     size_t index = MatchShortOption(shortName);
-    return (index < std::numeric_limits<size_t>::max()) && _options[index]->FoundOption();
+    return (index < numeric_limits<size_t>::max()) && _options[index]->FoundOption();
 }
 
 bool CommandLineParser::FoundOption(OSAL::String longName) const
 {
     size_t index = MatchLongOption(longName.c_str(), longName.length());
-    return (index < std::numeric_limits<size_t>::max()) && _options[index]->FoundOption();
+    return (index < numeric_limits<size_t>::max()) && _options[index]->FoundOption();
 }
 
 OSAL::String CommandLineParser::GetOption(OSAL::Char shortName) const
 {
     size_t index = MatchShortOption(shortName);
-    return (index < std::numeric_limits<size_t>::max())
+    return (index < numeric_limits<size_t>::max())
            ? _options[index]->Argument()
            : "";
 }
@@ -68,7 +72,7 @@ OSAL::String CommandLineParser::GetOption(OSAL::Char shortName) const
 OSAL::String CommandLineParser::GetOption(OSAL::String longName) const
 {
     size_t index = MatchLongOption(longName.c_str(), longName.length());
-    return (index < std::numeric_limits<size_t>::max())
+    return (index < numeric_limits<size_t>::max())
            ? _options[index]->Argument()
            : "";
 }
@@ -87,9 +91,9 @@ bool CommandLineParser::Parse(int argc, const OSAL::Char * argv[])
             return false;
         }
     }
-    catch (const std::exception & e)
+    catch (const exception & e)
     {
-        _console << fgcolor(OSAL::ConsoleColor::Red) << _("Exception: ") << e.what() << std::endl;
+        _console << fgcolor(OSAL::ConsoleColor::Red) << _("Exception: ") << e.what() << endl;
         if (_autoHelp)
         {
             ShowHelp(argv[0]);
@@ -99,48 +103,14 @@ bool CommandLineParser::Parse(int argc, const OSAL::Char * argv[])
     return true;
 }
 
-OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName) const
-{
-    OSAL::String strippedPath = OSAL::Path::LastPartOfPath(applicationName);
-    const int indentOptions = 2;
-    const int indentDescription = 25;
-    std::ostringstream stream;
-    stream << _("Usage:") << std::endl;
-    stream << _name << _(": ") << _description << std::endl << std::endl;
-    stream << OSAL::String(indentOptions, ' ') << strippedPath << _(" [OPTION...]") << std::endl << std::endl;
-    if (_options.size() > 0)
-    {
-        for (auto option : _options)
-        {
-            OSAL::String optionsText = (option->ShortName() != 0)
-                                 ? OSAL::String("-") + option->ShortName() + _(", ")
-                                 : _("");
-            optionsText += _("--") + option->LongName();
-            if (option->ArgType() == CommandLineArgumentType::OptionalArgument)
-            {
-                optionsText += _(" [argument]");
-            }
-            else if (option->ArgType() == CommandLineArgumentType::RequiredArgument)
-            {
-                optionsText += _(" <argument>");
-            }
-            stream << OSAL::String(indentOptions, ' ') << optionsText;
-            if (optionsText.length() < indentDescription)
-                stream << OSAL::String(indentDescription - optionsText.length(), _(' '));
-            stream << _(" ") << option->Description() << std::endl;
-        }
-        stream << std::endl;
-    }
-    return stream.str();
-}
-
 bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
 {
     size_t argCount = size_t(argc);
+    FillOptionsList();
     OSAL::String optionString;
     for (auto opt : _options)
     {
-        auto optionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(opt);
+        auto optionWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(opt);
         if (!optionWithVariable)
         {
             if (opt->ShortName())
@@ -163,7 +133,7 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
         if (result == 0)
         {
             CommandLineOption::Ptr option = _options[optionIndex];
-            auto optionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(option);
+            auto optionWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(option);
             if (optionWithVariable)
             {
                 SelectOption(option, nullptr);
@@ -177,7 +147,7 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
         } else if (result != -1)
         {
             size_t index = MatchShortOption(static_cast<char>(result));
-            if (index < std::numeric_limits<size_t>::max())
+            if (index < numeric_limits<size_t>::max())
             {
                 CommandLineOption::Ptr option = _options[index];
                 switch (option->ArgType())
@@ -279,8 +249,8 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
     {
         if (!OSAL::Strings::StrCmp(currentOption->LongName().c_str(), _getOptData.nextChar, nameLength))
         {
-            auto currentOptionWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(currentOption);
-            auto optionFoundWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
+            auto currentOptionWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(currentOption);
+            auto optionFoundWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
             if (nameLength == currentOption->LongName().length())
             {
                 optionFound = currentOption;
@@ -316,7 +286,7 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
                 amiguousOptionsList = amiguousOptionsList->next;
             }
             while (nullptr != amiguousOptionsList);
-            _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+            _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
         }
         _getOptData.nextChar += strlen(_getOptData.nextChar);
         _getOptData.optionIndex++;
@@ -345,10 +315,10 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
                     {
                         _console << argv[0] << ": option '--" << argv[_getOptData.optionIndex - 1][0] << optionFound->LongName() << "' doesn't allow an argument";
                     }
-                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
                 }
                 _getOptData.nextChar += strlen(_getOptData.nextChar);
-                auto optionFoundWithVariable = std::dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
+                auto optionFoundWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(optionFound);
                 _getOptData.optopt = optionFound->ShortName();
                 if (optionFoundWithVariable)
                 {
@@ -367,7 +337,7 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
                 {
                     _console << fgcolor(OSAL::ConsoleColor::Red);
                     _console <<  argv[0] << ": option '--" << optionFound->LongName() << "' requires an argument";
-                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
                 }
                 _getOptData.nextChar += strlen(_getOptData.nextChar);
                 _getOptData.optopt = optionFound->ShortName();
@@ -394,7 +364,7 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
         {
             _console <<  argv[0] << ": unrecognized option '--" << argv[_getOptData.optionIndex][0] << _getOptData.nextChar << "'";
         }
-        _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+        _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
     }
     _getOptData.nextChar = (OSAL::Char *)"";
     _getOptData.optionIndex++;
@@ -424,7 +394,7 @@ int CommandLineParser::HandleShortOption(size_t argCount, const OSAL::Char ** ar
         {
             _console << fgcolor(OSAL::ConsoleColor::Red);
             _console <<  argv[0] << ": invalid option -- '" << c << "'";
-            _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+            _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
         }
         _getOptData.optopt = c;
         return '?';
@@ -456,7 +426,7 @@ int CommandLineParser::HandleShortOption(size_t argCount, const OSAL::Char ** ar
                 {
                     _console << fgcolor(OSAL::ConsoleColor::Red);
                     _console <<  argv[0] << ": option '--" << c << "' requires an argument";
-                    _console << fgcolor(OSAL::ConsoleColor::Default) << std::endl;
+                    _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
                 }
                 _getOptData.optopt = c;
                 c = (optionString[0] == ':') ? ':' : '?';
@@ -487,8 +457,8 @@ int CommandLineParser::GetOpt(size_t argCount, const OSAL::Char ** argv, const O
         printErrors = false;
     if ((nullptr == _getOptData.nextChar) || ('\0' == *_getOptData.nextChar))
     {
-        _getOptData.lastNonOption = std::min(_getOptData.lastNonOption, _getOptData.optionIndex);
-        _getOptData.firstNonOption = std::min(_getOptData.firstNonOption, _getOptData.optionIndex);
+        _getOptData.lastNonOption = min(_getOptData.lastNonOption, _getOptData.optionIndex);
+        _getOptData.firstNonOption = min(_getOptData.firstNonOption, _getOptData.optionIndex);
         if (CommandLineParser::Ordering::Permute == _getOptData.ordering)
         {
             if ((_getOptData.firstNonOption != _getOptData.lastNonOption) &&
@@ -540,13 +510,13 @@ int CommandLineParser::GetOpt(size_t argCount, const OSAL::Char ** argv, const O
 void CommandLineParser::ShowHelp(const OSAL::String & applicationName)
 {
     _console << fgcolor(OSAL::ConsoleColor::Yellow) << GetHelp(applicationName)
-             << std::endl;
+             << endl;
     _console << fgcolor(OSAL::ConsoleColor::Default);
 }
 
 void CommandLineParser::AddOption(const CommandLineOption::Ptr option)
 {
-    _options.push_back(option);
+    _mainGroup->AddOption(option);
 }
 
 size_t CommandLineParser::MatchShortOption(OSAL::Char name) const
@@ -558,7 +528,7 @@ size_t CommandLineParser::MatchShortOption(OSAL::Char name) const
             return (int)i;
         }
     }
-    return std::numeric_limits<size_t>::max();
+    return numeric_limits<size_t>::max();
 }
 
 size_t CommandLineParser::MatchLongOption(const OSAL::String & name) const
@@ -580,7 +550,7 @@ size_t CommandLineParser::MatchLongOption(const OSAL::Char * name, size_t nameLe
         if ((nameLength == 1) && (*name == _options[i]->ShortName()))
             return static_cast<int>(i);
     }
-    return std::numeric_limits<size_t>::max();
+    return numeric_limits<size_t>::max();
 }
 
 void CommandLineParser::SelectOption(CommandLineOption::Ptr option, const OSAL::Char * value)
@@ -608,3 +578,96 @@ void CommandLineParser::AddNonOption(const OSAL::Char * value)
     _nonOptions.push_back(OSAL::String(OSAL::Trim(value, "\"")));
     OnParseNonOption(value);
 }
+
+void CommandLineParser::AddGroup(const CommandLineOptionGroup::Ptr group)
+{
+    _groups.push_back(group);
+}
+
+void CommandLineParser::MainGroup(const CommandLineOptionGroup::Ptr group)
+{
+    if (!IsInGroups(group))
+    {
+        AddGroup(group);
+    }
+    _mainGroup = group;
+}
+
+bool CommandLineParser::IsInGroups(const CommandLineOptionGroup::Ptr group) const
+{
+    for (auto groupFound : _groups)
+    {
+        if (groupFound == group)
+            return true;
+    }
+    return false;
+}
+
+OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName, bool mainHelp /* = true*/) const
+{
+    return GetHelp(applicationName, mainHelp, CommandLineOptionGroup::Ptr());
+}
+
+OSAL::String CommandLineParser::GetHelp(const OSAL::String & applicationName, bool mainHelp __attribute__((unused)),
+                                        const CommandLineOptionGroup::Ptr group) const
+{
+    OSAL::String strippedPath = OSAL::Path::LastPartOfPath(applicationName);
+    const int indentOptions = 2;
+    const int indentDescription = 25;
+    ostringstream stream;
+    stream << _("Usage:") << endl;
+    stream << _name << _(": ") << _description << endl << endl;
+    stream << OSAL::String(indentOptions, ' ') << strippedPath << _(" [OPTION...]") << endl << endl;
+    for (auto foundGroup : _groups)
+    {
+        if ((group != nullptr) && (group != foundGroup))
+            continue;
+        if (_options.size() > 0)
+        {
+            for (auto option : foundGroup->Options())
+            {
+                OSAL::String optionsText = (option->ShortName() != 0)
+                                           ? OSAL::String("-") + option->ShortName() + _(", ")
+                                           : _("");
+                optionsText += _("--") + option->LongName();
+                if (option->ArgType() == CommandLineArgumentType::OptionalArgument)
+                {
+                    optionsText += _(" [argument]");
+                } else if (option->ArgType() == CommandLineArgumentType::RequiredArgument)
+                {
+                    optionsText += _(" <argument>");
+                }
+                stream << OSAL::String(indentOptions, ' ') << optionsText;
+                if (optionsText.length() < indentDescription)
+                    stream << OSAL::String(indentDescription - optionsText.length(), _(' '));
+                stream << _(" ") << option->Description() << endl;
+            }
+            stream << endl;
+        }
+    }
+    return stream.str();
+}
+
+void CommandLineParser::FillOptionsList()
+{
+    for (auto group : _groups)
+    {
+        for (auto option : group->Options())
+        {
+            _options.push_back(option);
+        }
+    }
+}
+
+void CommandLineParser::SetupStandardGroups()
+{
+    CommandLineOptionGroup::Ptr mainGroup(new CommandLineOptionGroup(_name, _description));
+    AddGroup(mainGroup);
+
+    CommandLineOptionGroup::Ptr helpGroup(new CommandLineOptionGroup(HelpOptionsGroupName));
+    AddGroup(helpGroup);
+    helpGroup->AddSwitchWithVariable("help", _showHelp, true, "Show help options");
+
+    MainGroup(mainGroup);
+}
+

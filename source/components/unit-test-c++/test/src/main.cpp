@@ -1,33 +1,28 @@
 #include <unit-test-c++/UnitTestC++.h>
 
 #include <fstream>
-#include <core/ConsoleLogger.h>
-#include <core/DefaultLogger.h>
+//#include <core/ConsoleLogger.h>
+//#include <core/DefaultLogger.h>
 #include "CommandLineOptionsParser.h"
+#include "osal/osal.h"
+#include "osal/console.h"
 
-int main(int argc, char* argv[])
+static const std::string moduleName = "unit-test-c++";
+
+int main(int argc, const char * argv[])
 {
     OSAL::Console console;
 
-    const std::string moduleName = "unit-test-c++";
     console << fgcolor(OSAL::ConsoleColor::Magenta | OSAL::ConsoleColor::Intensity);
     console << "Running tests for: " << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
-    Core::ConsoleLogger logger(Core::TheLogger(), console);
+//    Core::ConsoleLogger logger(Core::TheLogger(), console);
 
-    CommandLineOptionsParser parser;
-    string applicationName = argv[0];
+    CommandLineOptionsParser parser(console);
+    std::string applicationName = argv[0];
 
-    try
+    if (!parser.Parse(argc, argv))
     {
-        parser.Parse(argc, argv);
-    }
-    catch (const Core::Exception & e)
-    {
-        console << fgcolor(OSAL::ConsoleColor::Red) << "Exception: " << e.what() << std::endl;
-        console << fgcolor(OSAL::ConsoleColor::Yellow) << parser.GetHelp(applicationName, true)
-                << std::endl;
-        console << fgcolor(OSAL::ConsoleColor::Default);
         exit(1);
     }
 
@@ -66,5 +61,6 @@ int main(int argc, char* argv[])
         }
         result = RunAllTests(reporter);
     }
+
     return result;
 }

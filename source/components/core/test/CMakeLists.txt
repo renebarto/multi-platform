@@ -6,12 +6,10 @@ include(show_target_properties)
 message("\ncore.test\n")
 
 set(COMPONENTS_CORE_TEST_DEFINITIONS
-        TEST_DATA_ROOT="${TEST_DATA_ROOT}"
-        CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)
+        TEST_DATA_ROOT="${TEST_DATA_ROOT}")
 
 set(COMPONENTS_CORE_TEST_INCLUDE
-        ${PROJECT_SOURCE_DIR}/include
-        CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
+        ${PROJECT_SOURCE_DIR}/include)
 
 set(CORE_TEST_DEPENDENCIES
         osal
@@ -20,8 +18,7 @@ set(CORE_TEST_DEPENDENCIES
 
 set(COMPONENTS_CORE_TEST_LIBS
         ${CMAKE_THREAD_LIBS_INIT}
-        ${CORE_TEST_DEPENDENCIES}
-        CACHE INTERNAL "${PROJECT_NAME}: Link libararies" FORCE)
+        ${CORE_TEST_DEPENDENCIES})
 
 file(GLOB_RECURSE COMPONENTS_CORE_TEST_INCLUDES include/*.h)
 file(GLOB_RECURSE COMPONENTS_CORE_TEST_SOURCES src/*.cpp)
@@ -29,8 +26,7 @@ file(GLOB_RECURSE COMPONENTS_CORE_TEST_SOURCES src/*.cpp)
 set(COMPONENTS_CORE_TEST_SOURCES
         ${COMPONENTS_CORE_TEST_SOURCES}
         ${COMPONENTS_CORE_TEST_SOURCES_TEST}
-        ${COMPONENTS_CORE_TEST_INCLUDES}
-        CACHE INTERNAL "${PROJECT_NAME}: Source files" FORCE)
+        ${COMPONENTS_CORE_TEST_INCLUDES})
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})
 MESSAGE(STATUS "CMAKE_CXX_FLAGS_DEBUG:              " ${CMAKE_CXX_FLAGS_DEBUG} )
@@ -49,8 +45,8 @@ add_executable(${PROJECT_NAME} ${COMPONENTS_CORE_TEST_SOURCES})
 target_link_libraries(${PROJECT_NAME} ${COMPONENTS_CORE_TEST_LIBS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_CORE_TEST_INCLUDE})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPONENTS_CORE_TEST_DEFINITIONS})
-setup_target_properties_executable()
+setup_target_properties_executable(${PROJECT_NAME})
 
-show_target_properties()
+show_target_properties(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

@@ -6,7 +6,7 @@
 class CommandLineOptionsParser : public Core::CommandLineParser
 {
 public:
-    CommandLineOptionsParser();
+    CommandLineOptionsParser(OSAL::Console & console);
 
     std::string testSuiteName;
     std::string testFixtureName;
