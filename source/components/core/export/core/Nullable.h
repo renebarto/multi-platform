@@ -71,7 +71,7 @@ protected:
     T & GetValue()
     {
         if (!_hasValue)
-            throw std::runtime_error("Nullable object has null value");
+            throw std::runtime_error("Nullable object has null _value");
         return _value;
     }
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <typeinfo>
-#include "osal/strings.h"
+#include <osal/strings.h>
 
 namespace OSAL {
 namespace OS {

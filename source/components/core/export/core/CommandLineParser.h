@@ -112,13 +112,13 @@ namespace Core {
         OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp __attribute__((unused)),
                              const CommandLineOptionGroup::Ptr group) const;
 
-        virtual void OnParseOption(const CommandLineOption::Ptr option)
+        virtual void OnParseOption(const CommandLineOption::Ptr UNUSED(option))
         {
-            _console << "Option " << option->LongName() << " argument " << option->Argument() << std::endl;
+//            _console << "Option " << option->LongName() << " argument " << option->Argument() << std::endl;
         }
         virtual void OnParseNonOption(const std::string UNUSED(parameter))
         {
-            _console << "Non-option " << parameter << std::endl;
+//            _console << "Non-option " << parameter << std::endl;
         }
 
         enum class Ordering { RequireOrder, Permute, ReturnInOrder };

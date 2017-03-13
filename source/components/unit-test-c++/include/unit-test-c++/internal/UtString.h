@@ -15,7 +15,7 @@ class String
 {
 public:
     // Clones a 0-terminated C string, allocating memory using new.  The
-    // caller is responsible for deleting the return value using
+    // caller is responsible for deleting the return _value using
     // delete[].  Returns the cloned string, or nullptr if the input is
     // nullptr.
     //
@@ -70,10 +70,10 @@ public:
     // case. Any string is considered to end with an empty suffix.
     static bool EndsWithCaseInsensitive(const string& str, const string& suffix);
 
-    // Formats an int value as "%02d".
+    // Formats an int _value as "%02d".
     static string FormatIntWidth2(int value);  // "%02d" for width == 2
 
-    // Formats an int value as "%X".
+    // Formats an int _value as "%X".
     static string FormatHexInt(int value);
 
     // Formats a byte as "%02X".
@@ -343,7 +343,7 @@ bool String::EndsWithCaseInsensitive(const string& str, const string& suffix)
            CaseInsensitiveCStringEquals(str.c_str() + str_len - suffix_len, suffix.c_str());
 }
 
-// Formats an int value as "%02d".
+// Formats an int _value as "%02d".
 string String::FormatIntWidth2(int value)
 {
     stringstream ss;
@@ -351,7 +351,7 @@ string String::FormatIntWidth2(int value)
     return ss.str();
 }
 
-// Formats an int value as "%X".
+// Formats an int _value as "%X".
 string String::FormatHexInt(int value)
 {
     stringstream ss;
@@ -369,7 +369,7 @@ string String::FormatByte(unsigned char value)
 }
 
 
-// Depending on the value of a char (or wchar_t), we print it in one
+// Depending on the _value of a char (or wchar_t), we print it in one
 // of three formats:
 //   - as is if it's a printable ASCII (e.g. 'a', '2', ' '),
 //   - as a hexidecimal escape sequence (e.g. '\x7F'), or
@@ -382,7 +382,7 @@ enum CharFormat
 };
 
 // Returns true if c is a printable ASCII character.  We test the
-// value of c directly instead of calling isprint(), which is buggy on
+// _value of c directly instead of calling isprint(), which is buggy on
 // Windows Mobile.
 inline bool IsPrintableAscii(wchar_t c)
 {

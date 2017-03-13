@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osal/osal.h"
+#include "osal/strings.h"
 
 namespace OSAL {
 namespace Path {

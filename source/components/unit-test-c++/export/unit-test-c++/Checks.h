@@ -17,9 +17,9 @@ class TestResults;
 class TestDetails;
 
 //template< typename Value >
-//bool Check(Value const value)
+//bool Check(Value const _value)
 //{
-//    return !!value;
+//    return !!_value;
 //}
 //
 template<typename Value>
@@ -60,10 +60,10 @@ typedef uint64_t BiggestInt;
 //class FormatForComparison<ToPrint[N], OtherOperand>
 //{
 //public:
-//    static std::string Format(const ToPrint[N] value)
+//    static std::string Format(const ToPrint[N] _value)
 //    {
-//        PrintToString(value);
-//        //        return FormatForComparison<const ToPrint *, OtherOperand>::Format(value);
+//        PrintToString(_value);
+//        //        return FormatForComparison<const ToPrint *, OtherOperand>::Format(_value);
 //    }
 //};
 
@@ -524,7 +524,7 @@ public:
       // this template match better.
 
                                       typename std::enable_if<!std::is_pointer<Actual>::value>::type* = 0)
-//                                      typename std::enable_if<!std::is_null_pointer<Expected>::value>::type* = 0)
+//                                      typename std::enable_if<!std::is_null_pointer<Expected>::_value>::type* = 0)
     {
         return CheckEqualInternal(expectedExpression, actualExpression, expected, actual);
     }
@@ -538,7 +538,7 @@ public:
       // to match the Secret* in the other overload, which would otherwise make
       // this template match better.
                                          typename std::enable_if<!std::is_pointer<Actual>::value>::type* = 0)
-//                                         typename std::enable_if<!std::is_null_pointer<Expected>::value>::type* = 0)
+//                                         typename std::enable_if<!std::is_null_pointer<Expected>::_value>::type* = 0)
     {
         return CheckNotEqualInternal(expectedExpression, actualExpression, expected, actual);
     }

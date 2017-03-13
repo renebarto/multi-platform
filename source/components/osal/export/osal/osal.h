@@ -20,4 +20,3 @@
 #include "osal/strings.h"
 #include "osal/system.h"
 #include "osal/time.h"
-

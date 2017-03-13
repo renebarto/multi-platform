@@ -79,7 +79,7 @@ public:
     void ResetTerminalColor();
     bool ShouldUseColor();
 
-    // Streams a non-pointer value to this object.
+    // Streams a non-pointer _value to this object.
     template <typename T>
     inline ConsoleBase & operator << (const T & val)
     {

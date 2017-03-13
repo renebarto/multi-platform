@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osal/platform-defines.h"
+#include <osal/platform-defines.h>
 
 #if defined(WIN_MSVC) || defined(WIN_MINGW)
     #if defined(OSAL_DYNAMIC)

@@ -47,7 +47,7 @@ struct has_insertion_operator : has_insertion_operator_impl::has_insertion_opera
 template<typename To>
 inline To ImplicitCast_(To x) { return x; }
 
-// ImplicitlyConvertible<From, To>::value is a compile-time bool
+// ImplicitlyConvertible<From, To>::_value is a compile-time bool
 // constant that's true iff type From can be implicitly converted to
 // type To.
 template <typename From, typename To>
@@ -67,8 +67,8 @@ private:
     // implicitly converted to type To; otherwise it will pick the
     // second version.
     //
-    // The first version returns a value of size 1, and the second
-    // version returns a value of size 2.  Therefore, by checking the
+    // The first version returns a _value of size 1, and the second
+    // version returns a _value of size 2.  Therefore, by checking the
     // size of Helper(x), which can be done at compile time, we can tell
     // which version of Helper() is used, and hence whether x can be
     // implicitly converted to type To.
@@ -160,7 +160,7 @@ WARNING_POP
 //                    std::false_type isClass,
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container pointer";
@@ -171,7 +171,7 @@ WARNING_POP
 //                    std::false_type isClass,
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container enum";
@@ -182,7 +182,7 @@ WARNING_POP
 //                    std::false_type isClass,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container enum pointer";
@@ -205,7 +205,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container class pointer";
@@ -216,7 +216,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container enum class";
@@ -227,13 +227,13 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "container enum class pointer";
 //}
 
-// Normal value
+// Normal _value
 template <typename T>
 void DefaultPrintTo(IsNotContainer /* dummy */,
                     std::false_type UNUSED(isClass),
@@ -245,7 +245,7 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
     DefaultPrintNonContainerTo(value, stream);
 }
 
-// Normal value pointer
+// Normal _value pointer
 template <typename T>
 void DefaultPrintTo(IsNotContainer /* dummy */,
                     std::false_type,
@@ -285,7 +285,7 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
     }
 }
 
-// Enum value
+// Enum _value
 template <typename T>
 typename std::enable_if<has_insertion_operator<T>::value, void>::type
 DefaultPrintTo(IsNotContainer /* dummy */,
@@ -298,7 +298,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
     stream << value;
 }
 
-// Enum value
+// Enum _value
 template <typename T>
 typename std::enable_if<!has_insertion_operator<T>::value, void>::type
 DefaultPrintTo(IsNotContainer /* dummy */,
@@ -317,13 +317,13 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::false_type isClass,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
-//    stream << "enum " << (int)*value;
+//    stream << "enum " << (int)*_value;
 //}
 
-// Class or Struct value
+// Class or Struct _value
 template <typename T>
 typename std::enable_if<has_insertion_operator<T>::value, void>::type
 DefaultPrintTo(IsNotContainer /* dummy */,
@@ -336,7 +336,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
     stream << value;
 }
 
-// Class or Struct value
+// Class or Struct _value
 template <typename T>
 typename std::enable_if<!has_insertion_operator<T>::value, void>::type
 DefaultPrintTo(IsNotContainer /* dummy */,
@@ -359,7 +359,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "class pointer " << ConvertTypeName(typeid(T).name());
@@ -370,7 +370,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "class enum " << ConvertTypeName(typeid(T).name());
@@ -381,7 +381,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isClass,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
-//                    const T& value,
+//                    const T& _value,
 //                    std::ostream & stream)
 //{
 //    stream << "class enum pointer " << ConvertTypeName(typeid(T).name());
@@ -464,7 +464,7 @@ public:
     static void Print(const T& value, std::ostream & stream)
     {
         // By default, ::testing::internal::PrintTo() is used for printing
-        // the value.
+        // the _value.
         //
         // Thanks to Koenig look-up, if T is a class and has its own
         // PrintTo() function defined in its namespace, that function will
@@ -546,11 +546,11 @@ class UniversalPrinter<T&>
 public:
     static void Print(const T& value, std::ostream & stream)
     {
-        // Prints the address of the value.  We use reinterpret_cast here
+        // Prints the address of the _value.  We use reinterpret_cast here
         // as static_cast doesn't compile when T is a function type.
         stream << "@" << reinterpret_cast<const void*>(&value) << " ";
 
-        // Then prints the value itself.
+        // Then prints the _value itself.
         UniversalPrint(value, stream);
     }
 };
@@ -576,9 +576,9 @@ public:
 //class ValuePrinter<T&>
 //{
 //public:
-//    static void Print(const T& value, std::ostream & stream)
+//    static void Print(const T& _value, std::ostream & stream)
 //    {
-//        UniversalPrint(value, stream);
+//        UniversalPrint(_value, stream);
 //    }
 //};
 
@@ -644,9 +644,9 @@ public:
 //};
 //
 //template <typename T>
-//void UniversalTersePrint(const T& value, std::ostream & stream)
+//void UniversalTersePrint(const T& _value, std::ostream & stream)
 //{
-//    ValuePrinter<T>::Print(value, stream);
+//    ValuePrinter<T>::Print(_value, stream);
 //}
 //
 template <typename T>

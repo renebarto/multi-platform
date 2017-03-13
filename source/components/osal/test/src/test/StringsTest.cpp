@@ -65,5 +65,15 @@ TEST_FIXTURE(StringTest, TrimSpaceRight)
     EXPECT_EQ(" ab c", TrimSpacesRight(" ab c "));
 }
 
+TEST_FIXTURE(StringTest, StringToWString)
+{
+    FAIL();
+}
+
+TEST_FIXTURE(StringTest, WStringToString)
+{
+    FAIL();
+}
+
 } // namespace Test
 } // namespace OSAL

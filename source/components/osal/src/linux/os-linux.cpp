@@ -43,7 +43,7 @@ String OS::DemangleName(const String & mangledName)
     char * demangledName = abi::__cxa_demangle(mangledName.c_str(), 0, 0, &status);
     if (status == 0)
     {
-        result = demangledName;
+        result = ToString(demangledName);
         std::free(demangledName);
     }
     return result;

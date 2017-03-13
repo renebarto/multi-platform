@@ -7,5 +7,5 @@
 #elif defined(DARWIN)
 #include "osal/darwin/os.h"
 #elif defined(LINUX)
-#include "osal/linux/os.h"
+#include <osal/linux/os.h>
 #endif
