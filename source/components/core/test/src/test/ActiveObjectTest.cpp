@@ -12,7 +12,7 @@ namespace Test
 
 static const int SLEEP = 100;
 
-class MyActiveObject: public ActiveObject
+class MyActiveObject: public ActiveObject<int>
 {
 public:
     static bool isDeleted;
@@ -26,24 +26,25 @@ public:
         isDeleted = true;
     }
     virtual void InitThread() {}
-    virtual void Run() { Core::Util::Sleep(SLEEP); }
+    virtual int Run() { Core::Util::Sleep(SLEEP); return 1; }
     virtual void ExitThread() {}
     virtual void FlushThread() {}
 };
 
 bool MyActiveObject::isDeleted;
 
-class MyActiveObject2: public ActiveObject
+class MyActiveObject2: public ActiveObject<int>
 {
 public:
     MyActiveObject2() : ActiveObject("ActiveObjTst2") {}
     virtual void InitThread() { }
-    virtual void Run()
+    virtual int Run()
     {
         while (!IsDying())
         {
             Core::Util::Sleep(SLEEP * 2);
         }
+        return 2;
     }
     virtual void ExitThread() { }
     virtual void FlushThread() { }
@@ -70,6 +71,7 @@ TEST_FIXTURE(ActiveObjectTest, Simple)
     object.Create();
     Core::Util::Sleep(SLEEP);
     object.Kill();
+    EXPECT_EQ(1, object.GetResult());
 }
 
 TEST_FIXTURE(ActiveObjectTest, Loop)
@@ -78,6 +80,7 @@ TEST_FIXTURE(ActiveObjectTest, Loop)
     object.Create();
     Core::Util::Sleep(SLEEP);
     object.Kill();
+    EXPECT_EQ(2, object.GetResult());
 }
 
 } // namespace Test

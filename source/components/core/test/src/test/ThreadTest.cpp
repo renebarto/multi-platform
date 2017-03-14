@@ -22,16 +22,23 @@ public:
     virtual void TearDown();
 
     static bool havethread;
-    static Thread * thread;
+    static Thread<bool, void *> * thread;
 
-    static void TestThread(void * arg)
+    static bool TestThread(void * arg)
     {
         *(bool *)arg = true;
         Core::Util::Sleep(SLEEP);
+        return true;
+    }
+    static bool CrashingThread(void * UNUSED(arg))
+    {
+        Core::Util::Sleep(SLEEP);
+        throw runtime_error("Crash");
+        return false;
     }
 };
 
-Thread * ThreadTest::thread;
+Thread<bool, void *> * ThreadTest::thread;
 const string ThreadName = "MyThread";
 
 
@@ -47,7 +54,7 @@ void ThreadTest::TearDown()
 
 TEST_FIXTURE(ThreadTest, Construction)
 {
-    thread = new Thread(ThreadName);
+    thread = new Thread<bool, void *>(ThreadName);
     EXPECT_FALSE(thread->IsAlive());
     EXPECT_FALSE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
@@ -57,12 +64,14 @@ TEST_FIXTURE(ThreadTest, Construction)
     EXPECT_FALSE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
     EXPECT_FALSE(thread->HasDied());
+    EXPECT_FALSE(thread->HaveResult());
+    EXPECT_THROW(thread->GetResult(), std::future_error);
 }
 
 TEST_FIXTURE(ThreadTest, ConstructionInitFunctionParam)
 {
     bool flag = false;
-    thread = new Thread(ThreadName, TestThread, &flag);
+    thread = new Thread<bool, void *>(ThreadName, TestThread, &flag);
     EXPECT_TRUE(thread->IsAlive());
     EXPECT_TRUE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
@@ -76,26 +85,30 @@ TEST_FIXTURE(ThreadTest, ConstructionInitFunctionParam)
     EXPECT_TRUE(thread->IsFinished());
     EXPECT_TRUE(thread->HasDied());
     EXPECT_EQ(ThreadName, thread->GetName());
+    EXPECT_TRUE(thread->HaveResult());
+    EXPECT_TRUE(thread->GetResult());
 }
 
 TEST_FIXTURE(ThreadTest, GetSetName)
 {
     const string AltName = "Thread";
-    thread = new Thread(ThreadName);
+    thread = new Thread<bool, void *>(ThreadName);
     EXPECT_EQ(ThreadName, thread->GetName());
     thread->SetName(AltName);
     EXPECT_EQ(AltName, thread->GetName());
+    EXPECT_FALSE(thread->HaveResult());
+    EXPECT_THROW(thread->GetResult(), std::future_error);
 }
 
 TEST_FIXTURE(ThreadTest, Create)
 {
     bool flag = false;
-    thread = new Thread(ThreadName);
+    thread = new Thread<bool, void *>(ThreadName);
     EXPECT_FALSE(thread->IsAlive());
     EXPECT_FALSE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
     EXPECT_EQ(ThreadName, thread->GetName());
-    dynamic_cast<Thread *>(thread)->CreateThread(TestThread, &flag);
+    thread->Create(TestThread, &flag);
     EXPECT_TRUE(thread->IsAlive());
     EXPECT_TRUE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
@@ -109,48 +122,80 @@ TEST_FIXTURE(ThreadTest, Create)
     EXPECT_TRUE(thread->IsFinished());
     EXPECT_TRUE(thread->HasDied());
     EXPECT_EQ(ThreadName, thread->GetName());
-}
-
-TEST_FIXTURE(ThreadTest, CreateName)
-{
-    bool flag = false;
-    thread = new Thread(ThreadName);
-    EXPECT_FALSE(thread->IsAlive());
-    EXPECT_FALSE(thread->IsRunning());
-    EXPECT_FALSE(thread->IsFinished());
-    EXPECT_EQ(ThreadName, thread->GetName());
-    dynamic_cast<Thread *>(thread)->CreateThread(TestThread, &flag);
-    EXPECT_TRUE(thread->IsAlive());
-    EXPECT_TRUE(thread->IsRunning());
-    EXPECT_FALSE(thread->IsFinished());
-    EXPECT_EQ(ThreadName, thread->GetName());
-    Core::Util::Sleep(SLEEP);
-    EXPECT_TRUE(flag);
-    Core::Util::Sleep(SLEEP);
-    thread->WaitForDeath();
-    EXPECT_FALSE(thread->IsAlive());
-    EXPECT_FALSE(thread->IsRunning());
-    EXPECT_TRUE(thread->IsFinished());
-    EXPECT_TRUE(thread->HasDied());
-    EXPECT_EQ(ThreadName, thread->GetName());
+    EXPECT_TRUE(thread->HaveResult());
+    EXPECT_TRUE(thread->GetResult());
 }
 
 TEST_FIXTURE(ThreadTest, Destroy)
 {
     bool flag = false;
-    thread = new Thread(ThreadName, TestThread, &flag);
+    thread = new Thread<bool, void *>(ThreadName, TestThread, &flag);
     EXPECT_TRUE(thread->IsAlive());
     EXPECT_TRUE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
     EXPECT_EQ(ThreadName, thread->GetName());
     Core::Util::Sleep(SLEEP);
     EXPECT_TRUE(flag);
-    thread->DestroyThread();
+    thread->Destroy();
     EXPECT_FALSE(thread->IsAlive());
     EXPECT_FALSE(thread->IsRunning());
     EXPECT_FALSE(thread->IsFinished());
     EXPECT_TRUE(thread->HasDied());
     EXPECT_EQ(ThreadName, thread->GetName());
+    EXPECT_TRUE(thread->HaveResult());
+    EXPECT_TRUE(thread->GetResult());
+}
+
+TEST_FIXTURE(ThreadTest, CrashingThread)
+{
+    thread = new Thread<bool, void *>(ThreadName, CrashingThread, nullptr);
+    EXPECT_TRUE(thread->IsAlive());
+    EXPECT_TRUE(thread->IsRunning());
+    EXPECT_FALSE(thread->IsFinished());
+    EXPECT_EQ(ThreadName, thread->GetName());
+    Core::Util::Sleep(SLEEP);
+    thread->Destroy();
+    EXPECT_FALSE(thread->IsAlive());
+    EXPECT_FALSE(thread->IsRunning());
+    EXPECT_FALSE(thread->IsFinished());
+    EXPECT_TRUE(thread->HasDied());
+    EXPECT_EQ(ThreadName, thread->GetName());
+    EXPECT_TRUE(thread->HaveResult());
+    EXPECT_THROW(thread->GetResult(), std::runtime_error);
+}
+
+int IntThread(void * UNUSED(arg))
+{
+    Util::Sleep(ThreadTest::SLEEP);
+    return 42;
+}
+
+TEST_FIXTURE(ThreadTest, ThreadReturningInt)
+{
+    Thread<int, void *> thread(ThreadName);
+    EXPECT_FALSE(thread.IsAlive());
+    EXPECT_FALSE(thread.IsRunning());
+    EXPECT_FALSE(thread.IsFinished());
+    EXPECT_FALSE(thread.HasDied());
+    EXPECT_EQ(ThreadName, thread.GetName());
+    EXPECT_FALSE(thread.HaveResult());
+    EXPECT_THROW(thread.GetResult(), std::future_error);
+
+    thread.Create(IntThread, nullptr);
+
+    EXPECT_TRUE(thread.IsAlive());
+    EXPECT_TRUE(thread.IsRunning());
+    EXPECT_FALSE(thread.IsFinished());
+    EXPECT_EQ(ThreadName, thread.GetName());
+
+    thread.Destroy();
+    EXPECT_FALSE(thread.IsAlive());
+    EXPECT_FALSE(thread.IsRunning());
+    EXPECT_FALSE(thread.IsFinished());
+    EXPECT_TRUE(thread.HasDied());
+    EXPECT_EQ(ThreadName, thread.GetName());
+    EXPECT_TRUE(thread.HaveResult());
+    EXPECT_EQ(42, thread.GetResult());
 }
 
 } // namespace Test

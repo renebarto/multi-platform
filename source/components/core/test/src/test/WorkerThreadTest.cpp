@@ -13,14 +13,14 @@ namespace Test
 static const int SLEEP = 200;
 static const int TIMEOUT = 50;
 
-class MyWorkerThread: public WorkerThread
+class MyWorkerThread: public WorkerThread<int>
 {
 public:
     static bool isDeleted;
     bool isFlagged;
 
     MyWorkerThread():
-        WorkerThread("MyWorkerThread"),
+        WorkerThread<int>("MyWorkerThread"),
         isFlagged(false)
     {
         MyWorkerThread::isDeleted = false;
@@ -29,7 +29,7 @@ public:
     {
         isDeleted = true;
     }
-    void * Thread()
+    int Thread()
     {
         isFlagged = true;
         Core::Util::Sleep(SLEEP);
