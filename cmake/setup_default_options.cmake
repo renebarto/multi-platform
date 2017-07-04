@@ -1,7 +1,8 @@
+include(${CMAKE_SOURCE_DIR}/cmake/platform.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/list_to_string.cmake)
-include(${CMAKE_SOURCE_DIR}/cmake/add_defines.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/convert_default_options.cmake)
 
-# Sets up the default compiler options, based on a number of defined variables:
+# Defines the default compiler options for each platform:
 # FLAGS_CXX                 Compiler flags for all platforms, for langurage C++
 # FLAGS_CXX_DEBUG           Compiler flags for debug build, for langurage C++
 # FLAGS_CXX_RELEASE         Compiler flags for release build, for langurage C++
@@ -18,99 +19,128 @@ include(${CMAKE_SOURCE_DIR}/cmake/add_defines.cmake)
 # DEFINES_MINSIZEREL        Compiler definitions for release min size build, for langurage C and C++
 # DEFINES_RELWITHDEBINFO    Compiler definitions for release with debug info build, for langurage C and C++
 #
-# The following standard variables are set and placed in the cache (by appending the contents of the mentioned
-# lists, and subsequently converting the lists to space separated string):
-#
-# CMAKE_CXX_FLAGS                   FLAGS_CXX DEFINES
-# CMAKE_CXX_FLAGS_DEBUG             FLAGS_CXX FLAGS_CXX_DEBUG DEFINES DEFINES_DEBUG
-# CMAKE_CXX_FLAGS_RELEASE           FLAGS_CXX FLAGS_CXX_RELEASE DEFINES DEFINES_RELEASE
-# CMAKE_CXX_FLAGS_MINSIZEREL        FLAGS_CXX FLAGS_CXX_MINSIZEREL DEFINES DEFINES_MINSIZEREL
-# CMAKE_CXX_FLAGS_RELWITHDEBINFO    FLAGS_CXX FLAGS_CXX_RELWITHDEBINFO DEFINES DEFINES_RELWITHDEBINFO
-# CMAKE_C_FLAGS                     FLAGS_C DEFINES
-# CMAKE_C_FLAGS_DEBUG               FLAGS_C FLAGS_C_DEBUG DEFINES DEFINES_DEBUG
-# CMAKE_C_FLAGS_RELEASE             FLAGS_C FLAGS_C_RELEASE DEFINES DEFINES_RELEASE
-# CMAKE_C_FLAGS_MINSIZEREL          FLAGS_C FLAGS_C_MINSIZEREL DEFINES DEFINES_MINSIZEREL
-# CMAKE_C_FLAGS_RELWITHDEBINFO      FLAGS_C FLAGS_C_RELWITHDEBINFO DEFINES DEFINES_RELWITHDEBINFO
+macro(setup_default_options)
+    if(WIN_MSVC)
+        # Important! do not keep warning 4251 4275 ignored!
+        # Possibly switch warning 4505 back on
+        set(FLAGS_CXX
+            /Wall /wd4251 /wd4275 /wd4505 /wd4514 /wd4548 /wd4571 /wd4625 /wd4626 /wd4710
+            /wd4820 /wd5026 /wd5027 /WX- /EHsc /Gd /GR /sdl- /Zc:wchar_t /Zc:inline /fp:precise)
+        set(FLAGS_CXX_DEBUG /Od /Gm- /ZI /RTC1 /MDd)
+        set(FLAGS_CXX_RELEASE /Ox /GL /GS /Gy /Oi /MD)
+        set(FLAGS_CXX_MINSIZEREL /O1 /GL /GS /Gy /Oi /MD)
+        set(FLAGS_CXX_RELWITHDEBINFO /O2 /GL /GS /Gy /Oi /Zi /MD)
 
-function(setup_default_options)
-    set(OPTIONS_CXX ${FLAGS_CXX})
-    set(OPTIONS_CXX_DEBUG ${FLAGS_CXX_DEBUG})
-    set(OPTIONS_CXX_RELEASE ${FLAGS_CXX_RELEASE})
-    set(OPTIONS_CXX_MINSIZEREL ${FLAGS_CXX_MINSIZEREL})
-    set(OPTIONS_CXX_RELWITHDEBINFO ${FLAGS_CXX_RELWITHDEBINFO})
+        set(FLAGS_C
+            /Wall /wd4251 /wd4275 /wd4505 /wd4514 /wd4548 /wd4571 /wd4625 /wd4626 /wd4710
+            /wd4820 /wd5026 /wd5027 /WX- /EHsc /Gd /GR /sdl- /Zc:wchar_t /Zc:inline /fp:precise)
+        set(FLAGS_C_DEBUG /Od /Gm- /ZI /RTC1 /MDd)
+        set(FLAGS_C_RELEASE /Ox /GL /GS /Gy /Oi /MD)
+        set(FLAGS_C_MINSIZEREL /O1 /GL /GS /Gy /Oi /MD)
+        set(FLAGS_C_RELWITHDEBINFO /O2 /GL /GS /Gy /Oi /Zi /MD)
 
-    set(OPTIONS_C ${FLAGS_C})
-    set(OPTIONS_C_DEBUG ${FLAGS_C_DEBUG})
-    set(OPTIONS_C_RELEASE ${FLAGS_C_RELEASE})
-    set(OPTIONS_C_MINSIZEREL ${FLAGS_C_MINSIZEREL})
-    set(OPTIONS_C_RELWITHDEBINFO ${FLAGS_C_RELWITHDEBINFO})
+        set(DEFINES _UNICODE UNICODE _CRT_SECURE_NO_WARNINGS)
+        set(DEFINES_DEBUG _DEBUG)
+        set(DEFINES_RELEASE NDEBUG)
+        set(DEFINES_MINSIZEREL NDEBUG)
+        set(DEFINES_RELWITHDEBINFO NDEBUG)
 
-    add_defines(OPTIONS_CXX DEFINES)
-    add_defines(OPTIONS_CXX_DEBUG DEFINES_DEBUG)
-    add_defines(OPTIONS_CXX_RELEASE DEFINES_RELEASE)
-    add_defines(OPTIONS_CXX_MINSIZEREL DEFINES_MINSIZEREL)
-    add_defines(OPTIONS_CXX_RELWITHDEBINFO DEFINES_RELWITHDEBINFO)
+    elseif(MINGW)
+        set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
+        set(FLAGS_CXX_DEBUG -O0 -g)
+        set(FLAGS_CXX_RELEASE -O3)
+        set(FLAGS_CXX_MINSIZEREL -O3)
+        set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
 
-    add_defines(OPTIONS_C DEFINES)
-    add_defines(OPTIONS_C_DEBUG DEFINES_DEBUG)
-    add_defines(OPTIONS_C_RELEASE DEFINES_RELEASE)
-    add_defines(OPTIONS_C_MINSIZEREL DEFINES_MINSIZEREL)
-    add_defines(OPTIONS_C_RELWITHDEBINFO DEFINES_RELWITHDEBINFO)
+        set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
+        set(FLAGS_C_DEBUG -O0 -g)
+        set(FLAGS_C_RELEASE -O3)
+        set(FLAGS_C_MINSIZEREL -O3)
+        set(FLAGS_C_RELWITHDEBINFO -O2 -g)
 
-    list_to_string(OPTIONS_CXX OPTIONS_CXX_STRING)
-    list_to_string(OPTIONS_CXX_DEBUG OPTIONS_CXX_DEBUG_STRING)
-    list_to_string(OPTIONS_CXX_RELEASE OPTIONS_CXX_RELEASE_STRING)
-    list_to_string(OPTIONS_CXX_MINSIZEREL OPTIONS_CXX_MINSIZEREL_STRING)
-    list_to_string(OPTIONS_CXX_RELWITHDEBINFO OPTIONS_CXX_RELWITHDEBINFO_STRING)
+        set(DEFINES )
+        set(DEFINES_DEBUG _DEBUG)
+        set(DEFINES_RELEASE NDEBUG)
+        set(DEFINES_MINSIZEREL NDEBUG)
+        set(DEFINES_RELWITHDEBINFO NDEBUG)
 
-    list_to_string(OPTIONS_C OPTIONS_C_STRING)
-    list_to_string(OPTIONS_C_DEBUG OPTIONS_C_DEBUG_STRING)
-    list_to_string(OPTIONS_C_RELEASE OPTIONS_C_RELEASE_STRING)
-    list_to_string(OPTIONS_C_MINSIZEREL OPTIONS_C_MINSIZEREL_STRING)
-    list_to_string(OPTIONS_C_RELWITHDEBINFO OPTIONS_C_RELWITHDEBINFO_STRING)
+    elseif(LINUX)
+        set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
+        set(FLAGS_CXX_DEBUG -O0 -g)
+        set(FLAGS_CXX_RELEASE -O3)
+        set(FLAGS_CXX_MINSIZEREL -O3)
+        set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
 
-#    message(STATUS "C++ Options:                        " ${OPTIONS_CXX_STRING})
-#    message(STATUS "C++ Options - debug:                " ${OPTIONS_CXX_DEBUG_STRING})
-#    message(STATUS "C++ Options - release:              " ${OPTIONS_CXX_RELEASE_STRING})
-#    message(STATUS "C++ Options - release min size:     " ${OPTIONS_CXX_MINSIZEREL_STRING})
-#    message(STATUS "C++ Options - release debug info:   " ${OPTIONS_CXX_RELWITHDEBINFO_STRING})
-#
-#    message(STATUS "C Options:                          " ${OPTIONS_C_STRING})
-#    message(STATUS "C Options - debug:                  " ${OPTIONS_C_DEBUG_STRING})
-#    message(STATUS "C Options - release:                " ${OPTIONS_C_RELEASE_STRING})
-#    message(STATUS "C Options - release min size:       " ${OPTIONS_C_MINSIZEREL_STRING})
-#    message(STATUS "C Options - release debug info:     " ${OPTIONS_C_RELWITHDEBINFO_STRING})
+        set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
+        set(FLAGS_C_DEBUG -O0 -g)
+        set(FLAGS_C_RELEASE -O3)
+        set(FLAGS_C_MINSIZEREL -O3)
+        set(FLAGS_C_RELWITHDEBINFO -O2 -g)
 
-    set(CMAKE_CXX_FLAGS ${OPTIONS_CXX_STRING} 
-        CACHE STRING
-        "Standard compiler options" FORCE)
-    set(CMAKE_CXX_FLAGS_DEBUG ${OPTIONS_CXX_DEBUG_STRING}
-        CACHE STRING
-        "Flags used by the compiler during debug builds" FORCE)
-    set(CMAKE_CXX_FLAGS_RELEASE ${OPTIONS_CXX_RELEASE_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds." FORCE)
-    set(CMAKE_CXX_FLAGS_MINSIZEREL ${OPTIONS_CXX_MINSIZEREL_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds for minimum size." FORCE)
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO ${OPTIONS_CXX_RELWITHDEBINFO_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds with debug info." FORCE)
+        set(DEFINES )
+        set(DEFINES_DEBUG _DEBUG)
+        set(DEFINES_RELEASE NDEBUG)
+        set(DEFINES_MINSIZEREL NDEBUG)
+        set(DEFINES_RELWITHDEBINFO NDEBUG)
 
-    set(CMAKE_C_FLAGS ${OPTIONS_C_STRING} 
-        CACHE STRING
-        "Standard compiler options" FORCE)
-    set(CMAKE_C_FLAGS_DEBUG ${OPTIONS_C_DEBUG_STRING}
-        CACHE STRING
-        "Flags used by the compiler during debug builds" FORCE)
-    set(CMAKE_C_FLAGS_RELEASE ${OPTIONS_C_RELEASE_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds." FORCE)
-    set(CMAKE_C_FLAGS_MINSIZEREL ${OPTIONS_C_MINSIZEREL_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds for minimum size." FORCE)
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO ${OPTIONS_C_RELWITHDEBINFO_STRING}
-        CACHE STRING
-        "Flags used by the compiler during release builds with debug info." FORCE)
+    elseif(APPLE)
+        set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
+        set(FLAGS_CXX_DEBUG -O0 -g)
+        set(FLAGS_CXX_RELEASE -O3)
+        set(FLAGS_CXX_MINSIZEREL -O3)
+        set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
 
-endfunction()
+        set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
+        set(FLAGS_C_DEBUG -O0 -g)
+        set(FLAGS_C_RELEASE -O3)
+        set(FLAGS_C_MINSIZEREL -O3)
+        set(FLAGS_C_RELWITHDEBINFO -O2 -g)
+
+        set(DEFINES )
+        set(DEFINES_DEBUG _DEBUG)
+        set(DEFINES_RELEASE NDEBUG)
+        set(DEFINES_MINSIZEREL NDEBUG)
+        set(DEFINES_RELWITHDEBINFO NDEBUG)
+
+    else()
+        display_list("Unsupported platform " ${CMAKE_HOST_SYSTEM})
+        return()
+    endif()
+
+    set(CMAKE_COMPILER_IS_CLANG OFF)
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+        display_list("Using Clang")
+        set(CMAKE_COMPILER_IS_CLANG ON)
+    elseif(${CMAKE_COMPILER_IS_GNUCXX})
+        display_list("Using Gcc")
+    else()
+        display_list("Compiler " ${CMAKE_CXX_COMPILER_ID})
+    endif()
+
+    if(CMAKE_USE_PTHREADS_INIT)
+        display_list("Adding pthread flags")
+        list(APPEND FLAGS_CXX -pthread)
+        list(APPEND FLAGS_C -pthread)
+    endif()
+
+    if(CMAKE_VERBOSE_MAKEFILE)
+        display_list("Defines:                            " ${DEFINES})
+        display_list("Defines - debug:                    " ${DEFINES_DEBUG})
+        display_list("Defines - release:                  " ${DEFINES_RELEASE})
+        display_list("Defines - release min size:         " ${DEFINES_MINSIZEREL})
+        display_list("Defines - release debug info:       " ${DEFINES_RELWITHDEBINFO})
+
+        display_list("C++ Flags:                          " ${FLAGS_CXX})
+        display_list("C++ Flags - debug:                  " ${FLAGS_CXX_DEBUG})
+        display_list("C++ Flags - release:                " ${FLAGS_CXX_RELEASE})
+        display_list("C++ Flags - release min size:       " ${FLAGS_CXX_MINSIZEREL})
+        display_list("C++ Flags - release debug info:     " ${FLAGS_CXX_RELWITHDEBINFO})
+
+        display_list("C Flags:                            " ${FLAGS_C})
+        display_list("C Flags - debug:                    " ${FLAGS_C_DEBUG})
+        display_list("C Flags - release:                  " ${FLAGS_C_RELEASE})
+        display_list("C Flags - release min size:         " ${FLAGS_C_MINSIZEREL})
+        display_list("C Flags - release debug info:       " ${FLAGS_C_RELWITHDEBINFO})
+    endif()
+    convert_default_options()
+endmacro()

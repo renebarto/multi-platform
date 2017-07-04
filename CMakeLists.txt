@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(multi-platform C CXX)
 
-# add cmake custom module directory
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake CACHE STRING
-    "CMake module path." FORCE)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 include(config)
-include(dump_vars)
+include(setup_standard_vars)
 include(setup_default_options)
-include(platform)
 
 set(LANGUAGE CXX)
 
@@ -51,166 +47,32 @@ else()
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
-set(BUILD_SHARED_LIBS ON)
-set(BUILD_TESTS ON)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CONFIG_DIR "debug" CACHE STRING "Build config directory" FORCE)
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CONFIG_DIR "release" CACHE STRING "Build config directory" FORCE)
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-    set(CONFIG_DIR "releaseMinSize" CACHE STRING "Build config directory" FORCE)
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-    set(CONFIG_DIR "releaseMinSize" CACHE STRING "Build config directory" FORCE)
-else()
-    message(FATAL_ERROR "Invalid build type: " ${CMAKE_BUILD_TYPE})
-endif()
-set(TEST_DATA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
-set(BUILD_BASE_DIR ${CMAKE_SOURCE_DIR}/build CACHE STRING
-        "Build root directory.")
-set(CMAKE_BINARY_DIR ${BUILD_BASE_DIR}/${CONFIG_DIR} CACHE STRING
-    "Build directory.")
-message(STATUS "Build base directory: " ${BUILD_BASE_DIR})
-message(STATUS "Build config directory: " ${CMAKE_BINARY_DIR})
+set(TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}")
 
-set(OUTPUT_BASE_DIR ${CMAKE_SOURCE_DIR}/output)
-message(STATUS "Output base directory: " ${OUTPUT_BASE_DIR})
+message(STATUS "Build config directory  : " ${CMAKE_BINARY_DIR})
+message(STATUS "Sytem root  directory   : " ${CMAKE_SYSROOT})
+message(STATUS "Install prefix          : " ${CMAKE_INSTALL_PREFIX})
+set(CMAKE_PROGRAM_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+message(STATUS "CMAKE_PROGRAM_PATH      : ${CMAKE_PROGRAM_PATH}")
+set(CMAKE_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+message(STATUS "CMAKE_LIBRARY_PATH      : ${CMAKE_LIBRARY_PATH}")
+set(CMAKE_INCLUDE_PATH ${CMAKE_INSTALL_PREFIX}/include)
+message(STATUS "CMAKE_PROGRAM_PATH      : ${CMAKE_INCLUDE_PATH}")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_BASE_DIR}/lib)
-message(STATUS "Static lib output directory:  " ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE_DIR}/bin)
-message(STATUS "Dynamic lib output directory: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE_DIR}/bin)
-message(STATUS "Executable output directory:  " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
+set(LINK_WHOLE_LIB -Wl,--whole-archive)
+set(LINK_NO_WHOLE_LIB -Wl,--no-whole-archive)
+set(LINK_RPATH -Wl,-rpath,'\$ORIGIN/../lib/')
 set(CMAKE_MACOSX_RPATH ../lib)
 set(CMAKE_SKIP_BUILD_RPATH TRUE)
-message(STATUS "Install directory: " ${CMAKE_INSTALL_PREFIX})
 
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/multi-platform.pc.in"
-    "${CMAKE_BINARY_DIR}/multi-platform.pc"
-    @ONLY)
+add_custom_target(install-components)
+add_custom_target(uninstall-components)
 
-# uninstall target
-configure_file(
-    ${CMAKE_SOURCE_DIR}/cmake/uninstall.cmake.in
-    ${CMAKE_BINARY_DIR}/uninstall.cmake
-    IMMEDIATE @ONLY)
-
-add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/uninstall.cmake)
-
-add_custom_target(install_${PROJECT_NAME}
-    $(MAKE) install
-    COMMENT "Installing ${PROJECT_NAME}")
-
-install(FILES ${CMAKE_BINARY_DIR}/multi-platform.pc DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
-
-if(WIN_MSVC)
-    # Important! do not keep warning 4251 4275 ignored!
-    # Possibly switch warning 4505 back on
-    set(FLAGS_CXX 
-        /Wall /wd4251 /wd4275 /wd4505 /wd4514 /wd4548 /wd4571 /wd4625 /wd4626 /wd4710
-        /wd4820 /wd5026 /wd5027 /WX- /EHsc /Gd /GR /sdl- /Zc:wchar_t /Zc:inline /fp:precise)
-    set(FLAGS_CXX_DEBUG /Od /Gm- /ZI /RTC1 /MDd)
-    set(FLAGS_CXX_RELEASE /Ox /GL /GS /Gy /Oi /MD)
-    set(FLAGS_CXX_MINSIZEREL /O1 /GL /GS /Gy /Oi /MD)
-    set(FLAGS_CXX_RELWITHDEBINFO /O2 /GL /GS /Gy /Oi /Zi /MD)
-
-    set(FLAGS_C 
-        /Wall /wd4251 /wd4275 /wd4505 /wd4514 /wd4548 /wd4571 /wd4625 /wd4626 /wd4710
-        /wd4820 /wd5026 /wd5027 /WX- /EHsc /Gd /GR /sdl- /Zc:wchar_t /Zc:inline /fp:precise)
-    set(FLAGS_C_DEBUG /Od /Gm- /ZI /RTC1 /MDd)
-    set(FLAGS_C_RELEASE /Ox /GL /GS /Gy /Oi /MD)
-    set(FLAGS_C_MINSIZEREL /O1 /GL /GS /Gy /Oi /MD)
-    set(FLAGS_C_RELWITHDEBINFO /O2 /GL /GS /Gy /Oi /Zi /MD)
-
-    set(DEFINES _UNICODE UNICODE _CRT_SECURE_NO_WARNINGS)
-    set(DEFINES_DEBUG _DEBUG)
-    set(DEFINES_RELEASE NDEBUG)
-    set(DEFINES_MINSIZEREL NDEBUG)
-    set(DEFINES_RELWITHDEBINFO NDEBUG)
-
-elseif(MINGW)
-    set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
-    set(FLAGS_CXX_DEBUG -O0 -g)
-    set(FLAGS_CXX_RELEASE -O3)
-    set(FLAGS_CXX_MINSIZEREL -O3)
-    set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
-
-    set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
-    set(FLAGS_C_DEBUG -O0 -g)
-    set(FLAGS_C_RELEASE -O3)
-    set(FLAGS_C_MINSIZEREL -O3)
-    set(FLAGS_C_RELWITHDEBINFO -O2 -g)
-
-    set(DEFINES )
-    set(DEFINES_DEBUG _DEBUG)
-    set(DEFINES_RELEASE NDEBUG)
-    set(DEFINES_MINSIZEREL NDEBUG)
-    set(DEFINES_RELWITHDEBINFO NDEBUG)
-
-elseif(LINUX)
-    set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
-    set(FLAGS_CXX_DEBUG -O0 -g)
-    set(FLAGS_CXX_RELEASE -O3)
-    set(FLAGS_CXX_MINSIZEREL -O3)
-    set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
-
-    set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
-    set(FLAGS_C_DEBUG -O0 -g)
-    set(FLAGS_C_RELEASE -O3)
-    set(FLAGS_C_MINSIZEREL -O3)
-    set(FLAGS_C_RELWITHDEBINFO -O2 -g)
-
-    set(DEFINES )
-    set(DEFINES_DEBUG _DEBUG)
-    set(DEFINES_RELEASE NDEBUG)
-    set(DEFINES_MINSIZEREL NDEBUG)
-    set(DEFINES_RELWITHDEBINFO NDEBUG)
-
-elseif(APPLE)
-    set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
-    set(FLAGS_CXX_DEBUG -O0 -g)
-    set(FLAGS_CXX_RELEASE -O3)
-    set(FLAGS_CXX_MINSIZEREL -O3)
-    set(FLAGS_CXX_RELWITHDEBINFO -O2 -g)
-
-    set(FLAGS_C -Wall -Wextra -fPIC -fmessage-length=0)
-    set(FLAGS_C_DEBUG -O0 -g)
-    set(FLAGS_C_RELEASE -O3)
-    set(FLAGS_C_MINSIZEREL -O3)
-    set(FLAGS_C_RELWITHDEBINFO -O2 -g)
-
-    set(DEFINES )
-    set(DEFINES_DEBUG _DEBUG)
-    set(DEFINES_RELEASE NDEBUG)
-    set(DEFINES_MINSIZEREL NDEBUG)
-    set(DEFINES_RELWITHDEBINFO NDEBUG)
-
-else()
-    message(STATUS "Unsupported platform " ${CMAKE_HOST_SYSTEM})
-    return()
-endif()
-
-set(CMAKE_COMPILER_IS_CLANG OFF)
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-    message(STATUS "Using Clang")
-    set(CMAKE_COMPILER_IS_CLANG ON)
-elseif(${CMAKE_COMPILER_IS_GNUCXX})
-    message(STATUS "Using Gcc")
-else()
-    message(STATUS "Compiler " ${CMAKE_CXX_COMPILER_ID})
-endif()
-
-if(CMAKE_USE_PTHREADS_INIT)
-    message(STATUS "Adding pthread flags")
-    list(APPEND FLAGS_CXX -pthread)
-    list(APPEND FLAGS_C -pthread)
-endif()
+setup_standard_vars()
 
 setup_default_options()
 
@@ -222,5 +84,3 @@ setup_default_options()
 # endif (WEBBRIDGE_TEST_MEASUREMENTS)
 
 add_subdirectory(source)
-
-# dump_vars()

@@ -1,67 +1,57 @@
-include (${CMAKE_SOURCE_DIR}/cmake/list_to_string.cmake)
+include (${CMAKE_SOURCE_DIR}/cmake/display_list.cmake)
 
 function(show_target_properties target)
     message(STATUS "Properties for ${target}")
 
-    MESSAGE(STATUS "CMAKE_CXX_FLAGS:                    " ${CMAKE_CXX_FLAGS})
-    MESSAGE(STATUS "CMAKE_CXX_FLAGS_DEBUG:              " ${CMAKE_CXX_FLAGS_DEBUG} )
-    MESSAGE(STATUS "CMAKE_CXX_FLAGS_RELEASE:            " ${CMAKE_CXX_FLAGS_RELEASE} )
-    MESSAGE(STATUS "CMAKE_CXX_FLAGS_MINSIZEREL:         " ${CMAKE_CXX_FLAGS_MINSIZEREL} )
-    MESSAGE(STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO:     " ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} )
-
-    get_target_property(INCLUDES ${PROJECT_NAME} INCLUDE_DIRECTORIES)
-    message(STATUS "Includes:                           " ${INCLUDES})
-
     get_target_property(DEFINES ${target} COMPILE_DEFINITIONS)
-    list_to_string(DEFINES STR)
-    message(STATUS "Target defines:                     " ${STR})
+    display_list("Target defines                    : " ${DEFINES})
 
     get_target_property(OPTIONS ${target} COMPILE_OPTIONS)
-    list_to_string(OPTIONS STR)
-    message(STATUS "Target options:                     " ${STR})
+    display_list("Target options                    : " ${OPTIONS})
 
     get_target_property(INCLUDES ${target} INCLUDE_DIRECTORIES)
-    list_to_string(INCLUDES STR)
-    message(STATUS "Target includes:                    " ${STR})
+    display_list("Target includes                   : " ${INCLUDES})
 
     get_target_property(LIBRARIES ${target} LINK_LIBRARIES)
-    list_to_string(LIBRARIES STR)
-    message(STATUS "Target link libraries:              " ${STR})
+    display_list("Target link libraries             : " ${LIBRARIES})
 
-    get_target_property(LIBRARIES ${target} LINK_FLAGS)
-    list_to_string(LIBRARIES STR)
-    message(STATUS "Target link options:                " ${STR})
+    get_target_property(LINK_OPTIONS ${target} LINK_FLAGS)
+    display_list("Target link options               : " ${LINK_OPTIONS})
 
     get_target_property(DEFINES_EXPORTS ${target} INTERFACE_COMPILE_DEFINITIONS)
-    list_to_string(DEFINES_EXPORTS STR)
-    message(STATUS "Target exported defines:            " ${STR})
+    display_list("Target exported defines           : " ${DEFINES_EXPORTS})
 
     get_target_property(OPTIONS_EXPORTS ${target} INTERFACE_COMPILE_OPTIONS)
-    list_to_string(OPTIONS_EXPORTS STR)
-    message(STATUS "Target exported options:            " ${STR})
+    display_list("Target exported options           : " ${OPTIONS_EXPORTS})
 
-    get_target_property(INCLUDES_EXPORTS ${target} INTERFACE_INCLUDE_DIRECTORIES)
-    list_to_string(INCLUDES_EXPORTS STR)
-    message(STATUS "Target exported includes:           " ${STR})
+    get_target_property(INCLUDE_DIRS_EXPORTS ${target} INTERFACE_INCLUDE_DIRECTORIES)
+    display_list("Target exported includes          : " ${INCLUDE_DIRS_EXPORTS})
 
     get_target_property(LIBRARIES_EXPORTS ${target} INTERFACE_LINK_LIBRARIES)
-    list_to_string(LIBRARIES_EXPORTS STR)
-    message(STATUS "Target exported link libraries:     " ${STR})
+    display_list("Target exported link libraries    : " ${LIBRARIES_EXPORTS})
 
     get_test_property(IMPORT_DEPENDENCIES ${target} IMPORTED_LINK_DEPENDENT_LIBRARIES)
-    list_to_string(LIBRARIES_EXPORTS STR)
-    message(STATUS "Target imported dependencies:       " ${STR})
+    display_list("Target imported dependencies      : " ${STR})
 
     get_test_property(IMPORT_LIBRARIES ${target} IMPORTED_LINK_INTERFACE_LIBRARIES)
-    list_to_string(LIBRARIES_EXPORTS STR)
-    message(STATUS "Target imported link libraries:     " ${STR})
+    display_list("Target imported link libraries    : " ${IMPORT_LIBRARIES})
 
     get_target_property(ARCHIVE_LOCATION ${target} ARCHIVE_OUTPUT_DIRECTORY)
-    message(STATUS "Target static library location:     " ${ARCHIVE_LOCATION})
+    display_list("Target static library location    : " ${ARCHIVE_LOCATION})
 
     get_target_property(LIBRARY_LOCATION ${target} LIBRARY_OUTPUT_DIRECTORY)
-    message(STATUS "Target dynamic library location:    " ${LIBRARY_LOCATION})
+    display_list("Target dynamic library location   : " ${LIBRARY_LOCATION})
 
     get_target_property(RUNTIME_LOCATION ${target} RUNTIME_OUTPUT_DIRECTORY)
-    message(STATUS "Target binary location:             " ${RUNTIME_LOCATION})
+    display_list("Target binary location            : " ${RUNTIME_LOCATION})
+
+    get_target_property(TARGET_VERSION ${target} VERSION)
+    display_list("Target version                    : " ${TARGET_VERSION})
+
+    get_target_property(TARGET_SOVERSION ${target} SOVERSION)
+    display_list("Target so-version                 : " ${TARGET_SOVERSION})
+
+    get_target_property(TARGET_OUTPUT_NAME ${target} OUTPUT_NAME)
+    display_list("Target output name                : " ${TARGET_OUTPUT_NAME})
+
 endfunction()
