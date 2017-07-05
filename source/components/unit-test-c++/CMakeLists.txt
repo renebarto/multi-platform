@@ -7,6 +7,7 @@ include(display_list)
 message("\nunit-test-c++\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
+set(TARGET_NAME ${PROJECT_NAME})
 set(PACKAGE_DESCRIPTION "Unit test framework")
 set(PACKAGE_VERSION_MAJOR 1)
 set(PACKAGE_VERSION_MINOR 0)

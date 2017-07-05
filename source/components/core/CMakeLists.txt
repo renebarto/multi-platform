@@ -7,6 +7,7 @@ include(display_list)
 message("\ncore\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
+set(TARGET_NAME ${PROJECT_NAME})
 set(PACKAGE_DESCRIPTION "OS abstraction layer")
 set(PACKAGE_VERSION_MAJOR 1)
 set(PACKAGE_VERSION_MINOR 0)

@@ -31,10 +31,16 @@ function(show_target_properties target)
     display_list("Target exported link libraries    : " ${LIBRARIES_EXPORTS})
 
     get_test_property(IMPORT_DEPENDENCIES ${target} IMPORTED_LINK_DEPENDENT_LIBRARIES)
-    display_list("Target imported dependencies      : " ${STR})
+    display_list("Target imported dependencies      : " ${IMPORT_DEPENDENCIES})
 
     get_test_property(IMPORT_LIBRARIES ${target} IMPORTED_LINK_INTERFACE_LIBRARIES)
     display_list("Target imported link libraries    : " ${IMPORT_LIBRARIES})
+
+    get_target_property(LINK_DEPENDENCIES ${target} LINK_DEPENDS)
+    display_list("Target link dependencies          : " ${LINK_DEPENDENCIES})
+
+    get_target_property(EXPLICIT_DEPENDENCIES ${target} MANUALLY_ADDED_DEPENDENCIES)
+    display_list("Target manual dependencies        : " ${EXPLICIT_DEPENDENCIES})
 
     get_target_property(ARCHIVE_LOCATION ${target} ARCHIVE_OUTPUT_DIRECTORY)
     display_list("Target static library location    : " ${ARCHIVE_LOCATION})

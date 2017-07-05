@@ -52,6 +52,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
 
 set(TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}")
+set(BUILD_TESTS ON)
 
 message(STATUS "Build config directory  : " ${CMAKE_BINARY_DIR})
 message(STATUS "Sytem root  directory   : " ${CMAKE_SYSROOT})

@@ -4,7 +4,6 @@ add_subdirectory(core)
 
 if(BUILD_TESTS)
     message(STATUS "Building tests")
-#     add_subdirectory(unit-test-c++/test)
     add_subdirectory(osal/test)
     add_subdirectory(core/test)
     add_subdirectory(unit-test-c++/test)
