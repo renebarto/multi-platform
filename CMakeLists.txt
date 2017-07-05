@@ -47,6 +47,18 @@ else()
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
         "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(CONFIG_DIR "debug" CACHE STRING "Build config directory" FORCE)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(CONFIG_DIR "release" CACHE STRING "Build config directory" FORCE)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+    set(CONFIG_DIR "releaseMinSize" CACHE STRING "Build config directory" FORCE)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set(CONFIG_DIR "releaseMinSize" CACHE STRING "Build config directory" FORCE)
+else()
+    message(FATAL_ERROR "Invalid build type: " ${CMAKE_BUILD_TYPE})
+endif()
+
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
@@ -63,6 +75,10 @@ set(CMAKE_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
 message(STATUS "CMAKE_LIBRARY_PATH      : ${CMAKE_LIBRARY_PATH}")
 set(CMAKE_INCLUDE_PATH ${CMAKE_INSTALL_PREFIX}/include)
 message(STATUS "CMAKE_PROGRAM_PATH      : ${CMAKE_INCLUDE_PATH}")
+
+set(OUTPUT_BASE_DIR ${CMAKE_SOURCE_DIR}/output)
+message(STATUS "Output base directory   : " ${OUTPUT_BASE_DIR})
+
 
 set(LINK_WHOLE_LIB -Wl,--whole-archive)
 set(LINK_NO_WHOLE_LIB -Wl,--no-whole-archive)

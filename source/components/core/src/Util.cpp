@@ -1,5 +1,6 @@
 #include "core/Util.h"
 
+#include <cxxabi.h>
 #include <bitset>
 #include <climits>
 #include <cmath>
@@ -13,6 +14,21 @@
 
 using namespace std;
 using namespace Core;
+
+int Util::NextPowerOfTwo(int value)
+{
+    int rest = value;
+    int numberOfOnes = 0;
+    int power = 0;
+    while (rest != 0)
+    {
+        power++;
+        if ((rest & 0x01) != 0)
+            numberOfOnes++;
+        rest >>= 1;
+    }
+    return (numberOfOnes != 1) ? 1 << power : 1 << (power - 1);
+}
 
 timespec Util::MilliSecondsToTimespec(int ms)
 {

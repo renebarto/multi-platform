@@ -13,6 +13,8 @@ class ByteArray;
 namespace Util
 {
 
+int NextPowerOfTwo(int value);
+
 //template<class T> T BitsToBytes(T numBits) {
 //    return (numBits + 7) / 8;
 //}
@@ -37,7 +39,6 @@ void Sleep(int sleepMS);
 //void CopyMemory(void * destination, int offsetDestination, const void * source, int size);
 //void CopyMemory(void * destination, const void * source, int offsetSource, int size);
 //void CopyMemory(void * destination, int offsetDestination, const void * source, int offsetSource, int size);
-//int NextPowerOfTwo(int value);
 //
 //void DumpToStream(std::ostream & stream, const ByteArray & data);
 //void DumpToStream(std::ostream & stream, const uint8_t * data, int length);
