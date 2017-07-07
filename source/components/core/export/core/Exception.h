@@ -5,8 +5,8 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
-#include "osal/osal.h"
-#include "osal/strings.h"
+#include "osal/OSAL.h"
+#include "osal/Strings.h"
 
 namespace Core
 {

@@ -57,7 +57,7 @@ public:
     std::string ToString() const;
 };
 
-void PrintTo(const ByteArray & value, std::ostream & stream)
+inline void PrintTo(const ByteArray & value, std::ostream & stream)
 {
     stream << value.ToString();
 }

@@ -1,6 +1,6 @@
 #include <unit-test-c++/UnitTestC++.h>
 
-#include <osal/flagoperators.h>
+#include <osal/FlagOperators.h>
 #include <core/serialization/Serialization.h>
 #include <core/serialization/SerializationImpl.h>
 

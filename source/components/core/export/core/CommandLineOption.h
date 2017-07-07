@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <osal/strings.h>
+#include <osal/Strings.h>
 #include "core/serialization/Serialization.h"
 #include "core/serialization/DeserializationImpl.h"
 #include "core/serialization/SerializationImpl.h"

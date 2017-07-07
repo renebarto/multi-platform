@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
-#include <osal/osal.h>
+#include <osal/OSAL.h>
 
 namespace Core
 {

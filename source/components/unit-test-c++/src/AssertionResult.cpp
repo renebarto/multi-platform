@@ -2,7 +2,7 @@
 
 #include <sstream>
 #include <unit-test-c++/PrintValue.h>
-#include <osal/unused.h>
+#include <osal/Unused.h>
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 
 #include <setjmp.h>
 #include <signal.h>
-#include <osal/platform-defines.h>
+#include <osal/PlatformDefines.h>
 
 namespace UnitTestCpp
 {

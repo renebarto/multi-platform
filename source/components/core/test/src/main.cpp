@@ -4,8 +4,8 @@
 //#include <core/ConsoleLogger.h>
 //#include <core/DefaultLogger.h>
 #include "CommandLineOptionsParser.h"
-#include "osal/osal.h"
-#include "osal/console.h"
+#include "osal/OSAL.h"
+#include "osal/Console.h"
 
 static const std::string moduleName = "core";
 

@@ -3,7 +3,7 @@
 #include <future>
 #include <mutex>
 #include <thread>
-#include <osal/strings.h>
+#include <osal/Strings.h>
 
 namespace Core
 {

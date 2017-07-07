@@ -7,7 +7,7 @@
 #include <unit-test-c++/TestDetailedResult.h>
 #include <unit-test-c++/TestResults.h>
 
-#include <osal/unused.h>
+#include <osal/Unused.h>
 
 using namespace std;
 

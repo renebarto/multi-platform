@@ -4,7 +4,7 @@
 #include <iostream>
 #include <map>
 #include <mutex>
-#include "osal/flagoperators.h"
+#include "osal/FlagOperators.h"
 #include "core/Util.h"
 
 namespace Core

@@ -4,7 +4,7 @@
 #include <vector>
 #include "core/CommandLineOption.h"
 #include "core/CommandLineOptionGroup.h"
-#include "osal/console.h"
+#include "osal/Console.h"
 
 namespace Core {
 

@@ -1,7 +1,7 @@
 #include <cstring>
 #include "core/ByteArray.h"
 #include "core/Exception.h"
-#include "osal/strings.h"
+#include "osal/Strings.h"
 
 using namespace std;
 

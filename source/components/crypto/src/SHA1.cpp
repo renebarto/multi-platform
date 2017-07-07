@@ -56,10 +56,10 @@ SHA1::SHA1()
     , _workspace()
     , _block(reinterpret_cast<SHA1WorkspaceBlock *>(_workspace))
 {
-    Reset();
+    Initialize();
 }
 
-void SHA1::Reset()
+void SHA1::Initialize()
 {
     // SHA1 initialization constants
     _state[0] = 0x67452301;
@@ -104,6 +104,11 @@ void SHA1::Process(const uint8_t *data, size_t len)
     memcpy(&_buffer[j], &data[i], len - i);
 }
 
+void SHA1::Process(const Core::ByteArray & data)
+{
+    Process(data.Data(), data.Size());
+}
+
 void SHA1::Finalize()
 {
     uint32_t i = 0;
@@ -133,7 +138,7 @@ void SHA1::Finalize()
     Transform(_state, _buffer);
 }
 
-Core::ByteArray SHA1::GetDigest()
+Core::ByteArray SHA1::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
@@ -182,7 +187,7 @@ void SHA1::Transform(uint32_t state[5], const uint8_t buffer[64])
     state[4] += e;
 }
 
-OSAL::String SHA1::ToString()
+OSAL::String SHA1::ToString() const
 {
     basic_ostringstream<OSAL::Char> stream;
 

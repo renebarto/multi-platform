@@ -2,7 +2,7 @@
 
 #include <unit-test-c++/TestDetails.h>
 
-#include <osal/unused.h>
+#include <osal/Unused.h>
 
 using namespace std;
 

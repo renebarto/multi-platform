@@ -1,25 +1,25 @@
 #pragma once
 
-#include "core/ByteArray.h"
+#include "crypto/Digest.h"
 
 namespace Crypto
 {
 
 union SHA1WorkspaceBlock;
 
-class SHA1
+class SHA1 : public Digest
 {
 public:
     SHA1();
 
-    void Reset();
+    virtual void Initialize() override;
 
-    // Update the hash value
-    void Process(const uint8_t *data, size_t len);
-    void Finalize();
-    Core::ByteArray GetDigest();
+    virtual void Process(const uint8_t *data, size_t len) override;
+    virtual void Process(const Core::ByteArray & data) override;
+    virtual void Finalize() override;
+    virtual Core::ByteArray GetDigest() const override;
 
-    OSAL::String ToString();
+    virtual OSAL::String ToString() const override;
 
 private:
     // Private SHA-1 transformation

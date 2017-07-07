@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unit-test-c++/PrintValue.h>
-#include <osal/osal.h>
+#include <osal/OSAL.h>
 
 using namespace std;
 

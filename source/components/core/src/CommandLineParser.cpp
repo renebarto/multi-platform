@@ -5,8 +5,8 @@
 #include <limits>
 #include <sstream>
 #include <string>
-#include "osal/osal.h"
-#include "osal/path.h"
+#include "osal/OSAL.h"
+#include "osal/Path.h"
 
 using namespace std;
 using namespace Core;

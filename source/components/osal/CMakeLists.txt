@@ -57,24 +57,24 @@ file(GLOB COMPONENTS_OSAL_INCLUDES_BASE include/osal/*.h)
 
 if (WIN_MSVC)
     message(STATUS "Building on Windows with MSVC")
-    file(GLOB COMPONENTS_OSAL_SOURCES src/windows/*.cpp)
-    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/windows/*.h)
-    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/windows/*.h)
+    file(GLOB COMPONENTS_OSAL_SOURCES_PLATFORM src/windows/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_PLATFORM export/osal/windows/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_PLATFORM include/osal/windows/*.h)
 elseif(MINGW)
     message(STATUS "Building on Windows with MinGW")
-    file(GLOB COMPONENTS_OSAL_SOURCES src/mingw/*.cpp)
-    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/mingw/*.h)
-    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/mingw/*.h)
+    file(GLOB COMPONENTS_OSAL_SOURCES_PLATFORM src/mingw/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_PLATFORM export/osal/mingw/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_PLATFORM include/osal/mingw/*.h)
 elseif(LINUX)
     message(STATUS "Building on Linux")
-    file(GLOB COMPONENTS_OSAL_SOURCES src/linux/*.cpp)
-    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/linux/*.h)
-    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/linux/*.h)
+    file(GLOB COMPONENTS_OSAL_SOURCES_PLATFORM src/linux/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_PLATFORM export/osal/linux/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_PLATFORM include/osal/linux/*.h)
 elseif(APPLE)
     message(STATUS "Building on OS X")
-    file(GLOB COMPONENTS_OSAL_SOURCES src/darwin/*.cpp)
-    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT export/osal/darwin/*.h)
-    file(GLOB COMPONENTS_OSAL_INCLUDES include/osal/darwin/*.h)
+    file(GLOB COMPONENTS_OSAL_SOURCES_PLATFORM src/darwin/*.cpp)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_EXPORT_PLATFORM export/osal/darwin/*.h)
+    file(GLOB COMPONENTS_OSAL_INCLUDES_PLATFORM include/osal/darwin/*.h)
 else()
     message(STATUS "Unsupported platform " ${CMAKE_HOST_SYSTEM})
     _return()
@@ -82,12 +82,12 @@ endif()
 
 set(COMPONENTS_OSAL_SOURCES
     ${COMPONENTS_OSAL_SOURCES_BASE}
-    ${COMPONENTS_OSAL_SOURCES})
+    ${COMPONENTS_OSAL_SOURCES_PLATFORM})
 set(COMPONENTS_OSAL_INCLUDES
     ${COMPONENTS_OSAL_INCLUDES_EXPORT_BASE}
-    ${COMPONENTS_OSAL_INCLUDES_EXPORT}
+    ${COMPONENTS_OSAL_INCLUDES_EXPORT_PLATFORM}
     ${COMPONENTS_OSAL_INCLUDES_BASE}
-    ${COMPONENTS_OSAL_INCLUDES})
+    ${COMPONENTS_OSAL_INCLUDES_PLATFORM})
 
 display_list("Defines                     : " ${COMPONENTS_OSAL_DEFINITIONS} )
 display_list("Compiler options            : " ${COMPONENTS_OSAL_OPTIONS} )

@@ -67,7 +67,7 @@ TEST_FIXTURE(SHA1Test, ProcessResetCase1)
     memcpy(input, "abc", sizeof(input));
     target.Process(input, sizeof(input));
     target.Finalize();
-    target.Reset();
+    target.Initialize();
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("0000000000000000000000000000000000000000", target.ToString());
 }

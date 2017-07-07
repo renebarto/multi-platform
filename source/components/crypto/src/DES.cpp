@@ -1,423 +1,334 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "crypto/DES.h"
 
-int initial_key_permutaion[] = {57, 49,  41, 33,  25,  17,  9,
-                                1, 58,  50, 42,  34,  26, 18,
-                                10,  2,  59, 51,  43,  35, 27,
-                                19, 11,   3, 60,  52,  44, 36,
-                                63, 55,  47, 39,  31,  23, 15,
-                                7, 62,  54, 46,  38,  30, 22,
-                                14,  6,  61, 53,  45,  37, 29,
-                                21, 13,   5, 28,  20,  12,  4};
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+#include <sstream>
 
-int initial_message_permutation[] =	   {58, 50, 42, 34, 26, 18, 10, 2,
-                                           60, 52, 44, 36, 28, 20, 12, 4,
-                                           62, 54, 46, 38, 30, 22, 14, 6,
-                                           64, 56, 48, 40, 32, 24, 16, 8,
-                                           57, 49, 41, 33, 25, 17,  9, 1,
-                                           59, 51, 43, 35, 27, 19, 11, 3,
-                                           61, 53, 45, 37, 29, 21, 13, 5,
-                                           63, 55, 47, 39, 31, 23, 15, 7};
+using namespace std;
+using namespace Crypto;
 
-int key_shift_sizes[] = {-1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
+// The algorithm is designed to encipher and decipher blocks of data consisting of 64 bits under control
+// of a 64-bit key. Deciphering must be accomplished by using the same key as for enciphering, but
+// with the schedule of addressing the key bits altered so that the deciphering process is the reverse of
+// the enciphering process.
 
-int sub_key_permutation[] =    {14, 17, 11, 24,  1,  5,
-                                3, 28, 15,  6, 21, 10,
-                                23, 19, 12,  4, 26,  8,
-                                16,  7, 27, 20, 13,  2,
-                                41, 52, 31, 37, 47, 55,
-                                30, 40, 51, 45, 33, 48,
-                                44, 49, 39, 56, 34, 53,
-                                46, 42, 50, 36, 29, 32};
+inline uint32_t PermuteBit(const uint8_t * data, int bitIndexIn, int bitIndexOut)
+{
+    return static_cast<uint32_t>(((data[bitIndexIn / 8] >> (7 - (bitIndexIn % 8))) & 0x01) << bitIndexOut);
+}
 
-int message_expansion[] =  {32,  1,  2,  3,  4,  5,
-                            4,  5,  6,  7,  8,  9,
-                            8,  9, 10, 11, 12, 13,
-                            12, 13, 14, 15, 16, 17,
-                            16, 17, 18, 19, 20, 21,
-                            20, 21, 22, 23, 24, 25,
-                            24, 25, 26, 27, 28, 29,
-                            28, 29, 30, 31, 32,  1};
+inline uint8_t ShiftBitR(uint32_t data, int bitIndexIn, int bitIndexOut)
+{
+    return static_cast<uint8_t>(((data >> (31 - bitIndexIn)) & 0x00000001) << bitIndexOut);
+}
 
-int S1[] = {14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
-            0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8,
-            4,  1, 14,  8, 13,  6,  2, 11, 15, 12,  9,  7,  3, 10,  5,  0,
-            15, 12,  8,  2,  4,  9,  1,  7,  5, 11,  3, 14, 10,  0,  6, 13};
+inline uint32_t ShiftBitL(uint32_t data, int bitIndexIn, int bitIndexOut)
+{
+    return static_cast<uint32_t>(((data << bitIndexIn) & 0x80000000) >> bitIndexOut);
+}
 
-int S2[] = {15,  1,  8, 14,  6, 11,  3,  4,  9,  7,  2, 13, 12,  0,  5, 10,
-            3, 13,  4,  7, 15,  2,  8, 14, 12,  0,  1, 10,  6,  9, 11,  5,
-            0, 14,  7, 11, 10,  4, 13,  1,  5,  8, 12,  6,  9,  3,  2, 15,
-            13,  8, 10,  1,  3, 15,  4,  2, 11,  6,  7, 12,  0,  5, 14,  9};
+inline uint32_t RotateLeft28(uint32_t value, int numBits)
+{
+    return ((value << numBits) | (value >> (28-numBits))) & 0xfffffff0;
+}
 
-int S3[] = {10,  0,  9, 14,  6,  3, 15,  5,  1, 13, 12,  7, 11,  4,  2,  8,
-            13,  7,  0,  9,  3,  4,  6, 10,  2,  8,  5, 14, 12, 11, 15,  1,
-            13,  6,  4,  9,  8, 15,  3,  0, 11,  1,  2, 12,  5, 10, 14,  7,
-            1, 10, 13,  0,  6,  9,  8,  7,  4, 15, 14,  3, 11,  5,  2, 12};
+DES::DES()
+    : _keyset()
+{
 
-int S4[] = { 7, 13, 14,  3,  0,  6,  9, 10,  1,  2,  8,  5, 11, 12,  4, 15,
-             13,  8, 11,  5,  6, 15,  0,  3,  4,  7,  2, 12,  1, 10, 14,  9,
-             10,  6,  9,  0, 12, 11,  7, 13, 15,  1,  3, 14,  5,  2,  8,  4,
-             3, 15,  0,  6, 10,  1, 13,  8,  9,  4,  5, 11, 12,  7,  2, 14};
+}
 
-int S5[] = { 2, 12,  4,  1,  7, 10, 11,  6,  8,  5,  3, 15, 13,  0, 14,  9,
-             14, 11,  2, 12,  4,  7, 13,  1,  5,  0, 15, 10,  3,  9,  8,  6,
-             4,  2,  1, 11, 10, 13,  7,  8, 15,  9, 12,  5,  6,  3,  0, 14,
-             11,  8, 12,  7,  1, 14,  2, 13,  6, 15,  0,  9, 10,  4,  5,  3};
+void DES::Initialize(const DESKey & key, Direction direction)
+{
+    uint32_t C {};
+    uint32_t D {};
+    size_t keyIndex;
+    const uint32_t key_rnd_shift[NumSubKeys] = {1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1};
+    const uint32_t key_perm_c[28] = {56,48,40,32,24,16, 8, 0,57,49,41,33,25,17,
+                                      9, 1,58,50,42,34,26,18,10, 2,59,51,43,35};
+    const uint32_t key_perm_d[28] = {62,54,46,38,30,22,14, 6,61,53,45,37,29,21,
+                                     13, 5,60,52,44,36,28,20,12, 4,27,19,11, 3};
+    const uint32_t key_compression[48] = {13,16,10,23, 0, 4, 2,27,14, 5,20, 9,
+                                          22,18,11, 3,25, 7,15, 6,26,19,12, 1,
+                                          40,51,30,36,46,54,29,39,50,44,32,47,
+                                          43,48,38,55,33,52,45,41,49,35,28,31};
 
-int S6[] = {12,  1, 10, 15,  9,  2,  6,  8,  0, 13,  3,  4, 14,  7,  5, 11,
-            10, 15,  4,  2,  7, 12,  9,  5,  6,  1, 13, 14,  0, 11,  3,  8,
-            9, 14, 15,  5,  2,  8, 12,  3,  7,  0,  4, 10,  1, 13, 11,  6,
-            4,  3,  2, 12,  9,  5, 15, 10, 11, 14,  1,  7,  6,  0,  8, 13};
+    // Permuted Choice #1 (copy the key in, ignoring parity bits).
+    // Create C and D key in bits 31..4
+    for (int i = 0, j = 31; i < 28; ++i, --j)
+        C |= PermuteBit(key,key_perm_c[i],j);
+    for (int i = 0, j = 31; i < 28; ++i, --j)
+        D |= PermuteBit(key,key_perm_d[i],j);
 
-int S7[] = { 4, 11,  2, 14, 15,  0,  8, 13,  3, 12,  9,  7,  5, 10,  6,  1,
-             13,  0, 11,  7,  4,  9,  1, 10, 14,  3,  5, 12,  2, 15,  8,  6,
-             1,  4, 11, 13, 12,  3,  7, 14, 10, 15,  6,  8,  0,  5,  9,  2,
-             6, 11, 13,  8,  1,  4, 10,  7,  9,  5,  0, 15, 14,  2,  3, 12};
+    // Generate the 16 subkeys.
+    for (size_t i = 0; i < NumSubKeys; ++i)
+    {
+        C = RotateLeft28(C, key_rnd_shift[i]);
+        D = RotateLeft28(D, key_rnd_shift[i]);
 
-int S8[] = {13,  2,  8,  4,  6, 15, 11,  1, 10,  9,  3, 14,  5,  0, 12,  7,
-            1, 15, 13,  8, 10,  3,  7,  4, 12,  5,  6, 11,  0, 14,  9,  2,
-            7, 11,  4,  1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8,
-            2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11};
-
-int right_sub_message_permutation[] =    {16,  7, 20, 21,
-                                          29, 12, 28, 17,
-                                          1, 15, 23, 26,
-                                          5, 18, 31, 10,
-                                          2,  8, 24, 14,
-                                          32, 27,  3,  9,
-                                          19, 13, 30,  6,
-                                          22, 11,  4, 25};
-
-int final_message_permutation[] =  {40,  8, 48, 16, 56, 24, 64, 32,
-                                    39,  7, 47, 15, 55, 23, 63, 31,
-                                    38,  6, 46, 14, 54, 22, 62, 30,
-                                    37,  5, 45, 13, 53, 21, 61, 29,
-                                    36,  4, 44, 12, 52, 20, 60, 28,
-                                    35,  3, 43, 11, 51, 19, 59, 27,
-                                    34,  2, 42, 10, 50, 18, 58, 26,
-                                    33,  1, 41,  9, 49, 17, 57, 25};
-
-
-void print_char_as_binary(char input) {
-    int i;
-    for (i=0; i<8; i++) {
-        char shift_byte = 0x01 << (7-i);
-        if (shift_byte & input) {
-            printf("1");
-        } else {
-            printf("0");
-        }
+        // Decryption subkeys are reverse order of encryption subkeys so
+        // generate them in reverse if the key schedule is for decryption useage.
+        if (direction == Direction::Decrypt)
+            keyIndex = 15 - i;
+        else
+            keyIndex = i;
+        // Initialize the array
+        // Permuted Choice #2
+        for (size_t j = 0; j < SubKeySize; ++j)
+            _keyset[keyIndex][j] = 0;
+        for (int j = 0; j < 24; ++j)
+            _keyset[keyIndex][j/8] |= ShiftBitR(C, key_compression[j], 7 - (j % 8));
+        for (int j = 24; j < 48; ++j)
+            _keyset[keyIndex][j/8] |= ShiftBitR(D, key_compression[j] - 28, 7 - (j % 8));
     }
 }
 
-void generate_key(unsigned char* key) {
-    int i;
-    for (i=0; i<8; i++) {
-        key[i] = rand()%255;
+void DES::Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len)
+{
+    size_t offset = 0;
+    DataBlock blockIn {};
+    DataBlock blockOut {};
+    while (offset < len)
+    {
+        size_t numBytes = (len - offset >= BlockSize) ? BlockSize : len - offset;
+        memcpy(blockIn, dataIn + offset, numBytes);
+        if (numBytes < BlockSize)
+            memset(blockIn + numBytes, 0, BlockSize - numBytes);
+        ProcessBlock(blockIn, blockOut);
+        memcpy(dataOut + offset, blockOut, numBytes);
+        offset += numBytes;
     }
 }
 
-void print_key_set(key_set key_set){
-    int i;
-    printf("K: \n");
-    for (i=0; i<8; i++) {
-        printf("%02X : ", key_set.k[i]);
-        print_char_as_binary(key_set.k[i]);
-        printf("\n");
-    }
-    printf("\nC: \n");
-
-    for (i=0; i<4; i++) {
-        printf("%02X : ", key_set.c[i]);
-        print_char_as_binary(key_set.c[i]);
-        printf("\n");
-    }
-    printf("\nD: \n");
-
-    for (i=0; i<4; i++) {
-        printf("%02X : ", key_set.d[i]);
-        print_char_as_binary(key_set.d[i]);
-        printf("\n");
-    }
-    printf("\n");
+void DES::Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut)
+{
+    dataOut.Size(dataIn.Size());
+    Process(dataIn.Data(), dataOut.Data(), dataIn.Size());
 }
 
-void generate_sub_keys(unsigned char* main_key, key_set* key_sets) {
-    int i, j;
-    int shift_size;
-    unsigned char shift_byte, first_shift_bits, second_shift_bits, third_shift_bits, fourth_shift_bits;
+void DES::Finalize()
+{
 
-    for (i=0; i<8; i++) {
-        key_sets[0].k[i] = 0;
-    }
-
-    for (i=0; i<56; i++) {
-        shift_size = initial_key_permutaion[i];
-        shift_byte = 0x80 >> ((shift_size - 1)%8);
-        shift_byte &= main_key[(shift_size - 1)/8];
-        shift_byte <<= ((shift_size - 1)%8);
-
-        key_sets[0].k[i/8] |= (shift_byte >> i%8);
-    }
-
-    for (i=0; i<3; i++) {
-        key_sets[0].c[i] = key_sets[0].k[i];
-    }
-
-    key_sets[0].c[3] = key_sets[0].k[3] & 0xF0;
-
-    for (i=0; i<3; i++) {
-        key_sets[0].d[i] = (key_sets[0].k[i+3] & 0x0F) << 4;
-        key_sets[0].d[i] |= (key_sets[0].k[i+4] & 0xF0) >> 4;
-    }
-
-    key_sets[0].d[3] = (key_sets[0].k[6] & 0x0F) << 4;
-
-
-    for (i=1; i<17; i++) {
-        for (j=0; j<4; j++) {
-            key_sets[i].c[j] = key_sets[i-1].c[j];
-            key_sets[i].d[j] = key_sets[i-1].d[j];
-        }
-
-        shift_size = key_shift_sizes[i];
-        if (shift_size == 1){
-            shift_byte = 0x80;
-        } else {
-            shift_byte = 0xC0;
-        }
-
-        // Process C
-        first_shift_bits = shift_byte & key_sets[i].c[0];
-        second_shift_bits = shift_byte & key_sets[i].c[1];
-        third_shift_bits = shift_byte & key_sets[i].c[2];
-        fourth_shift_bits = shift_byte & key_sets[i].c[3];
-
-        key_sets[i].c[0] <<= shift_size;
-        key_sets[i].c[0] |= (second_shift_bits >> (8 - shift_size));
-
-        key_sets[i].c[1] <<= shift_size;
-        key_sets[i].c[1] |= (third_shift_bits >> (8 - shift_size));
-
-        key_sets[i].c[2] <<= shift_size;
-        key_sets[i].c[2] |= (fourth_shift_bits >> (8 - shift_size));
-
-        key_sets[i].c[3] <<= shift_size;
-        key_sets[i].c[3] |= (first_shift_bits >> (4 - shift_size));
-
-        // Process D
-        first_shift_bits = shift_byte & key_sets[i].d[0];
-        second_shift_bits = shift_byte & key_sets[i].d[1];
-        third_shift_bits = shift_byte & key_sets[i].d[2];
-        fourth_shift_bits = shift_byte & key_sets[i].d[3];
-
-        key_sets[i].d[0] <<= shift_size;
-        key_sets[i].d[0] |= (second_shift_bits >> (8 - shift_size));
-
-        key_sets[i].d[1] <<= shift_size;
-        key_sets[i].d[1] |= (third_shift_bits >> (8 - shift_size));
-
-        key_sets[i].d[2] <<= shift_size;
-        key_sets[i].d[2] |= (fourth_shift_bits >> (8 - shift_size));
-
-        key_sets[i].d[3] <<= shift_size;
-        key_sets[i].d[3] |= (first_shift_bits >> (4 - shift_size));
-
-        for (j=0; j<48; j++) {
-            shift_size = sub_key_permutation[j];
-            if (shift_size <= 28) {
-                shift_byte = 0x80 >> ((shift_size - 1)%8);
-                shift_byte &= key_sets[i].c[(shift_size - 1)/8];
-                shift_byte <<= ((shift_size - 1)%8);
-            } else {
-                shift_byte = 0x80 >> ((shift_size - 29)%8);
-                shift_byte &= key_sets[i].d[(shift_size - 29)/8];
-                shift_byte <<= ((shift_size - 29)%8);
-            }
-
-            key_sets[i].k[j/8] |= (shift_byte >> j%8);
-        }
-    }
 }
 
-void process_message(unsigned char* message_piece, unsigned char* processed_piece, key_set* key_sets, int mode) {
-    int i, k;
-    int shift_size;
-    unsigned char shift_byte;
-
-    unsigned char initial_permutation[8];
-    memset(initial_permutation, 0, 8);
-    memset(processed_piece, 0, 8);
-
-    for (i=0; i<64; i++) {
-        shift_size = initial_message_permutation[i];
-        shift_byte = 0x80 >> ((shift_size - 1)%8);
-        shift_byte &= message_piece[(shift_size - 1)/8];
-        shift_byte <<= ((shift_size - 1)%8);
-
-        initial_permutation[i/8] |= (shift_byte >> i%8);
+OSAL::String DES::ToString() const
+{
+    basic_ostringstream<OSAL::Char> stream;
+    stream << hex << uppercase;
+    for (int i = 0; i < NumSubKeys; ++i)
+    {
+        for (int j = 0; j < SubKeySize; ++j)
+        {
+            stream << setw(2) << setfill('0') << int(_keyset[i][j]);
+        }
+        stream << endl;
     }
+    stream << dec;
+    return stream.str();
+}
 
-    unsigned char l[4], r[4];
-    for (i=0; i<4; i++) {
-        l[i] = initial_permutation[i];
-        r[i] = initial_permutation[i+4];
+void DES::IP(uint32_t state[], const uint8_t dataIn[])
+{
+    // IP
+    // 58, 50, 42, 34, 26, 18, 10, 2,
+    // 60, 52, 44, 36, 28, 20, 12, 4,
+    // 62, 54, 46, 38, 30, 22, 14, 6,
+    // 64, 56, 48, 40, 32, 24, 16, 8,
+    // 57, 49, 41, 33, 25, 17,  9, 1,
+    // 59, 51, 43, 35, 27, 19, 11, 3,
+    // 61, 53, 45, 37, 29, 21, 13, 5,
+    // 63, 55, 47, 39, 31, 23, 15, 7
+
+    state[0] = PermuteBit(dataIn,57,31) | PermuteBit(dataIn,49,30) | PermuteBit(dataIn,41,29) | PermuteBit(dataIn,33,28) |
+               PermuteBit(dataIn,25,27) | PermuteBit(dataIn,17,26) | PermuteBit(dataIn, 9,25) | PermuteBit(dataIn, 1,24) |
+               PermuteBit(dataIn,59,23) | PermuteBit(dataIn,51,22) | PermuteBit(dataIn,43,21) | PermuteBit(dataIn,35,20) |
+               PermuteBit(dataIn,27,19) | PermuteBit(dataIn,19,18) | PermuteBit(dataIn,11,17) | PermuteBit(dataIn, 3,16) |
+               PermuteBit(dataIn,61,15) | PermuteBit(dataIn,53,14) | PermuteBit(dataIn,45,13) | PermuteBit(dataIn,37,12) |
+               PermuteBit(dataIn,29,11) | PermuteBit(dataIn,21,10) | PermuteBit(dataIn,13, 9) | PermuteBit(dataIn, 5, 8) |
+               PermuteBit(dataIn,63, 7) | PermuteBit(dataIn,55, 6) | PermuteBit(dataIn,47, 5) | PermuteBit(dataIn,39, 4) |
+               PermuteBit(dataIn,31, 3) | PermuteBit(dataIn,23, 2) | PermuteBit(dataIn,15, 1) | PermuteBit(dataIn, 7, 0);
+
+    state[1] = PermuteBit(dataIn,56,31) | PermuteBit(dataIn,48,30) | PermuteBit(dataIn,40,29) | PermuteBit(dataIn,32,28) |
+               PermuteBit(dataIn,24,27) | PermuteBit(dataIn,16,26) | PermuteBit(dataIn, 8,25) | PermuteBit(dataIn, 0,24) |
+               PermuteBit(dataIn,58,23) | PermuteBit(dataIn,50,22) | PermuteBit(dataIn,42,21) | PermuteBit(dataIn,34,20) |
+               PermuteBit(dataIn,26,19) | PermuteBit(dataIn,18,18) | PermuteBit(dataIn,10,17) | PermuteBit(dataIn, 2,16) |
+               PermuteBit(dataIn,60,15) | PermuteBit(dataIn,52,14) | PermuteBit(dataIn,44,13) | PermuteBit(dataIn,36,12) |
+               PermuteBit(dataIn,28,11) | PermuteBit(dataIn,20,10) | PermuteBit(dataIn,12, 9) | PermuteBit(dataIn, 4, 8) |
+               PermuteBit(dataIn,62, 7) | PermuteBit(dataIn,54, 6) | PermuteBit(dataIn,46, 5) | PermuteBit(dataIn,38, 4) |
+               PermuteBit(dataIn,30, 3) | PermuteBit(dataIn,22, 2) | PermuteBit(dataIn,14, 1) | PermuteBit(dataIn, 6, 0);
+}
+
+void DES::IPInv(const uint32_t state[], uint8_t out[])
+{
+    // IP-1
+    // 40,  8, 48, 16, 56, 24, 64, 32,
+    // 39,  7, 47, 15, 55, 23, 63, 31,
+    // 38,  6, 46, 14, 54, 22, 62, 30,
+    // 37,  5, 45, 13, 53, 21, 61, 29,
+    // 36,  4, 44, 12, 52, 20, 60, 28,
+    // 35,  3, 43, 11, 51, 19, 59, 27,
+    // 34,  2, 42, 10, 50, 18, 58, 26,
+    // 33,  1, 41,  9, 49, 17, 57, 25};
+
+    out[0] = ShiftBitR(state[1], 7,7) | ShiftBitR(state[0], 7,6) | ShiftBitR(state[1],15,5) | ShiftBitR(state[0],15,4) |
+             ShiftBitR(state[1],23,3) | ShiftBitR(state[0],23,2) | ShiftBitR(state[1],31,1) | ShiftBitR(state[0],31,0);
+
+    out[1] = ShiftBitR(state[1], 6,7) | ShiftBitR(state[0], 6,6) | ShiftBitR(state[1],14,5) | ShiftBitR(state[0],14,4) |
+             ShiftBitR(state[1],22,3) | ShiftBitR(state[0],22,2) | ShiftBitR(state[1],30,1) | ShiftBitR(state[0],30,0);
+
+    out[2] = ShiftBitR(state[1], 5,7) | ShiftBitR(state[0], 5,6) | ShiftBitR(state[1],13,5) | ShiftBitR(state[0],13,4) |
+             ShiftBitR(state[1],21,3) | ShiftBitR(state[0],21,2) | ShiftBitR(state[1],29,1) | ShiftBitR(state[0],29,0);
+
+    out[3] = ShiftBitR(state[1], 4,7) | ShiftBitR(state[0], 4,6) | ShiftBitR(state[1],12,5) | ShiftBitR(state[0],12,4) |
+             ShiftBitR(state[1],20,3) | ShiftBitR(state[0],20,2) | ShiftBitR(state[1],28,1) | ShiftBitR(state[0],28,0);
+
+    out[4] = ShiftBitR(state[1], 3,7) | ShiftBitR(state[0], 3,6) | ShiftBitR(state[1],11,5) | ShiftBitR(state[0],11,4) |
+             ShiftBitR(state[1],19,3) | ShiftBitR(state[0],19,2) | ShiftBitR(state[1],27,1) | ShiftBitR(state[0],27,0);
+
+    out[5] = ShiftBitR(state[1], 2,7) | ShiftBitR(state[0], 2,6) | ShiftBitR(state[1],10,5) | ShiftBitR(state[0],10,4) |
+             ShiftBitR(state[1],18,3) | ShiftBitR(state[0],18,2) | ShiftBitR(state[1],26,1) | ShiftBitR(state[0],26,0);
+
+    out[6] = ShiftBitR(state[1], 1,7) | ShiftBitR(state[0], 1,6) | ShiftBitR(state[1], 9,5) | ShiftBitR(state[0],9,4) |
+             ShiftBitR(state[1],17,3) | ShiftBitR(state[0],17,2) | ShiftBitR(state[1],25,1) | ShiftBitR(state[0],25,0);
+
+    out[7] = ShiftBitR(state[1], 0,7) | ShiftBitR(state[0], 0,6) | ShiftBitR(state[1], 8,5) | ShiftBitR(state[0], 8,4) |
+             ShiftBitR(state[1],16,3) | ShiftBitR(state[0],16,2) | ShiftBitR(state[1],24,1) | ShiftBitR(state[0],24,0);
+}
+
+// This macro converts a 6 bit block with the S-Box row defined as the first and last
+// bits to a 6 bit block with the row defined by the first two bits.
+#define SBOXBIT(a) (((a) & 0x20) | (((a) & 0x1f) >> 1) | (((a) & 0x01) << 4))
+
+/**************************** VARIABLES *****************************/
+static const uint8_t sbox1[64] =
+{
+    14,  4,  13,  1,   2, 15,  11,  8,   3, 10,   6, 12,   5,  9,   0,  7,
+     0, 15,   7,  4,  14,  2,  13,  1,  10,  6,  12, 11,   9,  5,   3,  8,
+     4,  1,  14,  8,  13,  6,   2, 11,  15, 12,   9,  7,   3, 10,   5,  0,
+    15, 12,   8,  2,   4,  9,   1,  7,   5, 11,   3, 14,  10,  0,   6, 13
+};
+static const uint8_t sbox2[64] =
+{
+    15,  1,   8, 14,   6, 11,   3,  4,   9,  7,   2, 13,  12,  0,   5, 10,
+     3, 13,   4,  7,  15,  2,   8, 14,  12,  0,   1, 10,   6,  9,  11,  5,
+     0, 14,   7, 11,  10,  4,  13,  1,   5,  8,  12,  6,   9,  3,   2, 15,
+    13,  8,  10,  1,   3, 15,   4,  2,  11,  6,   7, 12,   0,  5,  14,  9
+};
+static const uint8_t sbox3[64] =
+{
+    10,  0,   9, 14,   6,  3,  15,  5,   1, 13,  12,  7,  11,  4,   2,  8,
+    13,  7,   0,  9,   3,  4,   6, 10,   2,  8,   5, 14,  12, 11,  15,  1,
+    13,  6,   4,  9,   8, 15,   3,  0,  11,  1,   2, 12,   5, 10,  14,  7,
+     1, 10,  13,  0,   6,  9,   8,  7,   4, 15,  14,  3,  11,  5,   2, 12
+};
+static const uint8_t sbox4[64] =
+{
+     7, 13,  14,  3,   0,  6,   9, 10,   1,  2,   8,  5,  11, 12,   4, 15,
+    13,  8,  11,  5,   6, 15,   0,  3,   4,  7,   2, 12,   1, 10,  14,  9,
+    10,  6,   9,  0,  12, 11,   7, 13,  15,  1,   3, 14,   5,  2,   8,  4,
+     3, 15,   0,  6,  10,  1,  13,  8,   9,  4,   5, 11,  12,  7,   2, 14
+};
+static const uint8_t sbox5[64] =
+{
+     2, 12,   4,  1,   7, 10,  11,  6,   8,  5,   3, 15,  13,  0,  14,  9,
+    14, 11,   2, 12,   4,  7,  13,  1,   5,  0,  15, 10,   3,  9,   8,  6,
+     4,  2,   1, 11,  10, 13,   7,  8,  15,  9,  12,  5,   6,  3,   0, 14,
+    11,  8,  12,  7,   1, 14,   2, 13,   6, 15,   0,  9,  10,  4,   5,  3
+};
+static const uint8_t sbox6[64] =
+{
+    12,  1,  10, 15,   9,  2,   6,  8,   0, 13,   3,  4,  14,  7,   5, 11,
+    10, 15,   4,  2,   7, 12,   9,  5,   6,  1,  13, 14,   0, 11,   3,  8,
+     9, 14,  15,  5,   2,  8,  12,  3,   7,  0,   4, 10,   1, 13,  11,  6,
+     4,  3,   2, 12,   9,  5,  15, 10,  11, 14,   1,  7,   6,  0,   8, 13
+};
+static const uint8_t sbox7[64] =
+{
+     4, 11,   2, 14,  15,  0,   8, 13,   3, 12,   9,  7,   5, 10,   6,  1,
+    13,  0,  11,  7,   4,  9,   1, 10,  14,  3,   5, 12,   2, 15,   8,  6,
+     1,  4,  11, 13,  12,  3,   7, 14,  10, 15,   6,  8,   0,  5,   9,  2,
+     6, 11,  13,  8,   1,  4,  10,  7,   9,  5,   0, 15,  14,  2,   3, 12
+};
+static const uint8_t sbox8[64] =
+{
+    13,  2,   8,  4,   6, 15,  11,  1,  10,  9,   3, 14,   5,  0,  12,  7,
+     1, 15,  13,  8,  10,  3,   7,  4,  12,  5,   6, 11,   0, 14,   9,  2,
+     7, 11,   4,  1,   9, 12,  14,  2,   0,  6,  10, 13,  15,  3,   5,  8,
+     2,  1,  14,  7,   4, 10,   8, 13,  15, 12,   9,  0,   3,  5,   6, 11
+};
+
+uint32_t DES::F(uint32_t state, const SubKey & key)
+{
+    uint8_t lrgstate[6]; //,i;
+
+    // Expansion Permutation
+    uint32_t t1 = ShiftBitL(state,31, 0) | ((state & 0xf0000000) >>  1) | ShiftBitL(state, 4, 5) |
+                  ShiftBitL(state, 3, 6) | ((state & 0x0f000000) >>  3) | ShiftBitL(state, 8,11) |
+                  ShiftBitL(state, 7,12) | ((state & 0x00f00000) >>  5) | ShiftBitL(state,12,17) |
+                  ShiftBitL(state,11,18) | ((state & 0x000f0000) >>  7) | ShiftBitL(state,16,23);
+
+    uint32_t t2 = ShiftBitL(state,15, 0) | ((state & 0x0000f000) << 15) | ShiftBitL(state,20, 5) |
+                  ShiftBitL(state,19, 6) | ((state & 0x00000f00) << 13) | ShiftBitL(state,24,11) |
+                  ShiftBitL(state,23,12) | ((state & 0x000000f0) << 11) | ShiftBitL(state,28,17) |
+                  ShiftBitL(state,27,18) | ((state & 0x0000000f) <<  9) | ShiftBitL(state, 0,23);
+
+    lrgstate[0] = static_cast<uint8_t>((t1 >> 24) & 0x000000ff);
+    lrgstate[1] = static_cast<uint8_t>((t1 >> 16) & 0x000000ff);
+    lrgstate[2] = static_cast<uint8_t>((t1 >> 8) & 0x000000ff);
+    lrgstate[3] = static_cast<uint8_t>((t2 >> 24) & 0x000000ff);
+    lrgstate[4] = static_cast<uint8_t>((t2 >> 16) & 0x000000ff);
+    lrgstate[5] = static_cast<uint8_t>((t2 >> 8) & 0x000000ff);
+
+    // Key XOR
+    lrgstate[0] ^= key[0];
+    lrgstate[1] ^= key[1];
+    lrgstate[2] ^= key[2];
+    lrgstate[3] ^= key[3];
+    lrgstate[4] ^= key[4];
+    lrgstate[5] ^= key[5];
+
+    // S-Box Permutation
+    state = (sbox1[SBOXBIT(lrgstate[0] >> 2)] << 28) |
+            (sbox2[SBOXBIT(((lrgstate[0] & 0x03) << 4) | (lrgstate[1] >> 4))] << 24) |
+            (sbox3[SBOXBIT(((lrgstate[1] & 0x0f) << 2) | (lrgstate[2] >> 6))] << 20) |
+            (sbox4[SBOXBIT(lrgstate[2] & 0x3f)] << 16) |
+            (sbox5[SBOXBIT(lrgstate[3] >> 2)] << 12) |
+            (sbox6[SBOXBIT(((lrgstate[3] & 0x03) << 4) | (lrgstate[4] >> 4))] << 8) |
+            (sbox7[SBOXBIT(((lrgstate[4] & 0x0f) << 2) | (lrgstate[5] >> 6))] << 4) |
+            sbox8[SBOXBIT(lrgstate[5] & 0x3f)];
+
+    // P-Box Permutation
+    state = ShiftBitL(state,15,0) | ShiftBitL(state,6,1) | ShiftBitL(state,19,2) |
+            ShiftBitL(state,20,3) | ShiftBitL(state,28,4) | ShiftBitL(state,11,5) |
+            ShiftBitL(state,27,6) | ShiftBitL(state,16,7) | ShiftBitL(state,0,8) |
+            ShiftBitL(state,14,9) | ShiftBitL(state,22,10) | ShiftBitL(state,25,11) |
+            ShiftBitL(state,4,12) | ShiftBitL(state,17,13) | ShiftBitL(state,30,14) |
+            ShiftBitL(state,9,15) | ShiftBitL(state,1,16) | ShiftBitL(state,7,17) |
+            ShiftBitL(state,23,18) | ShiftBitL(state,13,19) | ShiftBitL(state,31,20) |
+            ShiftBitL(state,26,21) | ShiftBitL(state,2,22) | ShiftBitL(state,8,23) |
+            ShiftBitL(state,18,24) | ShiftBitL(state,12,25) | ShiftBitL(state,29,26) |
+            ShiftBitL(state,5,27) | ShiftBitL(state,21,28) | ShiftBitL(state,10,29) |
+            ShiftBitL(state,3,30) | ShiftBitL(state,24,31);
+
+    // Return the final state value
+    return(state);
+}
+
+void DES::ProcessBlock(const DataBlock dataIn, DataBlock dataOut)
+{
+    uint32_t state[2];
+
+    IP(state, dataIn);
+
+    for (int idx = 0; idx < 15; ++idx)
+    {
+        uint32_t temp = state[1];
+        state[1] = F(state[1], _keyset[idx]) ^ state[0];
+        state[0] = temp;
     }
+    // Perform the final loop manually as it doesn't switch sides
+    state[0] = F(state[1], _keyset[15]) ^ state[0];
 
-    unsigned char ln[4], rn[4], er[6], ser[4];
-
-    int key_index;
-    for (k=1; k<=16; k++) {
-        memcpy(ln, r, 4);
-
-        memset(er, 0, 6);
-
-        for (i=0; i<48; i++) {
-            shift_size = message_expansion[i];
-            shift_byte = 0x80 >> ((shift_size - 1)%8);
-            shift_byte &= r[(shift_size - 1)/8];
-            shift_byte <<= ((shift_size - 1)%8);
-
-            er[i/8] |= (shift_byte >> i%8);
-        }
-
-        if (mode == DECRYPTION_MODE) {
-            key_index = 17 - k;
-        } else {
-            key_index = k;
-        }
-
-        for (i=0; i<6; i++) {
-            er[i] ^= key_sets[key_index].k[i];
-        }
-
-        unsigned char row, column;
-
-        for (i=0; i<4; i++) {
-            ser[i] = 0;
-        }
-
-        // 0000 0000 0000 0000 0000 0000
-        // rccc crrc cccr rccc crrc cccr
-
-        // Byte 1
-        row = 0;
-        row |= ((er[0] & 0x80) >> 6);
-        row |= ((er[0] & 0x04) >> 2);
-
-        column = 0;
-        column |= ((er[0] & 0x78) >> 3);
-
-        ser[0] |= ((unsigned char)S1[row*16+column] << 4);
-
-        row = 0;
-        row |= (er[0] & 0x02);
-        row |= ((er[1] & 0x10) >> 4);
-
-        column = 0;
-        column |= ((er[0] & 0x01) << 3);
-        column |= ((er[1] & 0xE0) >> 5);
-
-        ser[0] |= (unsigned char)S2[row*16+column];
-
-        // Byte 2
-        row = 0;
-        row |= ((er[1] & 0x08) >> 2);
-        row |= ((er[2] & 0x40) >> 6);
-
-        column = 0;
-        column |= ((er[1] & 0x07) << 1);
-        column |= ((er[2] & 0x80) >> 7);
-
-        ser[1] |= ((unsigned char)S3[row*16+column] << 4);
-
-        row = 0;
-        row |= ((er[2] & 0x20) >> 4);
-        row |= (er[2] & 0x01);
-
-        column = 0;
-        column |= ((er[2] & 0x1E) >> 1);
-
-        ser[1] |= (unsigned char)S4[row*16+column];
-
-        // Byte 3
-        row = 0;
-        row |= ((er[3] & 0x80) >> 6);
-        row |= ((er[3] & 0x04) >> 2);
-
-        column = 0;
-        column |= ((er[3] & 0x78) >> 3);
-
-        ser[2] |= ((unsigned char)S5[row*16+column] << 4);
-
-        row = 0;
-        row |= (er[3] & 0x02);
-        row |= ((er[4] & 0x10) >> 4);
-
-        column = 0;
-        column |= ((er[3] & 0x01) << 3);
-        column |= ((er[4] & 0xE0) >> 5);
-
-        ser[2] |= (unsigned char)S6[row*16+column];
-
-        // Byte 4
-        row = 0;
-        row |= ((er[4] & 0x08) >> 2);
-        row |= ((er[5] & 0x40) >> 6);
-
-        column = 0;
-        column |= ((er[4] & 0x07) << 1);
-        column |= ((er[5] & 0x80) >> 7);
-
-        ser[3] |= ((unsigned char)S7[row*16+column] << 4);
-
-        row = 0;
-        row |= ((er[5] & 0x20) >> 4);
-        row |= (er[5] & 0x01);
-
-        column = 0;
-        column |= ((er[5] & 0x1E) >> 1);
-
-        ser[3] |= (unsigned char)S8[row*16+column];
-
-        for (i=0; i<4; i++) {
-            rn[i] = 0;
-        }
-
-        for (i=0; i<32; i++) {
-            shift_size = right_sub_message_permutation[i];
-            shift_byte = 0x80 >> ((shift_size - 1)%8);
-            shift_byte &= ser[(shift_size - 1)/8];
-            shift_byte <<= ((shift_size - 1)%8);
-
-            rn[i/8] |= (shift_byte >> i%8);
-        }
-
-        for (i=0; i<4; i++) {
-            rn[i] ^= l[i];
-        }
-
-        for (i=0; i<4; i++) {
-            l[i] = ln[i];
-            r[i] = rn[i];
-        }
-    }
-
-    unsigned char pre_end_permutation[8];
-    for (i=0; i<4; i++) {
-        pre_end_permutation[i] = r[i];
-        pre_end_permutation[4+i] = l[i];
-    }
-
-    for (i=0; i<64; i++) {
-        shift_size = final_message_permutation[i];
-        shift_byte = 0x80 >> ((shift_size - 1)%8);
-        shift_byte &= pre_end_permutation[(shift_size - 1)/8];
-        shift_byte <<= ((shift_size - 1)%8);
-
-        processed_piece[i/8] |= (shift_byte >> i%8);
-    }
+    IPInv(state, dataOut);
 }
