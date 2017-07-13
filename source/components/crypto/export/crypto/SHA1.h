@@ -5,11 +5,11 @@
 namespace Crypto
 {
 
-union SHA1WorkspaceBlock;
-
 class SHA1 : public Digest
 {
 public:
+    union WorkspaceBlock;
+
     SHA1();
 
     virtual void Initialize() override;
@@ -17,21 +17,31 @@ public:
     virtual void Process(const uint8_t *data, size_t len) override;
     virtual void Process(const Core::ByteArray & data) override;
     virtual void Finalize() override;
+    virtual size_t GetDigestSize() const override { return DigestSize; }
     virtual Core::ByteArray GetDigest() const override;
 
     virtual OSAL::String ToString() const override;
 
 private:
+    static constexpr size_t DigestSize = 20;
+    static constexpr size_t BlockSize = 64;
+    static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
+    static constexpr size_t WordLength = 32;
+    using Word = uint32_t;
+    static const Word K0;
+    static const Word K1;
+    static const Word K2;
+    static const Word K3;
     // Private SHA-1 transformation
-    void Transform(uint32_t state[5], const uint8_t buffer[64]);
+    void Transform(uint32_t state[DigestSize >> 2], const uint8_t buffer[BlockSize]);
 
-    uint32_t _state[5];
-    uint32_t _count[2];
-    uint8_t _buffer[64];
-    uint8_t _digest[20];
+    Word _state[DigestSize >> 2];
+    uint64_t _bitCount;
+    uint8_t _buffer[BlockSize];
+    uint8_t _digest[DigestSize];
 
-    uint8_t _workspace[64];
-    SHA1WorkspaceBlock * _block; // SHA1 pointer to the byte array above
+    uint8_t _workspace[BlockSize];
+    WorkspaceBlock * _block; // SHA1 pointer to the byte array above
 };
 
 } // namespace Crypto

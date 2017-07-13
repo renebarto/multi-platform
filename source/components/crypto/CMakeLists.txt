@@ -51,42 +51,12 @@ set(COMPONENTS_CRYPTO_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${COMPONENTS_CRYPTO_DEPENDENCIES})
 
-file(GLOB COMPONENTS_CRYPTO_SOURCES_BASE src/*.cpp)
-file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT_BASE export/crypto/*.h)
-file(GLOB COMPONENTS_CRYPTO_INCLUDES_BASE include/crypto/*.h)
+file(GLOB COMPONENTS_CRYPTO_SOURCES src/*.cpp)
+file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT export/crypto/*.h)
+file(GLOB COMPONENTS_CRYPTO_INCLUDES include/crypto/*.h)
 
-if (WIN_MSVC)
-    message(STATUS "Building on Windows with MSVC")
-    file(GLOB COMPONENTS_CRYPTO_SOURCES src/windows/*.cpp)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT export/crypto/windows/*.h)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES include/crypto/windows/*.h)
-elseif(MINGW)
-    message(STATUS "Building on Windows with MinGW")
-    file(GLOB COMPONENTS_CRYPTO_SOURCES src/mingw/*.cpp)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT export/crypto/mingw/*.h)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES include/crypto/mingw/*.h)
-elseif(LINUX)
-    message(STATUS "Building on Linux")
-    file(GLOB COMPONENTS_CRYPTO_SOURCES src/linux/*.cpp)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT export/crypto/linux/*.h)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES include/crypto/linux/*.h)
-elseif(APPLE)
-    message(STATUS "Building on OS X")
-    file(GLOB COMPONENTS_CRYPTO_SOURCES src/darwin/*.cpp)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES_EXPORT export/crypto/darwin/*.h)
-    file(GLOB COMPONENTS_CRYPTO_INCLUDES include/crypto/darwin/*.h)
-else()
-    message(STATUS "Unsupported platform " ${CMAKE_HOST_SYSTEM})
-    _return()
-endif()
-
-set(COMPONENTS_CRYPTO_SOURCES
-    ${COMPONENTS_CRYPTO_SOURCES_BASE}
-    ${COMPONENTS_CRYPTO_SOURCES})
 set(COMPONENTS_CRYPTO_INCLUDES
-    ${COMPONENTS_CRYPTO_INCLUDES_EXPORT_BASE}
     ${COMPONENTS_CRYPTO_INCLUDES_EXPORT}
-    ${COMPONENTS_CRYPTO_INCLUDES_BASE}
     ${COMPONENTS_CRYPTO_INCLUDES})
 
 display_list("Defines                     : " ${COMPONENTS_CRYPTO_DEFINITIONS} )

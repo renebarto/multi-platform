@@ -8,197 +8,197 @@ namespace Crypto {
 namespace Test
 {
 
-    class DESTest
-        : public UnitTestCpp::TestFixture
-    {
-    public:
-        virtual void SetUp();
+class DESTest
+    : public UnitTestCpp::TestFixture
+{
+public:
+    virtual void SetUp();
 
-        virtual void TearDown();
-    };
+    virtual void TearDown();
+};
 
-    void DESTest::SetUp()
-    {
-    }
+void DESTest::SetUp()
+{
+}
 
-    void DESTest::TearDown()
-    {
-    }
+void DESTest::TearDown()
+{
+}
 
-    TEST_FIXTURE(DESTest, Construct)
-    {
-        DES target;
+TEST_FIXTURE(DESTest, Construct)
+{
+    DES target;
 
-        EXPECT_EQ("000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n", target.ToString());
-    }
+    EXPECT_EQ("000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeDecryption1)
-    {
-        DES target;
-        DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        target.Initialize(key, DES::Direction::Decrypt);
+TEST_FIXTURE(DESTest, InitializeDecryption1)
+{
+    DES target;
+    DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Decrypt);
 
-        EXPECT_EQ("000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n", target.ToString());
-    }
+    EXPECT_EQ("000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeDecryption2)
-    {
-        DES target;
-        DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-        target.Initialize(key, DES::Direction::Decrypt);
+TEST_FIXTURE(DESTest, InitializeDecryption2)
+{
+    DES target;
+    DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    target.Initialize(key, Direction::Decrypt);
 
-        EXPECT_EQ("FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n", target.ToString());
-    }
+    EXPECT_EQ("FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeDecryption3)
-    {
-        DES target;
-        DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        target.Initialize(key, DES::Direction::Decrypt);
+TEST_FIXTURE(DESTest, InitializeDecryption3)
+{
+    DES target;
+    DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Decrypt);
 
-        EXPECT_EQ("000000000100\n"
-                      "000000000002\n"
-                      "000000200000\n"
-                      "000000002000\n"
-                      "000000000000\n"
-                      "000000100000\n"
-                      "000000000200\n"
-                      "000000800000\n"
-                      "000000000010\n"
-                      "000000000800\n"
-                      "000000000020\n"
-                      "000000001000\n"
-                      "000000000008\n"
-                      "000000400000\n"
-                      "000000000000\n"
-                      "000000040000\n", target.ToString());
-    }
+    EXPECT_EQ("000000000100\n"
+              "000000000002\n"
+              "000000200000\n"
+              "000000002000\n"
+              "000000000000\n"
+              "000000100000\n"
+              "000000000200\n"
+              "000000800000\n"
+              "000000000010\n"
+              "000000000800\n"
+              "000000000020\n"
+              "000000001000\n"
+              "000000000008\n"
+              "000000400000\n"
+              "000000000000\n"
+              "000000040000\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeEncryption1)
-    {
-        DES target;
-        DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        target.Initialize(key, DES::Direction::Encrypt);
+TEST_FIXTURE(DESTest, InitializeEncryption1)
+{
+    DES target;
+    DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Encrypt);
 
-        EXPECT_EQ("000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n"
-                      "000000000000\n", target.ToString());
-    }
+    EXPECT_EQ("000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n"
+              "000000000000\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeEncryption2)
-    {
-        DES target;
-        DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-        target.Initialize(key, DES::Direction::Encrypt);
+TEST_FIXTURE(DESTest, InitializeEncryption2)
+{
+    DES target;
+    DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    target.Initialize(key, Direction::Encrypt);
 
-        EXPECT_EQ("FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n"
-                      "FFFFFFFFFFFF\n", target.ToString());
-    }
+    EXPECT_EQ("FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n"
+              "FFFFFFFFFFFF\n", target.ToString());
+}
 
-    TEST_FIXTURE(DESTest, InitializeEncryption3)
-    {
-        DES target;
-        DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        target.Initialize(key, DES::Direction::Encrypt);
+TEST_FIXTURE(DESTest, InitializeEncryption3)
+{
+    DES target;
+    DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Encrypt);
 
-        EXPECT_EQ("000000040000\n"
-                      "000000000000\n"
-                      "000000400000\n"
-                      "000000000008\n"
-                      "000000001000\n"
-                      "000000000020\n"
-                      "000000000800\n"
-                      "000000000010\n"
-                      "000000800000\n"
-                      "000000000200\n"
-                      "000000100000\n"
-                      "000000000000\n"
-                      "000000002000\n"
-                      "000000200000\n"
-                      "000000000002\n"
-                      "000000000100\n", target.ToString());
-    }
+    EXPECT_EQ("000000040000\n"
+              "000000000000\n"
+              "000000400000\n"
+              "000000000008\n"
+              "000000001000\n"
+              "000000000020\n"
+              "000000000800\n"
+              "000000000010\n"
+              "000000800000\n"
+              "000000000200\n"
+              "000000100000\n"
+              "000000000000\n"
+              "000000002000\n"
+              "000000200000\n"
+              "000000000002\n"
+              "000000000100\n", target.ToString());
+}
 
-struct TestData
+struct TestDataDES
 {
     DESKey key;
     Core::ByteArray dataDecrypted;
     Core::ByteArray dataEncrypted;
 };
 
-const vector<TestData> TestVectors1 =
+const vector<TestDataDES> TestVectors1 =
 {
     {
         {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -534,16 +534,16 @@ TEST_FIXTURE(DESTest, Process1)
         Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
         Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
         Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
-        target.Initialize(key, DES::Direction::Encrypt);
+        target.Initialize(key, Direction::Encrypt);
         target.Process(dataIn, dataEncrypted);
         EXPECT_EQ(referenceEncrypted, dataEncrypted);
-        target.Initialize(key, DES::Direction::Decrypt);
+        target.Initialize(key, Direction::Decrypt);
         target.Process(dataEncrypted, dataDecrypted);
         EXPECT_EQ(referenceDecrypted, dataDecrypted);
     }
 }
 
-const vector<TestData> TestVectors2 =
+const vector<TestDataDES> TestVectors2 =
 {
     {
         {
@@ -682,6 +682,28 @@ const vector<TestData> TestVectors2 =
             0x16, 0x6B, 0x40, 0xB4, 0x4A, 0xBA, 0x4B, 0xD6,
         },
     },
+    {
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
+        },
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xE7
+        },
+        {
+            0xC9, 0x57, 0x44, 0x25, 0x6A, 0x5E, 0xD3, 0x1D
+        },
+    },
+    {
+        {
+            0x13, 0x34, 0x57, 0x79, 0x9B, 0xBC, 0xDF, 0xF1
+        },
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
+        },
+        {
+            0x85, 0xE8, 0x13, 0x54, 0x0F, 0x0A, 0xB4, 0x05
+        },
+    },
 };
 
 TEST_FIXTURE(DESTest, Process2)
@@ -696,10 +718,487 @@ TEST_FIXTURE(DESTest, Process2)
         Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
         Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
         Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
-        target.Initialize(key, DES::Direction::Encrypt);
+        target.Initialize(key, Direction::Encrypt);
         target.Process(dataIn, dataEncrypted);
         EXPECT_EQ(referenceEncrypted, dataEncrypted);
-        target.Initialize(key, DES::Direction::Decrypt);
+        target.Initialize(key, Direction::Decrypt);
+        target.Process(dataEncrypted, dataDecrypted);
+        EXPECT_EQ(referenceDecrypted, dataDecrypted);
+    }
+}
+
+class TripleDESTest
+    : public UnitTestCpp::TestFixture
+{
+public:
+    virtual void SetUp();
+
+    virtual void TearDown();
+};
+
+void TripleDESTest::SetUp()
+{
+}
+
+void TripleDESTest::TearDown()
+{
+}
+
+TEST_FIXTURE(TripleDESTest, Construct)
+{
+    TripleDES target;
+
+    EXPECT_EQ("BlockCipher 1: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 2: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 3: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeDecryption1)
+{
+    TripleDES target;
+    TripleDESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Decrypt);
+
+    EXPECT_EQ("BlockCipher 1: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 2: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 3: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeDecryption2)
+{
+    TripleDES target;
+    TripleDESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    target.Initialize(key, Direction::Decrypt);
+
+    EXPECT_EQ("BlockCipher 1: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n"
+              "BlockCipher 2: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n"
+              "BlockCipher 3: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeDecryption3)
+{
+    TripleDES target;
+    TripleDESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Decrypt);
+
+    EXPECT_EQ("BlockCipher 1: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 2: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 3: 000000000100\n"
+                             "000000000002\n"
+                             "000000200000\n"
+                             "000000002000\n"
+                             "000000000000\n"
+                             "000000100000\n"
+                             "000000000200\n"
+                             "000000800000\n"
+                             "000000000010\n"
+                             "000000000800\n"
+                             "000000000020\n"
+                             "000000001000\n"
+                             "000000000008\n"
+                             "000000400000\n"
+                             "000000000000\n"
+                             "000000040000\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeEncryption1)
+{
+    TripleDES target;
+    TripleDESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Encrypt);
+
+    EXPECT_EQ("BlockCipher 1: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 2: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 3: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeEncryption2)
+{
+    TripleDES target;
+    TripleDESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    target.Initialize(key, Direction::Encrypt);
+
+    EXPECT_EQ("BlockCipher 1: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n"
+              "BlockCipher 2: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n"
+              "BlockCipher 3: FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n"
+                             "FFFFFFFFFFFF\n\n", target.ToString());
+}
+
+TEST_FIXTURE(TripleDESTest, InitializeEncryption3)
+{
+    TripleDES target;
+    TripleDESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    target.Initialize(key, Direction::Encrypt);
+
+    EXPECT_EQ("BlockCipher 1: 000000040000\n"
+                             "000000000000\n"
+                             "000000400000\n"
+                             "000000000008\n"
+                             "000000001000\n"
+                             "000000000020\n"
+                             "000000000800\n"
+                             "000000000010\n"
+                             "000000800000\n"
+                             "000000000200\n"
+                             "000000100000\n"
+                             "000000000000\n"
+                             "000000002000\n"
+                             "000000200000\n"
+                             "000000000002\n"
+                             "000000000100\n\n"
+              "BlockCipher 2: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n"
+              "BlockCipher 3: 000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n"
+                             "000000000000\n\n", target.ToString());
+}
+
+struct TestDataTripleDES
+{
+    TripleDESKey key;
+    Core::ByteArray dataDecrypted;
+    Core::ByteArray dataEncrypted;
+};
+
+const vector<TestDataTripleDES> TestVectorsTripleDES =
+{
+    {
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+        },
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xE7,
+        },
+        {
+            0xC9, 0x57, 0x44, 0x25, 0x6A, 0x5E, 0xD3, 0x1D,
+        },
+    },
+    {
+        {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+            0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01,
+            0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0x01, 0x23,
+        },
+        {
+            0x54, 0x68, 0x65, 0x20, 0x71, 0x75, 0x66, 0x63,
+        },
+        {
+            0xA8, 0x26, 0xFD, 0x8C, 0xE5, 0x3B, 0x85, 0x5F,
+        },
+    },
+};
+
+TEST_FIXTURE(TripleDESTest, Process)
+{
+    TripleDES target;
+    for (auto testVector : TestVectorsTripleDES)
+    {
+        TripleDESKey key;
+        memcpy(key, testVector.key, TripleDESKeySize);
+        Core::ByteArray dataIn = testVector.dataDecrypted;
+        Core::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
+        Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
+        Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
+        Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
+        target.Initialize(key, Direction::Encrypt);
+        target.Process(dataIn, dataEncrypted);
+        EXPECT_EQ(referenceEncrypted, dataEncrypted);
+        target.Initialize(key, Direction::Decrypt);
         target.Process(dataEncrypted, dataDecrypted);
         EXPECT_EQ(referenceDecrypted, dataDecrypted);
     }

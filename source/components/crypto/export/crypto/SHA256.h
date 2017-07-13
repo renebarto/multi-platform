@@ -1,36 +1,45 @@
 #pragma once
 
-/*********************************************************************
-* Filename:   sha256.h
-* Author:     Brad Conte (brad AT bradconte.com)
-* Copyright:
-* Disclaimer: This code is presented "as is" without any guarantees.
-* Details:    Defines the API for the corresponding SHA1 implementation.
-*********************************************************************/
+#include "crypto/Digest.h"
 
-#ifndef SHA256_H
-#define SHA256_H
+namespace Crypto
+{
 
-/*************************** HEADER FILES ***************************/
-#include <stddef.h>
+    class SHA256 : public Digest
+    {
+    public:
+        union WorkspaceBlock;
 
-/****************************** MACROS ******************************/
-#define SHA256_BLOCK_SIZE 32            // SHA256 outputs a 32 byte digest
+        SHA256();
 
-/**************************** DATA TYPES ****************************/
-typedef unsigned char BYTE;             // 8-bit byte
-typedef unsigned int  WORD;             // 32-bit word, change to "long" for 16-bit machines
+        virtual void Initialize() override;
 
-typedef struct {
-    BYTE data[64];
-    WORD datalen;
-    unsigned long long bitlen;
-    WORD state[8];
-} SHA256_CTX;
+        virtual void Process(const uint8_t *data, size_t len) override;
+        virtual void Process(const Core::ByteArray & data) override;
+        virtual void Finalize() override;
+        virtual size_t GetDigestSize() const override { return DigestSize; }
+        virtual Core::ByteArray GetDigest() const override;
 
-/*********************** FUNCTION DECLARATIONS **********************/
-void sha256_init(SHA256_CTX *ctx);
-void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len);
-void sha256_final(SHA256_CTX *ctx, BYTE hash[]);
+        virtual OSAL::String ToString() const override;
 
-#endif // SHA256_H
+        static constexpr size_t WordLength = 32;
+        using Word = uint32_t;
+
+    private:
+        static constexpr size_t DigestSize = 32;
+        static constexpr size_t BlockSize = 64;
+        static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
+        static const Word K[64];
+            // Private SHA-1 transformation
+        void Transform(uint32_t state[DigestSize >> 2], const uint8_t buffer[BlockSize]);
+
+        Word _state[DigestSize >> 2];
+        uint64_t _bitCount;
+        uint8_t _buffer[BlockSize];
+        uint8_t _digest[DigestSize];
+
+        uint8_t _workspace[BlockSize];
+        WorkspaceBlock * _block; // SHA256 pointer to the byte array above
+    };
+
+} // namespace Crypto

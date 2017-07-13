@@ -12,6 +12,7 @@ class DES
     : public BlockCipher<DESKey>
 {
 public:
+
     DES();
 
     virtual void Initialize(const DESKey & key, Direction direction) override;
@@ -24,20 +25,49 @@ public:
 
     virtual OSAL::String ToString() const override;
 
+    static constexpr size_t BlockSize = 8;
+    using DataBlock = uint8_t[BlockSize];
+    void ProcessBlock(const DataBlock dataIn, DataBlock dataOut);
+
 private:
     static constexpr size_t SubKeySize = 6;
-    static constexpr size_t BlockSize = 8;
     static constexpr size_t NumSubKeys = 16;
     using SubKey = uint8_t[SubKeySize];
     using Keyset = SubKey[NumSubKeys];
-    using DataBlock = uint8_t[BlockSize];
     void IP(uint32_t state[], const uint8_t dataIn[]);
     void IPInv(const uint32_t state[], uint8_t out[]);
     uint32_t F(uint32_t state, const SubKey & key);
 
+    Keyset _keyset;
+};
+
+static constexpr size_t TripleDESKeySize = 3 * DESKeySize;
+using TripleDESKey = uint8_t[TripleDESKeySize];
+
+class TripleDES
+    : public BlockCipher<TripleDESKey>
+{
+public:
+    TripleDES();
+
+    virtual void Initialize(const TripleDESKey & key, Direction direction) override;
+
+    virtual void Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len) override;
+
+    virtual void Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut) override;
+
+    virtual void Finalize() override;
+
+    virtual OSAL::String ToString() const override;
+
+    static constexpr size_t BlockSize = 8;
+    using DataBlock = uint8_t[BlockSize];
     void ProcessBlock(const DataBlock dataIn, DataBlock dataOut);
 
-    Keyset _keyset;
+private:
+    DES _des1;
+    DES _des2;
+    DES _des3;
 };
 
 } // namespace Crypto

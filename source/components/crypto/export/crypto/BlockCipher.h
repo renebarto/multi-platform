@@ -6,15 +6,16 @@
 namespace Crypto
 {
 
+enum Direction
+{
+    Encrypt,
+    Decrypt,
+};
+
 template<class Key>
 class BlockCipher
 {
 public:
-    enum Direction
-    {
-        Encrypt,
-        Decrypt,
-    };
     virtual ~BlockCipher() {}
 
     virtual void Initialize(const Key & key, Direction direction) = 0;
@@ -24,6 +25,7 @@ public:
     virtual void Finalize() = 0;
 
     virtual OSAL::String ToString() const = 0;
+
 };
 
 template<class Key>

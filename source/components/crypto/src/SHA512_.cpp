@@ -32,7 +32,7 @@
 
 //#if defined(MBEDTLS_SHA512_C)
 
-#include "crypto/SHA512.h"
+#include "crypto/SHA512_.h"
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
   #define UL64(x) x##ui64

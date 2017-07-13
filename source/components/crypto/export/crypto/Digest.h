@@ -16,6 +16,7 @@ public:
     virtual void Process(const uint8_t *data, size_t len) = 0;
     virtual void Process(const Core::ByteArray & data) = 0;
     virtual void Finalize() = 0;
+    virtual size_t GetDigestSize() const = 0;
     virtual Core::ByteArray GetDigest() const = 0;
 
     virtual OSAL::String ToString() const = 0;

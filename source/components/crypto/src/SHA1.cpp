@@ -22,39 +22,45 @@
 using namespace std;
 using namespace Crypto;
 
-union Crypto::SHA1WorkspaceBlock
+union Crypto::SHA1::WorkspaceBlock
 {
-    uint8_t c[64];
-    uint32_t l[16];
+    uint8_t c[SHA1::BlockSize];
+    Word l[16];
 };
 
 // Rotate x bits to the left
-#define ROL32(value, bits) (((value)<<(bits))|((value)>>(32-(bits))))
+#define ROTL(value, bits) (((value)<<(bits))|((value)>>(WordLength-(bits))))
 
 #ifdef LITTLE_ENDIAN
+// Swap bytes to for BIG ENDIAN value
 #define SHABLK0(i) (_block->l[i] = \
-            (ROL32(_block->l[i],24) & 0xFF00FF00) | (ROL32(_block->l[i],8) & 0x00FF00FF))
+            (ROTL(_block->l[i],24) & 0xFF00FF00) | (ROTL(_block->l[i],8) & 0x00FF00FF))
 #else
 #define SHABLK0(i) (_block->l[i])
 #endif
 
-#define SHABLK(i) (_block->l[i&15] = ROL32(_block->l[(i+13)&15] ^ _block->l[(i+8)&15] \
-        ^ _block->l[(i+2)&15] ^ _block->l[i&15],1))
+#define SHABLK(i) (_block->l[i&15] = \
+            (ROTL(_block->l[(i+13)&15] ^ _block->l[(i+8)&15] ^ _block->l[(i+2)&15] ^ _block->l[i&15],1)))
 
 // SHA-1 rounds
-#define R0(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK0(i)+0x5A827999+ROL32(v,5); w=ROL32(w,30); }
-#define R1(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK(i)+0x5A827999+ROL32(v,5); w=ROL32(w,30); }
-#define R2(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+0x6ED9EBA1+ROL32(v,5); w=ROL32(w,30); }
-#define R3(v,w,x,y,z,i) { z+=(((w|x)&y)|(w&x))+SHABLK(i)+0x8F1BBCDC+ROL32(v,5); w=ROL32(w,30); }
-#define R4(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+0xCA62C1D6+ROL32(v,5); w=ROL32(w,30); }
+const SHA1::Word SHA1::K0 = 0x5A827999;
+const SHA1::Word SHA1::K1 = 0x6ED9EBA1;
+const SHA1::Word SHA1::K2 = 0x8F1BBCDC;
+const SHA1::Word SHA1::K3 = 0xCA62C1D6;
+
+#define R0(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK0(i)+K0+ROTL(v,5); w=ROTL(w,30); }
+#define R1(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK(i)+K0+ROTL(v,5); w=ROTL(w,30); }
+#define R2(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K1+ROTL(v,5); w=ROTL(w,30); }
+#define R3(v,w,x,y,z,i) { z+=(((w|x)&y)|(w&x))+SHABLK(i)+K2+ROTL(v,5); w=ROTL(w,30); }
+#define R4(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K3+ROTL(v,5); w=ROTL(w,30); }
 
 SHA1::SHA1()
     : _state()
-    , _count()
+    , _bitCount()
     , _buffer()
     , _digest()
     , _workspace()
-    , _block(reinterpret_cast<SHA1WorkspaceBlock *>(_workspace))
+    , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
 {
     Initialize();
 }
@@ -68,8 +74,7 @@ void SHA1::Initialize()
     _state[3] = 0x10325476;
     _state[4] = 0xC3D2E1F0;
 
-    _count[0] = 0;
-    _count[1] = 0;
+    _bitCount = 0;
 
     memset(_digest, 0, sizeof(_digest));
 }
@@ -77,31 +82,34 @@ void SHA1::Initialize()
 // Update the hash value
 void SHA1::Process(const uint8_t *data, size_t len)
 {
-    uint32_t i = 0, j = 0;
 
-    j = (_count[0] >> 3) & 63;
+    uint32_t filledBlock = static_cast<uint32_t>((_bitCount >> 3) & BlockSizeMinusOne);
+                                                            // Calculate bytes mod 64 or bit mod 512
 
-    _count[0] += (len << 3);
-    if (_count[0] < (len << 3))
-        _count[1]++;
+    _bitCount += (static_cast<uint64_t>(len) << 3);         // Add number of bits for this block
+                                                            // (we expect no more than 2^64 bits in total)
 
-    _count[1] += (len >> 29);
-
-    if ((j + len) > 63)
+    uint32_t offset {};
+    if ((filledBlock + len) > BlockSizeMinusOne)            // If total number of bytes crosses 64 (i.e. if we now have a complete 512 bit block)
     {
-        memcpy(&_buffer[j], data, (i = 64 - j));
+        uint32_t spaceLeft = static_cast<uint32_t>(BlockSize - filledBlock);
+                                                            // Space left in block
+        memcpy(&_buffer[filledBlock], data, spaceLeft);
+                                // Fill up block;
         Transform(_state, _buffer);
+                                // Calculate
+        offset += spaceLeft;
 
-        for (; i+63 < len; i += 64)
+        while (offset + BlockSizeMinusOne < len)
         {
-            Transform(_state, &data[i]);
+            Transform(_state, &data[offset]);
+            offset += BlockSize;
         }
 
-        j = 0;
+        filledBlock = 0;
     }
-    else i = 0;
 
-    memcpy(&_buffer[j], &data[i], len - i);
+    memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
 void SHA1::Process(const Core::ByteArray & data)
@@ -111,28 +119,28 @@ void SHA1::Process(const Core::ByteArray & data)
 
 void SHA1::Finalize()
 {
-    uint32_t i = 0;
     uint8_t finalCount[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    for (i = 0; i < sizeof(finalCount); i++)
+    for (size_t i = 0; i < sizeof(finalCount); i++)
         // Endian independent
-        finalCount[i] = static_cast<uint8_t>((_count[(i >= 4 ? 0 : 1)] >> ((3 - (i & 3)) * 8) ) & 255);
+        finalCount[i] = static_cast<uint8_t>((_bitCount >> ((7 - (i & 7)) * 8) ) & 255);
 
-    Process(reinterpret_cast<const uint8_t *>("\200"), 1);
+    Process(reinterpret_cast<const uint8_t *>("\x80"), 1);
 
-    while ((_count[0] & 504) != 448)
-        Process(reinterpret_cast<const uint8_t *>("\0"), 1);
+    while ((_bitCount & 504) != 448)
+        Process(reinterpret_cast<const uint8_t *>("\x00"), 1);
 
     Process(finalCount, 8); // Cause a SHA1Transform()
 
-    for (i = 0; i < 20; i++)
+    for (size_t i = 0; i < 20; i++)
     {
+        // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
         _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
     }
 
-    memset(_buffer, 0, 64);
-    memset(_state, 0, 20);
-    memset(_count, 0, 8);
+    memset(_buffer, 0, BlockSize);
+    memset(_state, 0, DigestSize);
+    _bitCount = 0;
     memset(finalCount, 0, 8);
 
     Transform(_state, _buffer);
@@ -144,18 +152,16 @@ Core::ByteArray SHA1::GetDigest() const
     return digest;
 }
 
-void SHA1::Transform(uint32_t state[5], const uint8_t buffer[64])
+void SHA1::Transform(uint32_t state[5], const uint8_t buffer[BlockSize])
 {
-    uint32_t a = 0, b = 0, c = 0, d = 0, e = 0;
-
-    memcpy(_block, buffer, 64);
+    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
 
     // Copy state[] to working vars
-    a = state[0];
-    b = state[1];
-    c = state[2];
-    d = state[3];
-    e = state[4];
+    Word a = state[0];
+    Word b = state[1];
+    Word c = state[2];
+    Word d = state[3];
+    Word e = state[4];
 
     // 4 rounds of 20 operations each. Loop unrolled.
     R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
@@ -163,16 +169,19 @@ void SHA1::Transform(uint32_t state[5], const uint8_t buffer[64])
     R0(c,d,e,a,b, 8); R0(b,c,d,e,a, 9); R0(a,b,c,d,e,10); R0(e,a,b,c,d,11);
     R0(d,e,a,b,c,12); R0(c,d,e,a,b,13); R0(b,c,d,e,a,14); R0(a,b,c,d,e,15);
     R1(e,a,b,c,d,16); R1(d,e,a,b,c,17); R1(c,d,e,a,b,18); R1(b,c,d,e,a,19);
+
     R2(a,b,c,d,e,20); R2(e,a,b,c,d,21); R2(d,e,a,b,c,22); R2(c,d,e,a,b,23);
     R2(b,c,d,e,a,24); R2(a,b,c,d,e,25); R2(e,a,b,c,d,26); R2(d,e,a,b,c,27);
     R2(c,d,e,a,b,28); R2(b,c,d,e,a,29); R2(a,b,c,d,e,30); R2(e,a,b,c,d,31);
     R2(d,e,a,b,c,32); R2(c,d,e,a,b,33); R2(b,c,d,e,a,34); R2(a,b,c,d,e,35);
     R2(e,a,b,c,d,36); R2(d,e,a,b,c,37); R2(c,d,e,a,b,38); R2(b,c,d,e,a,39);
+
     R3(a,b,c,d,e,40); R3(e,a,b,c,d,41); R3(d,e,a,b,c,42); R3(c,d,e,a,b,43);
     R3(b,c,d,e,a,44); R3(a,b,c,d,e,45); R3(e,a,b,c,d,46); R3(d,e,a,b,c,47);
     R3(c,d,e,a,b,48); R3(b,c,d,e,a,49); R3(a,b,c,d,e,50); R3(e,a,b,c,d,51);
     R3(d,e,a,b,c,52); R3(c,d,e,a,b,53); R3(b,c,d,e,a,54); R3(a,b,c,d,e,55);
     R3(e,a,b,c,d,56); R3(d,e,a,b,c,57); R3(c,d,e,a,b,58); R3(b,c,d,e,a,59);
+
     R4(a,b,c,d,e,60); R4(e,a,b,c,d,61); R4(d,e,a,b,c,62); R4(c,d,e,a,b,63);
     R4(b,c,d,e,a,64); R4(a,b,c,d,e,65); R4(e,a,b,c,d,66); R4(d,e,a,b,c,67);
     R4(c,d,e,a,b,68); R4(b,c,d,e,a,69); R4(a,b,c,d,e,70); R4(e,a,b,c,d,71);

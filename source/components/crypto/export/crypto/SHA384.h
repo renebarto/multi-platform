@@ -5,19 +5,18 @@
 namespace Crypto
 {
 
-union SHA512WorkspaceBlock;
+union SHA384WorkspaceBlock;
 
-class SHA512 : public Digest
+class SHA384 : public Digest
 {
 public:
-    SHA512(size_t requestedDigestSize);
+    SHA384();
 
     virtual void Initialize() override;
 
     virtual void Process(const uint8_t *data, size_t len) override;
     virtual void Process(const Core::ByteArray & data) override;
     virtual void Finalize() override;
-    virtual size_t GetDigestSize() const override { return _requestedDigestSize; }
     virtual Core::ByteArray GetDigest() const override;
 
     virtual OSAL::String ToString() const override;
@@ -29,11 +28,10 @@ private:
     uint32_t _state[8];
     uint32_t _count[2];
     uint8_t _buffer[128];
-    uint8_t _digest[64];
+    uint8_t _digest[48];
 
     uint8_t _workspace[64];
-    SHA512WorkspaceBlock * _block; // SHA512 pointer to the byte array above
-    size_t _requestedDigestSize;
+    SHA384WorkspaceBlock * _block; // SHA384 pointer to the byte array above
 };
 
 } // namespace Crypto

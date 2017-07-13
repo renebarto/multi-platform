@@ -116,9 +116,9 @@ OSAL::String DES::ToString() const
 {
     basic_ostringstream<OSAL::Char> stream;
     stream << hex << uppercase;
-    for (int i = 0; i < NumSubKeys; ++i)
+    for (size_t i = 0; i < NumSubKeys; ++i)
     {
-        for (int j = 0; j < SubKeySize; ++j)
+        for (size_t j = 0; j < SubKeySize; ++j)
         {
             stream << setw(2) << setfill('0') << int(_keyset[i][j]);
         }
@@ -331,4 +331,83 @@ void DES::ProcessBlock(const DataBlock dataIn, DataBlock dataOut)
     state[0] = F(state[1], _keyset[15]) ^ state[0];
 
     IPInv(state, dataOut);
+}
+
+TripleDES::TripleDES()
+    : _des1()
+    , _des2()
+    , _des3()
+{
+
+}
+
+void TripleDES::Initialize(const TripleDESKey & key, Direction direction)
+{
+    DESKey key1 {};
+    DESKey key2 {};
+    DESKey key3 {};
+    if (direction == Direction::Encrypt)
+    {
+        memcpy(key1, &key[0], DESKeySize);
+        memcpy(key2, &key[DESKeySize], DESKeySize);
+        memcpy(key3, &key[2 * DESKeySize], DESKeySize);
+        _des1.Initialize(key1, Direction::Encrypt);
+        _des2.Initialize(key2, Direction::Decrypt);
+        _des3.Initialize(key3, Direction::Encrypt);
+    }
+    else
+    {
+        memcpy(key1, &key[2 * DESKeySize], DESKeySize);
+        memcpy(key2, &key[DESKeySize], DESKeySize);
+        memcpy(key3, &key[0], DESKeySize);
+        _des1.Initialize(key1, Direction::Decrypt);
+        _des2.Initialize(key2, Direction::Encrypt);
+        _des3.Initialize(key3, Direction::Decrypt);
+    }
+}
+
+void TripleDES::Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len)
+{
+    size_t offset = 0;
+    DataBlock blockIn {};
+    DataBlock blockOut {};
+    while (offset < len)
+    {
+        size_t numBytes = (len - offset >= BlockSize) ? BlockSize : len - offset;
+        memcpy(blockIn, dataIn + offset, numBytes);
+        if (numBytes < BlockSize)
+            memset(blockIn + numBytes, 0, BlockSize - numBytes);
+        ProcessBlock(blockIn, blockOut);
+        memcpy(dataOut + offset, blockOut, numBytes);
+        offset += numBytes;
+    }
+}
+
+void TripleDES::Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut)
+{
+    dataOut.Size(dataIn.Size());
+    Process(dataIn.Data(), dataOut.Data(), dataIn.Size());
+}
+
+void TripleDES::Finalize()
+{
+
+}
+
+OSAL::String TripleDES::ToString() const
+{
+    basic_ostringstream<OSAL::Char> stream;
+    stream << "BlockCipher 1: " << _des1.ToString() << endl;
+    stream << "BlockCipher 2: " << _des2.ToString() << endl;
+    stream << "BlockCipher 3: " << _des3.ToString() << endl;
+    return stream.str();
+}
+
+void TripleDES::ProcessBlock(const DataBlock dataIn, DataBlock dataOut)
+{
+    DataBlock dataTemp1;
+    DataBlock dataTemp2;
+    _des1.ProcessBlock(dataIn, dataTemp1);
+    _des2.ProcessBlock(dataTemp1, dataTemp2);
+    _des3.ProcessBlock(dataTemp2, dataOut);
 }
