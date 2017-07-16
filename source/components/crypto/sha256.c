@@ -21,11 +21,25 @@
 #define ROTLEFT(a,b) (((a) << (b)) | ((a) >> (32-(b))))
 #define ROTRIGHT(a,b) (((a) >> (b)) | ((a) << (32-(b))))
 
+// Ch ( x , y , z ) = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
 #define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
+// Maj ( x , y , z ) = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
 #define MAJ(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+//  { 256 }
+// ∑    (x ) = ROTR 2 (x) ⊕ ROTR 13 (x) ⊕ ROTR 22 (x)
+//  0
 #define EP0(x) (ROTRIGHT(x,2) ^ ROTRIGHT(x,13) ^ ROTRIGHT(x,22))
+//  { 256 }
+// ∑    (x ) = ROTR 6 (x) ⊕ ROTR 11 (x) ⊕ ROTR 25 (x)
+//  1
 #define EP1(x) (ROTRIGHT(x,6) ^ ROTRIGHT(x,11) ^ ROTRIGHT(x,25))
+//  { 256 }
+// σ   ( x ) = ROTR 7 (x) ⊕ ROTR 18 (x) ⊕ SHR 3 (x)
+//  0
 #define SIG0(x) (ROTRIGHT(x,7) ^ ROTRIGHT(x,18) ^ ((x) >> 3))
+//  { 256 }
+// σ   ( x ) = ROTR 17 (x) ⊕ ROTR 19 (x) ⊕ SHR 10 (x)
+//  1
 #define SIG1(x) (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
 
 /**************************** VARIABLES *****************************/

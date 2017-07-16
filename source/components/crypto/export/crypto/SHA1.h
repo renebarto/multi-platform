@@ -32,8 +32,6 @@ private:
     static const Word K1;
     static const Word K2;
     static const Word K3;
-    // Private SHA-1 transformation
-    void Transform(uint32_t state[DigestSize >> 2], const uint8_t buffer[BlockSize]);
 
     Word _state[DigestSize >> 2];
     uint64_t _bitCount;
@@ -42,6 +40,7 @@ private:
 
     uint8_t _workspace[BlockSize];
     WorkspaceBlock * _block; // SHA1 pointer to the byte array above
+    void Transform(const uint8_t buffer[BlockSize]);
 };
 
 } // namespace Crypto

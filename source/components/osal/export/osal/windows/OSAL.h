@@ -17,3 +17,7 @@
 #undef max
 #pragma warning(pop)
 
+#define SL32(x) x
+#define UL32(x) x##u
+#define SL64(x) x##i64
+#define UL64(x) x##ui64

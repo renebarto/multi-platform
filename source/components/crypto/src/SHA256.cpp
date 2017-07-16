@@ -1,8 +1,4 @@
-// SHA-1 computation
-
-// 100% free public domain implementation of the SHA-1
-// algorithm by Dominik Reichl <dominik.reichl@t-online.de>
-//
+// SHA-224/256 computation
 //
 // === Test Vectors (from FIPS PUB 180-1) ===
 //
@@ -22,30 +18,50 @@
 using namespace std;
 using namespace Crypto;
 
-union Crypto::SHA256::WorkspaceBlock
+struct Crypto::SHA256Base::WorkspaceBlock
 {
-    uint8_t c[SHA256::BlockSize];
-    uint32_t l[16];
+    Word l[64];
 };
 
-// Rotate x bits to the left
-#define ROTL(value, bits) (((value)<<(bits))|((value)>>(SHA256::WordLength-(bits))))
-#define ROTR(value, bits) (((value)>>(bits))|((value)<<(SHA256::WordLength-(bits))))
-#define SHR(value, bits) ((value)>>(bits))
+/****************************** MACROS ******************************/
+#define ROTLEFT(a,b) (((a) << (b)) | ((a) >> (SHA256Base::WordLength-(b))))
+#define ROTRIGHT(a,b) (((a) >> (b)) | ((a) << (SHA256Base::WordLength-(b))))
 
+// Ch ( x , y , z )     = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
+#define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
+// Maj ( x , y , z )    = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
+#define MAJ(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+//  { 256 }
+// ∑    (x )            = ROTR 2 (x) ⊕ ROTR 13 (x) ⊕ ROTR 22 (x)
+//  0
+#define EP0(x) (ROTRIGHT(x,2) ^ ROTRIGHT(x,13) ^ ROTRIGHT(x,22))
+//  { 256 }
+// ∑    (x )            = ROTR 6 (x) ⊕ ROTR 11 (x) ⊕ ROTR 25 (x)
+//  1
+#define EP1(x) (ROTRIGHT(x,6) ^ ROTRIGHT(x,11) ^ ROTRIGHT(x,25))
+//  { 256 }
+// σ   ( x )            = ROTR 7 (x) ⊕ ROTR 18 (x) ⊕ SHR 3 (x)
+//  0
+#define SIG0(x) (ROTRIGHT(x,7) ^ ROTRIGHT(x,18) ^ ((x) >> 3))
+//  { 256 }
+// σ   ( x )            = ROTR 17 (x) ⊕ ROTR 19 (x) ⊕ SHR 10 (x)
+//  1
+#define SIG1(x) (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
+
+// Wt = Mt                                                  0 <= t <= 15
 #ifdef LITTLE_ENDIAN
 // Swap bytes to for BIG ENDIAN value
-#define SHABLK0(i) (_block->l[i] = \
-            (ROTL(_block->l[i],24) & 0xFF00FF00) | (ROTL(_block->l[i],8) & 0x00FF00FF))
+#define SHABLK0(i) ((ROTLEFT(_block->l[i],24) & 0xFF00FF00) | (ROTLEFT(_block->l[i],8) & 0x00FF00FF))
 #else
 #define SHABLK0(i) (_block->l[i])
 #endif
 
-#define SHABLK(i) (_block->l[i&15] = \
-            (ROTL(_block->l[(i+13)&15] ^ _block->l[(i+8)&15] ^ _block->l[(i+2)&15] ^ _block->l[i&15],1)))
+//                                                          16 <= t <= 79
+// s = t & 0x0000000F
+// W s = ROTL 1 ( W ( s + 13 ) ∧ MASK ⊕ W ( s + 8 ) ∧ MASK ⊕ W ( s + 2 ) ∧ MASK ⊕ W s )
+#define SHABLK(i) (SIG1(_block->l[i-2]) + _block->l[i-7] + SIG0(_block->l[i-15]) + _block->l[i-16])
 
-// SHA-1 rounds
-const SHA256::Word SHA256::K[64] =
+const SHA256Base::Word SHA256Base::K[64] =
 {
     0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
     0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
@@ -57,91 +73,44 @@ const SHA256::Word SHA256::K[64] =
     0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
-static inline SHA256::Word F1(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return (x&(y^z))^z;
-}
-static inline SHA256::Word F2(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return ((x|y)&z)|(x&y);
-}
-static inline SHA256::Word F3(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22);
-}
-static inline SHA256::Word F4(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25);
-}
-static inline SHA256::Word F5(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return ROTR(x, 7) ^ ROTR(x, 18) ^ SHR(x, 3);
-}
-static inline SHA256::Word F6(SHA256::Word x, SHA256::Word y, SHA256::Word z)
-{
-    return ROTR(x, 17) ^ ROTR(x, 19) ^ SHR(x, 10);
-}
-
-SHA256::Word K0 = 0;
-SHA256::Word K1 = 0;
-SHA256::Word K2 = 0;
-SHA256::Word K3 = 0;
-
-#define R0(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK0(i)+K0+ROTL(v,5); w=ROTL(w,30); }
-#define R1(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK(i)+K0+ROTL(v,5); w=ROTL(w,30); }
-#define R2(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K1+ROTL(v,5); w=ROTL(w,30); }
-#define R3(v,w,x,y,z,i) { z+=(((w|x)&y)|(w&x))+SHABLK(i)+K2+ROTL(v,5); w=ROTL(w,30); }
-#define R4(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K3+ROTL(v,5); w=ROTL(w,30); }
-
-SHA256::SHA256()
-    : _state()
-    , _bitCount()
+SHA256Base::SHA256Base()
+    : _bitCount()
     , _buffer()
-    , _digest()
+    , _state()
     , _workspace()
-    , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
+    , _block(new WorkspaceBlock)
 {
-    Initialize();
 }
 
-void SHA256::Initialize()
+SHA256Base::~SHA256Base()
 {
-    // SHA256 initialization constants
-    _state[0] = 0x67452301;
-    _state[1] = 0xEFCDAB89;
-    _state[2] = 0x98BADCFE;
-    _state[3] = 0x10325476;
-    _state[4] = 0xC3D2E1F0;
-
-    _bitCount = 0;
-
-    memset(_digest, 0, sizeof(_digest));
+    delete _block;
 }
 
 // Update the hash value
-void SHA256::Process(const uint8_t *data, size_t len)
+void SHA256Base::Process(const uint8_t *data, size_t len)
 {
     uint32_t filledBlock = static_cast<uint32_t>((_bitCount >> 3) & BlockSizeMinusOne);
-                                                        // Calculate bytes mod 64 or bit mod 512
+    // Calculate bytes mod 64 or bit mod 512
 
     _bitCount += (static_cast<uint64_t>(len) << 3);     // Add number of bits for this block
     // (we expect no more than 2^64 bits in total)
 
     uint32_t offset {};
     if ((filledBlock + len) > BlockSizeMinusOne)        // If total number of bytes crosses 64
-                                                        // (i.e. if we now have a complete 512 bit block)
+        // (i.e. if we now have a complete 512 bit block)
     {
         uint32_t spaceLeft = static_cast<uint32_t>(BlockSize - filledBlock);
-                                                        // Space left in block
+        // Space left in block
         memcpy(&_buffer[filledBlock], data, spaceLeft);
         // Fill up block;
-        Transform(_state, _buffer);
+        Transform(_buffer);
         // Calculate
         offset += spaceLeft;
 
         while (offset + BlockSizeMinusOne < len)
         {
-            Transform(_state, &data[offset]);
+            Transform(&data[offset]);
             offset += BlockSize;
         }
 
@@ -151,89 +120,180 @@ void SHA256::Process(const uint8_t *data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void SHA256::Process(const Core::ByteArray & data)
+void SHA256Base::Process(const Core::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
 
-void SHA256::Finalize()
+void SHA256Base::Finalize()
 {
-    uint32_t i = 0;
+    // For _bitCount into a 64 bit number
     uint8_t finalCount[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    for (i = 0; i < sizeof(finalCount); i++)
+    for (size_t i = 0; i < sizeof(finalCount); i++)
         // Endian independent
         finalCount[i] = static_cast<uint8_t>((_bitCount >> ((7 - (i & 7)) * 8) ) & 255);
 
+    // Suppose that the length of the message, M, is l bits. Append the bit “1” to the end of the
+    // message, followed by k zero bits, where k is the smallest, non-negative solution to the equation
+    // l + 1 + k ≡ 448 mod 512 . Then append the 64-bit block that is equal to the number l expressed
+    // using a binary representation.
+    // A "1" bit followed by 7 "0" bits
     Process(reinterpret_cast<const uint8_t *>("\x80"), 1);
 
+    // Fill up to 448 bits with "0" bits
     while ((_bitCount & 504) != 448)
         Process(reinterpret_cast<const uint8_t *>("\x00"), 1);
 
-    Process(finalCount, 8); // Cause a SHA256Transform()
+    // Add l = _bitCount as 64 bit integer
+    Process(finalCount, sizeof(finalCount));
 
-    for (i = 0; i < 20; i++)
+    memset(finalCount, 0, sizeof(finalCount));
+}
+
+void SHA256Base::Transform(const uint8_t buffer[BlockSize])
+{
+    memset(_block, 0, sizeof(WorkspaceBlock::l));
+    memcpy(_block, buffer, BlockSize);
+
+    // Copy state[] to working vars
+    Word a = _state[0];
+    Word b = _state[1];
+    Word c = _state[2];
+    Word d = _state[3];
+    Word e = _state[4];
+    Word f = _state[5];
+    Word g = _state[6];
+    Word h = _state[7];
+
+    for (size_t t = 0; t < 16; ++t)
+        _block->l[t] = SHABLK0(t);
+    for (size_t t = 16; t < 64; ++t)
+        _block->l[t] = SHABLK(t);
+    for (size_t t = 0; t < 63; ++t)
+    {
+        Word T1 = h + EP1(e) + CH(e, f, g) + K[t] + _block->l[t];
+        Word T2 = EP0(a) + MAJ (a, b, c);
+        h = g;
+        g = f;
+        f = e;
+        e = d + T1;
+        d = c;
+        c = b;
+        b = a;
+        a = T1 + T2;
+    }
+
+    // Add the working vars back into state[]
+    _state[0] += a;
+    _state[1] += b;
+    _state[2] += c;
+    _state[3] += d;
+    _state[4] += e;
+    _state[5] += f;
+    _state[6] += g;
+    _state[7] += h;
+}
+
+SHA224::SHA224()
+    : _digest()
+{
+    Initialize();
+}
+
+void SHA224::Initialize()
+{
+    // SHA224 initialization constants
+    _state[0] = 0xc1059ed8;
+    _state[1] = 0x367cd507;
+    _state[2] = 0x3070dd17;
+    _state[3] = 0xf70e5939;
+    _state[4] = 0xffc00b31;
+    _state[5] = 0x68581511;
+    _state[6] = 0x64f98fa7;
+    _state[7] = 0xbefa4fa4;
+    _bitCount = 0;
+
+    memset(_digest, 0, sizeof(_digest));
+}
+
+void SHA224::Finalize()
+{
+    SHA256Base::Finalize();
+    for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
         _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
-    memset(_state, 0, 20);
+    memset(_state, 0, sizeof(_state));
     _bitCount = 0;
-    memset(finalCount, 0, 8);
 
-    Transform(_state, _buffer);
+    Transform(_buffer);
 }
 
-Core::ByteArray SHA256::GetDigest() const
+Core::ByteArray SHA224::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 
-void SHA256::Transform(uint32_t state[5], const uint8_t buffer[BlockSize])
+OSAL::String SHA224::ToString() const
 {
-    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
+    basic_ostringstream<OSAL::Char> stream;
 
-    // Copy state[] to working vars
-    uint32_t a = state[0];
-    uint32_t b = state[1];
-    uint32_t c = state[2];
-    uint32_t d = state[3];
-    uint32_t e = state[4];
+    for (size_t i = 0; i < sizeof(_digest); ++i)
+    {
+        stream << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(_digest[i]);
+    }
+    return stream.str();
+}
 
-    // 4 rounds of 20 operations each. Loop unrolled.
-    R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
-    R0(b,c,d,e,a, 4); R0(a,b,c,d,e, 5); R0(e,a,b,c,d, 6); R0(d,e,a,b,c, 7);
-    R0(c,d,e,a,b, 8); R0(b,c,d,e,a, 9); R0(a,b,c,d,e,10); R0(e,a,b,c,d,11);
-    R0(d,e,a,b,c,12); R0(c,d,e,a,b,13); R0(b,c,d,e,a,14); R0(a,b,c,d,e,15);
-    R1(e,a,b,c,d,16); R1(d,e,a,b,c,17); R1(c,d,e,a,b,18); R1(b,c,d,e,a,19);
+SHA256::SHA256()
+    : _digest()
+{
+    Initialize();
+}
 
-    R2(a,b,c,d,e,20); R2(e,a,b,c,d,21); R2(d,e,a,b,c,22); R2(c,d,e,a,b,23);
-    R2(b,c,d,e,a,24); R2(a,b,c,d,e,25); R2(e,a,b,c,d,26); R2(d,e,a,b,c,27);
-    R2(c,d,e,a,b,28); R2(b,c,d,e,a,29); R2(a,b,c,d,e,30); R2(e,a,b,c,d,31);
-    R2(d,e,a,b,c,32); R2(c,d,e,a,b,33); R2(b,c,d,e,a,34); R2(a,b,c,d,e,35);
-    R2(e,a,b,c,d,36); R2(d,e,a,b,c,37); R2(c,d,e,a,b,38); R2(b,c,d,e,a,39);
+void SHA256::Initialize()
+{
+    // SHA256 initialization constants
+    _state[0] = 0x6a09e667;
+    _state[1] = 0xbb67ae85;
+    _state[2] = 0x3c6ef372;
+    _state[3] = 0xa54ff53a;
+    _state[4] = 0x510e527f;
+    _state[5] = 0x9b05688c;
+    _state[6] = 0x1f83d9ab;
+    _state[7] = 0x5be0cd19;
 
-    R3(a,b,c,d,e,40); R3(e,a,b,c,d,41); R3(d,e,a,b,c,42); R3(c,d,e,a,b,43);
-    R3(b,c,d,e,a,44); R3(a,b,c,d,e,45); R3(e,a,b,c,d,46); R3(d,e,a,b,c,47);
-    R3(c,d,e,a,b,48); R3(b,c,d,e,a,49); R3(a,b,c,d,e,50); R3(e,a,b,c,d,51);
-    R3(d,e,a,b,c,52); R3(c,d,e,a,b,53); R3(b,c,d,e,a,54); R3(a,b,c,d,e,55);
-    R3(e,a,b,c,d,56); R3(d,e,a,b,c,57); R3(c,d,e,a,b,58); R3(b,c,d,e,a,59);
+    _bitCount = 0;
 
-    R4(a,b,c,d,e,60); R4(e,a,b,c,d,61); R4(d,e,a,b,c,62); R4(c,d,e,a,b,63);
-    R4(b,c,d,e,a,64); R4(a,b,c,d,e,65); R4(e,a,b,c,d,66); R4(d,e,a,b,c,67);
-    R4(c,d,e,a,b,68); R4(b,c,d,e,a,69); R4(a,b,c,d,e,70); R4(e,a,b,c,d,71);
-    R4(d,e,a,b,c,72); R4(c,d,e,a,b,73); R4(b,c,d,e,a,74); R4(a,b,c,d,e,75);
-    R4(e,a,b,c,d,76); R4(d,e,a,b,c,77); R4(c,d,e,a,b,78); R4(b,c,d,e,a,79);
+    memset(_digest, 0, sizeof(_digest));
+}
 
-    // Add the working vars back into state[]
-    state[0] += a;
-    state[1] += b;
-    state[2] += c;
-    state[3] += d;
-    state[4] += e;
+void SHA256::Finalize()
+{
+    SHA256Base::Finalize();
+    for (size_t i = 0; i < DigestSize; i++)
+    {
+        // Convert 32 bit integers to digest bytes in BIG ENDIAN form
+        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+    }
+
+    memset(_buffer, 0, BlockSize);
+    memset(_state, 0, sizeof(_state));
+    _bitCount = 0;
+
+    Transform(_buffer);
+}
+
+Core::ByteArray SHA256::GetDigest() const
+{
+    Core::ByteArray digest(_digest, sizeof(_digest));
+
+    return digest;
 }
 
 OSAL::String SHA256::ToString() const

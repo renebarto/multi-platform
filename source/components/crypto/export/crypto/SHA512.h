@@ -4,36 +4,125 @@
 
 namespace Crypto
 {
+    class SHA512Base : public Digest
+    {
+    public:
+        union WorkspaceBlock;
 
-union SHA512WorkspaceBlock;
+        SHA512Base();
 
-class SHA512 : public Digest
-{
-public:
-    SHA512(size_t requestedDigestSize);
+        virtual void Process(const uint8_t *data, size_t len) override;
+        virtual void Process(const Core::ByteArray & data) override;
+        virtual void Finalize() override;
 
-    virtual void Initialize() override;
+        virtual size_t GetDigestSize() const = 0;
+        virtual Core::ByteArray GetDigest() const = 0;
 
-    virtual void Process(const uint8_t *data, size_t len) override;
-    virtual void Process(const Core::ByteArray & data) override;
-    virtual void Finalize() override;
-    virtual size_t GetDigestSize() const override { return _requestedDigestSize; }
-    virtual Core::ByteArray GetDigest() const override;
+        virtual OSAL::String ToString() const = 0;
 
-    virtual OSAL::String ToString() const override;
+        static constexpr size_t WordLength = 64;
+        using Word = uint64_t;
 
-private:
-    // Private SHA-1 transformation
-    void Transform(uint32_t state[5], const uint8_t buffer[64]);
+    protected:
+        static constexpr size_t BlockSize = 128;
+        static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
+        static const Word K[80];
 
-    uint32_t _state[8];
-    uint32_t _count[2];
-    uint8_t _buffer[128];
-    uint8_t _digest[64];
+        uint64_t _bitCount;
+        uint8_t _buffer[BlockSize];
 
-    uint8_t _workspace[64];
-    SHA512WorkspaceBlock * _block; // SHA512 pointer to the byte array above
-    size_t _requestedDigestSize;
-};
+        uint8_t _workspace[BlockSize];
+        WorkspaceBlock * _block; // SHA256 pointer to the byte array above
+
+        virtual void Transform(const uint8_t buffer[BlockSize]) = 0;
+    };
+
+    class SHA384 : public SHA512Base
+    {
+    public:
+        SHA384();
+
+        virtual void Initialize() override;
+        virtual void Finalize() override;
+
+        virtual size_t GetDigestSize() const override { return DigestSize; }
+        virtual Core::ByteArray GetDigest() const override;
+
+        virtual OSAL::String ToString() const override;
+
+    private:
+        static constexpr size_t DigestSize = 48;
+
+        Word _state[DigestSize >> 2];
+        uint8_t _digest[DigestSize];
+
+        void Transform(const uint8_t buffer[BlockSize]);
+    };
+
+    class SHA512 : public SHA512Base
+    {
+    public:
+        SHA512();
+
+        virtual void Initialize() override;
+        virtual void Finalize() override;
+
+        virtual size_t GetDigestSize() const override { return DigestSize; }
+        virtual Core::ByteArray GetDigest() const override;
+
+        virtual OSAL::String ToString() const override;
+
+    private:
+        static constexpr size_t DigestSize = 64;
+
+        Word _state[DigestSize >> 2];
+        uint8_t _digest[DigestSize];
+
+        void Transform(const uint8_t buffer[BlockSize]);
+    };
+
+    class SHA512_224 : public SHA512Base
+    {
+    public:
+        SHA512_224();
+
+        virtual void Initialize() override;
+        virtual void Finalize() override;
+
+        virtual size_t GetDigestSize() const override { return DigestSize; }
+        virtual Core::ByteArray GetDigest() const override;
+
+        virtual OSAL::String ToString() const override;
+
+    private:
+        static constexpr size_t DigestSize = 28;
+
+        Word _state[DigestSize >> 2];
+        uint8_t _digest[DigestSize];
+
+        void Transform(const uint8_t buffer[BlockSize]);
+    };
+
+    class SHA512_256 : public SHA512Base
+    {
+    public:
+        SHA512_256();
+
+        virtual void Initialize() override;
+        virtual void Finalize() override;
+
+        virtual size_t GetDigestSize() const override { return DigestSize; }
+        virtual Core::ByteArray GetDigest() const override;
+
+        virtual OSAL::String ToString() const override;
+
+    private:
+        static constexpr size_t DigestSize = 32;
+
+        Word _state[DigestSize >> 2];
+        uint8_t _digest[DigestSize];
+
+        void Transform(const uint8_t buffer[BlockSize]);
+    };
 
 } // namespace Crypto
