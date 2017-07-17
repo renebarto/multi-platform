@@ -7,7 +7,7 @@ namespace Crypto
     class SHA512Base : public Digest
     {
     public:
-        union WorkspaceBlock;
+        struct WorkspaceBlock;
 
         SHA512Base();
 
@@ -22,19 +22,26 @@ namespace Crypto
 
         static constexpr size_t WordLength = 64;
         using Word = uint64_t;
+        static const Word K[80];
+
+        void DumpState();
+        static void DumpState(size_t t, Word a, Word b, Word c, Word d, Word e, Word f, Word g, Word h);
+        static void DumpBlock(WorkspaceBlock * block);
 
     protected:
         static constexpr size_t BlockSize = 128;
         static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
-        static const Word K[80];
+        static constexpr size_t StateSize = 8;
 
-        uint64_t _bitCount;
+        uint64_t _bitCountL;
+        uint64_t _bitCountH;
         uint8_t _buffer[BlockSize];
 
+        Word _state[StateSize];
         uint8_t _workspace[BlockSize];
         WorkspaceBlock * _block; // SHA256 pointer to the byte array above
 
-        virtual void Transform(const uint8_t buffer[BlockSize]) = 0;
+        void Transform(const uint8_t buffer[BlockSize]);
     };
 
     class SHA384 : public SHA512Base
@@ -52,11 +59,7 @@ namespace Crypto
 
     private:
         static constexpr size_t DigestSize = 48;
-
-        Word _state[DigestSize >> 2];
         uint8_t _digest[DigestSize];
-
-        void Transform(const uint8_t buffer[BlockSize]);
     };
 
     class SHA512 : public SHA512Base
@@ -74,11 +77,7 @@ namespace Crypto
 
     private:
         static constexpr size_t DigestSize = 64;
-
-        Word _state[DigestSize >> 2];
         uint8_t _digest[DigestSize];
-
-        void Transform(const uint8_t buffer[BlockSize]);
     };
 
     class SHA512_224 : public SHA512Base
@@ -96,11 +95,7 @@ namespace Crypto
 
     private:
         static constexpr size_t DigestSize = 28;
-
-        Word _state[DigestSize >> 2];
         uint8_t _digest[DigestSize];
-
-        void Transform(const uint8_t buffer[BlockSize]);
     };
 
     class SHA512_256 : public SHA512Base
@@ -118,11 +113,7 @@ namespace Crypto
 
     private:
         static constexpr size_t DigestSize = 32;
-
-        Word _state[DigestSize >> 2];
         uint8_t _digest[DigestSize];
-
-        void Transform(const uint8_t buffer[BlockSize]);
     };
 
 } // namespace Crypto

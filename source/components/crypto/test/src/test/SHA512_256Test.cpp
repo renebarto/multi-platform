@@ -1,39 +1,39 @@
 #include <unit-test-c++/UnitTestC++.h>
 
-#include <crypto/SHA256.h>
+#include <crypto/SHA512.h>
 
 using namespace std;
 
 namespace Crypto {
 namespace Test {
 
-class SHA256Test : public UnitTestCpp::TestFixture
+class SHA512_256Test : public UnitTestCpp::TestFixture
 {
 public:
     virtual void SetUp();
     virtual void TearDown();
 };
 
-void SHA256Test::SetUp()
+void SHA512_256Test::SetUp()
 {
 }
 
-void SHA256Test::TearDown()
+void SHA512_256Test::TearDown()
 {
 }
 
-TEST_FIXTURE(SHA256Test, Construct)
+TEST_FIXTURE(SHA512_256Test, Construct)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessNoFinalize_Case2)
+TEST_FIXTURE(SHA512_256Test, ProcessNoFinalize_Case2)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
@@ -41,44 +41,44 @@ TEST_FIXTURE(SHA256Test, ProcessNoFinalize_Case2)
     EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessCase1)
+TEST_FIXTURE(SHA512_256Test, ProcessCase1)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected = {
-        0XE3, 0XB0, 0XC4, 0X42, 0X98, 0XFC, 0X1C, 0X14,
-        0X9A, 0XFB, 0XF4, 0XC8, 0X99, 0X6F, 0XB9, 0X24,
-        0X27, 0XAE, 0X41, 0XE4, 0X64, 0X9B, 0X93, 0X4C,
-        0XA4, 0X95, 0X99, 0X1B, 0X78, 0X52, 0XB8, 0X55,
+        0xC6, 0x72, 0xB8, 0xD1, 0xEF, 0x56, 0xED, 0x28,
+        0xAB, 0x87, 0xC3, 0x62, 0x2C, 0x51, 0x14, 0x06,
+        0x9B, 0xDD, 0x3A, 0xD7, 0xB8, 0xF9, 0x73, 0x74,
+        0x98, 0xD0, 0xC0, 0x1E, 0xCE, 0xF0, 0x96, 0x7A,
     };
     uint8_t input[0];
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855", target.ToString());
+    EXPECT_EQ("C672B8D1EF56ED28AB87C3622C5114069BDD3AD7B8F9737498D0C01ECEF0967A", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessCase2)
+TEST_FIXTURE(SHA512_256Test, ProcessCase2)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected = {
-        0XBA, 0X78, 0X16, 0XBF, 0X8F, 0X01, 0XCF, 0XEA,
-        0X41, 0X41, 0X40, 0XDE, 0X5D, 0XAE, 0X22, 0X23,
-        0XB0, 0X03, 0X61, 0XA3, 0X96, 0X17, 0X7A, 0X9C,
-        0XB4, 0X10, 0XFF, 0X61, 0XF2, 0X00, 0X15, 0XAD,
+        0x53, 0x04, 0x8E, 0x26, 0x81, 0x94, 0x1E, 0xF9,
+        0x9B, 0x2E, 0x29, 0xB7, 0x6B, 0x4C, 0x7D, 0xAB,
+        0xE4, 0xC2, 0xD0, 0xC6, 0x34, 0xFC, 0x6D, 0x46,
+        0xE0, 0xE2, 0xF1, 0x31, 0x07, 0xE7, 0xAF, 0x23,
     };
     uint8_t input[3];
     memcpy(input, "abc", sizeof(input));
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD", target.ToString());
+    EXPECT_EQ("53048E2681941EF99B2E29B76B4C7DABE4C2D0C634FC6D46E0E2F13107E7AF23", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessResetCase2)
+TEST_FIXTURE(SHA512_256Test, ProcessResetCase2)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected(target.GetDigestSize());
     uint8_t input[3];
@@ -90,51 +90,51 @@ TEST_FIXTURE(SHA256Test, ProcessResetCase2)
     EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessCase3)
+TEST_FIXTURE(SHA512_256Test, ProcessCase3)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected = {
-        0x24, 0x8D, 0x6A, 0x61, 0xD2, 0x06, 0x38, 0xB8,
-        0xE5, 0xC0, 0x26, 0x93, 0x0C, 0x3E, 0x60, 0x39,
-        0xA3, 0x3C, 0xE4, 0x59, 0x64, 0xFF, 0x21, 0x67,
-        0xF6, 0xEC, 0xED, 0xD4, 0x19, 0xDB, 0x06, 0xC1,
+        0xBD, 0xE8, 0xE1, 0xF9, 0xF1, 0x9B, 0xB9, 0xFD,
+        0x34, 0x06, 0xC9, 0x0E, 0xC6, 0xBC, 0x47, 0xBD,
+        0x36, 0xD8, 0xAD, 0xA9, 0xF1, 0x18, 0x80, 0xDB,
+        0xC8, 0xA2, 0x2A, 0x70, 0x78, 0xB6, 0xA4, 0x61,
     };
     uint8_t input[56];
     memcpy(input, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", sizeof(input));
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1", target.ToString());
+    EXPECT_EQ("BDE8E1F9F19BB9FD3406C90EC6BC47BD36D8ADA9F11880DBC8A22A7078B6A461", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessCase4)
+TEST_FIXTURE(SHA512_256Test, ProcessCase4)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected = {
-        0xCF, 0x5B, 0x16, 0xA7, 0x78, 0xAF, 0x83, 0x80,
-        0x03, 0x6C, 0xE5, 0x9E, 0x7B, 0x04, 0x92, 0x37,
-        0x0B, 0x24, 0x9B, 0x11, 0xE8, 0xF0, 0x7A, 0x51,
-        0xAF, 0xAC, 0x45, 0x03, 0x7A, 0xFE, 0xE9, 0xD1,
+        0x39, 0x28, 0xE1, 0x84, 0xFB, 0x86, 0x90, 0xF8,
+        0x40, 0xDA, 0x39, 0x88, 0x12, 0x1D, 0x31, 0xBE,
+        0x65, 0xCB, 0x9D, 0x3E, 0xF8, 0x3E, 0xE6, 0x14,
+        0x6F, 0xEA, 0xC8, 0x61, 0xE1, 0x9B, 0x56, 0x3A,
     };
     uint8_t input[112];
     memcpy(input, "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", sizeof(input));
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("CF5B16A778AF8380036CE59E7B0492370B249B11E8F07A51AFAC45037AFEE9D1", target.ToString());
+    EXPECT_EQ("3928E184FB8690F840DA3988121D31BE65CB9D3EF83EE6146FEAC861E19B563A", target.ToString());
 }
 
-TEST_FIXTURE(SHA256Test, ProcessCase5)
+TEST_FIXTURE(SHA512_256Test, ProcessCase5)
 {
-    SHA256 target;
+    SHA512_256 target;
 
     Core::ByteArray expected = {
-        0xCD, 0xC7, 0x6E, 0x5C, 0x99, 0x14, 0xFB, 0x92,
-        0x81, 0xA1, 0xC7, 0xE2, 0x84, 0xD7, 0x3E, 0x67,
-        0xF1, 0x80, 0x9A, 0x48, 0xA4, 0x97, 0x20, 0x0E,
-        0x04, 0x6D, 0x39, 0xCC, 0xC7, 0x11, 0x2C, 0xD0,
+        0x9A, 0x59, 0xA0, 0x52, 0x93, 0x01, 0x87, 0xA9,
+        0x70, 0x38, 0xCA, 0xE6, 0x92, 0xF3, 0x07, 0x08,
+        0xAA, 0x64, 0x91, 0x92, 0x3E, 0xF5, 0x19, 0x43,
+        0x94, 0xDC, 0x68, 0xD5, 0x6C, 0x74, 0xFB, 0x21,
     };
     uint8_t input[10];
     memset(input, 'a', sizeof(input));
@@ -142,7 +142,7 @@ TEST_FIXTURE(SHA256Test, ProcessCase5)
         target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("CDC76E5C9914FB9281A1C7E284D73E67F1809A48A497200E046D39CCC7112CD0", target.ToString());
+    EXPECT_EQ("9A59A052930187A97038CAE692F30708AA6491923EF5194394DC68D56C74FB21", target.ToString());
 }
 
 } // namespace Test

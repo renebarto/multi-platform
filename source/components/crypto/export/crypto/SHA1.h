@@ -22,16 +22,17 @@ public:
 
     virtual OSAL::String ToString() const override;
 
-private:
-    static constexpr size_t DigestSize = 20;
-    static constexpr size_t BlockSize = 64;
-    static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
     static constexpr size_t WordLength = 32;
     using Word = uint32_t;
     static const Word K0;
     static const Word K1;
     static const Word K2;
     static const Word K3;
+
+private:
+    static constexpr size_t DigestSize = 20;
+    static constexpr size_t BlockSize = 64;
+    static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
 
     Word _state[DigestSize >> 2];
     uint64_t _bitCount;

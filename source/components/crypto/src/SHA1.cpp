@@ -1,20 +1,5 @@
 // SHA-1 computation
 
-// 100% free public domain implementation of the SHA-1
-// algorithm by Dominik Reichl <dominik.reichl@t-online.de>
-//
-//
-// === Test Vectors (from FIPS PUB 180-1) ===
-//
-// SHA1("abc") =
-// A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
-//
-// SHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") =
-// 84983E44 1C3BD26E BAAE4AA1 F95129E5 E54670F1
-//
-// SHA1(A million repetitions of "a") =
-// 34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
-
 #include "crypto/SHA1.h"
 
 #include <sstream>
@@ -29,22 +14,35 @@ union Crypto::SHA1::WorkspaceBlock
 };
 
 // Rotate x bits to the left
-#define ROTL(value, bits) (((value)<<(bits))|((value)>>(WordLength-(bits))))
+inline SHA1::Word ROTL(SHA1::Word value, size_t bits)
+{
+    return (((value)<<(bits))|((value)>>(SHA1::WordLength-(bits))));
+}
 
 // Wt = Mt                                                  0 <= t <= 15
 #ifdef LITTLE_ENDIAN
 // Swap bytes to for BIG ENDIAN value
-#define SHABLK0(i) (_block->l[i] = \
-            (ROTL(_block->l[i],24) & 0xFF00FF00) | (ROTL(_block->l[i],8) & 0x00FF00FF))
+inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
+{
+    block->l[i] = (ROTL(block->l[i], 24) & 0xFF00FF00) | (ROTL(block->l[i], 8) & 0x00FF00FF);
+    return block->l[i];
+}
 #else
-#define SHABLK0(i) (_block->l[i])
+inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock & block, size_t i)
+{
+    return block->l[i];
+}
 #endif
 
 //                                                          16 <= t <= 79
 // s = t & 0x0000000F
 // W s = ROTL 1 ( W ( s + 13 ) ∧ MASK ⊕ W ( s + 8 ) ∧ MASK ⊕ W ( s + 2 ) ∧ MASK ⊕ W s )
-#define SHABLK(i) (_block->l[i&15] = \
-            (ROTL(_block->l[(i+13)&15] ^ _block->l[(i+8)&15] ^ _block->l[(i+2)&15] ^ _block->l[i&15],1)))
+inline SHA1::Word SHABLK(SHA1::WorkspaceBlock * block, size_t i)
+{
+    block->l[i & 15] = (ROTL(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^
+                             block->l[(i + 2) & 15] ^ block->l[i & 15], 1));
+    return block->l[i & 15];
+}
 
 // SHA-1 rounds
 const SHA1::Word SHA1::K0 = 0x5A827999;
@@ -62,14 +60,34 @@ const SHA1::Word SHA1::K3 = 0xCA62C1D6;
 // a = T
 // Variable rotation is done while calling the macro, and variables take the initial place for:
 // a : v, b : w, c : x, d : y, e : z
-#define R0(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK0(i)+K0+ROTL(v,5); w=ROTL(w,30); }
-#define R1(v,w,x,y,z,i) { z+=((w&(x^y))^y)+SHABLK(i)+K0+ROTL(v,5); w=ROTL(w,30); }
+inline void Round0(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += ((w & (x ^ y)) ^ y) + SHABLK0(block, i) + SHA1::K0 + ROTL(v,5);
+    w = ROTL(w,30);
+}
+inline void Round1(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += ((w & (x ^ y)) ^ y) + SHABLK(block, i) + SHA1::K0 + ROTL(v,5);
+    w = ROTL(w,30);
+}
 // Parity(x, y, z)=x ⊕ y ⊕ z                    20 ≤ t ≤ 39
-#define R2(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K1+ROTL(v,5); w=ROTL(w,30); }
+inline void Round2(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K1 + ROTL(v,5);
+    w = ROTL(w,30);
+}
 // Maj(x, y, z)=(x ∧ y) ⊕ (x ∧ z) ⊕ (y ∧ z)     40 ≤ t ≤ 59
-#define R3(v,w,x,y,z,i) { z+=(((w|x)&y)|(w&x))+SHABLK(i)+K2+ROTL(v,5); w=ROTL(w,30); }
+inline void Round3(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (((w | x) & y) | (w & x)) + SHABLK(block, i) + SHA1::K2 + ROTL(v,5);
+    w = ROTL(w,30);
+}
 // Parity(x, y, z)=x ⊕ y ⊕ z                    60 ≤ t ≤ 79
-#define R4(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+K3+ROTL(v,5); w=ROTL(w,30); }
+inline void Round4(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K3 + ROTL(v,5);
+    w = ROTL(w,30);
+}
 
 SHA1::SHA1()
     : _state()
@@ -167,8 +185,6 @@ void SHA1::Finalize()
     memset(_state, 0, sizeof(_state));
     _bitCount = 0;
     memset(finalCount, 0, sizeof(finalCount));
-
-    Transform(_buffer);
 }
 
 Core::ByteArray SHA1::GetDigest() const
@@ -190,32 +206,32 @@ void SHA1::Transform(const uint8_t buffer[BlockSize])
 
     // 4 rounds of 20 operations each. Loop unrolled.
     // 0 <= t <= 19
-    R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
-    R0(b,c,d,e,a, 4); R0(a,b,c,d,e, 5); R0(e,a,b,c,d, 6); R0(d,e,a,b,c, 7);
-    R0(c,d,e,a,b, 8); R0(b,c,d,e,a, 9); R0(a,b,c,d,e,10); R0(e,a,b,c,d,11);
-    R0(d,e,a,b,c,12); R0(c,d,e,a,b,13); R0(b,c,d,e,a,14); R0(a,b,c,d,e,15);
-    R1(e,a,b,c,d,16); R1(d,e,a,b,c,17); R1(c,d,e,a,b,18); R1(b,c,d,e,a,19);
+    Round0(_block, a,b,c,d,e, 0); Round0(_block, e,a,b,c,d, 1); Round0(_block, d,e,a,b,c, 2); Round0(_block, c,d,e,a,b, 3);
+    Round0(_block, b,c,d,e,a, 4); Round0(_block, a,b,c,d,e, 5); Round0(_block, e,a,b,c,d, 6); Round0(_block, d,e,a,b,c, 7);
+    Round0(_block, c,d,e,a,b, 8); Round0(_block, b,c,d,e,a, 9); Round0(_block, a,b,c,d,e,10); Round0(_block, e,a,b,c,d,11);
+    Round0(_block, d,e,a,b,c,12); Round0(_block, c,d,e,a,b,13); Round0(_block, b,c,d,e,a,14); Round0(_block, a,b,c,d,e,15);
+    Round1(_block, e,a,b,c,d,16); Round1(_block, d,e,a,b,c,17); Round1(_block, c,d,e,a,b,18); Round1(_block, b,c,d,e,a,19);
 
     // 20 <= t <= 39
-    R2(a,b,c,d,e,20); R2(e,a,b,c,d,21); R2(d,e,a,b,c,22); R2(c,d,e,a,b,23);
-    R2(b,c,d,e,a,24); R2(a,b,c,d,e,25); R2(e,a,b,c,d,26); R2(d,e,a,b,c,27);
-    R2(c,d,e,a,b,28); R2(b,c,d,e,a,29); R2(a,b,c,d,e,30); R2(e,a,b,c,d,31);
-    R2(d,e,a,b,c,32); R2(c,d,e,a,b,33); R2(b,c,d,e,a,34); R2(a,b,c,d,e,35);
-    R2(e,a,b,c,d,36); R2(d,e,a,b,c,37); R2(c,d,e,a,b,38); R2(b,c,d,e,a,39);
+    Round2(_block, a,b,c,d,e,20); Round2(_block, e,a,b,c,d,21); Round2(_block, d,e,a,b,c,22); Round2(_block, c,d,e,a,b,23);
+    Round2(_block, b,c,d,e,a,24); Round2(_block, a,b,c,d,e,25); Round2(_block, e,a,b,c,d,26); Round2(_block, d,e,a,b,c,27);
+    Round2(_block, c,d,e,a,b,28); Round2(_block, b,c,d,e,a,29); Round2(_block, a,b,c,d,e,30); Round2(_block, e,a,b,c,d,31);
+    Round2(_block, d,e,a,b,c,32); Round2(_block, c,d,e,a,b,33); Round2(_block, b,c,d,e,a,34); Round2(_block, a,b,c,d,e,35);
+    Round2(_block, e,a,b,c,d,36); Round2(_block, d,e,a,b,c,37); Round2(_block, c,d,e,a,b,38); Round2(_block, b,c,d,e,a,39);
 
     // 40 <= t <= 59
-    R3(a,b,c,d,e,40); R3(e,a,b,c,d,41); R3(d,e,a,b,c,42); R3(c,d,e,a,b,43);
-    R3(b,c,d,e,a,44); R3(a,b,c,d,e,45); R3(e,a,b,c,d,46); R3(d,e,a,b,c,47);
-    R3(c,d,e,a,b,48); R3(b,c,d,e,a,49); R3(a,b,c,d,e,50); R3(e,a,b,c,d,51);
-    R3(d,e,a,b,c,52); R3(c,d,e,a,b,53); R3(b,c,d,e,a,54); R3(a,b,c,d,e,55);
-    R3(e,a,b,c,d,56); R3(d,e,a,b,c,57); R3(c,d,e,a,b,58); R3(b,c,d,e,a,59);
+    Round3(_block, a,b,c,d,e,40); Round3(_block, e,a,b,c,d,41); Round3(_block, d,e,a,b,c,42); Round3(_block, c,d,e,a,b,43);
+    Round3(_block, b,c,d,e,a,44); Round3(_block, a,b,c,d,e,45); Round3(_block, e,a,b,c,d,46); Round3(_block, d,e,a,b,c,47);
+    Round3(_block, c,d,e,a,b,48); Round3(_block, b,c,d,e,a,49); Round3(_block, a,b,c,d,e,50); Round3(_block, e,a,b,c,d,51);
+    Round3(_block, d,e,a,b,c,52); Round3(_block, c,d,e,a,b,53); Round3(_block, b,c,d,e,a,54); Round3(_block, a,b,c,d,e,55);
+    Round3(_block, e,a,b,c,d,56); Round3(_block, d,e,a,b,c,57); Round3(_block, c,d,e,a,b,58); Round3(_block, b,c,d,e,a,59);
 
     // 60 <= t <= 79
-    R4(a,b,c,d,e,60); R4(e,a,b,c,d,61); R4(d,e,a,b,c,62); R4(c,d,e,a,b,63);
-    R4(b,c,d,e,a,64); R4(a,b,c,d,e,65); R4(e,a,b,c,d,66); R4(d,e,a,b,c,67);
-    R4(c,d,e,a,b,68); R4(b,c,d,e,a,69); R4(a,b,c,d,e,70); R4(e,a,b,c,d,71);
-    R4(d,e,a,b,c,72); R4(c,d,e,a,b,73); R4(b,c,d,e,a,74); R4(a,b,c,d,e,75);
-    R4(e,a,b,c,d,76); R4(d,e,a,b,c,77); R4(c,d,e,a,b,78); R4(b,c,d,e,a,79);
+    Round4(_block, a,b,c,d,e,60); Round4(_block, e,a,b,c,d,61); Round4(_block, d,e,a,b,c,62); Round4(_block, c,d,e,a,b,63);
+    Round4(_block, b,c,d,e,a,64); Round4(_block, a,b,c,d,e,65); Round4(_block, e,a,b,c,d,66); Round4(_block, d,e,a,b,c,67);
+    Round4(_block, c,d,e,a,b,68); Round4(_block, b,c,d,e,a,69); Round4(_block, a,b,c,d,e,70); Round4(_block, e,a,b,c,d,71);
+    Round4(_block, d,e,a,b,c,72); Round4(_block, c,d,e,a,b,73); Round4(_block, b,c,d,e,a,74); Round4(_block, a,b,c,d,e,75);
+    Round4(_block, e,a,b,c,d,76); Round4(_block, d,e,a,b,c,77); Round4(_block, c,d,e,a,b,78); Round4(_block, b,c,d,e,a,79);
 
     // Add the working vars back into state[]
     _state[0] += a;

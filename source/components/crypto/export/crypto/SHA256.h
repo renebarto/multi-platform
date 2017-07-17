@@ -23,12 +23,16 @@ namespace Crypto
 
         static constexpr size_t WordLength = 32;
         using Word = uint32_t;
+        static const Word K[64];
+
+        void DumpState();
+        static void DumpState(size_t t, Word a, Word b, Word c, Word d, Word e, Word f, Word g, Word h);
+        static void DumpBlock(WorkspaceBlock * block);
 
     protected:
         static constexpr size_t BlockSize = 64;
         static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
-        static const Word K[64];
-        static const size_t StateSize = 16;
+        static constexpr size_t StateSize = 8;
 
         uint64_t _bitCount;
         uint8_t _buffer[BlockSize];

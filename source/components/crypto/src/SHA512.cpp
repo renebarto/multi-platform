@@ -1,53 +1,99 @@
 // SHA-384/512 computation
 //
-// === Test Vectors (from FIPS PUB 180-1) ===
-//
-// SHA512("abc") =
-// A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D 00000000 00000000 00000000
-//
-// SHA512("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") =
-// 84983E44 1C3BD26E BAAE4AA1 F95129E5 E54670F1 00000000 00000000 00000000
-//
-// SHA512(A million repetitions of "a") =
-// 34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F 00000000 00000000 00000000
 
 #include "crypto/SHA512.h"
 
+#include <iomanip>
+#include <iostream>
 #include <sstream>
 
 using namespace std;
 using namespace Crypto;
 
-union Crypto::SHA512::WorkspaceBlock
+static constexpr size_t NumWorkspace = 16;
+static constexpr size_t NumRounds = 80;
+struct Crypto::SHA512Base::WorkspaceBlock
 {
-    uint8_t c[SHA512::BlockSize];
-    Word l[16];
+    Word l[NumWorkspace];
 };
 
-/****************************** MACROS ******************************/
-#define ROTLEFT(a,b) (((a) << (b)) | ((a) >> (SHA512Base::WordLength-(b))))
-#define ROTRIGHT(a,b) (((a) >> (b)) | ((a) << (SHA512Base::WordLength-(b))))
+static constexpr uint64_t Mod1024Mask = 0x00000000000003FF;
+static constexpr uint64_t Mod1024_896 = 0x0000000000000380;
+
+inline static SHA512Base::Word ROTLEFT(SHA512Base::Word a, size_t b)
+{
+    return ((a) << (b)) | ((a) >> (SHA512Base::WordLength-(b)));
+}
+inline static SHA512Base::Word ROTRIGHT(SHA512Base::Word a, size_t b)
+{
+    return ((a) >> (b)) | ((a) << (SHA512Base::WordLength-(b)));
+}
 
 // Ch ( x , y , z )     = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
-#define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
+inline static SHA512Base::Word CH(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
+{
+    return (((x) & (y)) ^ (~(x) & (z)));
+}
 // Maj ( x , y , z )    = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
-#define MAJ(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+inline static SHA512Base::Word MAJ(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
+{
+    return (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)));
+}
 //  { 512 }
 // ∑    (x )            = ROTR 28 (x) ⊕ ROTR 34 (x) ⊕ ROTR 39 (x)
 //  0
-#define EP0(x) (ROTRIGHT(x,28) ^ ROTRIGHT(x,34) ^ ROTRIGHT(x,39))
+inline static SHA512Base::Word EP0(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,28) ^ ROTRIGHT(x,34) ^ ROTRIGHT(x,39));
+}
 //  { 512 }
 // ∑    (x )            = ROTR 14 (x) ⊕ ROTR 18 (x) ⊕ ROTR 41 (x)
 //  1
-#define EP1(x) (ROTRIGHT(x,14) ^ ROTRIGHT(x,18) ^ ROTRIGHT(x,41))
+inline static SHA512Base::Word EP1(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,14) ^ ROTRIGHT(x,18) ^ ROTRIGHT(x,41));
+}
 //  { 512 }
 // σ   ( x )            = ROTR 1 (x) ⊕ ROTR 8 (x) ⊕ SHR 7 (x)
 //  0
-#define SIG0(x) (ROTRIGHT(x,1) ^ ROTRIGHT(x,8) ^ ((x) >> 7))
+inline static SHA512Base::Word SIG0(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,1) ^ ROTRIGHT(x,8) ^ ((x) >> 7));
+}
 //  { 512 }
 // σ   ( x )            = ROTR 19 (x) ⊕ ROTR 61 (x) ⊕ SHR 6 (x)
 //  1
-#define SIG1(x) (ROTRIGHT(x,19) ^ ROTRIGHT(x,61) ^ ((x) >> 6))
+inline static SHA512Base::Word SIG1(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,19) ^ ROTRIGHT(x,61) ^ ((x) >> 6));
+}
+
+// Wt = Mt                                                  0 <= t <= 15
+#ifdef LITTLE_ENDIAN
+// Swap bytes to for BIG ENDIAN value
+inline static SHA512Base::Word SHABLK0(SHA512Base::WorkspaceBlock * block, size_t t)
+{
+    return ((ROTLEFT(block->l[t], 8) & 0x000000FF000000FF) |
+            (ROTLEFT(block->l[t], 24) & 0x0000FF000000FF00) |
+            (ROTLEFT(block->l[t], 40) & 0x00FF000000FF0000) |
+            (ROTLEFT(block->l[t], 56) & 0xFF000000FF000000));
+}
+#else
+inline static SHA512Base::Word SHABLK0(SHA512Base::WorkspaceBlock * block, size_t i)
+{
+    return block->l[i];
+}
+#endif
+
+//                                                          16 <= t <= 79
+// s = t & 0x0000000F
+//        {512}                         {512}
+// W s = σ     ( W t − 2 ) + W t − 7 + σ     ( W t − 15 ) + W t − 16
+//        1                             0
+inline static SHA512Base::Word SHABLK(SHA512Base::WorkspaceBlock * block, size_t t)
+{
+    return (SIG1(block->l[(t + 14) & 15]) + block->l[(t + 9) & 15] + SIG0(block->l[(t + 1) & 15]) + block->l[t & 15]);
+}
 
 const SHA512Base::Word SHA512Base::K[80] =
 {
@@ -93,9 +139,51 @@ const SHA512Base::Word SHA512Base::K[80] =
     UL64(0x5FCB6FAB3AD6FAEC),  UL64(0x6C44198C4A475817)
 };
 
+inline static void Round0(SHA512Base::WorkspaceBlock * block,
+                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                          size_t t)
+{
+    block->l[t] = SHABLK0(block, t);
+//    if (t == 0)
+//        SHA512Base::DumpBlock(block);
+    SHA512Base::Word T1 = h + EP1(e) + CH(e, f, g) + SHA512Base::K[t] + block->l[t];
+    SHA512Base::Word T2 = EP0(a) + MAJ (a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + T1;
+    d = c;
+    c = b;
+    b = a;
+    a = T1 + T2;
+//    SHA512Base::DumpState(t, a, b, c, d, e, f, g, h);
+}
+
+inline static void Round1(SHA512Base::WorkspaceBlock * block,
+                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                          size_t t)
+{
+    block->l[t & 15] = SHABLK(block, t);
+    SHA512Base::Word T1 = h + EP1(e) + CH(e, f, g) + SHA512Base::K[t] + block->l[t & 15];
+    SHA512Base::Word T2 = EP0(a) + MAJ (a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + T1;
+    d = c;
+    c = b;
+    b = a;
+    a = T1 + T2;
+//    SHA512Base::DumpState(t, a, b, c, d, e, f, g, h);
+}
+
 SHA512Base::SHA512Base()
-    : _bitCount()
+    : _bitCountL()
+    , _bitCountH()
     , _buffer()
+    , _state()
     , _workspace()
     , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
 {
@@ -104,15 +192,17 @@ SHA512Base::SHA512Base()
 // Update the hash value
 void SHA512Base::Process(const uint8_t *data, size_t len)
 {
-    uint32_t filledBlock = static_cast<uint32_t>((_bitCount >> 3) & BlockSizeMinusOne);
+    uint32_t filledBlock = static_cast<uint32_t>((_bitCountL >> 3) & BlockSizeMinusOne);
     // Calculate bytes mod 64 or bit mod 512
 
-    _bitCount += (static_cast<uint64_t>(len) << 3);     // Add number of bits for this block
-    // (we expect no more than 2^64 bits in total)
+    _bitCountH += (((_bitCountL >> 3) + static_cast<uint64_t>(len)) >> 61);
+    _bitCountL += (static_cast<uint64_t>(len) << 3);
+    // Add number of bits for this block
+    // (we expect no more than 2^128 bits in total)
 
     uint32_t offset {};
     if ((filledBlock + len) > BlockSizeMinusOne)        // If total number of bytes crosses 64
-        // (i.e. if we now have a complete 512 bit block)
+                                                        // (i.e. if we now have a complete 512 bit block)
     {
         uint32_t spaceLeft = static_cast<uint32_t>(BlockSize - filledBlock);
         // Space left in block
@@ -141,12 +231,14 @@ void SHA512Base::Process(const Core::ByteArray & data)
 
 void SHA512Base::Finalize()
 {
-    // For _bitCount into a 64 bit number
-    uint8_t finalCount[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Convert _bitCount into a 128 bit number
+    uint8_t finalCount[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-    for (size_t i = 0; i < sizeof(finalCount); i++)
-        // Endian independent
-        finalCount[i] = static_cast<uint8_t>((_bitCount >> ((7 - (i & 7)) * 8) ) & 255);
+    // Endian independent
+    for (size_t i = 0; i < sizeof(finalCount) / 2; i++)
+        finalCount[i] = static_cast<uint8_t>((_bitCountH >> ((7 - (i & 7)) * 8) ) & 255);
+    for (size_t i = sizeof(finalCount) / 2; i < sizeof(finalCount); i++)
+        finalCount[i] = static_cast<uint8_t>((_bitCountL >> ((7 - (i & 7)) * 8) ) & 255);
 
     // Suppose that the length of the message, M, is l bits. Append the bit “1” to the end of the
     // message, followed by k zero bits, where k is the smallest, non-negative solution to the equation
@@ -155,8 +247,8 @@ void SHA512Base::Finalize()
     // A "1" bit followed by 7 "0" bits
     Process(reinterpret_cast<const uint8_t *>("\x80"), 1);
 
-    // Fill up to 448 bits with "0" bits
-    while ((_bitCount & 504) != 448)
+    // Fill up to 896 bits with "0" bits
+    while ((_bitCountL & Mod1024Mask) != Mod1024_896)
         Process(reinterpret_cast<const uint8_t *>("\x00"), 1);
 
     // Add l = _bitCount as 64 bit integer
@@ -165,9 +257,73 @@ void SHA512Base::Finalize()
     memset(finalCount, 0, sizeof(finalCount));
 }
 
+void SHA512Base::DumpState()
+{
+    cout << "State: " << endl;
+    for (size_t i = 0; i < StateSize; ++i)
+    {
+        cout << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << _state[i] << dec << endl;
+    }
+}
+
+void SHA512Base::DumpState(size_t t, Word a, Word b, Word c, Word d, Word e, Word f, Word g, Word h)
+{
+    cout << "t = " << setw(2) << t << "  "
+         << "A = " << hex << setw(16) << setfill('0') << uppercase << a << dec << " "
+         << "B = " << hex << setw(16) << setfill('0') << uppercase << b << dec << " "
+         << "C = " << hex << setw(16) << setfill('0') << uppercase << c << dec << " "
+         << "D = " << hex << setw(16) << setfill('0') << uppercase << d << dec << " "
+         << "E = " << hex << setw(16) << setfill('0') << uppercase << e << dec << " "
+         << "F = " << hex << setw(16) << setfill('0') << uppercase << f << dec << " "
+         << "G = " << hex << setw(16) << setfill('0') << uppercase << g << dec << " "
+         << "H = " << hex << setw(16) << setfill('0') << uppercase << h << dec << endl;
+}
+
+void SHA512Base::DumpBlock(SHA512Base::WorkspaceBlock * block)
+{
+    cout << "W: " << endl;
+    for (size_t i = 0; i < NumWorkspace; ++i)
+    {
+        cout << "W" << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << block->l[i] << dec << endl;
+    }
+}
+
+void SHA512Base::Transform(const uint8_t buffer[BlockSize])
+{
+    memcpy(_block, buffer, BlockSize);
+
+//    DumpState();
+
+    // Copy state[] to working vars
+    Word a = _state[0];
+    Word b = _state[1];
+    Word c = _state[2];
+    Word d = _state[3];
+    Word e = _state[4];
+    Word f = _state[5];
+    Word g = _state[6];
+    Word h = _state[7];
+
+    for (size_t t = 0; t < NumWorkspace; ++t)
+        Round0(_block, a, b, c, d, e, f, g, h, t);
+    for (size_t t = NumWorkspace; t < NumRounds; ++t)
+        Round1(_block, a, b, c, d, e, f, g, h, t);
+
+    // Add the working vars back into state[]
+    _state[0] += a;
+    _state[1] += b;
+    _state[2] += c;
+    _state[3] += d;
+    _state[4] += e;
+    _state[5] += f;
+    _state[6] += g;
+    _state[7] += h;
+
+//    DumpState();
+}
+
 SHA384::SHA384()
-    : _state()
-    , _digest()
+    : _digest()
 {
     Initialize();
 }
@@ -184,7 +340,7 @@ void SHA384::Initialize()
     _state[6] = UL64(0xDB0C2E0D64F98FA7);
     _state[7] = UL64(0x47B5481DBEFA4FA4);
 
-    _bitCount = 0;
+    _bitCountL = _bitCountH = 0;
 
     memset(_digest, 0, sizeof(_digest));
 }
@@ -194,27 +350,19 @@ void SHA384::Finalize()
     SHA512Base::Finalize();
     for (size_t i = 0; i < DigestSize; i++)
     {
-        // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+        // Convert 16 64 bit integers to digest in BIG ENDIAN form
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
     memset(_state, 0, sizeof(_state));
-    _bitCount = 0;
-
-    Transform(_buffer);
+    _bitCountL = _bitCountH = 0;
 }
 
 Core::ByteArray SHA384::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
-}
-
-void SHA384::Transform(const uint8_t buffer[BlockSize])
-{
-    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
-
 }
 
 OSAL::String SHA384::ToString() const
@@ -229,8 +377,7 @@ OSAL::String SHA384::ToString() const
 }
 
 SHA512::SHA512()
-    : _state()
-    , _digest()
+    : _digest()
 {
     Initialize();
 }
@@ -247,7 +394,7 @@ void SHA512::Initialize()
     _state[6] = UL64(0x1F83D9ABFB41BD6B);
     _state[7] = UL64(0x5BE0CD19137E2179);
 
-    _bitCount = 0;
+    _bitCountL = _bitCountH = 0;
 
     memset(_digest, 0, sizeof(_digest));
 }
@@ -257,27 +404,19 @@ void SHA512::Finalize()
     SHA512Base::Finalize();
     for (size_t i = 0; i < DigestSize; i++)
     {
-        // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+        // Convert 16 64 bit integers to digest in BIG ENDIAN form
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
     memset(_state, 0, sizeof(_state));
-    _bitCount = 0;
-
-    Transform(_buffer);
+    _bitCountL = _bitCountH = 0;
 }
 
 Core::ByteArray SHA512::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
-}
-
-void SHA512::Transform(const uint8_t buffer[BlockSize])
-{
-    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
-
 }
 
 OSAL::String SHA512::ToString() const
@@ -292,8 +431,7 @@ OSAL::String SHA512::ToString() const
 }
 
 SHA512_224::SHA512_224()
-    : _state()
-    , _digest()
+    : _digest()
 {
     Initialize();
 }
@@ -310,7 +448,7 @@ void SHA512_224::Initialize()
     _state[6] = 0x3F9D85A86A1D36C8;
     _state[7] = 0x1112E6AD91D692A1;
 
-    _bitCount = 0;
+    _bitCountL = _bitCountH = 0;
 
     memset(_digest, 0, sizeof(_digest));
 }
@@ -320,27 +458,19 @@ void SHA512_224::Finalize()
     SHA512Base::Finalize();
     for (size_t i = 0; i < DigestSize; i++)
     {
-        // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+        // Convert 16 64 bit integers to digest in BIG ENDIAN form
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
     memset(_state, 0, sizeof(_state));
-    _bitCount = 0;
-
-    Transform(_buffer);
+    _bitCountL = _bitCountH = 0;
 }
 
 Core::ByteArray SHA512_224::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
-}
-
-void SHA512_224::Transform(const uint8_t buffer[BlockSize])
-{
-    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
-
 }
 
 OSAL::String SHA512_224::ToString() const
@@ -355,8 +485,7 @@ OSAL::String SHA512_224::ToString() const
 }
 
 SHA512_256::SHA512_256()
-    : _state()
-    , _digest()
+    : _digest()
 {
     Initialize();
 }
@@ -373,7 +502,7 @@ void SHA512_256::Initialize()
     _state[6] = 0x2B0199FC2C85B8AA;
     _state[7] = 0x0EB72DDC81C52CA2;
 
-    _bitCount = 0;
+    _bitCountL = _bitCountH = 0;
 
     memset(_digest, 0, sizeof(_digest));
 }
@@ -383,27 +512,19 @@ void SHA512_256::Finalize()
     SHA512Base::Finalize();
     for (size_t i = 0; i < DigestSize; i++)
     {
-        // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+        // Convert 16 64 bit integers to digest in BIG ENDIAN form
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
     memset(_state, 0, sizeof(_state));
-    _bitCount = 0;
-
-    Transform(_buffer);
+    _bitCountL = _bitCountH = 0;
 }
 
 Core::ByteArray SHA512_256::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
-}
-
-void SHA512_256::Transform(const uint8_t buffer[BlockSize])
-{
-    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
-
 }
 
 OSAL::String SHA512_256::ToString() const

@@ -31,7 +31,7 @@ TEST_FIXTURE(SHA1Test, Construct)
     EXPECT_EQ("0000000000000000000000000000000000000000", target.ToString());
 }
 
-TEST_FIXTURE(SHA1Test, ProcessNoFinalize_Case1)
+TEST_FIXTURE(SHA1Test, ProcessNoFinalize_Case2)
 {
     SHA1 target;
 
@@ -42,6 +42,22 @@ TEST_FIXTURE(SHA1Test, ProcessNoFinalize_Case1)
 }
 
 TEST_FIXTURE(SHA1Test, ProcessCase1)
+{
+    SHA1 target;
+
+    Core::ByteArray expected = {
+        0xDA, 0x39, 0xA3, 0xEE, 0x5E, 0x6B, 0x4B, 0x0D,
+        0x32, 0x55, 0xBF, 0xEF, 0x95, 0x60, 0x18, 0x90,
+        0xAF, 0xD8, 0x07, 0x09,
+    };
+    uint8_t input[0];
+    target.Process(input, sizeof(input));
+    target.Finalize();
+    EXPECT_EQ(expected, target.GetDigest());
+    EXPECT_EQ("DA39A3EE5E6B4B0D3255BFEF95601890AFD80709", target.ToString());
+}
+
+TEST_FIXTURE(SHA1Test, ProcessCase2)
 {
     SHA1 target;
 
@@ -58,7 +74,7 @@ TEST_FIXTURE(SHA1Test, ProcessCase1)
     EXPECT_EQ("A9993E364706816ABA3E25717850C26C9CD0D89D", target.ToString());
 }
 
-TEST_FIXTURE(SHA1Test, ProcessResetCase1)
+TEST_FIXTURE(SHA1Test, ProcessResetCase2)
 {
     SHA1 target;
 
@@ -72,7 +88,7 @@ TEST_FIXTURE(SHA1Test, ProcessResetCase1)
     EXPECT_EQ("0000000000000000000000000000000000000000", target.ToString());
 }
 
-TEST_FIXTURE(SHA1Test, ProcessCase2)
+TEST_FIXTURE(SHA1Test, ProcessCase3)
 {
     SHA1 target;
 
@@ -89,7 +105,24 @@ TEST_FIXTURE(SHA1Test, ProcessCase2)
     EXPECT_EQ("84983E441C3BD26EBAAE4AA1F95129E5E54670F1", target.ToString());
 }
 
-TEST_FIXTURE(SHA1Test, ProcessCase3)
+TEST_FIXTURE(SHA1Test, ProcessCase4)
+{
+    SHA1 target;
+
+    Core::ByteArray expected = {
+        0xA4, 0x9B, 0x24, 0x46, 0xA0, 0x2C, 0x64, 0x5B,
+        0xF4, 0x19, 0xF9, 0x95, 0xB6, 0x70, 0x91, 0x25,
+        0x3A, 0x04, 0xA2, 0x59,
+    };
+    uint8_t input[112];
+    memcpy(input, "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", sizeof(input));
+    target.Process(input, sizeof(input));
+    target.Finalize();
+    EXPECT_EQ(expected, target.GetDigest());
+    EXPECT_EQ("A49B2446A02C645BF419F995B67091253A04A259", target.ToString());
+}
+
+TEST_FIXTURE(SHA1Test, ProcessCase5)
 {
     SHA1 target;
 
