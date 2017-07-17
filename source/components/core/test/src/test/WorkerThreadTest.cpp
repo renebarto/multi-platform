@@ -58,6 +58,9 @@ void WorkerThreadTest::TearDown()
     delete thread;
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(WorkerThreadTest, Construction)
 {
     MyWorkerThread thread;
@@ -81,6 +84,8 @@ TEST_FIXTURE(WorkerThreadTest, Create)
     Core::Util::Sleep(SLEEP);
     EXPECT_FALSE(MyWorkerThread::isDeleted);
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

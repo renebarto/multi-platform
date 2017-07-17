@@ -11,6 +11,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST_SUITE(CheckMacros)
 {
 
@@ -1238,6 +1241,8 @@ TEST(CheckArray2DCloseDoesNotHaveSideEffectsWhenFailing)
 }
 
 } // TEST_SUITE
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

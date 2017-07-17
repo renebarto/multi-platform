@@ -1,5 +1,8 @@
 #include <unit-test-c++/UnitTestC++.h>
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST_SUITE(MyTestSuite)
 {
 
@@ -9,6 +12,8 @@ TEST(SuiteNameIsCorrect)
 }
 
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 TEST(DefaultSuiteNameIsCorrect)
 {

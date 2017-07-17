@@ -63,6 +63,9 @@ void ManualEventTest::TearDown()
 {
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(ManualEventTest, Construction)
 {
     ManualEvent event1;
@@ -143,6 +146,8 @@ TEST_FIXTURE(ManualEventTest, WaitEvent)
 
     thread.join();
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

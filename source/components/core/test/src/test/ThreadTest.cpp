@@ -52,6 +52,9 @@ void ThreadTest::TearDown()
     delete thread;
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(ThreadTest, Construction)
 {
     thread = new Thread<bool, void *>(ThreadName);
@@ -197,6 +200,8 @@ TEST_FIXTURE(ThreadTest, ThreadReturningInt)
     EXPECT_TRUE(thread.HaveResult());
     EXPECT_EQ(42, thread.GetResult());
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

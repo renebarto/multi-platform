@@ -84,6 +84,9 @@ void LogHandlerTest::TearDown()
     LogHandler::Reset(DomainName);
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(LogHandlerTest, DefaultHandler)
 {
     LogHandler::Log(LogHandler::DefaultDomain, "LogHandlerTest", LogLevel::Error, "Should not be shown on console");
@@ -247,6 +250,8 @@ TEST_FIXTURE(LogHandlerTest, SetLogLevelFiltered)
     ExpectDefault("", "", LogLevel::None, "");
     ExpectDomain(DomainName, aComponentName, aLogLevel, aMessage);
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

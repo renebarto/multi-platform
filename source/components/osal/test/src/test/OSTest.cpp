@@ -30,6 +30,9 @@ public:
     A() {}
 };
 
+TEST_SUITE(osal)
+{
+
 #if defined(LINUX)
 TEST_FIXTURE(OSTest, PlatformLinux)
 {
@@ -96,6 +99,8 @@ TEST_FIXTURE(TypeNameTest, LookupClass)
     EXPECT_EQ("OS::Test::A", typeName);
 }
 #endif // defined(WIN_MSVC)
+
+} // TEST_SUITE(osal)
 
 } // namespace Test
 } // namespace OSAL

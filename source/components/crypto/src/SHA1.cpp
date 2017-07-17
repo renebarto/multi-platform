@@ -13,6 +13,9 @@ union Crypto::SHA1::WorkspaceBlock
     Word l[16];
 };
 
+static constexpr uint64_t Mod512Mask = 0x00000000000001FF;
+static constexpr uint64_t Mod512_448 = 0x00000000000001C0;
+
 // Rotate x bits to the left
 inline SHA1::Word ROTL(SHA1::Word value, size_t bits)
 {
@@ -117,7 +120,6 @@ void SHA1::Initialize()
 // Update the hash value
 void SHA1::Process(const uint8_t *data, size_t len)
 {
-
     uint32_t filledBlock = static_cast<uint32_t>((_bitCount >> 3) & BlockSizeMinusOne);
                                                             // Calculate bytes mod 64 or bit mod 512
 
@@ -169,7 +171,7 @@ void SHA1::Finalize()
     Process(reinterpret_cast<const uint8_t *>("\x80"), 1);
 
     // Fill up to 448 bits with "0" bits
-    while ((_bitCount & 504) != 448)
+    while ((_bitCount & Mod512Mask) != Mod512_448)
         Process(reinterpret_cast<const uint8_t *>("\x00"), 1);
 
     // Add l = _bitCount as 64 bit integer

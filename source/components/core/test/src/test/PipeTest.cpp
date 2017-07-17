@@ -27,6 +27,9 @@ void PipeTest::TearDown()
 {
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(PipeTest, ConstructDefault)
 {
     Pipe pipe;
@@ -100,6 +103,8 @@ TEST_FIXTURE(PipeTest, ReadWrite)
     EXPECT_EQ(size, pipe.Read(actual, size));
     Util::Compare(reference, actual, size);
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

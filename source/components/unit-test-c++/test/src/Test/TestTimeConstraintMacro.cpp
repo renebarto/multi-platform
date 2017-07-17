@@ -10,6 +10,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST (TimeConstraintMacroQualifiesNamespace)
 {
     // If this compiles without a "using namespace UnitTestCpp;", all is well.
@@ -33,6 +36,8 @@ TEST (TimeConstraintMacroUsesCorrectInfo)
     EXPECT_EQ(testLine, reporter.lastFailedLine);
     EXPECT_TRUE(reporter.lastFailedTest.find("TimeConstraintMacroUsesCorrectInfo") != string::npos);
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

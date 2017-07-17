@@ -9,6 +9,9 @@ namespace _Test
 
 static TestDetails const TheTestDetails("testname", "fixturename", "suitename", "filename", 123);
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST(StartsWithNoTestsRun)
 {
     TestResults results;
@@ -109,6 +112,8 @@ TEST(NotifiesReporterOfTestEnd)
     ASSERT_EQ("suitename", reporter.lastFinishedSuite);
     ASSERT_EQ(1234, reporter.lastFinishedTestTime);
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

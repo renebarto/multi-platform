@@ -219,6 +219,9 @@ void CommandLineParserTest::TearDown()
 
 static const OSAL::String ApplicationName = "CommandLineParserTest";
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(CommandLineParserTest, Construct)
 {
     OSAL::Console console;
@@ -1364,6 +1367,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableVerbose)
 
     delete [] argv;
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 } // namespace Core

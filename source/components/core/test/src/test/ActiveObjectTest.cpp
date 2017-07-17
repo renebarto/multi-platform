@@ -65,6 +65,9 @@ void ActiveObjectTest::TearDown()
 {
 }
 
+TEST_SUITE(core)
+{
+
 TEST_FIXTURE(ActiveObjectTest, Simple)
 {
     MyActiveObject object;
@@ -82,6 +85,8 @@ TEST_FIXTURE(ActiveObjectTest, Loop)
     object.Kill();
     EXPECT_EQ(2, object.GetResult());
 }
+
+} // TEST_SUITE(core)
 
 } // namespace Test
 

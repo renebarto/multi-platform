@@ -22,6 +22,9 @@ void SHA384Test::TearDown()
 {
 }
 
+TEST_SUITE(crypto)
+{
+
 TEST_FIXTURE(SHA384Test, Construct)
 {
     SHA384 target;
@@ -154,6 +157,8 @@ TEST_FIXTURE(SHA384Test, ProcessCase5)
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("9D0E1809716474CB086E834E310A4A1CED149E9C00F248527972CEC5704C2A5B07B8B3DC38ECC4EBAE97DDD87F3D8985", target.ToString());
 }
+
+} // TEST_SUITE(crypto)
 
 } // namespace Test
 } // namespace Crypto

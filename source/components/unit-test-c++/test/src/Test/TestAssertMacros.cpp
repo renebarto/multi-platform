@@ -17,6 +17,9 @@ public:
     virtual void TearDown() {}
 };
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST_FIXTURE(AssertMacrosTest, AssertExpectNull)
 {
     void * nullPtr = nullptr;
@@ -51,6 +54,8 @@ TEST_FIXTURE(AssertMacrosTest, Fail)
     EXPECT_TRUE(testSucceeded);
 }
 WARNING_POP
+} // TEST_SUITE(unit_test_cpp)
+
 } // namespace _Test
 
 } // namespace UnitTestCpp

@@ -10,6 +10,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST(TimeConstraintSucceedsWithFastTest)
 {
     TestResults result;
@@ -62,6 +65,8 @@ TEST(TimeConstraintFailureIncludesTimeoutInformation)
     EXPECT_TRUE(reporter.lastFailedMessage.find("ime constraint") != string::npos);
     EXPECT_TRUE(reporter.lastFailedMessage.find("under 10ms") != string::npos);
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

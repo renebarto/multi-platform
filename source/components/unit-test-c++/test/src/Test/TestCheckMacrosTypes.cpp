@@ -10,6 +10,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST_SUITE(CheckMacroTypes)
 {
 
@@ -1639,6 +1642,8 @@ TEST(AssertNotEqualFailsOnEqualWCharPtr)
 }
 
 } // TEST_SUITE
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

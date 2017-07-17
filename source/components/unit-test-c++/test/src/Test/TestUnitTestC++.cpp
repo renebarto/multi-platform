@@ -11,6 +11,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST(ValidCheckSucceeds)
 {
     bool const b = true;
@@ -157,6 +160,8 @@ TEST(CanCallCHECKOutsideOfTestFunction)
 {
     CheckBool(true);
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

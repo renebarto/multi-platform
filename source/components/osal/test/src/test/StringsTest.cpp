@@ -20,6 +20,9 @@ void StringTest::TearDown()
 {
 }
 
+TEST_SUITE(osal)
+{
+
 TEST_FIXTURE(StringTest, Trim)
 {
     EXPECT_EQ("abc", Trim("abc", "'\""));
@@ -74,6 +77,8 @@ TEST_FIXTURE(StringTest, WStringToString)
 {
     FAIL();
 }
+
+} // TEST_SUITE(osal)
 
 } // namespace Test
 } // namespace OSAL

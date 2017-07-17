@@ -59,6 +59,9 @@ void FlagOperatorsTest::TearDown()
 {
 }
 
+TEST_SUITE(osal)
+{
+
 TEST_FIXTURE(FlagOperatorsTest, Construct)
 {
     MyFlag f;
@@ -1292,6 +1295,8 @@ TEST_FIXTURE(FlagOperatorsTest, CommonExpressions)
 //    EXPECT_TRUE((flags1 ^ MyFlags::ALL) == MyFlags::ALL_BUT_ONE);
 //    EXPECT_TRUE(((flags1 | flags2) & MyFlags::ALL) == (MyFlags::ONE | MyFlags::TWO));
 //}
+
+} // TEST_SUITE(osal)
 
 } // namespace Test
 } // namespace OSAL

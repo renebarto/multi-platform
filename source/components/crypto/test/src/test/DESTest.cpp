@@ -25,6 +25,9 @@ void DESTest::TearDown()
 {
 }
 
+TEST_SUITE(crypto)
+{
+
 TEST_FIXTURE(DESTest, Construct)
 {
     DES target;
@@ -1203,6 +1206,8 @@ TEST_FIXTURE(TripleDESTest, Process)
         EXPECT_EQ(referenceDecrypted, dataDecrypted);
     }
 }
+
+} // TEST_SUITE(crypto)
 
 } // namespace Test
 } // namespace Crypto

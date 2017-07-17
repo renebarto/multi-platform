@@ -11,6 +11,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TestRegistry list1;
 TEST_EX(DummyTest, list1)
 {
@@ -96,7 +99,7 @@ TEST(TestAddedWithTEST_EXMacroGetsDefaultSuite)
     CHECK(macroTestRegistry1.GetHead()->GetHead()->GetHead() != 0);
     ASSERT_EQ("MacroTestHelper1", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.testName);
     ASSERT_EQ("", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.fixtureName);
-    ASSERT_EQ("", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.suiteName);
+    ASSERT_EQ("unit_test_cpp", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.suiteName);
 }
 
 TestRegistry macroTestRegistry2;
@@ -111,7 +114,7 @@ TEST(TestAddedWithTEST_FIXTURE_EXMacroGetsDefaultSuite)
     CHECK(macroTestRegistry2.GetHead()->GetHead()->GetHead() != 0);
     ASSERT_EQ("MacroTestHelper2", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.testName);
     ASSERT_EQ("DummyFixture", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.fixtureName);
-    ASSERT_EQ("", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.suiteName);
+    ASSERT_EQ("unit_test_cpp", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.suiteName);
 }
 
 struct FixtureCtorThrows : public TestFixture
@@ -240,6 +243,8 @@ TEST(CUR_TEST_NAME)
 #undef CUR_TEST_NAME
 #undef INNER_STRINGIFY
 #undef STRINGIFY
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

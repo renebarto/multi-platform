@@ -7,6 +7,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST(PassingTestHasNoFailures)
 {
     class PassingTest : public Test
@@ -354,6 +357,8 @@ TEST(OutOfCoreCheckMacrosCanFailTests)
 
     ASSERT_EQ(1, results.GetFailureCount());
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

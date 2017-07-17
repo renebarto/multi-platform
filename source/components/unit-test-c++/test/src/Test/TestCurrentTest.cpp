@@ -7,6 +7,9 @@ namespace UnitTestCpp
 namespace _Test
 {
 
+TEST_SUITE(unit_test_cpp)
+{
+
 TEST(CanSetandGetDetails)
 {
     bool ok = false;
@@ -37,6 +40,8 @@ TEST(CanSetAndGetResults)
 
     CHECK(ok);
 }
+
+} // TEST_SUITE(unit_test_cpp)
 
 } // namespace _Test
 

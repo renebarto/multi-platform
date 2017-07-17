@@ -22,6 +22,9 @@ void SHA512_256Test::TearDown()
 {
 }
 
+TEST_SUITE(crypto)
+{
+
 TEST_FIXTURE(SHA512_256Test, Construct)
 {
     SHA512_256 target;
@@ -144,6 +147,8 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase5)
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("9A59A052930187A97038CAE692F30708AA6491923EF5194394DC68D56C74FB21", target.ToString());
 }
+
+} // TEST_SUITE(crypto)
 
 } // namespace Test
 } // namespace Crypto
