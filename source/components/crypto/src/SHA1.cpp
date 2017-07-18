@@ -7,90 +7,22 @@
 using namespace std;
 using namespace Crypto;
 
+static constexpr size_t NumWorkspace = 16;
+static constexpr size_t NumWorkspaceMinusOne = NumWorkspace - 1;
 union Crypto::SHA1::WorkspaceBlock
 {
     uint8_t c[SHA1::BlockSize];
-    Word l[16];
+    Word l[NumWorkspace];
 };
 
 static constexpr uint64_t Mod512Mask = 0x00000000000001FF;
 static constexpr uint64_t Mod512_448 = 0x00000000000001C0;
-
-// Rotate x bits to the left
-inline SHA1::Word ROTL(SHA1::Word value, size_t bits)
-{
-    return (((value)<<(bits))|((value)>>(SHA1::WordLength-(bits))));
-}
-
-// Wt = Mt                                                  0 <= t <= 15
-#ifdef LITTLE_ENDIAN
-// Swap bytes to for BIG ENDIAN value
-inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
-{
-    block->l[i] = (ROTL(block->l[i], 24) & 0xFF00FF00) | (ROTL(block->l[i], 8) & 0x00FF00FF);
-    return block->l[i];
-}
-#else
-inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock & block, size_t i)
-{
-    return block->l[i];
-}
-#endif
-
-//                                                          16 <= t <= 79
-// s = t & 0x0000000F
-// W s = ROTL 1 ( W ( s + 13 ) ∧ MASK ⊕ W ( s + 8 ) ∧ MASK ⊕ W ( s + 2 ) ∧ MASK ⊕ W s )
-inline SHA1::Word SHABLK(SHA1::WorkspaceBlock * block, size_t i)
-{
-    block->l[i & 15] = (ROTL(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] ^
-                             block->l[(i + 2) & 15] ^ block->l[i & 15], 1));
-    return block->l[i & 15];
-}
 
 // SHA-1 rounds
 const SHA1::Word SHA1::K0 = 0x5A827999;
 const SHA1::Word SHA1::K1 = 0x6ED9EBA1;
 const SHA1::Word SHA1::K2 = 0x8F1BBCDC;
 const SHA1::Word SHA1::K3 = 0xCA62C1D6;
-
-// Ch(x, y, z)=(x ∧ y) ⊕ ( ¬ x ∧ z)             0 ≤ t ≤ 19
-// First set is for uninitialized data
-// T = ROTL 5 ( a ) + f t ( b , c , d ) + e + K t + W t
-// e = d
-// d = c
-// c = ROTL 30 ( b )
-// b = a
-// a = T
-// Variable rotation is done while calling the macro, and variables take the initial place for:
-// a : v, b : w, c : x, d : y, e : z
-inline void Round0(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
-{
-    z += ((w & (x ^ y)) ^ y) + SHABLK0(block, i) + SHA1::K0 + ROTL(v,5);
-    w = ROTL(w,30);
-}
-inline void Round1(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
-{
-    z += ((w & (x ^ y)) ^ y) + SHABLK(block, i) + SHA1::K0 + ROTL(v,5);
-    w = ROTL(w,30);
-}
-// Parity(x, y, z)=x ⊕ y ⊕ z                    20 ≤ t ≤ 39
-inline void Round2(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
-{
-    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K1 + ROTL(v,5);
-    w = ROTL(w,30);
-}
-// Maj(x, y, z)=(x ∧ y) ⊕ (x ∧ z) ⊕ (y ∧ z)     40 ≤ t ≤ 59
-inline void Round3(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
-{
-    z += (((w | x) & y) | (w & x)) + SHABLK(block, i) + SHA1::K2 + ROTL(v,5);
-    w = ROTL(w,30);
-}
-// Parity(x, y, z)=x ⊕ y ⊕ z                    60 ≤ t ≤ 79
-inline void Round4(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
-{
-    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K3 + ROTL(v,5);
-    w = ROTL(w,30);
-}
 
 SHA1::SHA1()
     : _state()
@@ -193,6 +125,76 @@ Core::ByteArray SHA1::GetDigest() const
 {
     Core::ByteArray digest(_digest, sizeof(_digest));
     return digest;
+}
+
+// Rotate x bits to the left
+inline SHA1::Word SHA1::ROTL(SHA1::Word value, size_t bits)
+{
+    return (((value)<<(bits))|((value)>>(SHA1::WordLength-(bits))));
+}
+
+// Wt = Mt                                                  0 <= t <= 15
+#ifdef LITTLE_ENDIAN
+// Swap bytes to for BIG ENDIAN value
+inline SHA1::Word SHA1::SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
+{
+    block->l[i] = (ROTL(block->l[i], 24) & 0xFF00FF00) | (ROTL(block->l[i], 8) & 0x00FF00FF);
+    return block->l[i];
+}
+#else
+inline SHA1::Word SHA1::SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
+{
+    return block->l[i];
+}
+#endif
+
+//                                                          16 <= t <= 79
+// s = t & 0x0000000F
+// W s = ROTL 1 ( W ( s + 13 ) ∧ MASK ⊕ W ( s + 8 ) ∧ MASK ⊕ W ( s + 2 ) ∧ MASK ⊕ W s )
+inline SHA1::Word SHA1::SHABLK(SHA1::WorkspaceBlock * block, size_t i)
+{
+    block->l[i & NumWorkspaceMinusOne] = (ROTL(block->l[(i + 13) & NumWorkspaceMinusOne] ^ block->l[(i + 8) & NumWorkspaceMinusOne] ^
+                                               block->l[(i + 2) & NumWorkspaceMinusOne] ^ block->l[i & NumWorkspaceMinusOne], 1));
+    return block->l[i & NumWorkspaceMinusOne];
+}
+
+// Ch(x, y, z)=(x ∧ y) ⊕ ( ¬ x ∧ z)             0 ≤ t ≤ 19
+// First set is for uninitialized data
+// T = ROTL 5 ( a ) + f t ( b , c , d ) + e + K t + W t
+// e = d
+// d = c
+// c = ROTL 30 ( b )
+// b = a
+// a = T
+// Variable rotation is done while calling the macro, and variables take the initial place for:
+// a : v, b : w, c : x, d : y, e : z
+inline void SHA1::Round0(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += ((w & (x ^ y)) ^ y) + SHABLK0(block, i) + SHA1::K0 + ROTL(v,5);
+    w = ROTL(w,30);
+}
+inline void SHA1::Round1(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += ((w & (x ^ y)) ^ y) + SHABLK(block, i) + SHA1::K0 + ROTL(v,5);
+    w = ROTL(w,30);
+}
+// Parity(x, y, z)=x ⊕ y ⊕ z                    20 ≤ t ≤ 39
+inline void SHA1::Round2(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K1 + ROTL(v,5);
+    w = ROTL(w,30);
+}
+// Maj(x, y, z)=(x ∧ y) ⊕ (x ∧ z) ⊕ (y ∧ z)     40 ≤ t ≤ 59
+inline void SHA1::Round3(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (((w | x) & y) | (w & x)) + SHABLK(block, i) + SHA1::K2 + ROTL(v,5);
+    w = ROTL(w,30);
+}
+// Parity(x, y, z)=x ⊕ y ⊕ z                    60 ≤ t ≤ 79
+inline void SHA1::Round4(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+{
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K3 + ROTL(v,5);
+    w = ROTL(w,30);
 }
 
 void SHA1::Transform(const uint8_t buffer[BlockSize])

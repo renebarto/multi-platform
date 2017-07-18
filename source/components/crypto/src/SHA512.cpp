@@ -11,6 +11,7 @@ using namespace std;
 using namespace Crypto;
 
 static constexpr size_t NumWorkspace = 16;
+static constexpr size_t NumWorkspaceMinusOne = NumWorkspace - 1;
 static constexpr size_t NumRounds = 80;
 struct Crypto::SHA512Base::WorkspaceBlock
 {
@@ -19,81 +20,6 @@ struct Crypto::SHA512Base::WorkspaceBlock
 
 static constexpr uint64_t Mod1024Mask = 0x00000000000003FF;
 static constexpr uint64_t Mod1024_896 = 0x0000000000000380;
-
-inline static SHA512Base::Word ROTLEFT(SHA512Base::Word a, size_t b)
-{
-    return ((a) << (b)) | ((a) >> (SHA512Base::WordLength-(b)));
-}
-inline static SHA512Base::Word ROTRIGHT(SHA512Base::Word a, size_t b)
-{
-    return ((a) >> (b)) | ((a) << (SHA512Base::WordLength-(b)));
-}
-
-// Ch ( x , y , z )     = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
-inline static SHA512Base::Word CH(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
-{
-    return (((x) & (y)) ^ (~(x) & (z)));
-}
-// Maj ( x , y , z )    = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
-inline static SHA512Base::Word MAJ(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
-{
-    return (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)));
-}
-//  { 512 }
-// ∑    (x )            = ROTR 28 (x) ⊕ ROTR 34 (x) ⊕ ROTR 39 (x)
-//  0
-inline static SHA512Base::Word EP0(SHA512Base::Word x)
-{
-    return (ROTRIGHT(x,28) ^ ROTRIGHT(x,34) ^ ROTRIGHT(x,39));
-}
-//  { 512 }
-// ∑    (x )            = ROTR 14 (x) ⊕ ROTR 18 (x) ⊕ ROTR 41 (x)
-//  1
-inline static SHA512Base::Word EP1(SHA512Base::Word x)
-{
-    return (ROTRIGHT(x,14) ^ ROTRIGHT(x,18) ^ ROTRIGHT(x,41));
-}
-//  { 512 }
-// σ   ( x )            = ROTR 1 (x) ⊕ ROTR 8 (x) ⊕ SHR 7 (x)
-//  0
-inline static SHA512Base::Word SIG0(SHA512Base::Word x)
-{
-    return (ROTRIGHT(x,1) ^ ROTRIGHT(x,8) ^ ((x) >> 7));
-}
-//  { 512 }
-// σ   ( x )            = ROTR 19 (x) ⊕ ROTR 61 (x) ⊕ SHR 6 (x)
-//  1
-inline static SHA512Base::Word SIG1(SHA512Base::Word x)
-{
-    return (ROTRIGHT(x,19) ^ ROTRIGHT(x,61) ^ ((x) >> 6));
-}
-
-// Wt = Mt                                                  0 <= t <= 15
-#ifdef LITTLE_ENDIAN
-// Swap bytes to for BIG ENDIAN value
-inline static SHA512Base::Word SHABLK0(SHA512Base::WorkspaceBlock * block, size_t t)
-{
-    return ((ROTLEFT(block->l[t], 8) & 0x000000FF000000FF) |
-            (ROTLEFT(block->l[t], 24) & 0x0000FF000000FF00) |
-            (ROTLEFT(block->l[t], 40) & 0x00FF000000FF0000) |
-            (ROTLEFT(block->l[t], 56) & 0xFF000000FF000000));
-}
-#else
-inline static SHA512Base::Word SHABLK0(SHA512Base::WorkspaceBlock * block, size_t i)
-{
-    return block->l[i];
-}
-#endif
-
-//                                                          16 <= t <= 79
-// s = t & 0x0000000F
-//        {512}                         {512}
-// W s = σ     ( W t − 2 ) + W t − 7 + σ     ( W t − 15 ) + W t − 16
-//        1                             0
-inline static SHA512Base::Word SHABLK(SHA512Base::WorkspaceBlock * block, size_t t)
-{
-    return (SIG1(block->l[(t + 14) & 15]) + block->l[(t + 9) & 15] + SIG0(block->l[(t + 1) & 15]) + block->l[t & 15]);
-}
 
 const SHA512Base::Word SHA512Base::K[80] =
 {
@@ -138,46 +64,6 @@ const SHA512Base::Word SHA512Base::K[80] =
     UL64(0x4CC5D4BECB3E42B6),  UL64(0x597F299CFC657E2A),
     UL64(0x5FCB6FAB3AD6FAEC),  UL64(0x6C44198C4A475817)
 };
-
-inline static void Round0(SHA512Base::WorkspaceBlock * block,
-                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
-                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
-                          size_t t)
-{
-    block->l[t] = SHABLK0(block, t);
-//    if (t == 0)
-//        SHA512Base::DumpBlock(block);
-    SHA512Base::Word T1 = h + EP1(e) + CH(e, f, g) + SHA512Base::K[t] + block->l[t];
-    SHA512Base::Word T2 = EP0(a) + MAJ (a, b, c);
-    h = g;
-    g = f;
-    f = e;
-    e = d + T1;
-    d = c;
-    c = b;
-    b = a;
-    a = T1 + T2;
-//    SHA512Base::DumpState(t, a, b, c, d, e, f, g, h);
-}
-
-inline static void Round1(SHA512Base::WorkspaceBlock * block,
-                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
-                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
-                          size_t t)
-{
-    block->l[t & 15] = SHABLK(block, t);
-    SHA512Base::Word T1 = h + EP1(e) + CH(e, f, g) + SHA512Base::K[t] + block->l[t & 15];
-    SHA512Base::Word T2 = EP0(a) + MAJ (a, b, c);
-    h = g;
-    g = f;
-    f = e;
-    e = d + T1;
-    d = c;
-    c = b;
-    b = a;
-    a = T1 + T2;
-//    SHA512Base::DumpState(t, a, b, c, d, e, f, g, h);
-}
 
 SHA512Base::SHA512Base()
     : _bitCountL()
@@ -286,6 +172,122 @@ void SHA512Base::DumpBlock(SHA512Base::WorkspaceBlock * block)
     {
         cout << "W" << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << block->l[i] << dec << endl;
     }
+}
+
+inline SHA512Base::Word SHA512Base::ROTLEFT(SHA512Base::Word a, size_t b)
+{
+    return ((a) << (b)) | ((a) >> (SHA512Base::WordLength-(b)));
+}
+inline SHA512Base::Word SHA512Base::ROTRIGHT(SHA512Base::Word a, size_t b)
+{
+    return ((a) >> (b)) | ((a) << (SHA512Base::WordLength-(b)));
+}
+
+// Ch ( x , y , z )     = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
+inline SHA512Base::Word SHA512Base::CH(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
+{
+    return (((x) & (y)) ^ (~(x) & (z)));
+}
+// Maj ( x , y , z )    = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
+inline SHA512Base::Word SHA512Base::MAJ(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
+{
+    return (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)));
+}
+//  { 512 }
+// ∑    (x )            = ROTR 28 (x) ⊕ ROTR 34 (x) ⊕ ROTR 39 (x)
+//  0
+inline SHA512Base::Word SHA512Base::EP0(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,28) ^ ROTRIGHT(x,34) ^ ROTRIGHT(x,39));
+}
+//  { 512 }
+// ∑    (x )            = ROTR 14 (x) ⊕ ROTR 18 (x) ⊕ ROTR 41 (x)
+//  1
+inline SHA512Base::Word SHA512Base::EP1(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,14) ^ ROTRIGHT(x,18) ^ ROTRIGHT(x,41));
+}
+//  { 512 }
+// σ   ( x )            = ROTR 1 (x) ⊕ ROTR 8 (x) ⊕ SHR 7 (x)
+//  0
+inline SHA512Base::Word SHA512Base::SIG0(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,1) ^ ROTRIGHT(x,8) ^ ((x) >> 7));
+}
+//  { 512 }
+// σ   ( x )            = ROTR 19 (x) ⊕ ROTR 61 (x) ⊕ SHR 6 (x)
+//  1
+inline SHA512Base::Word SHA512Base::SIG1(SHA512Base::Word x)
+{
+    return (ROTRIGHT(x,19) ^ ROTRIGHT(x,61) ^ ((x) >> 6));
+}
+
+// Wt = Mt                                                  0 <= t <= 15
+#ifdef LITTLE_ENDIAN
+// Swap bytes to for BIG ENDIAN value
+inline SHA512Base::Word SHA512Base::SHABLK0(SHA512Base::WorkspaceBlock * block, size_t t)
+{
+    return ((ROTLEFT(block->l[t], 8) & 0x000000FF000000FF) |
+            (ROTLEFT(block->l[t], 24) & 0x0000FF000000FF00) |
+            (ROTLEFT(block->l[t], 40) & 0x00FF000000FF0000) |
+            (ROTLEFT(block->l[t], 56) & 0xFF000000FF000000));
+}
+#else
+inline SHA512Base::Word SHA512Base::SHABLK0(SHA512Base::WorkspaceBlock * block, size_t i)
+{
+    return block->l[i];
+}
+#endif
+
+//                                                          16 <= t <= 79
+// s = t & 0x0000000F
+//        {512}                         {512}
+// W s = σ     ( W t − 2 ) + W t − 7 + σ     ( W t − 15 ) + W t − 16
+//        1                             0
+inline SHA512Base::Word SHA512Base::SHABLK(SHA512Base::WorkspaceBlock * block, size_t t)
+{
+    return (SIG1(block->l[(t + 14) & NumWorkspaceMinusOne]) + block->l[(t + 9) & NumWorkspaceMinusOne] +
+            SIG0(block->l[(t + 1) & NumWorkspaceMinusOne]) + block->l[t & NumWorkspaceMinusOne]);
+}
+
+inline void SHA512Base::Round0(SHA512Base::WorkspaceBlock * block,
+                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                          size_t t)
+{
+    block->l[t] = SHABLK0(block, t);
+//    if (t == 0)
+//        DumpBlock(block);
+    Word T1 = h + EP1(e) + CH(e, f, g) + K[t] + block->l[t];
+    Word T2 = EP0(a) + MAJ (a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + T1;
+    d = c;
+    c = b;
+    b = a;
+    a = T1 + T2;
+//    DumpState(t, a, b, c, d, e, f, g, h);
+}
+
+inline void SHA512Base::Round1(SHA512Base::WorkspaceBlock * block,
+                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                          size_t t)
+{
+    block->l[t & NumWorkspaceMinusOne] = SHABLK(block, t);
+    Word T1 = h + EP1(e) + CH(e, f, g) + K[t] + block->l[t & NumWorkspaceMinusOne];
+    Word T2 = EP0(a) + MAJ (a, b, c);
+    h = g;
+    g = f;
+    f = e;
+    e = d + T1;
+    d = c;
+    c = b;
+    b = a;
+    a = T1 + T2;
+//    DumpState(t, a, b, c, d, e, f, g, h);
 }
 
 void SHA512Base::Transform(const uint8_t buffer[BlockSize])

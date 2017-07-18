@@ -9,7 +9,15 @@ using namespace Crypto;
 
 static constexpr uint64_t Mod512Mask = 0x00000000000001FF;
 static constexpr uint64_t Mod512_448 = 0x00000000000001C0;
+static constexpr size_t NumWorkspace = 16;
+static constexpr size_t NumWorkspaceMinusOne = NumWorkspace - 1;
 static constexpr size_t NumRounds = 64;
+
+union Crypto::MD5::WorkspaceBlock
+{
+    uint8_t c[MD5::BlockSize];
+    Word l[16];
+};
 
 const MD5::Word MD5::K[MD5::BlockSize] =
 {
@@ -36,14 +44,10 @@ MD5::MD5()
     , _buffer()
     , _bitCount()
     , _state()
-
+    , _workspace()
+    , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
 {
     Initialize();
-}
-
-MD5::~MD5()
-{
-
 }
 
 void MD5::Initialize()
@@ -144,8 +148,50 @@ OSAL::String MD5::ToString() const
     return stream.str();
 }
 
+MD5::Word MD5::F(MD5::Word x, MD5::Word y, MD5::Word z)
+{
+    return (x & y) | (~x & z);
+}
+
+MD5::Word MD5::G(MD5::Word x, MD5::Word y, MD5::Word z)
+{
+    return (x & z) | (y & ~z);
+}
+
+MD5::Word MD5::H(MD5::Word x, MD5::Word y, MD5::Word z)
+{
+    return x ^ y ^ z;
+}
+
+MD5::Word MD5::I(MD5::Word x, MD5::Word y, MD5::Word z)
+{
+    return y ^ (x | ~z);
+}
+
+// Rotate x bits to the left
+inline MD5::Word MD5::ROTL(MD5::Word value, size_t bits)
+{
+    return (((value)<<(bits))|((value)>>(MD5::WordLength-(bits))));
+}
+
+// Wt = Mt                                                  0 <= t <= 15
+#ifdef LITTLE_ENDIAN
+// Swap bytes to for BIG ENDIAN value
+inline MD5::Word MD5::GetData(const WorkspaceBlock * block, size_t i)
+{
+    return (ROTL(block->l[i], 24) & 0xFF00FF00) | (ROTL(block->l[i], 8) & 0x00FF00FF);
+}
+#else
+inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock & block, size_t i)
+{
+    return block->l[i];
+}
+#endif
+
 void MD5::Transform(const uint8_t buffer[BlockSize])
 {
+    memcpy(_block, buffer, sizeof(WorkspaceBlock::c));
+
     // Copy state[] to working vars
     Word a = _state[0];
     Word b = _state[1];
@@ -153,6 +199,10 @@ void MD5::Transform(const uint8_t buffer[BlockSize])
     Word d = _state[3];
     Word e = _state[4];
 
+    for (size_t i = 0; i < NumWorkspace; ++i)
+    {
+        _block->l[i] = GetData(_block, i);
+    }
     for (size_t i = 0; i < NumRounds; ++i)
     {
 
