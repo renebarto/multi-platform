@@ -4,133 +4,164 @@
 
 namespace Crypto
 {
-    class SHA512Base : public Digest
-    {
-    public:
-        struct WorkspaceBlock;
 
-        SHA512Base();
+class SHA512Base : public Digest
+{
+public:
+    struct WorkspaceBlock;
 
-        virtual void Process(const uint8_t *data, size_t len) override;
-        virtual void Process(const Core::ByteArray & data) override;
-        virtual void Finalize() override;
+    SHA512Base();
 
-        virtual size_t GetDigestSize() const = 0;
-        virtual Core::ByteArray GetDigest() const = 0;
+    virtual void Process(const uint8_t * data, size_t len) override;
 
-        virtual OSAL::String ToString() const = 0;
+    virtual void Process(const Core::ByteArray & data) override;
 
-    protected:
-        static constexpr size_t BlockSize = 128;
-        static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
-        static constexpr size_t StateSize = 8;
-        static constexpr size_t WordLength = 64;
-        using Word = uint64_t;
-        static const Word K[80];
+    virtual void Finalize() override;
 
-        uint64_t _bitCountL;
-        uint64_t _bitCountH;
-        uint8_t _buffer[BlockSize];
+    virtual size_t GetDigestSize() const = 0;
 
-        Word _state[StateSize];
-        uint8_t _workspace[BlockSize];
-        WorkspaceBlock * _block; // SHA256 pointer to the byte array above
+    virtual Core::ByteArray GetDigest() const = 0;
 
-        void DumpState();
-        void DumpState(size_t t, Word a, Word b, Word c, Word d, Word e, Word f, Word g, Word h);
-        void DumpBlock(WorkspaceBlock * block);
+    virtual OSAL::String ToString() const = 0;
 
-        Word ROTLEFT(Word a, size_t b);
-        Word ROTRIGHT(Word a, size_t b);
-        Word CH(Word x, Word y, Word z);
-        Word MAJ(Word x, Word y, Word z);
-        Word EP0(Word x);
-        Word EP1(Word x);
-        Word SIG0(Word x);
-        Word SIG1(Word x);
-        Word SHABLK0(WorkspaceBlock * block, size_t i);
-        Word SHABLK(WorkspaceBlock * block, size_t t);
-        void Round0(WorkspaceBlock * block,
-                    Word & a, Word & b, Word & c, Word & d,
-                    Word & e, Word & f, Word & g, Word & h,
-                    size_t t);
-        void Round1(WorkspaceBlock * block,
-                    Word & a, Word & b, Word & c, Word & d,
-                    Word & e, Word & f, Word & g, Word & h,
-                    size_t t);
-        void Transform(const uint8_t buffer[BlockSize]);
-    };
+protected:
+    static constexpr size_t BlockSize = 128;
+    static constexpr size_t BlockSizeMinusOne = BlockSize - 1;
+    static constexpr size_t StateSize = 8;
+    static constexpr size_t WordLength = 64;
 
-    class SHA384 : public SHA512Base
-    {
-    public:
-        SHA384();
+    using Word = uint64_t;
+    static const Word K[80];
 
-        virtual void Initialize() override;
-        virtual void Finalize() override;
+    uint64_t _bitCountL;
+    uint64_t _bitCountH;
+    uint8_t _buffer[BlockSize];
 
-        virtual size_t GetDigestSize() const override { return DigestSize; }
-        virtual Core::ByteArray GetDigest() const override;
+    Word _state[StateSize];
+    uint8_t _workspace[BlockSize];
+    WorkspaceBlock * _block; // SHA256 pointer to the byte array above
 
-        virtual OSAL::String ToString() const override;
+    void DumpState();
+    void DumpState(size_t t, Word a, Word b, Word c, Word d, Word e, Word f, Word g, Word h);
+    void DumpBlock(WorkspaceBlock * block);
 
-    private:
-        static constexpr size_t DigestSize = 48;
-        uint8_t _digest[DigestSize];
-    };
+    Word ROTLEFT(Word a, size_t b);
 
-    class SHA512 : public SHA512Base
-    {
-    public:
-        SHA512();
+    Word ROTRIGHT(Word a, size_t b);
 
-        virtual void Initialize() override;
-        virtual void Finalize() override;
+    Word CH(Word x, Word y, Word z);
 
-        virtual size_t GetDigestSize() const override { return DigestSize; }
-        virtual Core::ByteArray GetDigest() const override;
+    Word MAJ(Word x, Word y, Word z);
 
-        virtual OSAL::String ToString() const override;
+    Word EP0(Word x);
 
-    private:
-        static constexpr size_t DigestSize = 64;
-        uint8_t _digest[DigestSize];
-    };
+    Word EP1(Word x);
 
-    class SHA512_224 : public SHA512Base
-    {
-    public:
-        SHA512_224();
+    Word SIG0(Word x);
 
-        virtual void Initialize() override;
-        virtual void Finalize() override;
+    Word SIG1(Word x);
 
-        virtual size_t GetDigestSize() const override { return DigestSize; }
-        virtual Core::ByteArray GetDigest() const override;
+    Word SHABLK0(WorkspaceBlock * block, size_t i);
 
-        virtual OSAL::String ToString() const override;
+    Word SHABLK(WorkspaceBlock * block, size_t t);
 
-    private:
-        static constexpr size_t DigestSize = 28;
-        uint8_t _digest[DigestSize];
-    };
+    void Round0(WorkspaceBlock * block,
+                Word & a, Word & b, Word & c, Word & d,
+                Word & e, Word & f, Word & g, Word & h,
+                size_t t);
 
-    class SHA512_256 : public SHA512Base
-    {
-    public:
-        SHA512_256();
+    void Round1(WorkspaceBlock * block,
+                Word & a, Word & b, Word & c, Word & d,
+                Word & e, Word & f, Word & g, Word & h,
+                size_t t);
 
-        virtual void Initialize() override;
-        virtual void Finalize() override;
+    void Transform(const uint8_t buffer[BlockSize]);
+};
 
-        virtual size_t GetDigestSize() const override { return DigestSize; }
-        virtual Core::ByteArray GetDigest() const override;
+class SHA384 : public SHA512Base
+{
+public:
+    SHA384();
 
-        virtual OSAL::String ToString() const override;
+    virtual void Initialize() override;
 
-    private:
-        static constexpr size_t DigestSize = 32;
-        uint8_t _digest[DigestSize];
-    };
+    virtual void Finalize() override;
+
+    virtual size_t GetDigestSize() const override
+    { return DigestSize; }
+
+    virtual Core::ByteArray GetDigest() const override;
+
+    virtual OSAL::String ToString() const override;
+
+private:
+    static constexpr size_t DigestSize = 48;
+    uint8_t _digest[DigestSize];
+};
+
+class SHA512
+: public SHA512Base
+{
+public:
+    SHA512();
+
+    virtual void Initialize() override;
+
+    virtual void Finalize() override;
+
+    virtual size_t GetDigestSize() const override
+    { return DigestSize; }
+
+    virtual Core::ByteArray GetDigest() const override;
+
+    virtual OSAL::String ToString() const override;
+
+private:
+    static constexpr size_t DigestSize = 64;
+    uint8_t _digest[DigestSize];
+};
+
+class SHA512_224 : public SHA512Base
+{
+public:
+    SHA512_224();
+
+    virtual void Initialize() override;
+
+    virtual void Finalize() override;
+
+    virtual size_t GetDigestSize() const override
+    { return DigestSize; }
+
+    virtual Core::ByteArray GetDigest() const override;
+
+    virtual OSAL::String ToString() const override;
+
+private:
+    static constexpr size_t DigestSize = 28;
+    uint8_t _digest[DigestSize];
+};
+
+class SHA512_256
+: public SHA512Base
+{
+public:
+    SHA512_256();
+
+    virtual void Initialize() override;
+
+    virtual void Finalize() override;
+
+    virtual size_t GetDigestSize() const override
+    { return DigestSize; }
+
+    virtual Core::ByteArray GetDigest() const override;
+
+    virtual OSAL::String ToString() const override;
+
+private:
+    static constexpr size_t DigestSize = 32;
+    uint8_t _digest[DigestSize];
+};
 
 } // namespace Crypto

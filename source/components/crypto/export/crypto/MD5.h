@@ -39,13 +39,21 @@ private:
     uint8_t _workspace[BlockSize];
     WorkspaceBlock * _block;
 
-    Word ROTL(Word value, size_t bits);
+    void DumpState();
+    void DumpState(size_t t, Word a, Word b, Word c, Word d);
+    void DumpBlock(WorkspaceBlock * block);
+
+    Word ROTLEFT(Word value, size_t bits);
     Word GetData(const WorkspaceBlock * block, size_t i);
 
     Word F(Word x, Word y, Word z);
     Word G(Word x, Word y, Word z);
     Word H(Word x, Word y, Word z);
     Word I(Word x, Word y, Word z);
+    void FF(Word & a, Word b, Word c, Word d, Word m, size_t s, Word t);
+    void GG(Word & a, Word b, Word c, Word d, Word m, size_t s, Word t);
+    void HH(Word & a, Word b, Word c, Word d, Word m, size_t s, Word t);
+    void II(Word & a, Word b, Word c, Word d, Word m, size_t s, Word t);
 
     void Transform(const uint8_t buffer[BlockSize]);
 };

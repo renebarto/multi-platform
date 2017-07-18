@@ -25,12 +25,7 @@ const SHA1::Word SHA1::K2 = 0x8F1BBCDC;
 const SHA1::Word SHA1::K3 = 0xCA62C1D6;
 
 SHA1::SHA1()
-    : _state()
-    , _bitCount()
-    , _buffer()
-    , _digest()
-    , _workspace()
-    , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
+: _state(), _bitCount(), _buffer(), _digest(), _workspace(), _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
 {
     Initialize();
 }
@@ -50,23 +45,24 @@ void SHA1::Initialize()
 }
 
 // Update the hash value
-void SHA1::Process(const uint8_t *data, size_t len)
+void SHA1::Process(const uint8_t * data, size_t len)
 {
     uint32_t filledBlock = static_cast<uint32_t>((_bitCount >> 3) & BlockSizeMinusOne);
-                                                            // Calculate bytes mod 64 or bit mod 512
+    // Calculate bytes mod 64 or bit mod 512
 
     _bitCount += (static_cast<uint64_t>(len) << 3);         // Add number of bits for this block
-                                                            // (we expect no more than 2^64 bits in total)
+    // (we expect no more than 2^64 bits in total)
 
-    uint32_t offset {};
-    if ((filledBlock + len) > BlockSizeMinusOne)            // If total number of bytes crosses 64 (i.e. if we now have a complete 512 bit block)
+    uint32_t offset{};
+    if ((filledBlock + len) >
+        BlockSizeMinusOne)            // If total number of bytes crosses 64 (i.e. if we now have a complete 512 bit block)
     {
         uint32_t spaceLeft = static_cast<uint32_t>(BlockSize - filledBlock);
-                                                            // Space left in block
+        // Space left in block
         memcpy(&_buffer[filledBlock], data, spaceLeft);
-                                // Fill up block;
+        // Fill up block;
         Transform(_buffer);
-                                // Calculate
+        // Calculate
         offset += spaceLeft;
 
         while (offset + BlockSizeMinusOne < len)
@@ -89,11 +85,11 @@ void SHA1::Process(const Core::ByteArray & data)
 void SHA1::Finalize()
 {
     // For _bitCount into a 64 bit number
-    uint8_t finalCount[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t finalCount[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     for (size_t i = 0; i < sizeof(finalCount); i++)
         // Endian independent
-        finalCount[i] = static_cast<uint8_t>((_bitCount >> ((7 - (i & 7)) * 8) ) & 255);
+        finalCount[i] = static_cast<uint8_t>((_bitCount >> ((7 - (i & 7)) * 8)) & 255);
 
     // Suppose that the length of the message, M, is l bits. Append the bit “1” to the end of the
     // message, followed by k zero bits, where k is the smallest, non-negative solution to the equation
@@ -112,7 +108,7 @@ void SHA1::Finalize()
     for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 5 32 bit integers to 20 bytes in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+        _digest[i] = static_cast<uint8_t>((_state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
@@ -130,17 +126,19 @@ Core::ByteArray SHA1::GetDigest() const
 // Rotate x bits to the left
 inline SHA1::Word SHA1::ROTL(SHA1::Word value, size_t bits)
 {
-    return (((value)<<(bits))|((value)>>(SHA1::WordLength-(bits))));
+    return (((value) << (bits)) | ((value) >> (SHA1::WordLength - (bits))));
 }
 
 // Wt = Mt                                                  0 <= t <= 15
 #ifdef LITTLE_ENDIAN
+
 // Swap bytes to for BIG ENDIAN value
 inline SHA1::Word SHA1::SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
 {
     block->l[i] = (ROTL(block->l[i], 24) & 0xFF00FF00) | (ROTL(block->l[i], 8) & 0x00FF00FF);
     return block->l[i];
 }
+
 #else
 inline SHA1::Word SHA1::SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
 {
@@ -153,8 +151,9 @@ inline SHA1::Word SHA1::SHABLK0(SHA1::WorkspaceBlock * block, size_t i)
 // W s = ROTL 1 ( W ( s + 13 ) ∧ MASK ⊕ W ( s + 8 ) ∧ MASK ⊕ W ( s + 2 ) ∧ MASK ⊕ W s )
 inline SHA1::Word SHA1::SHABLK(SHA1::WorkspaceBlock * block, size_t i)
 {
-    block->l[i & NumWorkspaceMinusOne] = (ROTL(block->l[(i + 13) & NumWorkspaceMinusOne] ^ block->l[(i + 8) & NumWorkspaceMinusOne] ^
-                                               block->l[(i + 2) & NumWorkspaceMinusOne] ^ block->l[i & NumWorkspaceMinusOne], 1));
+    block->l[i & NumWorkspaceMinusOne] = (ROTL(
+    block->l[(i + 13) & NumWorkspaceMinusOne] ^ block->l[(i + 8) & NumWorkspaceMinusOne] ^
+    block->l[(i + 2) & NumWorkspaceMinusOne] ^ block->l[i & NumWorkspaceMinusOne], 1));
     return block->l[i & NumWorkspaceMinusOne];
 }
 
@@ -168,33 +167,42 @@ inline SHA1::Word SHA1::SHABLK(SHA1::WorkspaceBlock * block, size_t i)
 // a = T
 // Variable rotation is done while calling the macro, and variables take the initial place for:
 // a : v, b : w, c : x, d : y, e : z
-inline void SHA1::Round0(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+inline void SHA1::Round0(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y,
+                         SHA1::Word & z, size_t i)
 {
-    z += ((w & (x ^ y)) ^ y) + SHABLK0(block, i) + SHA1::K0 + ROTL(v,5);
-    w = ROTL(w,30);
+    z += ((w & (x ^ y)) ^ y) + SHABLK0(block, i) + SHA1::K0 + ROTL(v, 5);
+    w = ROTL(w, 30);
 }
-inline void SHA1::Round1(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+
+inline void SHA1::Round1(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y,
+                         SHA1::Word & z, size_t i)
 {
-    z += ((w & (x ^ y)) ^ y) + SHABLK(block, i) + SHA1::K0 + ROTL(v,5);
-    w = ROTL(w,30);
+    z += ((w & (x ^ y)) ^ y) + SHABLK(block, i) + SHA1::K0 + ROTL(v, 5);
+    w = ROTL(w, 30);
 }
+
 // Parity(x, y, z)=x ⊕ y ⊕ z                    20 ≤ t ≤ 39
-inline void SHA1::Round2(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+inline void SHA1::Round2(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y,
+                         SHA1::Word & z, size_t i)
 {
-    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K1 + ROTL(v,5);
-    w = ROTL(w,30);
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K1 + ROTL(v, 5);
+    w = ROTL(w, 30);
 }
+
 // Maj(x, y, z)=(x ∧ y) ⊕ (x ∧ z) ⊕ (y ∧ z)     40 ≤ t ≤ 59
-inline void SHA1::Round3(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+inline void SHA1::Round3(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y,
+                         SHA1::Word & z, size_t i)
 {
-    z += (((w | x) & y) | (w & x)) + SHABLK(block, i) + SHA1::K2 + ROTL(v,5);
-    w = ROTL(w,30);
+    z += (((w | x) & y) | (w & x)) + SHABLK(block, i) + SHA1::K2 + ROTL(v, 5);
+    w = ROTL(w, 30);
 }
+
 // Parity(x, y, z)=x ⊕ y ⊕ z                    60 ≤ t ≤ 79
-inline void SHA1::Round4(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y, SHA1::Word & z, size_t i)
+inline void SHA1::Round4(SHA1::WorkspaceBlock * block, SHA1::Word & v, SHA1::Word & w, SHA1::Word & x, SHA1::Word & y,
+                         SHA1::Word & z, size_t i)
 {
-    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K3 + ROTL(v,5);
-    w = ROTL(w,30);
+    z += (w ^ x ^ y) + SHABLK(block, i) + SHA1::K3 + ROTL(v, 5);
+    w = ROTL(w, 30);
 }
 
 void SHA1::Transform(const uint8_t buffer[BlockSize])
@@ -210,32 +218,92 @@ void SHA1::Transform(const uint8_t buffer[BlockSize])
 
     // 4 rounds of 20 operations each. Loop unrolled.
     // 0 <= t <= 19
-    Round0(_block, a,b,c,d,e, 0); Round0(_block, e,a,b,c,d, 1); Round0(_block, d,e,a,b,c, 2); Round0(_block, c,d,e,a,b, 3);
-    Round0(_block, b,c,d,e,a, 4); Round0(_block, a,b,c,d,e, 5); Round0(_block, e,a,b,c,d, 6); Round0(_block, d,e,a,b,c, 7);
-    Round0(_block, c,d,e,a,b, 8); Round0(_block, b,c,d,e,a, 9); Round0(_block, a,b,c,d,e,10); Round0(_block, e,a,b,c,d,11);
-    Round0(_block, d,e,a,b,c,12); Round0(_block, c,d,e,a,b,13); Round0(_block, b,c,d,e,a,14); Round0(_block, a,b,c,d,e,15);
-    Round1(_block, e,a,b,c,d,16); Round1(_block, d,e,a,b,c,17); Round1(_block, c,d,e,a,b,18); Round1(_block, b,c,d,e,a,19);
+    Round0(_block, a, b, c, d, e, 0);
+    Round0(_block, e, a, b, c, d, 1);
+    Round0(_block, d, e, a, b, c, 2);
+    Round0(_block, c, d, e, a, b, 3);
+    Round0(_block, b, c, d, e, a, 4);
+    Round0(_block, a, b, c, d, e, 5);
+    Round0(_block, e, a, b, c, d, 6);
+    Round0(_block, d, e, a, b, c, 7);
+    Round0(_block, c, d, e, a, b, 8);
+    Round0(_block, b, c, d, e, a, 9);
+    Round0(_block, a, b, c, d, e, 10);
+    Round0(_block, e, a, b, c, d, 11);
+    Round0(_block, d, e, a, b, c, 12);
+    Round0(_block, c, d, e, a, b, 13);
+    Round0(_block, b, c, d, e, a, 14);
+    Round0(_block, a, b, c, d, e, 15);
+    Round1(_block, e, a, b, c, d, 16);
+    Round1(_block, d, e, a, b, c, 17);
+    Round1(_block, c, d, e, a, b, 18);
+    Round1(_block, b, c, d, e, a, 19);
 
     // 20 <= t <= 39
-    Round2(_block, a,b,c,d,e,20); Round2(_block, e,a,b,c,d,21); Round2(_block, d,e,a,b,c,22); Round2(_block, c,d,e,a,b,23);
-    Round2(_block, b,c,d,e,a,24); Round2(_block, a,b,c,d,e,25); Round2(_block, e,a,b,c,d,26); Round2(_block, d,e,a,b,c,27);
-    Round2(_block, c,d,e,a,b,28); Round2(_block, b,c,d,e,a,29); Round2(_block, a,b,c,d,e,30); Round2(_block, e,a,b,c,d,31);
-    Round2(_block, d,e,a,b,c,32); Round2(_block, c,d,e,a,b,33); Round2(_block, b,c,d,e,a,34); Round2(_block, a,b,c,d,e,35);
-    Round2(_block, e,a,b,c,d,36); Round2(_block, d,e,a,b,c,37); Round2(_block, c,d,e,a,b,38); Round2(_block, b,c,d,e,a,39);
+    Round2(_block, a, b, c, d, e, 20);
+    Round2(_block, e, a, b, c, d, 21);
+    Round2(_block, d, e, a, b, c, 22);
+    Round2(_block, c, d, e, a, b, 23);
+    Round2(_block, b, c, d, e, a, 24);
+    Round2(_block, a, b, c, d, e, 25);
+    Round2(_block, e, a, b, c, d, 26);
+    Round2(_block, d, e, a, b, c, 27);
+    Round2(_block, c, d, e, a, b, 28);
+    Round2(_block, b, c, d, e, a, 29);
+    Round2(_block, a, b, c, d, e, 30);
+    Round2(_block, e, a, b, c, d, 31);
+    Round2(_block, d, e, a, b, c, 32);
+    Round2(_block, c, d, e, a, b, 33);
+    Round2(_block, b, c, d, e, a, 34);
+    Round2(_block, a, b, c, d, e, 35);
+    Round2(_block, e, a, b, c, d, 36);
+    Round2(_block, d, e, a, b, c, 37);
+    Round2(_block, c, d, e, a, b, 38);
+    Round2(_block, b, c, d, e, a, 39);
 
     // 40 <= t <= 59
-    Round3(_block, a,b,c,d,e,40); Round3(_block, e,a,b,c,d,41); Round3(_block, d,e,a,b,c,42); Round3(_block, c,d,e,a,b,43);
-    Round3(_block, b,c,d,e,a,44); Round3(_block, a,b,c,d,e,45); Round3(_block, e,a,b,c,d,46); Round3(_block, d,e,a,b,c,47);
-    Round3(_block, c,d,e,a,b,48); Round3(_block, b,c,d,e,a,49); Round3(_block, a,b,c,d,e,50); Round3(_block, e,a,b,c,d,51);
-    Round3(_block, d,e,a,b,c,52); Round3(_block, c,d,e,a,b,53); Round3(_block, b,c,d,e,a,54); Round3(_block, a,b,c,d,e,55);
-    Round3(_block, e,a,b,c,d,56); Round3(_block, d,e,a,b,c,57); Round3(_block, c,d,e,a,b,58); Round3(_block, b,c,d,e,a,59);
+    Round3(_block, a, b, c, d, e, 40);
+    Round3(_block, e, a, b, c, d, 41);
+    Round3(_block, d, e, a, b, c, 42);
+    Round3(_block, c, d, e, a, b, 43);
+    Round3(_block, b, c, d, e, a, 44);
+    Round3(_block, a, b, c, d, e, 45);
+    Round3(_block, e, a, b, c, d, 46);
+    Round3(_block, d, e, a, b, c, 47);
+    Round3(_block, c, d, e, a, b, 48);
+    Round3(_block, b, c, d, e, a, 49);
+    Round3(_block, a, b, c, d, e, 50);
+    Round3(_block, e, a, b, c, d, 51);
+    Round3(_block, d, e, a, b, c, 52);
+    Round3(_block, c, d, e, a, b, 53);
+    Round3(_block, b, c, d, e, a, 54);
+    Round3(_block, a, b, c, d, e, 55);
+    Round3(_block, e, a, b, c, d, 56);
+    Round3(_block, d, e, a, b, c, 57);
+    Round3(_block, c, d, e, a, b, 58);
+    Round3(_block, b, c, d, e, a, 59);
 
     // 60 <= t <= 79
-    Round4(_block, a,b,c,d,e,60); Round4(_block, e,a,b,c,d,61); Round4(_block, d,e,a,b,c,62); Round4(_block, c,d,e,a,b,63);
-    Round4(_block, b,c,d,e,a,64); Round4(_block, a,b,c,d,e,65); Round4(_block, e,a,b,c,d,66); Round4(_block, d,e,a,b,c,67);
-    Round4(_block, c,d,e,a,b,68); Round4(_block, b,c,d,e,a,69); Round4(_block, a,b,c,d,e,70); Round4(_block, e,a,b,c,d,71);
-    Round4(_block, d,e,a,b,c,72); Round4(_block, c,d,e,a,b,73); Round4(_block, b,c,d,e,a,74); Round4(_block, a,b,c,d,e,75);
-    Round4(_block, e,a,b,c,d,76); Round4(_block, d,e,a,b,c,77); Round4(_block, c,d,e,a,b,78); Round4(_block, b,c,d,e,a,79);
+    Round4(_block, a, b, c, d, e, 60);
+    Round4(_block, e, a, b, c, d, 61);
+    Round4(_block, d, e, a, b, c, 62);
+    Round4(_block, c, d, e, a, b, 63);
+    Round4(_block, b, c, d, e, a, 64);
+    Round4(_block, a, b, c, d, e, 65);
+    Round4(_block, e, a, b, c, d, 66);
+    Round4(_block, d, e, a, b, c, 67);
+    Round4(_block, c, d, e, a, b, 68);
+    Round4(_block, b, c, d, e, a, 69);
+    Round4(_block, a, b, c, d, e, 70);
+    Round4(_block, e, a, b, c, d, 71);
+    Round4(_block, d, e, a, b, c, 72);
+    Round4(_block, c, d, e, a, b, 73);
+    Round4(_block, b, c, d, e, a, 74);
+    Round4(_block, a, b, c, d, e, 75);
+    Round4(_block, e, a, b, c, d, 76);
+    Round4(_block, d, e, a, b, c, 77);
+    Round4(_block, c, d, e, a, b, 78);
+    Round4(_block, b, c, d, e, a, 79);
 
     // Add the working vars back into state[]
     _state[0] += a;

@@ -23,60 +23,55 @@ static constexpr uint64_t Mod1024_896 = 0x0000000000000380;
 
 const SHA512Base::Word SHA512Base::K[80] =
 {
-    UL64(0x428A2F98D728AE22),  UL64(0x7137449123EF65CD),
-    UL64(0xB5C0FBCFEC4D3B2F),  UL64(0xE9B5DBA58189DBBC),
-    UL64(0x3956C25BF348B538),  UL64(0x59F111F1B605D019),
-    UL64(0x923F82A4AF194F9B),  UL64(0xAB1C5ED5DA6D8118),
-    UL64(0xD807AA98A3030242),  UL64(0x12835B0145706FBE),
-    UL64(0x243185BE4EE4B28C),  UL64(0x550C7DC3D5FFB4E2),
-    UL64(0x72BE5D74F27B896F),  UL64(0x80DEB1FE3B1696B1),
-    UL64(0x9BDC06A725C71235),  UL64(0xC19BF174CF692694),
-    UL64(0xE49B69C19EF14AD2),  UL64(0xEFBE4786384F25E3),
-    UL64(0x0FC19DC68B8CD5B5),  UL64(0x240CA1CC77AC9C65),
-    UL64(0x2DE92C6F592B0275),  UL64(0x4A7484AA6EA6E483),
-    UL64(0x5CB0A9DCBD41FBD4),  UL64(0x76F988DA831153B5),
-    UL64(0x983E5152EE66DFAB),  UL64(0xA831C66D2DB43210),
-    UL64(0xB00327C898FB213F),  UL64(0xBF597FC7BEEF0EE4),
-    UL64(0xC6E00BF33DA88FC2),  UL64(0xD5A79147930AA725),
-    UL64(0x06CA6351E003826F),  UL64(0x142929670A0E6E70),
-    UL64(0x27B70A8546D22FFC),  UL64(0x2E1B21385C26C926),
-    UL64(0x4D2C6DFC5AC42AED),  UL64(0x53380D139D95B3DF),
-    UL64(0x650A73548BAF63DE),  UL64(0x766A0ABB3C77B2A8),
-    UL64(0x81C2C92E47EDAEE6),  UL64(0x92722C851482353B),
-    UL64(0xA2BFE8A14CF10364),  UL64(0xA81A664BBC423001),
-    UL64(0xC24B8B70D0F89791),  UL64(0xC76C51A30654BE30),
-    UL64(0xD192E819D6EF5218),  UL64(0xD69906245565A910),
-    UL64(0xF40E35855771202A),  UL64(0x106AA07032BBD1B8),
-    UL64(0x19A4C116B8D2D0C8),  UL64(0x1E376C085141AB53),
-    UL64(0x2748774CDF8EEB99),  UL64(0x34B0BCB5E19B48A8),
-    UL64(0x391C0CB3C5C95A63),  UL64(0x4ED8AA4AE3418ACB),
-    UL64(0x5B9CCA4F7763E373),  UL64(0x682E6FF3D6B2B8A3),
-    UL64(0x748F82EE5DEFB2FC),  UL64(0x78A5636F43172F60),
-    UL64(0x84C87814A1F0AB72),  UL64(0x8CC702081A6439EC),
-    UL64(0x90BEFFFA23631E28),  UL64(0xA4506CEBDE82BDE9),
-    UL64(0xBEF9A3F7B2C67915),  UL64(0xC67178F2E372532B),
-    UL64(0xCA273ECEEA26619C),  UL64(0xD186B8C721C0C207),
-    UL64(0xEADA7DD6CDE0EB1E),  UL64(0xF57D4F7FEE6ED178),
-    UL64(0x06F067AA72176FBA),  UL64(0x0A637DC5A2C898A6),
-    UL64(0x113F9804BEF90DAE),  UL64(0x1B710B35131C471B),
-    UL64(0x28DB77F523047D84),  UL64(0x32CAAB7B40C72493),
-    UL64(0x3C9EBE0A15C9BEBC),  UL64(0x431D67C49C100D4C),
-    UL64(0x4CC5D4BECB3E42B6),  UL64(0x597F299CFC657E2A),
-    UL64(0x5FCB6FAB3AD6FAEC),  UL64(0x6C44198C4A475817)
+UL64(0x428A2F98D728AE22), UL64(0x7137449123EF65CD),
+UL64(0xB5C0FBCFEC4D3B2F), UL64(0xE9B5DBA58189DBBC),
+UL64(0x3956C25BF348B538), UL64(0x59F111F1B605D019),
+UL64(0x923F82A4AF194F9B), UL64(0xAB1C5ED5DA6D8118),
+UL64(0xD807AA98A3030242), UL64(0x12835B0145706FBE),
+UL64(0x243185BE4EE4B28C), UL64(0x550C7DC3D5FFB4E2),
+UL64(0x72BE5D74F27B896F), UL64(0x80DEB1FE3B1696B1),
+UL64(0x9BDC06A725C71235), UL64(0xC19BF174CF692694),
+UL64(0xE49B69C19EF14AD2), UL64(0xEFBE4786384F25E3),
+UL64(0x0FC19DC68B8CD5B5), UL64(0x240CA1CC77AC9C65),
+UL64(0x2DE92C6F592B0275), UL64(0x4A7484AA6EA6E483),
+UL64(0x5CB0A9DCBD41FBD4), UL64(0x76F988DA831153B5),
+UL64(0x983E5152EE66DFAB), UL64(0xA831C66D2DB43210),
+UL64(0xB00327C898FB213F), UL64(0xBF597FC7BEEF0EE4),
+UL64(0xC6E00BF33DA88FC2), UL64(0xD5A79147930AA725),
+UL64(0x06CA6351E003826F), UL64(0x142929670A0E6E70),
+UL64(0x27B70A8546D22FFC), UL64(0x2E1B21385C26C926),
+UL64(0x4D2C6DFC5AC42AED), UL64(0x53380D139D95B3DF),
+UL64(0x650A73548BAF63DE), UL64(0x766A0ABB3C77B2A8),
+UL64(0x81C2C92E47EDAEE6), UL64(0x92722C851482353B),
+UL64(0xA2BFE8A14CF10364), UL64(0xA81A664BBC423001),
+UL64(0xC24B8B70D0F89791), UL64(0xC76C51A30654BE30),
+UL64(0xD192E819D6EF5218), UL64(0xD69906245565A910),
+UL64(0xF40E35855771202A), UL64(0x106AA07032BBD1B8),
+UL64(0x19A4C116B8D2D0C8), UL64(0x1E376C085141AB53),
+UL64(0x2748774CDF8EEB99), UL64(0x34B0BCB5E19B48A8),
+UL64(0x391C0CB3C5C95A63), UL64(0x4ED8AA4AE3418ACB),
+UL64(0x5B9CCA4F7763E373), UL64(0x682E6FF3D6B2B8A3),
+UL64(0x748F82EE5DEFB2FC), UL64(0x78A5636F43172F60),
+UL64(0x84C87814A1F0AB72), UL64(0x8CC702081A6439EC),
+UL64(0x90BEFFFA23631E28), UL64(0xA4506CEBDE82BDE9),
+UL64(0xBEF9A3F7B2C67915), UL64(0xC67178F2E372532B),
+UL64(0xCA273ECEEA26619C), UL64(0xD186B8C721C0C207),
+UL64(0xEADA7DD6CDE0EB1E), UL64(0xF57D4F7FEE6ED178),
+UL64(0x06F067AA72176FBA), UL64(0x0A637DC5A2C898A6),
+UL64(0x113F9804BEF90DAE), UL64(0x1B710B35131C471B),
+UL64(0x28DB77F523047D84), UL64(0x32CAAB7B40C72493),
+UL64(0x3C9EBE0A15C9BEBC), UL64(0x431D67C49C100D4C),
+UL64(0x4CC5D4BECB3E42B6), UL64(0x597F299CFC657E2A),
+UL64(0x5FCB6FAB3AD6FAEC), UL64(0x6C44198C4A475817)
 };
 
 SHA512Base::SHA512Base()
-    : _bitCountL()
-    , _bitCountH()
-    , _buffer()
-    , _state()
-    , _workspace()
-    , _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
+: _bitCountL(), _bitCountH(), _buffer(), _state(), _workspace(), _block(reinterpret_cast<WorkspaceBlock *>(_workspace))
 {
 }
 
 // Update the hash value
-void SHA512Base::Process(const uint8_t *data, size_t len)
+void SHA512Base::Process(const uint8_t * data, size_t len)
 {
     uint32_t filledBlock = static_cast<uint32_t>((_bitCountL >> 3) & BlockSizeMinusOne);
     // Calculate bytes mod 64 or bit mod 512
@@ -86,9 +81,9 @@ void SHA512Base::Process(const uint8_t *data, size_t len)
     // Add number of bits for this block
     // (we expect no more than 2^128 bits in total)
 
-    uint32_t offset {};
+    uint32_t offset{};
     if ((filledBlock + len) > BlockSizeMinusOne)        // If total number of bytes crosses 64
-                                                        // (i.e. if we now have a complete 512 bit block)
+        // (i.e. if we now have a complete 512 bit block)
     {
         uint32_t spaceLeft = static_cast<uint32_t>(BlockSize - filledBlock);
         // Space left in block
@@ -118,13 +113,13 @@ void SHA512Base::Process(const Core::ByteArray & data)
 void SHA512Base::Finalize()
 {
     // Convert _bitCount into a 128 bit number
-    uint8_t finalCount[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t finalCount[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // Endian independent
     for (size_t i = 0; i < sizeof(finalCount) / 2; i++)
-        finalCount[i] = static_cast<uint8_t>((_bitCountH >> ((7 - (i & 7)) * 8) ) & 255);
+        finalCount[i] = static_cast<uint8_t>((_bitCountH >> ((7 - (i & 7)) * 8)) & 255);
     for (size_t i = sizeof(finalCount) / 2; i < sizeof(finalCount); i++)
-        finalCount[i] = static_cast<uint8_t>((_bitCountL >> ((7 - (i & 7)) * 8) ) & 255);
+        finalCount[i] = static_cast<uint8_t>((_bitCountL >> ((7 - (i & 7)) * 8)) & 255);
 
     // Suppose that the length of the message, M, is l bits. Append the bit “1” to the end of the
     // message, followed by k zero bits, where k is the smallest, non-negative solution to the equation
@@ -148,7 +143,8 @@ void SHA512Base::DumpState()
     cout << "State: " << endl;
     for (size_t i = 0; i < StateSize; ++i)
     {
-        cout << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << _state[i] << dec << endl;
+        cout << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << _state[i]
+             << dec << endl;
     }
 }
 
@@ -170,17 +166,19 @@ void SHA512Base::DumpBlock(SHA512Base::WorkspaceBlock * block)
     cout << "W: " << endl;
     for (size_t i = 0; i < NumWorkspace; ++i)
     {
-        cout << "W" << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase << block->l[i] << dec << endl;
+        cout << "W" << setw(2) << setfill('0') << i << " = " << hex << setw(16) << setfill('0') << uppercase
+             << block->l[i] << dec << endl;
     }
 }
 
 inline SHA512Base::Word SHA512Base::ROTLEFT(SHA512Base::Word a, size_t b)
 {
-    return ((a) << (b)) | ((a) >> (SHA512Base::WordLength-(b)));
+    return ((a) << (b)) | ((a) >> (SHA512Base::WordLength - (b)));
 }
+
 inline SHA512Base::Word SHA512Base::ROTRIGHT(SHA512Base::Word a, size_t b)
 {
-    return ((a) >> (b)) | ((a) << (SHA512Base::WordLength-(b)));
+    return ((a) >> (b)) | ((a) << (SHA512Base::WordLength - (b)));
 }
 
 // Ch ( x , y , z )     = ( x ∧ y ) ⊕ ( ¬ x ∧ z )
@@ -188,42 +186,48 @@ inline SHA512Base::Word SHA512Base::CH(SHA512Base::Word x, SHA512Base::Word y, S
 {
     return (((x) & (y)) ^ (~(x) & (z)));
 }
+
 // Maj ( x , y , z )    = ( x ∧ y ) ⊕ ( x ∧ z ) ⊕ ( y ∧ z )
 inline SHA512Base::Word SHA512Base::MAJ(SHA512Base::Word x, SHA512Base::Word y, SHA512Base::Word z)
 {
     return (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)));
 }
+
 //  { 512 }
 // ∑    (x )            = ROTR 28 (x) ⊕ ROTR 34 (x) ⊕ ROTR 39 (x)
 //  0
 inline SHA512Base::Word SHA512Base::EP0(SHA512Base::Word x)
 {
-    return (ROTRIGHT(x,28) ^ ROTRIGHT(x,34) ^ ROTRIGHT(x,39));
+    return (ROTRIGHT(x, 28) ^ ROTRIGHT(x, 34) ^ ROTRIGHT(x, 39));
 }
+
 //  { 512 }
 // ∑    (x )            = ROTR 14 (x) ⊕ ROTR 18 (x) ⊕ ROTR 41 (x)
 //  1
 inline SHA512Base::Word SHA512Base::EP1(SHA512Base::Word x)
 {
-    return (ROTRIGHT(x,14) ^ ROTRIGHT(x,18) ^ ROTRIGHT(x,41));
+    return (ROTRIGHT(x, 14) ^ ROTRIGHT(x, 18) ^ ROTRIGHT(x, 41));
 }
+
 //  { 512 }
 // σ   ( x )            = ROTR 1 (x) ⊕ ROTR 8 (x) ⊕ SHR 7 (x)
 //  0
 inline SHA512Base::Word SHA512Base::SIG0(SHA512Base::Word x)
 {
-    return (ROTRIGHT(x,1) ^ ROTRIGHT(x,8) ^ ((x) >> 7));
+    return (ROTRIGHT(x, 1) ^ ROTRIGHT(x, 8) ^ ((x) >> 7));
 }
+
 //  { 512 }
 // σ   ( x )            = ROTR 19 (x) ⊕ ROTR 61 (x) ⊕ SHR 6 (x)
 //  1
 inline SHA512Base::Word SHA512Base::SIG1(SHA512Base::Word x)
 {
-    return (ROTRIGHT(x,19) ^ ROTRIGHT(x,61) ^ ((x) >> 6));
+    return (ROTRIGHT(x, 19) ^ ROTRIGHT(x, 61) ^ ((x) >> 6));
 }
 
 // Wt = Mt                                                  0 <= t <= 15
 #ifdef LITTLE_ENDIAN
+
 // Swap bytes to for BIG ENDIAN value
 inline SHA512Base::Word SHA512Base::SHABLK0(SHA512Base::WorkspaceBlock * block, size_t t)
 {
@@ -232,6 +236,7 @@ inline SHA512Base::Word SHA512Base::SHABLK0(SHA512Base::WorkspaceBlock * block, 
             (ROTLEFT(block->l[t], 40) & 0x00FF000000FF0000) |
             (ROTLEFT(block->l[t], 56) & 0xFF000000FF000000));
 }
+
 #else
 inline SHA512Base::Word SHA512Base::SHABLK0(SHA512Base::WorkspaceBlock * block, size_t i)
 {
@@ -251,15 +256,15 @@ inline SHA512Base::Word SHA512Base::SHABLK(SHA512Base::WorkspaceBlock * block, s
 }
 
 inline void SHA512Base::Round0(SHA512Base::WorkspaceBlock * block,
-                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
-                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
-                          size_t t)
+                               SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                               SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                               size_t t)
 {
     block->l[t] = SHABLK0(block, t);
 //    if (t == 0)
 //        DumpBlock(block);
     Word T1 = h + EP1(e) + CH(e, f, g) + K[t] + block->l[t];
-    Word T2 = EP0(a) + MAJ (a, b, c);
+    Word T2 = EP0(a) + MAJ(a, b, c);
     h = g;
     g = f;
     f = e;
@@ -272,13 +277,13 @@ inline void SHA512Base::Round0(SHA512Base::WorkspaceBlock * block,
 }
 
 inline void SHA512Base::Round1(SHA512Base::WorkspaceBlock * block,
-                          SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
-                          SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
-                          size_t t)
+                               SHA512Base::Word & a, SHA512Base::Word & b, SHA512Base::Word & c, SHA512Base::Word & d,
+                               SHA512Base::Word & e, SHA512Base::Word & f, SHA512Base::Word & g, SHA512Base::Word & h,
+                               size_t t)
 {
     block->l[t & NumWorkspaceMinusOne] = SHABLK(block, t);
     Word T1 = h + EP1(e) + CH(e, f, g) + K[t] + block->l[t & NumWorkspaceMinusOne];
-    Word T2 = EP0(a) + MAJ (a, b, c);
+    Word T2 = EP0(a) + MAJ(a, b, c);
     h = g;
     g = f;
     f = e;
@@ -325,7 +330,7 @@ void SHA512Base::Transform(const uint8_t buffer[BlockSize])
 }
 
 SHA384::SHA384()
-    : _digest()
+: _digest()
 {
     Initialize();
 }
@@ -353,7 +358,7 @@ void SHA384::Finalize()
     for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 16 64 bit integers to digest in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8)) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
@@ -379,7 +384,7 @@ OSAL::String SHA384::ToString() const
 }
 
 SHA512::SHA512()
-    : _digest()
+: _digest()
 {
     Initialize();
 }
@@ -407,7 +412,7 @@ void SHA512::Finalize()
     for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 16 64 bit integers to digest in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8)) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
@@ -433,7 +438,7 @@ OSAL::String SHA512::ToString() const
 }
 
 SHA512_224::SHA512_224()
-    : _digest()
+: _digest()
 {
     Initialize();
 }
@@ -461,7 +466,7 @@ void SHA512_224::Finalize()
     for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 16 64 bit integers to digest in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8)) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
@@ -487,7 +492,7 @@ OSAL::String SHA512_224::ToString() const
 }
 
 SHA512_256::SHA512_256()
-    : _digest()
+: _digest()
 {
     Initialize();
 }
@@ -515,7 +520,7 @@ void SHA512_256::Finalize()
     for (size_t i = 0; i < DigestSize; i++)
     {
         // Convert 16 64 bit integers to digest in BIG ENDIAN form
-        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8) ) & 255);
+        _digest[i] = static_cast<uint8_t>((_state[i >> 3] >> ((7 - (i & 7)) * 8)) & 255);
     }
 
     memset(_buffer, 0, BlockSize);
