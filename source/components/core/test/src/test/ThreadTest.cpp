@@ -1,16 +1,15 @@
 #include <unit-test-c++/UnitTestC++.h>
 
-#include "core/core.h"
+#include "core/Core.h"
 #include "core/Thread.h"
 #include "core/Util.h"
 
 using namespace std;
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 class ThreadTest : public UnitTestCpp::TestFixture
 {
@@ -51,9 +50,6 @@ void ThreadTest::TearDown()
 {
     delete thread;
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(ThreadTest, Construction)
 {

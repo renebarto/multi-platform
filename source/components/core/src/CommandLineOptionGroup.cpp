@@ -4,18 +4,18 @@ using namespace std;
 using namespace Core;
 
 CommandLineOptionGroup::CommandLineOptionGroup(const string & name, const string description /*= ""*/)
-    : name(name)
-    , description(description)
-    , options()
+    : _name(name)
+    , _description(description)
+    , _options()
 {
 }
 
 CommandLineOptionGroup::~CommandLineOptionGroup()
 {
-    options.clear();
+    _options.clear();
 }
 
 void CommandLineOptionGroup::AddOption(const CommandLineOption::Ptr option)
 {
-    options.push_back(option);
+    _options.push_back(option);
 }

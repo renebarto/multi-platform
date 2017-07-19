@@ -10,22 +10,22 @@ namespace UnitTestCpp
 {
 
 TimeConstraint::TimeConstraint(int timeConstraintMilliSeconds, const TestDetails & details) :
-    details(details),
-    timeConstraintMilliSeconds(timeConstraintMilliSeconds)
+    _details(details),
+    _timeConstraintMilliSeconds(timeConstraintMilliSeconds)
 {
-    timer.Start();
+    _timer.Start();
 }
 
 TimeConstraint::~TimeConstraint()
 {
-    int const totalTimeInMilliSeconds = timer.GetTimeInMilliSeconds();
-    if (totalTimeInMilliSeconds > timeConstraintMilliSeconds)
+    int const totalTimeInMilliSeconds = _timer.GetTimeInMilliSeconds();
+    if (totalTimeInMilliSeconds > _timeConstraintMilliSeconds)
     {
         ostringstream stream;
         stream << "Time constraint failed. Expected to run test under "
-               << timeConstraintMilliSeconds << "ms but took " << totalTimeInMilliSeconds << "ms.";
+               << _timeConstraintMilliSeconds << "ms but took " << totalTimeInMilliSeconds << "ms.";
 
-        UnitTestCpp::CurrentTest::Results()->OnTestFailure(details, stream.str());
+        UnitTestCpp::CurrentTest::Results()->OnTestFailure(_details, stream.str());
     }
 }
 

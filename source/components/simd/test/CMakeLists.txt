@@ -57,7 +57,7 @@ display_list("Linker options              : " ${COMPONENTS_SIMD_TEST_LINK_OPTION
 display_list("Dependencies                : " ${COMPONENTS_SIMD_TEST_DEPENDENCIES} )
 
 # add the executable
-add_executable(${PROJECT_NAME} ${COMPONENTS_SIMD_TEST_SOURCES})
+add_executable(${PROJECT_NAME} ${COMPONENTS_SIMD_TEST_SOURCES} ${COMPONENTS_SIMD_TEST_INCLUDES})
 target_link_libraries(${PROJECT_NAME} ${COMPONENTS_SIMD_TEST_LIBS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_SIMD_TEST_INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPONENTS_SIMD_TEST_DEFINITIONS})

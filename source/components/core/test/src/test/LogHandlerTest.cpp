@@ -3,11 +3,10 @@
 
 using namespace std;
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 const string DomainName = "Domain";
 
@@ -83,9 +82,6 @@ void LogHandlerTest::TearDown()
     LogHandler::Set(LogHandler::DefaultDomain, savedHandler);
     LogHandler::Reset(DomainName);
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(LogHandlerTest, DefaultHandler)
 {

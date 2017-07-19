@@ -21,15 +21,15 @@ public:
     TimeConstraint & operator = (const TimeConstraint &) = delete;
 
 private:
-    Timer timer;
-    TestDetails details;
-    int const timeConstraintMilliSeconds;
+    Timer _timer;
+    TestDetails _details;
+    int const _timeConstraintMilliSeconds;
 };
 
 #define UNITTEST_TIME_CONSTRAINT(ms)                                                               \
     UnitTestCpp::TimeConstraint unitTest__timeConstraint__(ms,                                     \
                                                            UnitTestCpp::TestDetails(_details, __LINE__))
 
-#define UNITTEST_TIME_CONSTRAINT_EXEMPT() do { m_timeConstraintExempt = true; } while (0)
+#define UNITTEST_TIME_CONSTRAINT_EXEMPT() do { _timeConstraintMilliSeconds = true; } while (0)
 
 } // namespace UnitTestCpp

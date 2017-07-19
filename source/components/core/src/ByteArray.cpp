@@ -1,6 +1,6 @@
 #include <cstring>
 #include "core/ByteArray.h"
-#include "core/Exception.h"
+#include "core/Core.h"
 #include "osal/Strings.h"
 
 using namespace std;

@@ -1,0 +1,10 @@
+prefix=/home/rene/install-multi-platform
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: network
+Description: OS abstraction layer
+Version: 1.0.0
+Cflags: -I${includedir}
+Libs: -L${libdir} -lnetwork

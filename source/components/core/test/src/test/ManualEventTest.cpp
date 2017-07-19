@@ -4,11 +4,10 @@
 #include "core/ManualEvent.h"
 #include "core/Util.h"
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 class ManualEventTest : public UnitTestCpp::TestFixture
 {
@@ -62,9 +61,6 @@ void ManualEventTest::SetUp()
 void ManualEventTest::TearDown()
 {
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(ManualEventTest, Construction)
 {

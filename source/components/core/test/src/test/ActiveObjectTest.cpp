@@ -4,11 +4,10 @@
 #include "core/ActiveObject.h"
 #include "core/Util.h"
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 static const int SLEEP = 100;
 
@@ -64,9 +63,6 @@ void ActiveObjectTest::SetUp()
 void ActiveObjectTest::TearDown()
 {
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(ActiveObjectTest, Simple)
 {

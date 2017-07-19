@@ -55,16 +55,16 @@ ostream & Core::operator << (ostream & stream, Core::LogLevel logLevel)
 
 const string LogHandler::DefaultDomain("");
 
-LogHandlerInfo LogHandler::defaultLogHandlerInfo(Core::LogLevel::All, LogHandler::DefaultLogHandler, nullptr);
-map<string, LogHandlerInfo> LogHandler::logHandlerInfo;
-recursive_mutex LogHandler::guard;
+LogHandlerInfo LogHandler::_defaultLogHandlerInfo(Core::LogLevel::All, LogHandler::DefaultLogHandler, nullptr);
+map<string, LogHandlerInfo> LogHandler::_logHandlerInfo;
+recursive_mutex LogHandler::_guard;
 
 LogHandlerInfo LogHandler::Set(const string & domainName,
                                Core::LogLevel logLevelFilter,
                                LogHandlerFunction * newHandler,
                                void * userData)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindOrCreateInfo(domainName);
     if (info != nullptr)
     {
@@ -77,7 +77,7 @@ LogHandlerInfo LogHandler::Set(const string & domainName,
 
 LogHandlerInfo LogHandler::Set(const string & domainName, const LogHandlerInfo & handlerInfo)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindOrCreateInfo(domainName);
     if (info != nullptr)
     {
@@ -90,37 +90,37 @@ LogHandlerInfo LogHandler::Set(const string & domainName, const LogHandlerInfo &
 
 void LogHandler::Reset(const string & domainName)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     if (domainName.empty())
     {
-        defaultLogHandlerInfo.Set(Core::LogLevel::All, DefaultLogHandler, nullptr);
+        _defaultLogHandlerInfo.Set(Core::LogLevel::All, DefaultLogHandler, nullptr);
         return;
     }
     LogHandlerInfo * info = FindInfo(domainName);
     if (info != nullptr)
     {
-        logHandlerInfo.erase(domainName);
+        _logHandlerInfo.erase(domainName);
     }
 }
 
 Core::LogLevel LogHandler::GetLogLevelFilter(const string & domainName)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
     if (info != nullptr)
     {
-        return info->logLevelFilter;
+        return info->_logLevelFilter;
     }
     return Core::LogLevel::None;
 }
 
 void LogHandler::SetLogLevelFilter(const string & domainName, Core::LogLevel logLevelFilter)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
     if (info != nullptr)
     {
-        info->logLevelFilter = logLevelFilter;
+        info->_logLevelFilter = logLevelFilter;
     }
 }
 
@@ -129,7 +129,7 @@ void LogHandler::Log(const string & domainName,
                      Core::LogLevel logLevel,
                      const string & message)
 {
-    lock_guard<recursive_mutex> lock(guard);
+    lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
     if (info == nullptr)
     {
@@ -137,10 +137,10 @@ void LogHandler::Log(const string & domainName,
     }
     if (!info->IsFilteredOut(logLevel))
     {
-        if (info->handler != nullptr)
-            info->handler(domainName, componentName, logLevel, message, info->userData);
+        if (info->_handler != nullptr)
+            info->_handler(domainName, componentName, logLevel, message, info->_userData);
         else
-            DefaultLogHandler(domainName, componentName, logLevel, message, info->userData);
+            DefaultLogHandler(domainName, componentName, logLevel, message, info->_userData);
     }
 }
 
@@ -148,10 +148,10 @@ LogHandlerInfo * LogHandler::FindInfo(const string & domainName)
 {
     if (domainName.empty())
     {
-        return &defaultLogHandlerInfo;
+        return &_defaultLogHandlerInfo;
     }
-    map<string, LogHandlerInfo>::iterator foundHandlerInfo = logHandlerInfo.find(domainName);
-    if (foundHandlerInfo == logHandlerInfo.end())
+    map<string, LogHandlerInfo>::iterator foundHandlerInfo = _logHandlerInfo.find(domainName);
+    if (foundHandlerInfo == _logHandlerInfo.end())
     {
         return nullptr;
     }
@@ -164,7 +164,7 @@ LogHandlerInfo * LogHandler::FindOrCreateInfo(const string & domainName)
     if (info == nullptr)
     {
         LogHandlerInfo info(Core::LogLevel::All, nullptr, nullptr);
-        logHandlerInfo.insert(pair<string, LogHandlerInfo>(domainName, info));
+        _logHandlerInfo.insert(pair<string, LogHandlerInfo>(domainName, info));
         return FindInfo(domainName);
     }
     return info;

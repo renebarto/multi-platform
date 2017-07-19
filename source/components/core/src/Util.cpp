@@ -6,10 +6,9 @@
 #include <cmath>
 #include <cstring>
 #include <termios.h>
-#include <core/core.h>
+#include <core/Core.h>
 //#include "Core/ByteArray.h"
 //#include "Core/DefaultLogger.h"
-//#include "Core/Object.h"
 //#include "Core/String.h"
 
 using namespace std;

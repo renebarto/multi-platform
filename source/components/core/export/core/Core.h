@@ -1,12 +1,10 @@
 #pragma once
 
-#include <string>
-#include <exception>
-#include <sstream>
-#include <iomanip>
 #include <cstring>
-#include "osal/OSAL.h"
-#include "osal/Strings.h"
+#include <iomanip>
+#include <sstream>
+#include <stdexcept>
+#include <osal/OSAL.h>
 
 namespace Core
 {
@@ -14,9 +12,9 @@ namespace Core
 class BaseException : public std::exception
 {
 protected:
-    OSAL::String message;
+    std::string message;
     const std::exception * innerException;
-    mutable OSAL::String whatMessage;
+    mutable std::string whatMessage;
 public:
     BaseException()
         : message()
@@ -34,12 +32,12 @@ public:
         , innerException(&innerException)
     {
     }
-    BaseException(const OSAL::String & message)
+    BaseException(const std::string & message)
         : message(message)
         , innerException(nullptr)
     {
     }
-    BaseException(const OSAL::String & message, const std::exception & innerException)
+    BaseException(const std::string & message, const std::exception & innerException)
         : message(message)
         , innerException(&innerException)
     {
@@ -58,24 +56,22 @@ public:
         whatMessage = FormatMessage();
         return whatMessage.c_str();
     }
-    virtual OSAL::String BuildMessage() const
-    {
-        return "";
-    }
-    const OSAL::String & GetMessage() const
+    virtual std::string BuildMessage() const = 0;
+
+    const std::string & GetMessage() const
     {
         return message;
     }
-    void SetMessage(const OSAL::String & value)
+    void SetMessage(const std::string & value)
     {
         message = value;
     }
 private:
-    OSAL::String FormatMessage() const
+    std::string FormatMessage() const
     {
         std::ostringstream stream;
         stream << OSAL::OS::TypeName(*this);
-        OSAL::String buildMessage = BuildMessage();
+        std::string buildMessage = BuildMessage();
         if (!buildMessage.empty())
             stream << " - " << BuildMessage();
         if (!message.empty())
@@ -103,14 +99,14 @@ public:
         , line(line)
     {
     }
-    Exception(char const * functionName, char const * fileName, int line, const OSAL::String & message)
+    Exception(char const * functionName, char const * fileName, int line, const std::string & message)
         : BaseException(message)
         , functionName(functionName)
         , fileName(fileName)
         , line(line)
     {
     }
-    Exception(char const * functionName, char const * fileName, int line, const OSAL::String & message, const std::exception & innerException)
+    Exception(char const * functionName, char const * fileName, int line, const std::string & message, const std::exception & innerException)
         : BaseException(message, innerException)
         , functionName(functionName)
         , fileName(fileName)
@@ -120,7 +116,7 @@ public:
     ~Exception() throw ()
     {
     }
-    virtual OSAL::String BuildMessage() const
+    virtual std::string BuildMessage() const override
     {
         std::ostringstream stream;
         if (functionName != nullptr)
@@ -146,7 +142,7 @@ public:
         , errorCode(errorCode)
     {
     }
-    SystemError(char const * functionName, char const * fileName, int line, int errorCode, OSAL::String message)
+    SystemError(char const * functionName, char const * fileName, int line, int errorCode, std::string message)
         : Exception(functionName, fileName, line, message)
         , errorCode(errorCode)
     {
@@ -158,7 +154,7 @@ public:
     {
         return errorCode;
     }
-    virtual OSAL::String BuildMessage() const
+    virtual std::string BuildMessage() const override
     {
         std::ostringstream stream;
         stream << Exception::BuildMessage() << " errno=" << errorCode
@@ -171,7 +167,7 @@ public:
 class RuntimeError : public Exception
 {
 public:
-    RuntimeError(char const * functionName, char const * fileName, int line, OSAL::String message)
+    RuntimeError(char const * functionName, char const * fileName, int line, std::string message)
         : Exception(functionName, fileName, line, message)
     {
     }
@@ -187,14 +183,14 @@ protected:
 public:
     ArgumentException(char const * functionName, char const * fileName, int line,
                       OSAL::String argument)
-        : Exception(functionName, fileName, line)
-        , argument(argument)
+    : Exception(functionName, fileName, line)
+    , argument(argument)
     {
     }
     ArgumentException(char const * functionName, char const * fileName, int line,
                       OSAL::String argument, OSAL::String message)
-        : Exception(functionName, fileName, line, message)
-        , argument(argument)
+    : Exception(functionName, fileName, line, message)
+    , argument(argument)
     {
     }
     ~ArgumentException() throw ()
@@ -215,12 +211,12 @@ class ArgumentOutOfRangeException : public ArgumentException
 public:
     ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
                                 OSAL::String argument)
-        : ArgumentException(functionName, fileName, line, argument)
+    : ArgumentException(functionName, fileName, line, argument)
     {
     }
     ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
                                 OSAL::String argument, OSAL::String message)
-        : ArgumentException(functionName, fileName, line, argument, message)
+    : ArgumentException(functionName, fileName, line, argument, message)
     {
     }
     ~ArgumentOutOfRangeException() throw ()
@@ -236,58 +232,12 @@ public:
     }
 };
 
-class ArgumentNullException : public ArgumentException
+inline void ThrowOnError(const char * functionName, const char * fileName, int line, int errorCode)
 {
-public:
-    ArgumentNullException(char const * functionName, char const * fileName, int line,
-                          OSAL::String argument) :
-        ArgumentException(functionName, fileName, line, argument)
+    if (errorCode != 0)
     {
+        throw SystemError(functionName, fileName, line, errorCode);
     }
-    ~ArgumentNullException() throw ()
-    {
-    }
-    virtual OSAL::String BuildMessage() const
-    {
-        std::ostringstream stream;
-        stream << Exception::BuildMessage();
-        if (!argument.empty())
-            stream << ": argument null: " << argument;
-        return stream.str();
-    }
-};
-
-class OperationException : public Exception
-{
-public:
-    OperationException(char const * functionName, char const * fileName, int line,
-                       OSAL::String message)
-        : Exception(functionName, fileName, line, message)
-    {
-    }
-    ~OperationException() throw ()
-    {
-    }
-};
-
-class OperationNotSupportedException : public OperationException
-{
-public:
-    OperationNotSupportedException(char const * functionName, char const * fileName, int line,
-                                   OSAL::String message)
-        : OperationException(functionName, fileName, line, message)
-    {
-    }
-    ~OperationNotSupportedException() throw ()
-    {
-    }
-    virtual OSAL::String BuildMessage() const
-    {
-        std::ostringstream stream;
-        stream << Exception::BuildMessage();
-        stream << ": operation not supported";
-        return stream.str();
-    }
-};
+}
 
 } // namespace Core

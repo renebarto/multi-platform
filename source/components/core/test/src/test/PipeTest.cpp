@@ -5,11 +5,10 @@
 
 using namespace std;
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 class PipeTest : public UnitTestCpp::TestFixture
 {
@@ -26,9 +25,6 @@ void PipeTest::SetUp()
 void PipeTest::TearDown()
 {
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(PipeTest, ConstructDefault)
 {

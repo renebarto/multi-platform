@@ -24,19 +24,19 @@ public:
 
     const std::string & Name() const
     {
-        return name;
+        return _name;
     }
     void Name(const std::string & name)
     {
-        this->name = name;
+        this->_name = name;
     }
     const std::string & Description() const
     {
-        return description;
+        return _description;
     }
     void Description(const std::string & description)
     {
-        this->description = description;
+        this->_description = description;
     }
 
     void AddOption(const CommandLineOption::Ptr option);
@@ -84,13 +84,13 @@ public:
 
     const CommandLineOptionsList & Options() const
     {
-        return options;
+        return _options;
     }
 
 protected:
-    std::string name;
-    std::string description;
-    CommandLineOptionsList options;
+    std::string _name;
+    std::string _description;
+    CommandLineOptionsList _options;
 };
 
 } // namespace Core

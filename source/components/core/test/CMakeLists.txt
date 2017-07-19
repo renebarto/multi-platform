@@ -57,7 +57,7 @@ display_list("Linker options              : " ${COMPONENTS_CORE_TEST_LINK_OPTION
 display_list("Dependencies                : " ${COMPONENTS_CORE_TEST_DEPENDENCIES} )
 
 # add the executable
-add_executable(${PROJECT_NAME} ${COMPONENTS_CORE_TEST_SOURCES})
+add_executable(${PROJECT_NAME} ${COMPONENTS_CORE_TEST_SOURCES} ${COMPONENTS_CORE_TEST_INCLUDES})
 target_link_libraries(${PROJECT_NAME} ${COMPONENTS_CORE_TEST_LIBS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${COMPONENTS_CORE_TEST_INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPONENTS_CORE_TEST_DEFINITIONS})

@@ -19,14 +19,14 @@ public:
     void CloseWrite();
     int Read(void * data, int numBytes);
     int Write(void * data, int numBytes);
-    int ReadFD() { return fd[PipeRead]; }
-    int WriteFD() { return fd[PipeWrite]; }
+    int ReadFD() { return _fd[PipeRead]; }
+    int WriteFD() { return _fd[PipeWrite]; }
 
 protected:
     static const int PipeRead = 0;
     static const int PipeWrite = 1;
     static const int PipeCount = 2;
-    int fd[PipeCount];
+    int _fd[PipeCount];
 };
 
 } // namespace Core

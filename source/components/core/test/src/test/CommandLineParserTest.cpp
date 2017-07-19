@@ -5,6 +5,8 @@
 namespace Core {
 namespace Test {
 
+TEST_SUITE(core) {
+
 class CommandLineParserTest : public UnitTestCpp::TestFixture
 {
 public:
@@ -218,9 +220,6 @@ void CommandLineParserTest::TearDown()
 }
 
 static const OSAL::String ApplicationName = "CommandLineParserTest";
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(CommandLineParserTest, Construct)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <initializer_list>
-#include "core/Exception.h"
+#include "core/Core.h"
 #include "core/Util.h"
 
 namespace Core

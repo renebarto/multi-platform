@@ -19,51 +19,51 @@ public:
 
     std::recursive_mutex & GetMutex()
     {
-        return guard;
+        return _guard;
     }
     typename std::list<T *>::iterator begin()
     {
-        return observers.begin();
+        return _observers.begin();
     }
     typename std::list<T *>::iterator end()
     {
-        return observers.end();
+        return _observers.end();
     }
 
 protected:
-    std::list<T *> observers;
+    std::list<T *> _observers;
     typename std::list<T *>::iterator Find(T * observer);
-    Mutex guard;
+    Mutex _guard;
 };
 
 template <class T>
 void Observable<T>::AddObserver(T * observer)
 {
-    Lock lock(guard);
+    Lock lock(_guard);
     typename std::list<T *>::iterator it = Find(observer);
-    if (it == observers.end())
+    if (it == _observers.end())
     {
-        observers.push_back(observer);
+        _observers.push_back(observer);
     }
 }
 
 template <class T>
 void Observable<T>::RemoveObserver(T * observer)
 {
-    Lock lock(guard);
+    Lock lock(_guard);
     typename std::list<T *>::iterator it = Find(observer);
-    if (it != observers.end())
+    if (it != _observers.end())
     {
-        observers.erase(it);
+        _observers.erase(it);
     }
 }
 
 template <class T>
 typename std::list<T *>::iterator Observable<T>::Find(T * observer)
 {
-    Lock lock(guard);
-    typename std::list<T *>::iterator it = observers.begin();
-    while (it != observers.end())
+    Lock lock(_guard);
+    typename std::list<T *>::iterator it = _observers.begin();
+    while (it != _observers.end())
     {
         if (*it == observer)
             break;

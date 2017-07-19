@@ -36,37 +36,37 @@ typedef void LogHandlerFunction(const std::string & domainName,
 struct LogHandlerInfo
 {
     LogHandlerInfo() :
-        logLevelFilter(LogLevel::All),
-        handler(nullptr),
-        userData(nullptr)
+        _logLevelFilter(LogLevel::All),
+        _handler(nullptr),
+        _userData(nullptr)
     {
     }
     LogHandlerInfo(LogLevel logLevelFilter, LogHandlerFunction * handler, void * userData) :
-        logLevelFilter(logLevelFilter),
-        handler(handler),
-        userData(userData)
+        _logLevelFilter(logLevelFilter),
+        _handler(handler),
+        _userData(userData)
     {
     }
     bool IsFilteredOut(LogLevel logLevel)
     {
-        return (logLevel & this->logLevelFilter) == LogLevel::None;
+        return (logLevel & this->_logLevelFilter) == LogLevel::None;
     }
     void Set(LogLevel logLevelFilter, LogHandlerFunction * handler, void * userData)
     {
-        this->logLevelFilter = logLevelFilter;
-        this->handler = handler;
-        this->userData = userData;
+        this->_logLevelFilter = logLevelFilter;
+        this->_handler = handler;
+        this->_userData = userData;
     }
     void Set(const LogHandlerInfo & other)
     {
-        this->logLevelFilter = other.logLevelFilter;
-        this->handler = other.handler;
-        this->userData = other.userData;
+        this->_logLevelFilter = other._logLevelFilter;
+        this->_handler = other._handler;
+        this->_userData = other._userData;
     }
 
-    LogLevel logLevelFilter;
-    LogHandlerFunction * handler;
-    void * userData;
+    LogLevel _logLevelFilter;
+    LogHandlerFunction * _handler;
+    void * _userData;
 };
 
 class LogHandler
@@ -92,9 +92,9 @@ private:
     typedef std::recursive_mutex Mutex;
     typedef std::lock_guard<Mutex> Lock;
 
-    static LogHandlerInfo defaultLogHandlerInfo;
-    static std::map<std::string, LogHandlerInfo> logHandlerInfo;
-    static Mutex guard;
+    static LogHandlerInfo _defaultLogHandlerInfo;
+    static std::map<std::string, LogHandlerInfo> _logHandlerInfo;
+    static Mutex _guard;
 
     static LogHandlerInfo * FindInfo(const std::string & domainName);
     static LogHandlerInfo * FindOrCreateInfo(const std::string & domainName);

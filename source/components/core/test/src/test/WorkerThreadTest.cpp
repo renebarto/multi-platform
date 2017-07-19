@@ -1,14 +1,13 @@
 #include <unit-test-c++/UnitTestC++.h>
 
-#include "core/core.h"
+#include "core/Core.h"
 #include "core/Util.h"
 #include "core/WorkerThread.h"
 
-namespace Core
-{
+namespace Core {
+namespace Test {
 
-namespace Test
-{
+TEST_SUITE(core) {
 
 static const int SLEEP = 200;
 static const int TIMEOUT = 50;
@@ -57,9 +56,6 @@ void WorkerThreadTest::TearDown()
 {
     delete thread;
 }
-
-TEST_SUITE(core)
-{
 
 TEST_FIXTURE(WorkerThreadTest, Construction)
 {
