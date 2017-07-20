@@ -30,7 +30,7 @@ void MACAddressTest::TearDown()
 TEST_FIXTURE(MACAddressTest, Constructor)
 {
     MACAddress target;
-    Core::ByteArray reference(MACAddress::Size);
+    Core::ByteArray reference(MACAddress::AddressSize);
     const string expected = "00-00-00-00-00-00";
     EXPECT_TRUE(reference == target.GetBytes());
     EXPECT_EQ(expected, target.ToString());
@@ -44,11 +44,6 @@ TEST_FIXTURE(MACAddressTest, ConstructorByteArray)
     const string expected = "01-02-03-04-05-06";
     EXPECT_TRUE(macAddress == target.GetBytes());
     EXPECT_EQ(expected, target.ToString());
-}
-
-TEST_FIXTURE(MACAddressTest, ConstructorByteArrayInvalid)
-{
-    EXPECT_THROW(MACAddress({ 1, 2, 3, 4, 5 }), Core::ArgumentOutOfRangeException);
 }
 
 TEST_FIXTURE(MACAddressTest, ConstructorByteArrayOffset)

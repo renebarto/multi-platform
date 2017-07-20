@@ -32,7 +32,7 @@ public:
         _port(port)
     {
     }
-    IPV6EndPoint(uint32_t ipAddress, uint16_t port) :
+    IPV6EndPoint(uint8_t ipAddress[16], uint16_t port) :
         _ipAddress(ipAddress),
         _port(port)
     {

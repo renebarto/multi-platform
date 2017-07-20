@@ -31,7 +31,7 @@ TEST_FIXTURE(IPV6AddressTest, Constructor)
 {
     IPV6Address target;
     Core::ByteArray reference({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-    const string expected = "0:0:0:0:0:0:0:0";
+    const string expected = "::";
     EXPECT_TRUE(reference == target.GetBytes());
     EXPECT_EQ(expected, target.ToString());
 }
@@ -52,11 +52,6 @@ TEST_FIXTURE(IPV6AddressTest, ConstructorByteArray)
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetBytes());
     EXPECT_EQ(expected, target.ToString());
-}
-
-TEST_FIXTURE(IPV6AddressTest, ConstructorByteArrayInvalid)
-{
-    EXPECT_THROW(IPV6Address({ 1, 2, 3 }), Core::ArgumentOutOfRangeException);
 }
 
 TEST_FIXTURE(IPV6AddressTest, ConstructorByteArrayOffset)
@@ -152,11 +147,18 @@ TEST_FIXTURE(IPV6AddressTest, ParseHostName)
     EXPECT_EQ(expected, actual);
 }
 
+TEST_FIXTURE(IPV6AddressTest, ParseLocalhost)
+{
+    const string text = "::1";
+
+    EXPECT_EQ(IPV6Address({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}), IPV6Address::Parse(text));
+}
+
 TEST_FIXTURE(IPV6AddressTest, ParseBroadcast)
 {
-    const string text1 = "ff02::1";
+    const string text = "ff02::1";
 
-    EXPECT_EQ(IPV6Address({255, 255, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}), IPV6Address::Parse(text1));
+    EXPECT_EQ(IPV6Address({255, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}), IPV6Address::Parse(text));
 }
 
 TEST_FIXTURE(IPV6AddressTest, ParseInvalid)
@@ -229,6 +231,46 @@ TEST_FIXTURE(IPV6AddressTest, PrintTo)
     ostringstream stream;
     PrintTo(ipAddress, stream);
     EXPECT_EQ("102:304:506:708:90a:b0c:d0e:f10", stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToAddressUnspecified)
+{
+    IPV6Address ipAddress({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+    ostringstream stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ("::", stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToLocalhostAddress)
+{
+    IPV6Address ipAddress({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+    ostringstream stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ("::1", stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToAddressTrailingZeroSequence)
+{
+    IPV6Address ipAddress({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+    ostringstream stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ("100::", stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToMultipleZeroSequences1)
+{
+    IPV6Address ipAddress({ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 });
+    ostringstream stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ("100:0:100::1", stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToMultipleZeroSequences2)
+{
+    IPV6Address ipAddress({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 });
+    ostringstream stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ("100::100:0:0:1", stream.str());
 }
 
 } // namespace Test

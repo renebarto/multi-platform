@@ -51,18 +51,14 @@ ByteArray & ByteArray::operator = (ByteArray && other)
 
 ByteArray ByteArray::Get(size_t offset, size_t length) const
 {
-    if (offset > size)
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset + length <= size);
     return ByteArray(Data() + offset, length);
 }
 
 uint8_t ByteArray::GetUInt8(size_t offset) const
 {
-    if (offset < size)
-    {
-        return data[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
+    return data[offset];
 }
 
 uint16_t ByteArray::GetUInt16(size_t offset) const

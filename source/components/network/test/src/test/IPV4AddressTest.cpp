@@ -54,11 +54,6 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorByteArray)
     EXPECT_EQ(expected, target.ToString());
 }
 
-TEST_FIXTURE(IPV4AddressTest, ConstructorByteArrayInvalid)
-{
-    EXPECT_THROW(IPV4Address({ 1, 2, 3 }), Core::ArgumentOutOfRangeException);
-}
-
 TEST_FIXTURE(IPV4AddressTest, ConstructorByteArrayOffset)
 {
     Core::ByteArray reference({ 1, 2, 3, 4 });

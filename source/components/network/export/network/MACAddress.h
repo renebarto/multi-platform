@@ -9,6 +9,8 @@ namespace Network
 class MACAddress : public Address
 {
 public:
+    static const size_t AddressSize = 6;
+
     MACAddress() :
         macAddress(AddressSize)
     {
@@ -46,7 +48,6 @@ private:
     static bool TryParse(const OSAL::String & text, uint8_t & value);
 
     Core::ByteArray macAddress;
-    static const size_t AddressSize = 6;
 };
 
 inline void PrintTo(const MACAddress & value, std::ostream & stream)

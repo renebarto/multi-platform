@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/Core.h"
+#include "core/DefaultLogger.h"
 #include "core/WorkerThread.h"
 
 namespace Core
@@ -30,11 +32,11 @@ public:
         {
             _isDying = true;
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Signaling thread to shut down");
+            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Signaling thread to shut down");
 
             FlushThread();
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Waiting for thread to shut down");
+            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Waiting for thread to shut down");
 
             WorkerThread<Result>::WaitForDeath();
             WorkerThread<Result>::Destroy();
@@ -71,17 +73,17 @@ protected:
                 _isAlive = true;
             }
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Thread starting");
+            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread starting");
 
             InitThread();
             result = Run();
             ExitThread();
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Thread shutting down");
+            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread shutting down");
         }
         catch (const std::exception & e)
         {
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Thread threw exception: " + e.what());
+            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread threw exception: " + e.what());
             Lock lock(_mutex);
             _isAlive = false;
             throw;
@@ -98,7 +100,7 @@ protected:
     virtual void ExitThread() {};
     virtual void FlushThread() {};
 
-    using Mutex = std::recursive_mutex ;
+    using Mutex = std::recursive_mutex;
     using Lock = std::lock_guard<Mutex>;
     volatile bool _isDying;
     bool          _isAlive;

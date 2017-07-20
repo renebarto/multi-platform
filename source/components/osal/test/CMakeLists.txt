@@ -29,23 +29,26 @@ set(COMPONENTS_OSAL_TEST_LINK_OPTIONS
     ${LINK_RPATH})
 list_to_string(COMPONENTS_OSAL_TEST_LINK_OPTIONS COMPONENTS_OSAL_TEST_LINK_OPTIONS_STRING)
 
-set(COMPONENTS_OSAL_TEST_DEPENDENCIES
+set(COMPONENTS_OSAL_TEST_LIB_DEPENDENCIES
+    ${CMAKE_THREAD_LIBS_INIT}
     core
     osal
     unit-test-c++
     )
 
+set(COMPONENTS_OSAL_TEST_DEPENDENCIES
+    ${COMPONENTS_OSAL_TEST_LIB_DEPENDENCIES}
+    ${LINK_WHOLE_LIB} ${PROJECT_NAME}-lib ${LINK_NO_WHOLE_LIB})
+
+set(COMPONENTS_OSAL_TEST_LIB_LIBS
+    ${COMPONENTS_OSAL_TEST_LIB_DEPENDENCIES})
+
 set(COMPONENTS_OSAL_TEST_LIBS
-    ${CMAKE_THREAD_LIBS_INIT}
     ${COMPONENTS_OSAL_TEST_DEPENDENCIES})
 
-file(GLOB_RECURSE COMPONENTS_OSAL_TEST_SOURCES src/*.cpp)
-file(GLOB_RECURSE COMPONENTS_OSAL_TEST_SOURCES_TEST src/Test/*.cpp)
+file(GLOB COMPONENTS_OSAL_TEST_SOURCES src/*.cpp)
+file(GLOB COMPONENTS_OSAL_TEST_SOURCES_TEST src/test/*.cpp)
 file(GLOB_RECURSE COMPONENTS_OSAL_TEST_INCLUDES include/*.h)
-
-set(COMPONENTS_OSAL_TEST_SOURCES
-    ${COMPONENTS_OSAL_TEST_SOURCES}
-    ${COMPONENTS_OSAL_TEST_SOURCES_TEST})
 
 display_list("Defines                     : " ${COMPONENTS_OSAL_TEST_DEFINITIONS} )
 display_list("Compiler options            : " ${COMPONENTS_OSAL_TEST_OPTIONS} )
@@ -53,8 +56,21 @@ display_list("Source files                : " ${COMPONENTS_OSAL_TEST_SOURCES} )
 display_list("Include files               : " ${COMPONENTS_OSAL_TEST_INCLUDES} )
 display_list("Include dirs                : " ${COMPONENTS_OSAL_TEST_INCLUDE_DIRS} )
 display_list("Link libs                   : " ${COMPONENTS_OSAL_TEST_LIBS} )
-display_list("Linker options              : " ${COMPONENTS_OSAL_TEST_LINK_OPTIONS} )
+display_list("Linker options              : " ${COMPONENTS_OSAL_TEST_LINK_OPTIONS_STRING} )
 display_list("Dependencies                : " ${COMPONENTS_OSAL_TEST_DEPENDENCIES} )
+
+set(LIB_NAME ${PROJECT_NAME}-lib)
+
+# add the test library
+add_library(${LIB_NAME} STATIC ${COMPONENTS_OSAL_TEST_SOURCES_TEST})
+target_link_libraries(${LIB_NAME} ${COMPONENTS_OSAL_TEST_LIB_LIBS})
+target_include_directories(${LIB_NAME} PRIVATE ${COMPONENTS_OSAL_TEST_INCLUDE_DIRS})
+target_compile_definitions(${LIB_NAME} PRIVATE ${COMPONENTS_OSAL_TEST_DEFINITIONS})
+target_compile_options(${LIB_NAME} PRIVATE ${COMPONENTS_OSAL_TEST_OPTIONS})
+set_target_properties(${LIB_NAME} PROPERTIES OUTPUT_NAME osal-test)
+setup_target_properties_library(${LIB_NAME})
+
+show_target_properties(${LIB_NAME})
 
 # add the executable
 add_executable(${PROJECT_NAME} ${COMPONENTS_OSAL_TEST_SOURCES} ${COMPONENTS_OSAL_TEST_INCLUDES})
@@ -66,6 +82,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${COMPONENTS_OSAL_T
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO})
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PACKAGE_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME osal.test)
+add_dependencies(${PROJECT_NAME} ${LIB_NAME})
+
 setup_target_properties_executable(${PROJECT_NAME})
 
 show_target_properties(${PROJECT_NAME})

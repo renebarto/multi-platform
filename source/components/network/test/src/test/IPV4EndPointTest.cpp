@@ -132,10 +132,11 @@ TEST_FIXTURE(IPV4EndPointTest, TryParseIPAddressOnly)
 
 TEST_FIXTURE(IPV4EndPointTest, TryParse)
 {
-    const string text = "255.254.253.252";
+    const string text = "255.254.253.252:8080";
     Core::ByteArray ipAddress({ 255, 254, 253, 252 });
+    uint16_t port = 8080;
     IPV4EndPoint actual;
-    IPV4EndPoint expected(ipAddress);
+    IPV4EndPoint expected(ipAddress, port);
     EXPECT_TRUE(IPV4EndPoint::TryParse(text, actual));
     EXPECT_EQ(expected, actual);
 }

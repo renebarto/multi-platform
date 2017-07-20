@@ -42,7 +42,7 @@ public:
         , innerException(&innerException)
     {
     }
-    ~BaseException() throw ()
+    ~BaseException() noexcept
     {
     }
     BaseException & operator = (const BaseException & other)
@@ -113,7 +113,7 @@ public:
         , line(line)
     {
     }
-    ~Exception() throw ()
+    ~Exception()
     {
     }
     virtual std::string BuildMessage() const override
@@ -147,7 +147,7 @@ public:
         , errorCode(errorCode)
     {
     }
-    ~SystemError() throw ()
+    ~SystemError()
     {
     }
     int GetErrorCode() const
@@ -171,7 +171,7 @@ public:
         : Exception(functionName, fileName, line, message)
     {
     }
-    ~RuntimeError() throw ()
+    ~RuntimeError()
     {
     }
 };
@@ -193,7 +193,7 @@ public:
     , argument(argument)
     {
     }
-    ~ArgumentException() throw ()
+    ~ArgumentException()
     {
     }
     virtual OSAL::String BuildMessage() const
@@ -206,31 +206,31 @@ public:
     }
 };
 
-class ArgumentOutOfRangeException : public ArgumentException
-{
-public:
-    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
-                                OSAL::String argument)
-    : ArgumentException(functionName, fileName, line, argument)
-    {
-    }
-    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
-                                OSAL::String argument, OSAL::String message)
-    : ArgumentException(functionName, fileName, line, argument, message)
-    {
-    }
-    ~ArgumentOutOfRangeException() throw ()
-    {
-    }
-    virtual OSAL::String BuildMessage() const
-    {
-        std::ostringstream stream;
-        stream << Exception::BuildMessage();
-        if (!argument.empty())
-            stream << ": argument out of range: " << argument;
-        return stream.str();
-    }
-};
+//class ArgumentOutOfRangeException : public ArgumentException
+//{
+//public:
+//    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
+//                                OSAL::String argument)
+//    : ArgumentException(functionName, fileName, line, argument)
+//    {
+//    }
+//    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
+//                                OSAL::String argument, OSAL::String message)
+//    : ArgumentException(functionName, fileName, line, argument, message)
+//    {
+//    }
+//    ~ArgumentOutOfRangeException()
+//    {
+//    }
+//    virtual OSAL::String BuildMessage() const
+//    {
+//        std::ostringstream stream;
+//        stream << Exception::BuildMessage();
+//        if (!argument.empty())
+//            stream << ": argument out of range: " << argument;
+//        return stream.str();
+//    }
+//};
 
 inline void ThrowOnError(const char * functionName, const char * fileName, int line, int errorCode)
 {
@@ -239,5 +239,7 @@ inline void ThrowOnError(const char * functionName, const char * fileName, int l
         throw SystemError(functionName, fileName, line, errorCode);
     }
 }
+
+extern const OSAL::String ComponentName;
 
 } // namespace Core

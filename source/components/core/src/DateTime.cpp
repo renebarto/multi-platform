@@ -1,9 +1,11 @@
+#include "core/DateTime.h"
+
+#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <iomanip>
 #include <sstream>
 #include <sys/time.h>
-#include "core/DateTime.h"
 #include "core/Core.h"
 #include "core/TimeSpan.h"
 
@@ -60,8 +62,7 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute, int secon
     : _time()
     , _dateTime()
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::DateTime", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     Assign(year, month, day, hour, minute, second + double(microSeconds) / MicroSecondsPerSecond, true);
 }
 
@@ -76,8 +77,7 @@ DateTime::DateTime(int year, MonthType month, int day, int hour, int minute, int
     : _time()
     , _dateTime()
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::DateTime", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     Assign(year, ConvertMonth(month), day, hour, minute, second + double(microSeconds) / MicroSecondsPerSecond, true);
 }
 
@@ -212,8 +212,7 @@ DateTime DateTime::CreateUTC(int year, int month, int day, int hour, int minute,
 
 DateTime DateTime::CreateUTC(int year, int month, int day, int hour, int minute, int second, int microSeconds /*= 0*/)
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::CreateUTC", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     DateTime dateTime;
     dateTime.Assign(year, month, day, hour, minute, second + (double)microSeconds / MicroSecondsPerSecond, false);
     return dateTime;
@@ -228,8 +227,7 @@ DateTime DateTime::CreateUTC(int year, MonthType month, int day, int hour, int m
 
 DateTime DateTime::CreateUTC(int year, MonthType month, int day, int hour, int minute, int second, int microSeconds /*= 0*/)
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::CreateUTC", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     DateTime dateTime;
     dateTime.Assign(year, ConvertMonth(month), day, hour, minute, second + (double)microSeconds / MicroSecondsPerSecond, false);
     return dateTime;
@@ -242,8 +240,7 @@ DateTime DateTime::CreateLocal(int year, int month, int day, int hour, int minut
 
 DateTime DateTime::CreateLocal(int year, int month, int day, int hour, int minute, int second, int microSeconds /*= 0*/)
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::CreateLocal", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     return DateTime(year, month, day, hour, minute, second, microSeconds);
 }
 
@@ -254,8 +251,7 @@ DateTime DateTime::CreateLocal(int year, MonthType month, int day, int hour, int
 
 DateTime DateTime::CreateLocal(int year, MonthType month, int day, int hour, int minute, int second, int microSeconds /*= 0*/)
 {
-    if ((microSeconds < 0) || (microSeconds >= MicroSecondsPerSecond))
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "DateTime::CreateLocal", "microSeconds");
+    assert((microSeconds >= 0) && (microSeconds < MicroSecondsPerSecond));
     return DateTime(year, month, day, hour, minute, second, microSeconds);
 }
 
@@ -422,7 +418,7 @@ std::string DateTime::TimeZoneName() const
 
 bool DateTime::IsDaylightSavings() const
 {
-    return _dateTime.tm_isdst;
+    return (_dateTime.tm_isdst != 0);
 }
 
 DateTime DateTime::ConvertToLocalTime() const
@@ -450,8 +446,7 @@ string DateTime::ToString() const
 string DateTime::ToString(const string & formatString) const
 {
     char buffer[1000];
-    if (0 == strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime))
-        throw Core::Exception(__func__, __FILE__, __LINE__, "Invalid format string.");
+    assert(0 != strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime));
     return string(buffer);
 }
 

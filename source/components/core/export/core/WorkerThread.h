@@ -50,21 +50,22 @@ protected:
     Core::ManualEvent _birthEvent;
     static Result ThreadStarter(WorkerThread * arg)
     {
+        WorkerThread * pThis = reinterpret_cast<WorkerThread *>(arg);
+
         Result result {};
         try
         {
-            WorkerThread * pThis = reinterpret_cast<WorkerThread *>(arg);
 
             pThis->SetSignalMask();
-//        TheLogger().Debug(COMPONENT_NAME, "WorkerThread " + pThis->GetName() + ": Thread starting");
+            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Thread starting");
             pThis->_birthEvent.Set();
             result = pThis->Thread();
-//        TheLogger().Debug(COMPONENT_NAME, "WorkerThread " + pThis->GetName() + ": Thread stopping");
+            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Thread stopping");
             pThis->_state = ThreadState::Finished;
         }
         catch (const std::exception & e)
         {
-//        TheLogger().Debug(COMPONENT_NAME, "WorkerThread " + pThis->GetName() + ": Exception thown: " + e.what());
+            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Exception thown: " + e.what());
             throw;
         }
         return result;
@@ -78,8 +79,8 @@ protected:
         sigaddset(&signalMaskSet, SIGINT);
         sigaddset(&signalMaskSet, SIGQUIT);
         if (pthread_sigmask(SIG_BLOCK, &signalMaskSet, nullptr) != 0)
-            throw std::system_error(errno, std::system_category(),
-                                    "Cannot set signal mask for thread");
+            throw SystemError(__func__, __FILE__, __LINE__, errno,
+                              "Cannot set signal mask for thread");
     }
 };
 

@@ -13,7 +13,7 @@ class ByteArray;
 namespace Util
 {
 
-int NextPowerOfTwo(int value);
+size_t NextPowerOfTwo(size_t value);
 
 //template<class T> T BitsToBytes(T numBits) {
 //    return (numBits + 7) / 8;

@@ -38,8 +38,8 @@ bool DomainSocketAddress::TryParse(const string & text, DomainSocketAddress & ad
     if (errorCode == 0)
     {
         addrinfo * addressInfo;
-        addrinfo hints = { 0, AF_INET, 0, 0, 0, nullptr, nullptr, nullptr };
-        errorCode = getaddrinfo(text.c_str(), 0, &hints, &addressInfo);
+        addrinfo hints = { 0, AF_UNIX, 0, 0, 0, nullptr, nullptr, nullptr };
+        errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);
         if (errorCode != 0)
             return false;
         path = ((sockaddr_un *)(addressInfo[0].ai_addr))->sun_path;
@@ -69,20 +69,14 @@ bool DomainSocketAddress::operator != (const DomainSocketAddress & other) const
 
 uint8_t & DomainSocketAddress::operator[] (size_t offset)
 {
-    if (offset < AddressSize)
-    {
-        return _address[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _address[offset];
 }
 
 const uint8_t & DomainSocketAddress::operator[] (size_t offset) const
 {
-    if (offset < AddressSize)
-    {
-        return _address[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _address[offset];
 }
 
 OSAL::String DomainSocketAddress::GetData() const
@@ -110,10 +104,7 @@ OSAL::String DomainSocketAddress::ToString() const
 
 void DomainSocketAddress::SetData(const Core::ByteArray & data, size_t offset)
 {
-    if (offset + AddressSize > data.Size())
-    {
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
-    }
+    assert(offset + AddressSize <= data.Size());
     _address.Set(0, data.Data() + offset, AddressSize);
 }
 

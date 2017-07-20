@@ -44,7 +44,7 @@ public:
         , innerException(&innerException)
     {
     }
-    ~BaseException() throw ()
+    ~BaseException()
     {
     }
     BaseException & operator = (const BaseException & other)
@@ -117,7 +117,7 @@ public:
         , line(line)
     {
     }
-    ~Exception() throw ()
+    ~Exception()
     {
     }
     virtual OSAL::String BuildMessage() const
@@ -151,7 +151,7 @@ public:
         , errorCode(errorCode)
     {
     }
-    ~SystemError() throw ()
+    ~SystemError()
     {
     }
     int GetErrorCode() const
@@ -175,7 +175,7 @@ public:
         : Exception(functionName, fileName, line, message)
     {
     }
-    ~RuntimeError() throw ()
+    ~RuntimeError()
     {
     }
 };
@@ -188,7 +188,7 @@ public:
         ArgumentException(functionName, fileName, line, argument)
     {
     }
-    ~ArgumentNullException() throw ()
+    ~ArgumentNullException()
     {
     }
     virtual OSAL::String BuildMessage() const
@@ -209,7 +209,7 @@ public:
         : Exception(functionName, fileName, line, message)
     {
     }
-    ~OperationException() throw ()
+    ~OperationException()
     {
     }
 };
@@ -222,7 +222,7 @@ public:
         : OperationException(functionName, fileName, line, message)
     {
     }
-    ~OperationNotSupportedException() throw ()
+    ~OperationNotSupportedException()
     {
     }
     virtual OSAL::String BuildMessage() const

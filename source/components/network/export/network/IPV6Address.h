@@ -61,6 +61,11 @@ private:
     void SetData(const Core::ByteArray & data, size_t offset);
 };
 
+inline void PrintTo(const IPV6Address & value, std::ostream & stream)
+{
+    stream << value.ToString();
+}
+
 } // namespace Network
 
 namespace Core

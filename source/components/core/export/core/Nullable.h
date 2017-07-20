@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <stdexcept>
 
 namespace Core
@@ -70,8 +71,7 @@ protected:
 
     T & GetValue()
     {
-        if (!_hasValue)
-            throw std::runtime_error("Nullable object has null _value");
+        assert(_hasValue);
         return _value;
     }
 };

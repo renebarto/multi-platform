@@ -78,20 +78,14 @@ bool MACAddress::operator != (const MACAddress & other) const
 
 uint8_t & MACAddress::operator[] (size_t offset)
 {
-    if (offset < AddressSize)
-    {
-        return macAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return macAddress[offset];
 }
 
 const uint8_t & MACAddress::operator[] (size_t offset) const
 {
-    if (offset < AddressSize)
-    {
-        return macAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return macAddress[offset];
 }
 
 Core::ByteArray MACAddress::GetBytes() const
@@ -114,10 +108,7 @@ string MACAddress::ToString() const
 
 void MACAddress::SetData(const Core::ByteArray & data, size_t offset)
 {
-    if (offset + AddressSize > data.Size())
-    {
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
-    }
+    assert(offset + AddressSize <= data.Size());
     macAddress.Set(0, data.Data() + offset, AddressSize);
 }
 

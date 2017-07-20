@@ -4,6 +4,7 @@
 #include <mutex>
 #include <thread>
 #include <osal/Strings.h>
+#include <core/DefaultLogger.h>
 
 namespace Core
 {
@@ -50,7 +51,7 @@ public:
     {
         Destroy();
 
-//    TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Create thread");
+        TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Create thread");
 
         Lock lock(_threadMutex);
         try
@@ -65,7 +66,7 @@ public:
                 pthread_setname_np(_thread.native_handle(), _name.c_str());
             }
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Thread created");
+            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Thread created");
         }
         catch (const std::exception & e)
         {
@@ -79,12 +80,12 @@ public:
         Lock lock(_threadMutex);
         if (IsAlive())
         {
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Destroy thread");
+            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Destroy thread");
 
             WaitForDeath();
             _state = ThreadState::Killed;
 
-//        TheLogger().Debug(COMPONENT_NAME, "Thread " + GetName() + ": Thread died");
+            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Thread died");
         }
     }
 
@@ -146,10 +147,10 @@ public:
         Lock lock(_threadMutex);
         if (_thread.native_handle() != pthread_self())
         {
-//        TheLogger().Debug(COMPONENT_NAME, ToString() + ": Wait for thread to die");
+            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Wait for thread to die");
             _thread.join();
             _state = ThreadState::Finished;
-//        TheLogger().Debug(COMPONENT_NAME, ToString() + ": Thread died");
+            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Thread died");
         }
     }
 
@@ -175,7 +176,7 @@ protected:
     ThreadState _state;
     void Cleanup()
     {
-//    TheLogger().Debug(COMPONENT_NAME, ToString() + ": Cleanup for thread");
+        TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Cleanup for thread");
 
         Destroy();
         Lock lock(_threadMutex);

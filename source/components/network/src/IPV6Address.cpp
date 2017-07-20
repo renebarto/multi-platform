@@ -40,13 +40,23 @@ bool IPV6Address::TryParse(const string & text, IPV6Address & ipAddress)
     int errorCode = inet_pton(AF_INET6, text.c_str(), &address);
     if (errorCode == 0)
     {
-        addrinfo * addressInfo;
-        addrinfo hints = { 0, AF_INET6, 0, 0, 0, nullptr, nullptr, nullptr };
-        errorCode = getaddrinfo(text.c_str(), 0, &hints, &addressInfo);
-        if (errorCode != 0)
-            return false;
-        address = ((sockaddr_in6 *)(addressInfo[0].ai_addr))->sin6_addr;
-        freeaddrinfo(addressInfo);
+        // Weird, when specifying "localhost", the hostname does not (always) resolve
+        // So create a hack to return the local address in this case.
+        if (strncasecmp(text.c_str(), "localhost", text.length()) == 0)
+        {
+            uint8_t localAddress[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+            memcpy(address.__in6_u.__u6_addr8, localAddress, sizeof(localAddress));
+        }
+        else
+        {
+            addrinfo * addressInfo;
+            addrinfo hints = { 0, AF_INET6, 0, 0, 0, nullptr, nullptr, nullptr };
+            errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);
+            if (errorCode != 0)
+                return false;
+            address = ((sockaddr_in6 *)(addressInfo->ai_addr))->sin6_addr;
+            freeaddrinfo(addressInfo);
+        }
     }
     ipAddress = IPV6Address(address.__in6_u.__u6_addr8);
     return true;
@@ -72,20 +82,14 @@ bool IPV6Address::operator != (const IPV6Address & other) const
 
 uint8_t & IPV6Address::operator[] (size_t offset)
 {
-    if (offset < AddressSize)
-    {
-        return _ipAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _ipAddress[offset];
 }
 
 const uint8_t & IPV6Address::operator[] (size_t offset) const
 {
-    if (offset < AddressSize)
-    {
-        return _ipAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _ipAddress[offset];
 }
 
 Core::ByteArray IPV6Address::GetData() const
@@ -106,24 +110,71 @@ Core::ByteArray IPV6Address::GetBytes() const
 string IPV6Address::ToString() const
 {
     ostringstream stream;
-    stream << hex
-           << (int)_ipAddress[0] << setw(2) << setfill('0') << (int)_ipAddress[1] << ":";
-    stream << (int)_ipAddress[2] << setw(2) << setfill('0') << (int)_ipAddress[3] << ":";
-    stream << (int)_ipAddress[4] << setw(2) << setfill('0') << (int)_ipAddress[5] << ":";
-    stream << (int)_ipAddress[6] << setw(2) << setfill('0') << (int)_ipAddress[7] << ":";
-    stream << (int)_ipAddress[8] << setw(2) << setfill('0') << (int)_ipAddress[9] << ":";
-    stream << (int)_ipAddress[10] << setw(2) << setfill('0') << (int)_ipAddress[11] << ":";
-    stream << (int)_ipAddress[12] << setw(2) << setfill('0') << (int)_ipAddress[13] << ":";
-    stream << (int)_ipAddress[14] << setw(2) << setfill('0') << (int)_ipAddress[15] << dec;
+    static const size_t NumWords = AddressSize / 2;
+    uint16_t words[NumWords];
+    size_t zeroSequenceStartMax = 0;
+    size_t zeroSequenceLengthMax = 0;
+    size_t zeroSequenceStart = 0;
+    size_t zeroSequenceLength = 0;
+    bool inZeroSequence = false;
+    for (size_t i = 0; i < NumWords; ++i)
+    {
+        words[i] = _ipAddress.GetUInt16BE(i * 2);
+        if (words[i] == 0)
+        {
+            if (!inZeroSequence)
+            {
+                zeroSequenceStart = i;
+                inZeroSequence = true;
+            }
+        }
+        else
+        {
+            if (inZeroSequence)
+            {
+                zeroSequenceLength = i - zeroSequenceStart;
+                inZeroSequence = false;
+                if (zeroSequenceLength > zeroSequenceLengthMax)
+                {
+                    zeroSequenceStartMax = zeroSequenceStart;
+                    zeroSequenceLengthMax = zeroSequenceLength;
+                }
+                zeroSequenceStart = static_cast<size_t>(-1);
+                zeroSequenceLength = 0;
+            }
+        }
+    }
+    if (inZeroSequence)
+    {
+        zeroSequenceLength = NumWords - zeroSequenceStart;
+        if (zeroSequenceLength > zeroSequenceLengthMax)
+        {
+            zeroSequenceStartMax = zeroSequenceStart;
+            zeroSequenceLengthMax = zeroSequenceLength;
+        }
+
+    }
+    stream << hex;
+    for (size_t i = 0; i < NumWords; ++i)
+    {
+        if ((i == zeroSequenceStartMax) && (zeroSequenceLengthMax > 1))
+        {
+            stream << "::";
+        }
+        else if ((i < zeroSequenceStartMax) || (i >= zeroSequenceStartMax + zeroSequenceLengthMax))
+        {
+            stream << words[i];
+            if (((i + 1) < NumWords) && ((i + 1) != zeroSequenceStartMax))
+                stream << ":";
+        }
+    }
+    stream << dec;
     return stream.str();
 }
 
 void IPV6Address::SetData(const Core::ByteArray & data, size_t offset)
 {
-    if (offset + AddressSize > data.Size())
-    {
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
-    }
+    assert(offset + AddressSize <= data.Size());
     _ipAddress.Set(0, data.Data() + offset, AddressSize);
 }
 

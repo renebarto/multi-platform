@@ -11,35 +11,44 @@ IPV6EndPoint::~IPV6EndPoint()
 
 IPV6EndPoint IPV6EndPoint::Parse(const string & text)
 {
-    IPV6EndPoint _ipAddress;
-    if (!TryParse(text, _ipAddress))
+    IPV6EndPoint ipAddress;
+    if (!TryParse(text, ipAddress))
     {
         ostringstream stream;
         stream << "IPV6EndPoint string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
         throw Core::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
-    return _ipAddress;
+    return ipAddress;
 }
 
 bool IPV6EndPoint::TryParse(const string & text, IPV6EndPoint & ipEndPoint)
 {
-    size_t pos = text.find(':');
     IPV6Address address = IPV6Address::None;
-    int _port = AnyPort;
-    if (pos == string::npos)
+    long port = AnyPort;
+    size_t bracketPos = text.find('[');
+    if (bracketPos == 0)
     {
-        if (!IPV6Address::TryParse(text, address))
+        // We have a URI with possibly a port number
+        bracketPos = text.find(']');
+        if (bracketPos == string::npos)
             return false;
+        if (!IPV6Address::TryParse(text.substr(1, bracketPos - 1), address))
+            return false;
+        size_t pos = text.find(':', bracketPos + 1);
+        if (pos != string::npos)
+        {
+            port = strtol(text.substr(pos + 1).c_str(), 0, 10);
+            if ((port < 0) || (port > 65535))
+                return false;
+        }
     }
     else
     {
-        if (!IPV6Address::TryParse(text.substr(0, pos), address))
-            return false;
-        _port = strtol(text.substr(pos + 1).c_str(), 0, 10);
-        if ((_port < 0) || (_port > 65535))
+        // We have a plain IPV6 address
+        if (!IPV6Address::TryParse(text, address))
             return false;
     }
-    ipEndPoint = IPV6EndPoint(address, (uint16_t)_port);
+    ipEndPoint = IPV6EndPoint(address, static_cast<uint16_t>(port));
     return true;
 }
 
@@ -65,7 +74,14 @@ bool IPV6EndPoint::operator != (const IPV6EndPoint & other) const
 string IPV6EndPoint::ToString() const
 {
     ostringstream stream;
-    stream << _ipAddress.ToString() << ":";
-    stream << _port;
+    if (_port != 0)
+    {
+        stream << "[" << _ipAddress.ToString() << "]:";
+        stream << _port;
+    }
+    else
+    {
+        stream << _ipAddress.ToString();
+    }
     return stream.str();
 }

@@ -32,15 +32,15 @@ IPV4Address IPV4Address::Parse(const string & text)
 bool IPV4Address::TryParse(const string & text, IPV4Address & ipAddress)
 {
     in_addr address;
-    int errorCode = inet_aton(text.c_str(), &address);
+    int errorCode = inet_pton(AF_INET, text.c_str(), &address);
     if (errorCode == 0)
     {
         addrinfo * addressInfo;
         addrinfo hints = { 0, AF_INET, 0, 0, 0, nullptr, nullptr, nullptr };
-        errorCode = getaddrinfo(text.c_str(), 0, &hints, &addressInfo);
+        errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);
         if (errorCode != 0)
             return false;
-        address = ((sockaddr_in *)(addressInfo[0].ai_addr))->sin_addr;
+        address = ((sockaddr_in *)(addressInfo->ai_addr))->sin_addr;
         freeaddrinfo(addressInfo);
     }
     ipAddress = IPV4Address((uint32_t)address.s_addr);
@@ -67,20 +67,14 @@ bool IPV4Address::operator != (const IPV4Address & other) const
 
 uint8_t & IPV4Address::operator[] (size_t offset)
 {
-    if (offset < AddressSize)
-    {
-        return _ipAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _ipAddress[offset];
 }
 
 const uint8_t & IPV4Address::operator[] (size_t offset) const
 {
-    if (offset < AddressSize)
-    {
-        return _ipAddress[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < AddressSize);
+    return _ipAddress[offset];
 }
 
 uint32_t IPV4Address::GetUInt32() const
@@ -110,10 +104,7 @@ string IPV4Address::ToString() const
 
 void IPV4Address::SetData(const Core::ByteArray & data, size_t offset)
 {
-    if (offset + AddressSize > data.Size())
-    {
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
-    }
+    assert(offset + AddressSize <= data.Size());
     _ipAddress.Set(0, data.Data() + offset, AddressSize);
 }
 

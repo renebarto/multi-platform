@@ -857,12 +857,6 @@ TEST_FIXTURE(DateTimeTest, ToStringFormat)
     EXPECT_EQ("2014-02-26 01:02:03 GMT", dateTime.ToString("%F %T %Z"));
 }
 
-TEST_FIXTURE(DateTimeTest, ToStringFormatInvalidFormatString)
-{
-    DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3);
-    EXPECT_THROW(dateTime.ToString(""), Exception);
-}
-
 TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
 {
     DateTime dateTime(2014, 2, 26, 1, 2, 3, 567891);

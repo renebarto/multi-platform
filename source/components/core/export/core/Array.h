@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <initializer_list>
 #include "core/Core.h"
 #include "core/Util.h"
@@ -162,18 +163,14 @@ void Array<T>::Clear()
 template<class T>
 T Array<T>::Get(size_t offset) const
 {
-    if (offset < size)
-    {
-        return data[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
+    return data[offset];
 }
 
 template<class T>
 size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 {
-    if (offset > size)
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
     size_t valuesToRead = std::min(length, size - offset);
     memcpy(data, this->data + offset, valuesToRead * sizeof(T));
     return valuesToRead;
@@ -182,8 +179,7 @@ size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 template<class T>
 size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 {
-    if (offset > size)
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
     data.Clear();
     size_t valuesToRead = std::min(length, size - offset);
     data.Set(0, this->data + offset, valuesToRead);
@@ -193,8 +189,7 @@ size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 template<class T>
 Array<T> Array<T>::Get(size_t offset, size_t length) const
 {
-    if (offset > size)
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset + length <= size);
     return Array<T>(Data() + offset, length);
 }
 
@@ -283,21 +278,15 @@ bool Array<T>::operator != (const Array<T> & other) const
 template<class T>
 T& Array<T>::operator[] (size_t offset)
 {
-    if (offset < size)
-    {
-        return data[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
+    return data[offset];
 }
 
 template<class T>
 const T& Array<T>::operator[] (size_t offset) const
 {
-    if (offset < size)
-    {
-        return data[offset];
-    }
-    throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
+    assert(offset < size);
+    return data[offset];
 }
 
 template<class T>

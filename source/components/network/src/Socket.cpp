@@ -511,9 +511,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
 
 bool Socket::Send(Core::ByteArray & data, size_t bytesToSend, int flags)
 {
-    if (bytesToSend > data.Size())
-        throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "bytesToSend", "Must be within size of data");
-
+    assert(bytesToSend <= data.Size());
     return Send(data.Data(), bytesToSend, flags);
 }
 

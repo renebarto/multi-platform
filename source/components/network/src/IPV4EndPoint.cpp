@@ -11,21 +11,21 @@ IPV4EndPoint::~IPV4EndPoint()
 
 IPV4EndPoint IPV4EndPoint::Parse(const string & text)
 {
-    IPV4EndPoint _ipAddress;
-    if (!TryParse(text, _ipAddress))
+    IPV4EndPoint ipAddress;
+    if (!TryParse(text, ipAddress))
     {
         ostringstream stream;
         stream << "IPV4EndPoint string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
         throw Core::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
-    return _ipAddress;
+    return ipAddress;
 }
 
 bool IPV4EndPoint::TryParse(const string & text, IPV4EndPoint & ipEndPoint)
 {
     size_t pos = text.find(':');
     IPV4Address address = IPV4Address::None;
-    int _port = AnyPort;
+    long port = AnyPort;
     if (pos == string::npos)
     {
         if (!IPV4Address::TryParse(text, address))
@@ -35,11 +35,11 @@ bool IPV4EndPoint::TryParse(const string & text, IPV4EndPoint & ipEndPoint)
     {
         if (!IPV4Address::TryParse(text.substr(0, pos), address))
             return false;
-        _port = strtol(text.substr(pos + 1).c_str(), 0, 10);
-        if ((_port < 0) || (_port > 65535))
+        port = strtol(text.substr(pos + 1).c_str(), 0, 10);
+        if ((port < 0) || (port > 65535))
             return false;
     }
-    ipEndPoint = IPV4EndPoint(address, (uint16_t)_port);
+    ipEndPoint = IPV4EndPoint(address, static_cast<uint16_t>(port));
     return true;
 }
 

@@ -14,11 +14,11 @@
 using namespace std;
 using namespace Core;
 
-int Util::NextPowerOfTwo(int value)
+size_t Util::NextPowerOfTwo(size_t value)
 {
-    int rest = value;
-    int numberOfOnes = 0;
-    int power = 0;
+    size_t rest = value;
+    size_t numberOfOnes = 0;
+    size_t power = 0;
     while (rest != 0)
     {
         power++;
@@ -26,7 +26,7 @@ int Util::NextPowerOfTwo(int value)
             numberOfOnes++;
         rest >>= 1;
     }
-    return (numberOfOnes != 1) ? 1 << power : 1 << (power - 1);
+    return static_cast<size_t>((numberOfOnes != 1) ? 1 << power : 1 << (power - 1));
 }
 
 timespec Util::MilliSecondsToTimespec(int ms)
