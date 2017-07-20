@@ -52,7 +52,7 @@ public:
 
     const IPV4Address & GetIPAddress() const { return _ipAddress; }
     uint16_t GetPort() const { return _port; }
-    std::string ToString() const;
+    OSAL::String ToString() const;
 
 private:
     IPV4Address _ipAddress;

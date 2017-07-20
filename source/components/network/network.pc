@@ -1,4 +1,4 @@
-prefix=/home/rene/install-multi-platform
+prefix=/usr/local
 exec_prefix=${prefix}
 libdir=${prefix}/lib
 includedir=${prefix}/include

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <sys/socket.h>
+#include <memory>
 #include "core/ByteArray.h"
+#include "osal/OSAL.h"
 
 namespace Network
 {
@@ -18,6 +20,8 @@ enum class SocketFamily
     Packet = AF_PACKET,
 };
 
+std::ostream & operator << (std::ostream & stream, SocketFamily socketFamily);
+
 class Address
 {
 public:
@@ -27,8 +31,9 @@ public:
     virtual SocketFamily Family() const = 0;
     virtual size_t Size() const = 0;
     virtual Core::ByteArray GetBytes() const = 0;
-    virtual std::string ToString() const = 0;
+    virtual OSAL::String ToString() const = 0;
 };
+using AddressPtr = std::shared_ptr<Address>;
 
 inline void PrintTo(const Address & value, std::ostream & stream)
 {

@@ -52,7 +52,7 @@ public:
     virtual SocketFamily Family() const { return SocketFamily::InternetV6; }
     virtual size_t Size() const override { return AddressSize; }
     virtual Core::ByteArray GetBytes() const override;
-    virtual std::string ToString() const override;
+    virtual OSAL::String ToString() const override;
 
 private:
     Core::ByteArray _ipAddress;
@@ -69,9 +69,10 @@ namespace Core
 namespace Util
 {
 
-bool TryParse(const std::string & text, Network::IPV6Address & ipAddress);
+bool TryParse(const OSAL::String & text, Network::IPV6Address & ipAddress);
 
-}
+} // namespace Util
 
 } // namespace Core
+
 

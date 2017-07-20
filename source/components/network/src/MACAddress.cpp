@@ -42,7 +42,7 @@ bool MACAddress::TryParse(const string & text, MACAddress & macAddress)
     string token;
     uint8_t value;
     size_t index = 0;
-    while (((pos = str.find(delimiter)) != string::npos) && (index < Size))
+    while (((pos = str.find(delimiter)) != string::npos) && (index < AddressSize))
     {
         token = str.substr(0, pos);
         if (!TryParse(token, value))
@@ -50,12 +50,12 @@ bool MACAddress::TryParse(const string & text, MACAddress & macAddress)
         macAddress[index++] = value;
         str.erase(0, pos + delimiter.length());
     }
-    if ((index >= Size))
+    if ((index >= AddressSize))
         return false;
     if (!TryParse(str, value))
         return false;
     macAddress[index++] = value;
-    return (index == Size);
+    return (index == AddressSize);
 }
 
 MACAddress & MACAddress::operator = (const MACAddress & other)
@@ -78,7 +78,7 @@ bool MACAddress::operator != (const MACAddress & other) const
 
 uint8_t & MACAddress::operator[] (size_t offset)
 {
-    if (offset < Size)
+    if (offset < AddressSize)
     {
         return macAddress[offset];
     }
@@ -87,7 +87,7 @@ uint8_t & MACAddress::operator[] (size_t offset)
 
 const uint8_t & MACAddress::operator[] (size_t offset) const
 {
-    if (offset < Size)
+    if (offset < AddressSize)
     {
         return macAddress[offset];
     }
@@ -114,9 +114,23 @@ string MACAddress::ToString() const
 
 void MACAddress::SetData(const Core::ByteArray & data, size_t offset)
 {
-    if (offset + Size > data.Size())
+    if (offset + AddressSize > data.Size())
     {
         throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
     }
-    macAddress.Set(0, data.Data() + offset, Size);
+    macAddress.Set(0, data.Data() + offset, AddressSize);
 }
+
+namespace Core
+{
+
+namespace Util
+{
+
+bool TryParse(const string & text, Network::MACAddress & ipAddress)
+{
+    return Network::MACAddress::TryParse(text, ipAddress);
+}
+
+} // namespace Util
+} // namespace Core

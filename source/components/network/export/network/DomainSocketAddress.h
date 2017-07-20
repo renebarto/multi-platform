@@ -14,49 +14,49 @@ public:
     static DomainSocketAddress LocalHost;
 
     DomainSocketAddress() :
-        _ipAddress(None._ipAddress)
+        _address(None._address)
     {
     }
     DomainSocketAddress(const DomainSocketAddress & other) :
-        _ipAddress(other._ipAddress)
+        _address(other._address)
     {
     }
-    DomainSocketAddress(const Core::ByteArray & ipAddress) :
-        _ipAddress(AddressSize)
+    DomainSocketAddress(const Core::ByteArray & address) :
+        _address(AddressSize)
     {
-        SetData(ipAddress, 0);
+        SetData(address, 0);
     }
-    DomainSocketAddress(uint32_t ipAddress) :
-        _ipAddress(AddressSize)
+    DomainSocketAddress(const OSAL::String & address) :
+        _address(AddressSize)
     {
-        SetUInt32(ipAddress);
+        SetData(address);
     }
-    DomainSocketAddress(const Core::ByteArray & ipAddress, size_t offset) :
-        _ipAddress(AddressSize)
+    DomainSocketAddress(const Core::ByteArray & address, size_t offset) :
+        _address(AddressSize)
     {
-        SetData(ipAddress, offset);
+        SetData(address, offset);
     }
 
     virtual ~DomainSocketAddress();
     static DomainSocketAddress Parse(const std::string & text);
-    static bool TryParse(const std::string & text, DomainSocketAddress & ipAddress);
+    static bool TryParse(const std::string & text, DomainSocketAddress & address);
     DomainSocketAddress & operator = (const DomainSocketAddress & other);
     bool operator == (const DomainSocketAddress & other) const;
     bool operator != (const DomainSocketAddress & other) const;
     uint8_t & operator[] (size_t offset);
     const uint8_t & operator[] (size_t offset) const;
 
-    uint32_t GetUInt32() const;
-    void SetUInt32(uint32_t value);
+    OSAL::String GetData() const;
+    void SetData(const OSAL::String & value);
 
     virtual SocketFamily Family() const { return SocketFamily::Unix; }
     virtual size_t Size() const override { return AddressSize; }
     virtual Core::ByteArray GetBytes() const override;
-    virtual std::string ToString() const override;
+    virtual OSAL::String ToString() const override;
 
 private:
-    Core::ByteArray _ipAddress;
-    static const size_t AddressSize = 4;
+    Core::ByteArray _address;
+    static const size_t AddressSize = 108;
 
     void SetData(const Core::ByteArray & data, size_t offset);
 };
@@ -69,7 +69,7 @@ namespace Core
 namespace Util
 {
 
-bool TryParse(const std::string & text, Network::DomainSocketAddress & ipAddress);
+bool TryParse(const OSAL::String & text, Network::DomainSocketAddress & address);
 
 }
 

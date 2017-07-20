@@ -14,7 +14,8 @@ class AdapterList
 public:
     AdapterList();
 
-    void ReScan();
+    bool ReScan();
+    const std::vector<AdapterPtr> & GetAdapters() { return _adapters; }
 
 private:
     std::vector<AdapterPtr> _adapters;

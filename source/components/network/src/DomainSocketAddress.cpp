@@ -1,17 +1,18 @@
 #include "network/DomainSocketAddress.h"
 #include <netdb.h>
-#include <sstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/un.h>
+#include <sstream>
 #include "core/Core.h"
 
 using namespace std;
 using namespace Network;
 
-DomainSocketAddress DomainSocketAddress::None = DomainSocketAddress({0, 0, 0, 0});
-DomainSocketAddress DomainSocketAddress::Any = DomainSocketAddress({0, 0, 0, 0});
-DomainSocketAddress DomainSocketAddress::Broadcast = DomainSocketAddress({255, 255, 255, 255});
-DomainSocketAddress DomainSocketAddress::LocalHost = DomainSocketAddress({127, 0, 0, 1});
+DomainSocketAddress DomainSocketAddress::None = DomainSocketAddress("");
+DomainSocketAddress DomainSocketAddress::Any = DomainSocketAddress("");
+DomainSocketAddress DomainSocketAddress::Broadcast = DomainSocketAddress("");
+DomainSocketAddress DomainSocketAddress::LocalHost = DomainSocketAddress("");
 
 DomainSocketAddress::~DomainSocketAddress()
 {
@@ -19,20 +20,21 @@ DomainSocketAddress::~DomainSocketAddress()
 
 DomainSocketAddress DomainSocketAddress::Parse(const string & text)
 {
-    DomainSocketAddress ipAddress;
-    if (!TryParse(text, ipAddress))
+    DomainSocketAddress address;
+    if (!TryParse(text, address))
     {
         ostringstream stream;
         stream << "DomainSocketAddress string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
         throw Core::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
-    return ipAddress;
+    return address;
 }
 
-bool DomainSocketAddress::TryParse(const string & text, DomainSocketAddress & ipAddress)
+bool DomainSocketAddress::TryParse(const string & text, DomainSocketAddress & address)
 {
-    in_addr address;
-    int errorCode = inet_aton(text.c_str(), &address);
+    in_addr inAddress;
+    const char * path = "";
+    int errorCode = inet_pton(AF_UNIX, text.c_str(), &inAddress);
     if (errorCode == 0)
     {
         addrinfo * addressInfo;
@@ -40,17 +42,16 @@ bool DomainSocketAddress::TryParse(const string & text, DomainSocketAddress & ip
         errorCode = getaddrinfo(text.c_str(), 0, &hints, &addressInfo);
         if (errorCode != 0)
             return false;
-        address = ((sockaddr_in *)(addressInfo[0].ai_addr))->sin_addr;
-        ipAddress = DomainSocketAddress((uint32_t)address.s_addr);
+        path = ((sockaddr_un *)(addressInfo[0].ai_addr))->sun_path;
         freeaddrinfo(addressInfo);
     }
-    ipAddress = DomainSocketAddress((uint32_t)address.s_addr);
+    address = DomainSocketAddress(path);
     return true;
 }
 
 DomainSocketAddress & DomainSocketAddress::operator = (const DomainSocketAddress & other)
 {
-    _ipAddress = other._ipAddress;
+    _address = other._address;
     return *this;
 }
 
@@ -58,7 +59,7 @@ bool DomainSocketAddress::operator == (const DomainSocketAddress & other) const
 {
     if (&other == this)
         return true;
-    return (other._ipAddress == _ipAddress);
+    return (other._address == _address);
 }
 
 bool DomainSocketAddress::operator != (const DomainSocketAddress & other) const
@@ -70,7 +71,7 @@ uint8_t & DomainSocketAddress::operator[] (size_t offset)
 {
     if (offset < AddressSize)
     {
-        return _ipAddress[offset];
+        return _address[offset];
     }
     throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
 }
@@ -79,33 +80,31 @@ const uint8_t & DomainSocketAddress::operator[] (size_t offset) const
 {
     if (offset < AddressSize)
     {
-        return _ipAddress[offset];
+        return _address[offset];
     }
     throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
 }
 
-uint32_t DomainSocketAddress::GetUInt32() const
+OSAL::String DomainSocketAddress::GetData() const
 {
-    return _ipAddress.GetUInt32(0);
+    return ToString();
 }
 
-void DomainSocketAddress::SetUInt32(uint32_t value)
+void DomainSocketAddress::SetData(const OSAL::String & value)
 {
-    _ipAddress.SetUInt32(0, value);
+    _address.Size(AddressSize);
+    _address.Set(0, reinterpret_cast<const uint8_t *>(value.c_str()), value.length());
 }
 
 Core::ByteArray DomainSocketAddress::GetBytes() const
 {
-    return _ipAddress;
+    return _address;
 }
 
-string DomainSocketAddress::ToString() const
+OSAL::String DomainSocketAddress::ToString() const
 {
     ostringstream stream;
-    stream << (int)_ipAddress[0] << ".";
-    stream << (int)_ipAddress[1] << ".";
-    stream << (int)_ipAddress[2] << ".";
-    stream << (int)_ipAddress[3];
+    stream << reinterpret_cast<char*>(_address.Data(), _address.Size());
     return stream.str();
 }
 
@@ -115,7 +114,7 @@ void DomainSocketAddress::SetData(const Core::ByteArray & data, size_t offset)
     {
         throw Core::ArgumentOutOfRangeException(__func__, __FILE__, __LINE__, "offset", "Invalid index");
     }
-    _ipAddress.Set(0, data.Data() + offset, AddressSize);
+    _address.Set(0, data.Data() + offset, AddressSize);
 }
 
 namespace Core
@@ -124,9 +123,9 @@ namespace Core
 namespace Util
 {
 
-bool TryParse(const string & text, Network::DomainSocketAddress & ipAddress)
+bool TryParse(const string & text, Network::DomainSocketAddress & address)
 {
-    return Network::DomainSocketAddress::TryParse(text, ipAddress);
+    return Network::DomainSocketAddress::TryParse(text, address);
 }
 
 } // namespace Util
