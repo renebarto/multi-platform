@@ -21,6 +21,16 @@ OSAL_EXPORT String TrimLeft(const String & value, const String & stripChars);
 OSAL_EXPORT String TrimSpacesLeft(const String & value);
 OSAL_EXPORT String TrimRight(const String & value, const String & stripChars);
 OSAL_EXPORT String TrimSpacesRight(const String & value);
+bool IsEqual(const String & lhs, const String & rhs);
+bool IsEqualIgnoreCase(const String & lhs, const String & rhs);
+bool IsEqual(const char * lhs, const char * rhs);
+bool IsEqualIgnoreCase(const char * lhs, const char * rhs);
+bool IsEqual(const wchar_t * lhs, const wchar_t * rhs);
+bool IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs);
+String ToLower(const String & text);
+String ToUpper(const String & text);
+String Quote(const String & text);
+String UnQuote(const String & text);
 
 } // namespace OSAL
 

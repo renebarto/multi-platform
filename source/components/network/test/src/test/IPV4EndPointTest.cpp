@@ -115,9 +115,9 @@ TEST_FIXTURE(IPV4EndPointTest, ParseInvalid)
     const string text2 = "255.255.255.255.255";
     const string text3 = "255.255.255.255:123456";
 
-    EXPECT_THROW(IPV4EndPoint::Parse(text1), Core::ArgumentException);
-    EXPECT_THROW(IPV4EndPoint::Parse(text2), Core::ArgumentException);
-    EXPECT_THROW(IPV4EndPoint::Parse(text3), Core::ArgumentException);
+    EXPECT_THROW(IPV4EndPoint::Parse(text1), OSAL::ArgumentException);
+    EXPECT_THROW(IPV4EndPoint::Parse(text2), OSAL::ArgumentException);
+    EXPECT_THROW(IPV4EndPoint::Parse(text3), OSAL::ArgumentException);
 }
 
 TEST_FIXTURE(IPV4EndPointTest, TryParseIPAddressOnly)

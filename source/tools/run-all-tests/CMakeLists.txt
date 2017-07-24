@@ -38,6 +38,7 @@ set(TOOLS_RUNALLTESTS_DEPENDENCIES
     osal.test-lib
     simd.test-lib
     unit-test-c++.test-lib
+    xml.test-lib
     ${LINK_NO_WHOLE_LIB})
 
 set(TOOLS_RUNALLTESTS_LIBS

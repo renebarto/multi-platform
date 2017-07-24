@@ -7,9 +7,9 @@
 #include <cstring>
 #include <termios.h>
 #include <core/Core.h>
-//#include "Core/ByteArray.h"
-//#include "Core/DefaultLogger.h"
-//#include "Core/String.h"
+//#include "core/ByteArray.h"
+//#include "core/DefaultLogger.h"
+//#include "core/String.h"
 
 using namespace std;
 using namespace Core;
@@ -83,7 +83,7 @@ void Util::Sleep(int sleepMS)
             errorCode = errno;
     }
     while (errorCode == EINTR);
-    ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+    OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
 }
 
 //int Util::KBHit()

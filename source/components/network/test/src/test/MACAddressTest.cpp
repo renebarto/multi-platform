@@ -99,8 +99,8 @@ TEST_FIXTURE(MACAddressTest, ParseInvalid)
     const string text1 = "00-11-22-AA-BB";
     const string text2 = "XX-YY-ZZ-AA-BB-CC";
 
-    EXPECT_THROW(MACAddress::Parse(text1), Core::ArgumentException);
-    EXPECT_THROW(MACAddress::Parse(text2), Core::ArgumentException);
+    EXPECT_THROW(MACAddress::Parse(text1), OSAL::ArgumentException);
+    EXPECT_THROW(MACAddress::Parse(text2), OSAL::ArgumentException);
 }
 
 TEST_FIXTURE(MACAddressTest, TryParse)

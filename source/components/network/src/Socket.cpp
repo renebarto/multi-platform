@@ -84,7 +84,7 @@ void Socket::Open(SocketFamily socketFamily, SocketType socketType)
         stream << "socket() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -105,7 +105,7 @@ void Socket::Close()
         stream << "close() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -125,7 +125,7 @@ void Socket::SetSocketOption(SocketOptionLevel level, SocketOption socketOption,
         stream << "setsockopt() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -140,7 +140,7 @@ void Socket::GetSocketOption(SocketOptionLevel level, SocketOption socketOption,
         stream << "getsockopt() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -248,7 +248,7 @@ bool Socket::GetBlockingMode()
         stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
     return (flags & O_NONBLOCK) == 0;
 }
@@ -264,7 +264,7 @@ void Socket::SetBlockingMode(bool value)
         stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
     int errorCode = fcntl(this->GetHandle(), F_SETFL, value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
     if (errorCode == -1)
@@ -275,7 +275,7 @@ void Socket::SetBlockingMode(bool value)
         stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -291,7 +291,7 @@ void Socket::Bind(const sockaddr * address, socklen_t addressLength)
         stream << "bind() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -342,7 +342,7 @@ bool Socket::Connect(sockaddr const * serverAddress, socklen_t serverAddressLeng
             }
         }
         else if ((errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
-            Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 
     SetBlockingMode(true);
@@ -360,7 +360,7 @@ void Socket::Listen(int numListeners)
         stream << "listen() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -404,7 +404,7 @@ bool Socket::Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen
                 return false;
             }
             else
-                Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+                OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
         }
     }
     while ((result == -1) && (waitTime > 0));
@@ -432,7 +432,7 @@ void Socket::GetLocalAddress(sockaddr * address, socklen_t * addressLength)
         stream << "getsockname() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -447,7 +447,7 @@ void Socket::GetRemoteAddress(sockaddr * address, socklen_t * addressLength)
         stream << "getpeername() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -488,7 +488,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
             Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 #endif
             if ((errorCode != EINTR) && (errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
-                Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+                OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
         }
         else if (result == 0)
         {
@@ -499,7 +499,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
             numBytes = result;
         }
     }
-    catch (const Core::SystemError & e)
+    catch (const OSAL::SystemError & e)
     {
         if (e.GetErrorCode() == EBADF)
         {
@@ -535,7 +535,7 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
             {
                 return false;
             }
-            Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
         }
         else
         {
@@ -557,7 +557,7 @@ void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t *
         stream << "sendto() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
@@ -575,7 +575,7 @@ size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_
 #endif
 
         if ((errorCode != EINTR) && (errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
-            Core::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
         numBytes = 0;
     }
 

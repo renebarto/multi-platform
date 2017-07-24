@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <vector>
+#include <osal/Strings.h>
 
 namespace Core {
 
@@ -15,7 +15,7 @@ public:
     virtual ~IStringDeserializer()
     {}
 
-    virtual bool Deserialize(const std::string &text, T &result) = 0;
+    virtual bool Deserialize(const OSAL::String &text, T &result) = 0;
 };
 
 template<class T>
@@ -28,7 +28,7 @@ public:
     virtual ~IStringSerializer()
     {}
 
-    virtual void Serialize(std::string &text, const T &result) = 0;
+    virtual void Serialize(OSAL::String &text, const T &result) = 0;
 };
 
 template<typename EnumType>
@@ -46,14 +46,14 @@ public:
     EnumSerializationInfo(const EnumSerializationInfo &) = delete;
     EnumSerializationInfo & operator = (const EnumSerializationInfo &) = delete;
 
-    static std::string Serialize(EnumType value)
+    static OSAL::String Serialize(EnumType value)
     {
         for (const auto & item : Info)
         {
             if (item.value == value)
                 return item.name;
         }
-        return std::string{};
+        return OSAL::String{};
     }
 private:
     static std::vector<EnumConversion<EnumType>> Info;

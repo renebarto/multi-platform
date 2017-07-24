@@ -79,8 +79,8 @@ protected:
         sigaddset(&signalMaskSet, SIGINT);
         sigaddset(&signalMaskSet, SIGQUIT);
         if (pthread_sigmask(SIG_BLOCK, &signalMaskSet, nullptr) != 0)
-            throw SystemError(__func__, __FILE__, __LINE__, errno,
-                              "Cannot set signal mask for thread");
+            throw OSAL::SystemError(__func__, __FILE__, __LINE__, errno,
+                                    "Cannot set signal mask for thread");
     }
 };
 

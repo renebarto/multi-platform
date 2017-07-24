@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="no"?>
+
+<root>
+    <element name="element1">
+        <subelement name="sub1" />
+        <subelement name="sub2" />
+    </element>
+    <element name="element2">
+        <subelement name="sub1" />
+        <subelement name="sub2" />
+        <subelement name="sub3" />
+    </element>
+</root>

@@ -29,7 +29,7 @@ IPV6Address IPV6Address::Parse(const string & text)
         ostringstream stream;
         stream << "IPV6Address string representation must be formatted as xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx " << endl
                << "(or a shortened format), string is " << text;
-        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
+        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
     return ipAddress;
 }

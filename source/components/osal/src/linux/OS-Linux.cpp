@@ -2,8 +2,45 @@
 
 #include <sys/utsname.h>
 #include <cxxabi.h>
+#include <ext/stdio_filebuf.h>
+#include <cassert>
 
 using namespace OSAL;
+
+OS::TemporaryFile::TemporaryFile()
+    : _stream()
+    , _path()
+{
+    const int MAX_PATH = 4096;
+    char fileMask[MAX_PATH];
+    sprintf(fileMask, "%s/testXXXXXX", P_tmpdir);
+    int fd = mkstemp(fileMask);
+    _path = fileMask;
+    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::out);
+    _stream = std::make_shared<std::iostream>(&filebuf);
+}
+
+OS::TemporaryFile::~TemporaryFile()
+{
+    Close();
+    OSAL::Path::MakeSureFileDoesNotExist(_path);
+}
+
+void OS::TemporaryFile::Close()
+{
+    _stream = nullptr;
+}
+
+std::iostream & OS::TemporaryFile::GetStream()
+{
+    assert(_stream != nullptr);
+    return *_stream;
+}
+
+std::string const & OS::TemporaryFile::GetPath() const
+{
+    return _path;
+}
 
 String OS::Name()
 {

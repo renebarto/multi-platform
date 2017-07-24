@@ -16,7 +16,7 @@ MACAddress MACAddress::Parse(const string & text)
     {
         ostringstream stream;
         stream << "MACAddress string representation must be formatted as xx-xx-xx-xx-xx-xx, string is " << text;
-        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
+        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
     return macAddress;
 }

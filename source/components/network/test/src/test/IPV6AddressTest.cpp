@@ -166,8 +166,8 @@ TEST_FIXTURE(IPV6AddressTest, ParseInvalid)
     const string text1 = "ffffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0";
     const string text2 = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0:0";
 
-    EXPECT_THROW(IPV6Address::Parse(text1), Core::ArgumentException);
-    EXPECT_THROW(IPV6Address::Parse(text2), Core::ArgumentException);
+    EXPECT_THROW(IPV6Address::Parse(text1), OSAL::ArgumentException);
+    EXPECT_THROW(IPV6Address::Parse(text2), OSAL::ArgumentException);
 }
 
 TEST_FIXTURE(IPV6AddressTest, TryParse)

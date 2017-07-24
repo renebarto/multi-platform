@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ctime>
+#include "osal/Strings.h"
 #include "core/TimeSpan.h"
 
 namespace Core
@@ -96,13 +97,13 @@ public:
     int WeekOfYear() const;
 
     TimeSpan OffsetFromUTC() const;
-    std::string TimeZoneName() const;
+    OSAL::String TimeZoneName() const;
     bool IsDaylightSavings() const;
     DateTime ConvertToLocalTime() const;
     DateTime ConvertToUTCTime() const;
 
-    virtual std::string ToString() const;
-    std::string ToString(const std::string & formatString) const;
+    virtual OSAL::String ToString() const;
+    OSAL::String ToString(const OSAL::String & formatString) const;
 
     friend DateTime operator + (const TimeSpan & lhs, const DateTime & rhs);
     friend DateTime operator + (const DateTime & lhs, const TimeSpan & rhs);
@@ -150,4 +151,15 @@ private:
     void Assign(const tm & value);
 };
 
+inline void PrintTo(const DateTime & value, std::ostream & stream)
+{
+    stream << value.ToString();
+}
 } // namespace Core
+
+inline std::ostream & operator << (std::ostream & stream, Core::DateTime value)
+{
+    stream << value.ToString();
+    return stream;
+}
+

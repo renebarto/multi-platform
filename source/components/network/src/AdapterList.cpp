@@ -27,7 +27,7 @@ bool AdapterList::ReScan()
 {
     _adapters.clear();
     ifaddrs * adapters;
-    Core::ThrowOnError(__func__, __FILE__, __LINE__, getifaddrs(&adapters));
+    OSAL::ThrowOnError(__func__, __FILE__, __LINE__, getifaddrs(&adapters));
 
     for (ifaddrs * currentAdapter = adapters; currentAdapter != nullptr; currentAdapter = currentAdapter->ifa_next)
     {

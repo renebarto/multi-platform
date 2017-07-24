@@ -62,3 +62,79 @@ String OSAL::TrimSpacesRight(const String & value)
         --indexRight;
     return value.substr(0, indexRight - 0);
 }
+
+bool OSAL::IsEqual(const String & lhs, const String & rhs)
+{
+    return (lhs == rhs);
+}
+
+bool OSAL::IsEqualIgnoreCase(const String & lhs, const String & rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    size_t size = rhs.size();
+    for (size_t n = 0; n < size; n++)
+        if (tolower(lhs[n]) != tolower(rhs[n]))
+            return false;
+
+    return true;
+}
+
+bool OSAL::IsEqual(const char * lhs, const char * rhs)
+{
+    return strcmp(lhs, rhs) == 0;
+}
+
+bool OSAL::IsEqualIgnoreCase(const char * lhs, const char * rhs)
+{
+    return strcasecmp(lhs, rhs) == 0;
+}
+
+bool OSAL::IsEqual(const wchar_t * lhs, const wchar_t * rhs)
+{
+    return wcscmp(lhs, rhs) == 0;
+}
+
+bool OSAL::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
+{
+    return wcscasecmp(lhs, rhs) == 0;
+}
+
+String OSAL::ToLower(const String & text)
+{
+    String result;
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        result += tolower(text[i]);
+    }
+    return result;
+}
+
+String OSAL::ToUpper(const String & text)
+{
+    String result;
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        result += toupper(text[i]);
+    }
+    return result;
+}
+
+String OSAL::Quote(const String & text)
+{
+    if ((text[0] == '\"') && (text[text.length() - 1] == '\"'))
+    {
+        return text;
+    }
+    return '\"' + text + '\"';
+}
+
+String OSAL::UnQuote(const String & text)
+{
+    if ((text.length() >= 2) && (text[0] == '\"') && (text[text.length() - 1] == '\"'))
+    {
+        return text.substr(1, text.length() - 2);
+    }
+    return text;
+}

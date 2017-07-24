@@ -147,8 +147,8 @@ TEST_FIXTURE(IPV4AddressTest, ParseInvalid)
     const string text1 = "256.255.255.255";
     const string text2 = "255.255.255.255.255";
 
-    EXPECT_THROW(IPV4Address::Parse(text1), Core::ArgumentException);
-    EXPECT_THROW(IPV4Address::Parse(text2), Core::ArgumentException);
+    EXPECT_THROW(IPV4Address::Parse(text1), OSAL::ArgumentException);
+    EXPECT_THROW(IPV4Address::Parse(text2), OSAL::ArgumentException);
 }
 
 TEST_FIXTURE(IPV4AddressTest, TryParse)

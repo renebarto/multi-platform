@@ -115,9 +115,9 @@ TEST_FIXTURE(IPV6EndPointTest, ParseInvalid)
     const string text2 = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0:0";
     const string text3 = "[fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0]:123456";
 
-    EXPECT_THROW(IPV6EndPoint::Parse(text1), Core::ArgumentException);
-    EXPECT_THROW(IPV6EndPoint::Parse(text2), Core::ArgumentException);
-    EXPECT_THROW(IPV6EndPoint::Parse(text3), Core::ArgumentException);
+    EXPECT_THROW(IPV6EndPoint::Parse(text1), OSAL::ArgumentException);
+    EXPECT_THROW(IPV6EndPoint::Parse(text2), OSAL::ArgumentException);
+    EXPECT_THROW(IPV6EndPoint::Parse(text3), OSAL::ArgumentException);
 }
 
 TEST_FIXTURE(IPV6EndPointTest, TryParseIPAddressOnly)
