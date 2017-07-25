@@ -96,8 +96,8 @@ add_dependencies(install-components install_${PROJECT_NAME})
 add_dependencies(uninstall-components uninstall_${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION ${TOOLS_LIB_DIR}
+    ARCHIVE DESTINATION ${TOOLS_LIB_DIR}
+    LIBRARY DESTINATION ${TOOLS_LIB_DIR}
     COMPONENT ${PROJECT_NAME})
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/core.pc

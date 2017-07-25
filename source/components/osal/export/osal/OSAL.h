@@ -16,7 +16,7 @@ class BaseException : public std::exception
 protected:
     String message;
     const std::exception * innerException;
-    mutable String whatMessage;
+    mutable std::string whatMessage;
 public:
     BaseException()
         : message()
@@ -55,7 +55,7 @@ public:
     }
     const char* what() const throw()
     {
-        whatMessage = FormatMessage();
+        whatMessage = ToNarrowString(FormatMessage());
         return whatMessage.c_str();
     }
     virtual String BuildMessage() const = 0;
@@ -120,15 +120,15 @@ public:
     }
     virtual String BuildMessage() const override
     {
-        std::ostringstream stream;
+        std::basic_ostringstream<Char> stream;
         if (functionName != nullptr)
-            stream << "in " << functionName;
+            stream << _("in ") << functionName;
         if (fileName != nullptr)
         {
-            stream << " [" << fileName;
+            stream << _(" [") << fileName;
             if (line > 0)
                 stream << ":" << line;
-            stream << "]";
+            stream << _("]");
         }
         return stream.str();
     }
@@ -158,10 +158,10 @@ public:
     }
     virtual String BuildMessage() const override
     {
-        std::ostringstream stream;
-        stream << Exception::BuildMessage() << " errno=" << errorCode
-               << " (0x" << std::hex << std::setw(8) << std::setfill('0') << errorCode << "): " << '"'
-               << strerror(errorCode) << '"';
+        std::basic_ostringstream<Char> stream;
+        stream << Exception::BuildMessage() << _(" errno=") << errorCode
+               << _(" (0x") << std::hex << std::setw(8) << std::setfill('0') << errorCode << _("): \"")
+               << strerror(errorCode) << _("\"");
         return stream.str();
     }
 };
@@ -200,10 +200,10 @@ public:
     }
     virtual String BuildMessage() const
     {
-        std::ostringstream stream;
+        std::basic_ostringstream<Char> stream;
         stream << Exception::BuildMessage();
         if (!argument.empty())
-            stream << ": argument: " << argument;
+            stream << _(": argument: ") << argument;
         return stream.str();
     }
 };

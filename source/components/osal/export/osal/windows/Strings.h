@@ -23,19 +23,19 @@ inline int StrCmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
 }
 inline int StrCaseCmp(const char * lhs, const char * rhs)
 {
-    return ::strcasecmp(lhs, rhs);
+    return ::_stricmp(lhs, rhs);
 }
 inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return ::wcscasecmp(lhs, rhs);
+    return ::_wcsicmp(lhs, rhs);
 }
 inline int StrCaseCmp(const char * lhs, const char * rhs, size_t size)
 {
-    return ::strncasecmp(lhs, rhs, size);
+    return ::_strnicmp(lhs, rhs, size);
 }
 inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
 {
-    return ::wcsncasecmp(lhs, rhs, size);
+    return ::_wcsnicmp(lhs, rhs, size);
 }
 inline const char * StrChr(const char * str, const char character)
 {

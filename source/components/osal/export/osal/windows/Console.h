@@ -1,9 +1,13 @@
 #pragma once
 
-#include <unistd.h>
+//#include <unistd.h>
 #include "osal/ConsoleBase.h"
 
 namespace OSAL {
+
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define STDERR_FILENO 2
 
 inline std::ostream * DetermineStream(int handle)
 {
@@ -25,9 +29,9 @@ inline std::ostream * DetermineStream(int handle)
 inline int DetermineHandle(std::ostream * stream)
 {
     if (stream == &std::cout)
-        return OSAL::Files::FileNo(stdout);
+        return OSAL::Files::fileno(stdout);
     else if (stream == &std::cerr)
-        return OSAL::Files::FileNo(stderr);
+        return OSAL::Files::fileno(stderr);
     return -1;
 }
 

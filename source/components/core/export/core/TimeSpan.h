@@ -47,4 +47,11 @@ private:
     int64_t _interval;
 };
 
+bool operator == (const TimeSpan & lhs, const TimeSpan & rhs);
+bool operator == (int64_t lhs, const TimeSpan & rhs);
+bool operator == (const TimeSpan & lhs, int64_t rhs);
+bool operator != (const TimeSpan & lhs, const TimeSpan & rhs);
+bool operator != (int64_t lhs, const TimeSpan & rhs);
+bool operator != (const TimeSpan & lhs, int64_t rhs);
+
 } // namespace Core

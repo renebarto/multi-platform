@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include "osal/Strings.h"
+#include "osal/Time.h"
 #include "core/TimeSpan.h"
 
 namespace Core
@@ -143,7 +144,7 @@ public:
 
 private:
     timespec _time;
-    tm _dateTime;
+    OSAL::Time::tm _dateTime;
     void Assign(timespec value, bool localTime);
     void Assign(timeval value, bool localTime);
     void Assign(time_t value, bool localTime);

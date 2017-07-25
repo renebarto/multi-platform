@@ -14,32 +14,32 @@
 namespace OSAL {
 
 template<class CharT>
-void ConsoleBase<CharT>::SetForegroundColor(ConsoleColorType foregroundColor)
+inline void ConsoleBase<CharT>::SetForegroundColor(ConsoleColorType foregroundColor)
 {
     SetTerminalColor(foregroundColor, _currentBackgroundColor);
 }
 
 template<class CharT>
-void ConsoleBase<CharT>::SetBackgroundColor(ConsoleColorType backgroundColor)
+inline void ConsoleBase<CharT>::SetBackgroundColor(ConsoleColorType backgroundColor)
 {
     SetTerminalColor(_currentForegroundColor, backgroundColor);
 }
 
 template<class CharT>
-void ConsoleBase<CharT>::ResetTerminalColor()
+inline void ConsoleBase<CharT>::ResetTerminalColor()
 {
     SetTerminalColor();
 }
 
 template<class CharT>
-ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetForegroundColor color)
+inline ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetForegroundColor color)
 {
     stream.SetForegroundColor(color.color);
     return stream;
 }
 
 template<class CharT>
-ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetBackgroundColor color)
+inline ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetBackgroundColor color)
 {
     stream.SetBackgroundColor(color.color);
     return stream;

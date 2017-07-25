@@ -83,22 +83,22 @@ bool OSAL::IsEqualIgnoreCase(const String & lhs, const String & rhs)
 
 bool OSAL::IsEqual(const char * lhs, const char * rhs)
 {
-    return strcmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqualIgnoreCase(const char * lhs, const char * rhs)
 {
-    return strcasecmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqual(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return wcscmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return wcscasecmp(lhs, rhs) == 0;
+    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
 }
 
 String OSAL::ToLower(const String & text)
@@ -127,7 +127,7 @@ String OSAL::Quote(const String & text)
     {
         return text;
     }
-    return '\"' + text + '\"';
+    return _("\"") + text + _("\"");
 }
 
 String OSAL::UnQuote(const String & text)

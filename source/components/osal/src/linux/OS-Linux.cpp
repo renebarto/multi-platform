@@ -46,31 +46,31 @@ String OS::Name()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.sysname;
+    return ToString(nameInfo.sysname);
 }
 String OS::Variant()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.nodename;
+    return ToString(nameInfo.nodename);
 }
 String OS::Release()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.release;
+    return ToString(nameInfo.release);
 }
 String OS::Version()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.version;
+    return ToString(nameInfo.version);
 }
 String OS::Platform()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.machine;
+    return ToString(nameInfo.machine);
 }
 
 String OS::DemangleName(const String & mangledName)

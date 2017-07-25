@@ -2,40 +2,142 @@
 
 #if defined(WIN_MINGW)
 
-#include <sys/utsname.h>
+#include <windows.h>
+
+#include <osal/mingw/utsname.h>
 #include <cxxabi.h>
+#include <osal/mingw/Pipe.h>
 
 using namespace OSAL;
+
+int uname(struct utsname *u)
+{
+    OSVERSIONINFOEX info;
+    info.dwOSVersionInfoSize = sizeof(info);
+
+    if (!GetVersionEx(reinterpret_cast<OSVERSIONINFO *>(&info)))
+    {
+        return -1;
+    }
+
+    u->sysname = "Microsoft Windows";
+    u->nodename = "";
+    u->release = "";
+    u->version = "";
+    u->machine = "";
+
+    switch (info.dwMajorVersion) {
+        case 4:
+            switch (info.dwMinorVersion)
+            {
+                case 0:
+                    u->version = "NT 4.0";
+                    break;
+                case 10:
+                    u->version = "98";
+                    break;
+                case 90:
+                    u->version = "Me";
+                    break;
+                default:
+                    return -1;
+            }
+            break;
+
+        case 5:
+            switch (info.dwMinorVersion)
+            {
+                case 0:
+                    u->version = "2000";
+                    break;
+                case 1:
+                    u->version = "XP";
+                    break;
+                case 2:
+                    u->version = "Server 2003";
+                    break;
+                default:
+                    return -1;
+            }
+            break;
+
+        case 6:
+            switch (info.dwMinorVersion)
+            {
+                case 0:
+                    u->version = (info.wProductType == VER_NT_WORKSTATION)
+                                 ? "Vista"
+                                 : "Server 2008";
+                    break;
+                case 1:
+                    u->version = (info.wProductType == VER_NT_WORKSTATION)
+                                 ? "7"
+                                 : "Server 2008 R2";
+                    break;
+                case 2:
+                    u->version = (info.wProductType == VER_NT_WORKSTATION)
+                                 ? "8"
+                                 : "Server 20012";
+                    break;
+                case 3:
+                    u->version = (info.wProductType == VER_NT_WORKSTATION)
+                                 ? "8.1"
+                                 : "Server 20012 R2";
+                    break;
+                default:
+                    return -1;
+            }
+            break;
+
+        case 10:
+            switch (info.dwMinorVersion)
+            {
+                case 0:
+                    u->version = (info.wProductType == VER_NT_WORKSTATION)
+                                 ? "10"
+                                 : "Server 2016";
+                    break;
+                default:
+                    return -1;
+            }
+            break;
+
+        default:
+            return -1;
+    }
+
+    return 0;
+}
 
 String OS::Name()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.sysname;
+    return ToString(nameInfo.sysname);
 }
 String OS::Variant()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.nodename;
+    return ToString(nameInfo.nodename);
 }
 String OS::Release()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.release;
+    return ToString(nameInfo.release);
 }
 String OS::Version()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.version;
+    return ToString(nameInfo.version);
 }
 String OS::Platform()
 {
     utsname nameInfo;
     uname(&nameInfo);
-    return nameInfo.machine;
+    return ToString(nameInfo.machine);
 }
 
 String OS::DemangleName(const String & mangledName)

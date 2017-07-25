@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include "core/Core.h"
+#include "osal/Pipe.h"
 
 using namespace std;
 using namespace Core;
@@ -25,7 +26,7 @@ Pipe::~Pipe()
 
 void Pipe::Create()
 {
-    int err = pipe(_fd);
+    int err = OSAL::Pipe::pipe(_fd);
     if (err < 0)
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
 }

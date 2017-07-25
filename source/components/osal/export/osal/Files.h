@@ -1,5 +1,7 @@
 #pragma once
 
+#include <osal/exports.h>
+
 #if defined(WIN_MSVC)
 #include "osal/windows/Files.h"
 #elif defined(WIN_MINGW)

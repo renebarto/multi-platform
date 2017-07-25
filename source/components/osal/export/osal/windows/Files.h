@@ -1,18 +1,52 @@
 #pragma once
 
-#include <cstdio>
-#include <unistd.h>
+#include <io.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 namespace OSAL {
 namespace Files {
 
-inline int FileNo(FILE * file)
+typedef int mode_t;
+typedef signed __int64 ssize_t;
+
+inline int fileno(FILE * file)
 {
-    return ::fileno(file);
+    return ::_fileno(file);
 }
-inline int IsAtty(int fd)
+inline int isatty(int fd)
 {
-    return ::isatty(fd);
+    return ::_isatty(fd);
+}
+
+inline int open(const char * path, int flags)
+{
+    return ::_open(path, flags);
+}
+
+inline int open(const char * path, int flags, mode_t mode)
+{
+    return ::_open(path, flags, mode);
+}
+
+inline int creat(const char * path, mode_t mode)
+{
+    return ::creat(path, mode);
+}
+
+inline int close(int fd)
+{
+    return ::close(fd);
+}
+
+inline ssize_t read(int fd, void * buf, size_t count)
+{
+    return ::read(fd, buf, count);
+}
+
+inline ssize_t write(int fd, const void * buf, size_t count)
+{
+    return ::write(fd, buf, count);
 }
 
 } // namespace Files

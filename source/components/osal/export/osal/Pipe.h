@@ -3,11 +3,11 @@
 #include <osal/exports.h>
 
 #if defined(WIN_MSVC)
-#include "osal/windows/Time.h"
+#include "osal/windows/Pipe.h"
 #elif defined(WIN_MINGW)
-#include "osal/mingw/Time.h"
+#include "osal/mingw/Pipe.h"
 #elif defined(DARWIN)
-#include "osal/darwin/Time.h"
+#include "osal/darwin/Pipe.h"
 #elif defined(LINUX)
-#include "osal/linux/Time.h"
+#include "osal/linux/Pipe.h"
 #endif

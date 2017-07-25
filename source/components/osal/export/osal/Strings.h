@@ -21,22 +21,18 @@ OSAL_EXPORT String TrimLeft(const String & value, const String & stripChars);
 OSAL_EXPORT String TrimSpacesLeft(const String & value);
 OSAL_EXPORT String TrimRight(const String & value, const String & stripChars);
 OSAL_EXPORT String TrimSpacesRight(const String & value);
-bool IsEqual(const String & lhs, const String & rhs);
-bool IsEqualIgnoreCase(const String & lhs, const String & rhs);
-bool IsEqual(const char * lhs, const char * rhs);
-bool IsEqualIgnoreCase(const char * lhs, const char * rhs);
-bool IsEqual(const wchar_t * lhs, const wchar_t * rhs);
-bool IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs);
-String ToLower(const String & text);
-String ToUpper(const String & text);
-String Quote(const String & text);
-String UnQuote(const String & text);
+OSAL_EXPORT bool IsEqual(const String & lhs, const String & rhs);
+OSAL_EXPORT bool IsEqualIgnoreCase(const String & lhs, const String & rhs);
+OSAL_EXPORT bool IsEqual(const char * lhs, const char * rhs);
+OSAL_EXPORT bool IsEqualIgnoreCase(const char * lhs, const char * rhs);
+OSAL_EXPORT bool IsEqual(const wchar_t * lhs, const wchar_t * rhs);
+OSAL_EXPORT bool IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs);
+OSAL_EXPORT String ToLower(const String & text);
+OSAL_EXPORT String ToUpper(const String & text);
+OSAL_EXPORT String Quote(const String & text);
+OSAL_EXPORT String UnQuote(const String & text);
 
 } // namespace OSAL
-
-inline OSAL::String _(const OSAL::String & value) { return value; }
-inline OSAL::String _(const OSAL::Char * value) { return value; }
-inline OSAL::Char _(const OSAL::Char value) { return value; }
 
 inline std::wstring StringToWString(const std::string & value)
 {
@@ -71,6 +67,31 @@ inline OSAL::String ToString(const std::wstring & value)
     return WStringToString(value);
 #endif
 }
+
+inline std::wstring ToWideString(const OSAL::String & value)
+{
+#if defined(UNICODE) || defined(_UNICODE)
+    return value;
+#else
+    return StringToWString(value);
+#endif
+}
+
+inline std::string ToNarrowString(const OSAL::String & value)
+{
+#if defined(UNICODE) || defined(_UNICODE)
+    return WStringToString(value);
+#else
+    return value;
+#endif
+}
+
+inline OSAL::String _(const std::string & value) { return ToString(value); }
+inline OSAL::String _(const std::wstring & value) { return ToString(value); }
+inline OSAL::String _(const char * value) { return ToString(value); }
+inline OSAL::String _(const wchar_t * value) { return ToString(value); }
+inline OSAL::Char _(const char value) { return ToString(std::string(1, value))[0]; }
+inline OSAL::Char _(const wchar_t value) { return ToString(std::wstring(1, value))[0]; }
 
 #if defined(WIN_MSVC)
 #include "osal/windows/Strings.h"

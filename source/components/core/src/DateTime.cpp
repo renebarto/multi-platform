@@ -146,25 +146,25 @@ DateTime::operator timespec() const
 
 DateTime::operator timeval() const
 {
-    return timeval {_time.tv_sec, _time.tv_nsec / NanoSecondsPerMicroSecond};
+    return timeval {_time.tv_sec, static_cast<long>(_time.tv_nsec / NanoSecondsPerMicroSecond)};
 }
 
 DateTime & DateTime::operator += (const TimeSpan & timeSpan)
 {
-    bool isLocalTime = (_dateTime.tm_gmtoff != 0);
+    bool isLocalTime = (_dateTime.tm_tzOffset != 0);
     timespec newTime;
-    newTime.tv_nsec = (_time.tv_nsec + timeSpan.NanoSeconds()) % NanoSecondsPerSecond;
-    newTime.tv_sec = _time.tv_sec + (_time.tv_nsec + timeSpan.NanoSeconds()) / NanoSecondsPerSecond;
+    newTime.tv_nsec = static_cast<long>((_time.tv_nsec + timeSpan.NanoSeconds()) % NanoSecondsPerSecond);
+    newTime.tv_sec = static_cast<long>(_time.tv_sec + (_time.tv_nsec + timeSpan.NanoSeconds()) / NanoSecondsPerSecond);
     Assign(newTime, isLocalTime);
     return *this;
 }
 
 DateTime & DateTime::operator -= (const TimeSpan & timeSpan)
 {
-    bool isLocalTime = (_dateTime.tm_gmtoff != 0);
+    bool isLocalTime = (_dateTime.tm_tzOffset != 0);
     timespec newTime;
-    newTime.tv_nsec = (_time.tv_nsec - (timeSpan.NanoSeconds() % NanoSecondsPerSecond) + NanoSecondsPerSecond) % NanoSecondsPerSecond;
-    newTime.tv_sec = _time.tv_sec - timeSpan.NanoSeconds() / NanoSecondsPerSecond - (newTime.tv_nsec > _time.tv_nsec ? 1 : 0);
+    newTime.tv_nsec = static_cast<long>((_time.tv_nsec - (timeSpan.NanoSeconds() % NanoSecondsPerSecond) + NanoSecondsPerSecond) % NanoSecondsPerSecond);
+    newTime.tv_sec = static_cast<long>(_time.tv_sec - timeSpan.NanoSeconds() / NanoSecondsPerSecond - (newTime.tv_nsec > _time.tv_nsec ? 1 : 0));
     Assign(newTime, isLocalTime);
     return *this;
 }
@@ -257,17 +257,17 @@ DateTime DateTime::CreateLocal(int year, MonthType month, int day, int hour, int
 
 int DateTime::Hour() const
 {
-    return _dateTime.tm_hour;
+    return _dateTime._tm.tm_hour;
 }
 
 int DateTime::Minute() const
 {
-    return _dateTime.tm_min;
+    return _dateTime._tm.tm_min;
 }
 
 int DateTime::Second() const
 {
-    return _dateTime.tm_sec;
+    return _dateTime._tm.tm_sec;
 }
 
 int DateTime::MicroSeconds() const
@@ -277,12 +277,12 @@ int DateTime::MicroSeconds() const
 
 int DateTime::Year() const
 {
-    return _dateTime.tm_year + 1900;
+    return _dateTime._tm.tm_year + 1900;
 }
 
 int DateTime::Month() const
 {
-    return _dateTime.tm_mon + 1;
+    return _dateTime._tm.tm_mon + 1;
 }
 
 MonthType DateTime::MonthName() const
@@ -292,17 +292,17 @@ MonthType DateTime::MonthName() const
 
 int DateTime::MonthDay() const
 {
-    return _dateTime.tm_mday;
+    return _dateTime._tm.tm_mday;
 }
 
 int DateTime::YearDay() const
 {
-    return _dateTime.tm_yday + 1;
+    return _dateTime._tm.tm_yday + 1;
 }
 
 WeekDayType DateTime::WeekDay() const
 {
-    return (_dateTime.tm_wday == 0) ? WeekDayType::Sunday : ConvertWeekDay(_dateTime.tm_wday);
+    return (_dateTime._tm.tm_wday == 0) ? WeekDayType::Sunday : ConvertWeekDay(_dateTime._tm.tm_wday);
 }
 
 int DateTime::WeekNumberingYear() const
@@ -408,17 +408,17 @@ int DateTime::WeekOfYear() const
 
 TimeSpan DateTime::OffsetFromUTC() const
 {
-    return TimeSpan(_dateTime.tm_gmtoff * NanoSecondsPerSecond);
+    return TimeSpan(-_dateTime.tm_tzOffset * NanoSecondsPerSecond);
 }
 
 std::string DateTime::TimeZoneName() const
 {
-    return _dateTime.tm_zone;
+    return _dateTime.tm_tzName;
 }
 
 bool DateTime::IsDaylightSavings() const
 {
-    return (_dateTime.tm_isdst != 0);
+    return (_dateTime._tm.tm_isdst != 0);
 }
 
 DateTime DateTime::ConvertToLocalTime() const
@@ -446,7 +446,7 @@ string DateTime::ToString() const
 string DateTime::ToString(const string & formatString) const
 {
     char buffer[1000];
-    assert(0 != strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime));
+    assert(0 != strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime._tm));
     return string(buffer);
 }
 
@@ -455,20 +455,20 @@ void DateTime::Assign(timespec value, bool localTime)
     _time = value;
     time_t rawtime = _time.tv_sec;
     if (localTime)
-        _dateTime = *localtime(&rawtime);
+        _dateTime = *OSAL::Time::localtime(&rawtime);
     else
-        _dateTime = *gmtime(&rawtime);
+        _dateTime = *OSAL::Time::gmtime(&rawtime);
 }
 
 void DateTime::Assign(timeval value, bool localTime)
 {
     _time.tv_sec = value.tv_sec;
-    _time.tv_nsec = int64_t(value.tv_usec) * NanoSecondsPerMicroSecond;
+    _time.tv_nsec = static_cast<long>(value.tv_usec * NanoSecondsPerMicroSecond);
     time_t rawtime = _time.tv_sec;
     if (localTime)
-        _dateTime = *localtime(&rawtime);
+        _dateTime = *OSAL::Time::localtime(&rawtime);
     else
-        _dateTime = *gmtime(&rawtime);
+        _dateTime = *OSAL::Time::gmtime(&rawtime);
 }
 
 void DateTime::Assign(time_t value, bool localTime)
@@ -477,18 +477,18 @@ void DateTime::Assign(time_t value, bool localTime)
     _time.tv_nsec = 0;
     time_t rawtime = _time.tv_sec;
     if (localTime)
-        _dateTime = *localtime(&rawtime);
+        _dateTime = *OSAL::Time::localtime(&rawtime);
     else
-        _dateTime = *gmtime(&rawtime);
+        _dateTime = *OSAL::Time::gmtime(&rawtime);
 }
 
 void DateTime::Assign(int year, int month, int day, int hour, int minute, double second, bool localTime)
 {
-    tm local { int(second), minute, hour, day, month - 1, year - 1900, 0, 0, 0, 0, 0 };
-    time_t rawtime = mktime(&local);
+    OSAL::Time::tm local(int(second), minute, hour, day, month - 1, year - 1900);
+    time_t rawtime = OSAL::Time::mktime(&local);
     if (localTime)
     {
-        if (local.tm_isdst)
+        if (local._tm.tm_isdst)
         {
             rawtime -= SecondsPerHour;
         }
@@ -496,7 +496,7 @@ void DateTime::Assign(int year, int month, int day, int hour, int minute, double
     }
     else
     {
-        rawtime += local.tm_gmtoff;
+        rawtime += local.tm_tzOffset;
         _dateTime = *gmtime(&rawtime);
     }
     _time.tv_sec = rawtime;

@@ -25,9 +25,9 @@ inline std::ostream * DetermineStream(int handle)
 inline int DetermineHandle(std::ostream * stream)
 {
     if (stream == &std::cout)
-        return OSAL::Files::FileNo(stdout);
+        return OSAL::Files::fileno(stdout);
     else if (stream == &std::cerr)
-        return OSAL::Files::FileNo(stderr);
+        return OSAL::Files::fileno(stderr);
     return -1;
 }
 
@@ -112,10 +112,10 @@ bool ConsoleBase<CharT>::ShouldUseColor()
 {
     if (_handle == InvalidHandle)
         return false;
-    if (!OSAL::Files::IsAtty(_handle))
+    if (!OSAL::Files::isatty(_handle))
         return false;
 
-    const char * termSetting = OSAL::System::GetEnv("TERM");
+    const char * termSetting = OSAL::System::getenv("TERM");
     if (!termSetting)
         return false;
     std::string term = termSetting;

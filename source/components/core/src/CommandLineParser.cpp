@@ -486,8 +486,10 @@ int CommandLineParser::GetOpt(size_t argCount, const OSAL::Char ** argv, const O
         {
             // Point to first non-option
             if (_getOptData.firstNonOption != _getOptData.lastNonOption)
+            {
                 _getOptData.optionIndex = _getOptData.firstNonOption;
                 return -1;
+            }
         }
         if (AtNonOption(argCount, argv))
         {

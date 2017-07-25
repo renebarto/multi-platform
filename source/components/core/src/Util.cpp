@@ -5,7 +5,7 @@
 #include <climits>
 #include <cmath>
 #include <cstring>
-#include <termios.h>
+//#include <termios.h>
 #include <core/Core.h>
 //#include "core/ByteArray.h"
 //#include "core/DefaultLogger.h"

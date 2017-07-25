@@ -1,4 +1,4 @@
-#include "osal/console-darwin.h"
+#include "osal/mingw/Console.h"
 
 #if defined(WIN_MINGW)
 

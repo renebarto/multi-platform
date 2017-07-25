@@ -5,7 +5,7 @@
 namespace OSAL {
 namespace System {
 
-inline const char * GetEnv(const char * name)
+inline const char * getenv(const char * name)
 {
     return ::getenv(name);
 }

@@ -1,9 +1,32 @@
 #pragma once
 
 #include <cstring>
+#include <wchar.h>
+#include <wctype.h>
 
 namespace OSAL {
 namespace Strings {
+
+inline int wcscasecmp(const wchar_t * s1, const wchar_t * s2)
+{
+    while ((*s1 != '\0') && towlower(static_cast<wint_t>(*s1)) == towlower(static_cast<wint_t>(*s2)))
+    {
+        s1++;
+        s2++;
+    }
+    return towlower(static_cast<wint_t>(*s1)) - towlower(static_cast<wint_t>(*s2));
+}
+
+inline int wcsncasecmp(const wchar_t * s1, const wchar_t * s2, size_t size)
+{
+    size_t count = size;
+    while ((count-- > 0) && (*s1 != '\0') && towlower(static_cast<wint_t>(*s1)) == towlower(static_cast<wint_t>(*s2)))
+    {
+        s1++;
+        s2++;
+    }
+    return towlower(static_cast<wint_t>(*s1)) - towlower(static_cast<wint_t>(*s2));
+}
 
 inline int StrCmp(const char * lhs, const char * rhs)
 {
@@ -27,7 +50,7 @@ inline int StrCaseCmp(const char * lhs, const char * rhs)
 }
 inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return ::wcscasecmp(lhs, rhs);
+    return wcscasecmp(lhs, rhs);
 }
 inline int StrCaseCmp(const char * lhs, const char * rhs, size_t size)
 {
@@ -35,7 +58,7 @@ inline int StrCaseCmp(const char * lhs, const char * rhs, size_t size)
 }
 inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
 {
-    return ::wcsncasecmp(lhs, rhs, size);
+    return wcsncasecmp(lhs, rhs, size);
 }
 inline const char * StrChr(const char * str, const char character)
 {
