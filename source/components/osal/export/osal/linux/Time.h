@@ -12,7 +12,7 @@ inline int GetTimeOfDay(struct timeval * time, struct timezone * timeZone)
 }
 inline void USleep(int64_t microSeconds)
 {
-    ::usleep(microSeconds);
+    ::usleep(static_cast<__useconds_t>(microSeconds));
 }
 
 struct tm
@@ -41,27 +41,11 @@ struct tm
     }
     tm & operator = (const ::tm & other)
     {
-        tm_sec = other.tm_sec;
-        tm_min = other.tm_min;
-        tm_hour = other.tm_hour;
-        tm_mday = other.tm_mday;
-        tm_mon = other.tm_mon;
-        tm_year = other.tm_year;
-        tm_wday = other.tm_wday;
-        tm_yday = other.tm_yday;
-        tm_isdst = other.tm_isdst;
+        _tm = other;
         Update();
         return *this;
     }
-    int tm_sec;
-    int tm_min;
-    int tm_hour;
-    int tm_mday;
-    int tm_mon;
-    int tm_year;
-    int tm_wday;
-    int tm_yday;
-    int tm_isdst;
+    struct ::tm _tm;
     long tm_tzOffset;
     int tm_dstOffset;
     const char * tm_tzName;

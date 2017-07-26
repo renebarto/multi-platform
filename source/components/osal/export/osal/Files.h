@@ -1,6 +1,6 @@
 #pragma once
 
-#include <osal/exports.h>
+#include <osal/Exports.h>
 
 #if defined(WIN_MSVC)
 #include "osal/windows/Files.h"

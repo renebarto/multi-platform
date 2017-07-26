@@ -1,7 +1,9 @@
 #pragma once
 
 #include <iostream>
+#if defined(WIN_MSVC)
 #include <windows.h>
+#endif
 #include "osal/OSAL.h"
 #include "osal/FlagOperators.h"
 
