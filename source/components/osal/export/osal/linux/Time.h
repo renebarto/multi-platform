@@ -31,6 +31,7 @@ struct tm
         _tm.tm_mday = day;
         _tm.tm_mon = month;
         _tm.tm_year = year;
+        Update();
     }
     void Update()
     {

@@ -376,7 +376,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromLocalTime)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    time_t epochExpected = 1393372923;
+    time_t epochExpected = 1393372923 + static_cast<time_t>(dateTime.OffsetFromUTC().Seconds());
     EXPECT_EQ(epochExpected, time_t(dateTime));
 }
 
