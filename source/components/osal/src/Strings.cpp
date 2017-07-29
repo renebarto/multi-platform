@@ -1,5 +1,15 @@
 #include "osal/Strings.h"
 
+#if WIN_MSVC
+#pragma warning(disable : 4668)
+#endif
+
+#include "windows.h"
+
+#if WIN_MSVC
+#pragma warning(default : 4668)
+#endif
+
 using namespace OSAL;
 using namespace OSAL::Strings;
 
@@ -101,12 +111,13 @@ bool OSAL::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
     return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
 }
 
+#pragma warning(disable : 4242 4365)
 String OSAL::ToLower(const String & text)
 {
     String result;
     for (size_t i = 0; i < text.length(); i++)
     {
-        result += tolower(text[i]);
+        result += CharLower(reinterpret_cast<LPTSTR>(text[i]));
     }
     return result;
 }
@@ -116,10 +127,11 @@ String OSAL::ToUpper(const String & text)
     String result;
     for (size_t i = 0; i < text.length(); i++)
     {
-        result += toupper(text[i]);
+        result += CharUpper(reinterpret_cast<LPTSTR>(text[i]));
     }
     return result;
 }
+#pragma warning(default : 4242 4365)
 
 String OSAL::Quote(const String & text)
 {

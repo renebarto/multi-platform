@@ -55,6 +55,8 @@ inline const char * GetAnsiColorCode(ConsoleColorType color)
             return "6";
         case ConsoleColor::White:
             return "7";
+		case ConsoleColor::Default:
+		case ConsoleColor::Intensity:
         default:
             return nullptr;
     };

@@ -16,10 +16,12 @@ int uname(struct utsname *u)
     OSVERSIONINFOEX info;
     info.dwOSVersionInfoSize = sizeof(info);
 
+#pragma warning(disable : 4996)
     if (!GetVersionEx(reinterpret_cast<OSVERSIONINFO *>(&info)))
     {
         return -1;
     }
+#pragma warning(default : 4996)
 
     u->sysname = "Microsoft Windows";
     u->nodename = "";

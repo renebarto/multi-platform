@@ -1,5 +1,16 @@
 #include "osal/Path.h"
 
+#if defined(UNICODE) || defined(_UNICODE)
+static const OSAL::Char _Dot = L'.';
+static const OSAL::Char _Slash = L'/';
+static const OSAL::Char * _CurrentDir = L".";
+static const OSAL::Char * _ParentDir = L"..";
+#else
+static const OSAL::Char _Dot = _Dot;
+static const OSAL::Char * _CurrentDir = ".";
+static const OSAL::Char * _ParentDir = "..";
+#endif
+
 void OSAL::Path::SplitPath(const String & path, String & directory, String & fileName)
 {
     directory = {};
@@ -21,7 +32,7 @@ void OSAL::Path::SplitPath(const String & path, String & directory, String & fil
 
 OSAL::String OSAL::Path::Extension(const String & path)
 {
-    size_t lastPathDelimiterPos = path.find_last_of('.');
+    size_t lastPathDelimiterPos = path.find_last_of(_Dot);
     if (lastPathDelimiterPos != String::npos)
     {
         return path.substr(lastPathDelimiterPos);
@@ -31,7 +42,7 @@ OSAL::String OSAL::Path::Extension(const String & path)
 
 OSAL::String OSAL::Path::StripExtension(const String & path)
 {
-    size_t lastPathDelimiterPos = path.find_last_of('.');
+    size_t lastPathDelimiterPos = path.find_last_of(_Dot);
     if (lastPathDelimiterPos != String::npos)
     {
         return path.substr(0, lastPathDelimiterPos);
@@ -70,7 +81,7 @@ OSAL::String OSAL::Path::CombinePath(const String & basePath, const String & sub
 {
     String result = basePath;
     if (result.empty())
-        result += ".";
+        result += _CurrentDir;
     if (result[result.length() - 1] != PathSeparator())
         result += PathSeparator();
     result += subPath;
@@ -84,7 +95,7 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
     size_t index = 0;
     while ((index < currentDir.length()) && (index < fullPath.length()) && (currentDir[index] == fullPath[index]))
         index++;
-    String relativePath = "";
+	String relativePath = {};
     if (index == 1) // All paths start with /
     {
         relativePath = fullPath;
@@ -95,8 +106,8 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
         fullPath = fullPath.substr(index);
         if (currentDir.empty())
         {
-            relativePath = ".";
-            if ((fullPath.length() > 0) && (fullPath[0] == '/'))
+            relativePath = _CurrentDir;
+            if ((fullPath.length() > 0) && (fullPath[0] == PathSeparator()))
                 fullPath = fullPath.substr(1); // Split was before /
         }
         else
@@ -104,19 +115,19 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
             size_t pathDelimiterPos = String::npos;
             do
             {
-                pathDelimiterPos = currentDir.find_last_of('/');
+                pathDelimiterPos = currentDir.find_last_of(_Slash);
                 if (pathDelimiterPos != String::npos)
                 {
                     currentDir = currentDir.substr(0, pathDelimiterPos);
                     relativePath = AddSlashIfNeeded(relativePath);
-                    relativePath += "..";
+                    relativePath += _ParentDir;
                 }
             }
             while (pathDelimiterPos != String::npos);
             if (!currentDir.empty())
             {
                 relativePath = AddSlashIfNeeded(relativePath);
-                relativePath += "..";
+                relativePath += _ParentDir;
             }
         }
         if (!fullPath.empty())
@@ -149,7 +160,7 @@ OSAL::String OSAL::Path::StripPathToSubDirectory(const String & path, const Stri
         }
         else
         {
-            return "";
+			return {};
         }
     }
     return strippedPath;

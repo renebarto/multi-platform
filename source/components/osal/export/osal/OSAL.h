@@ -159,9 +159,15 @@ public:
     virtual String BuildMessage() const override
     {
         std::basic_ostringstream<Char> stream;
-        stream << Exception::BuildMessage() << _(" errno=") << errorCode
-               << _(" (0x") << std::hex << std::setw(8) << std::setfill('0') << errorCode << _("): \"")
-               << strerror(errorCode) << _("\"");
+#if defined(UNICODE) || defined(_UNICODE)
+		stream << Exception::BuildMessage() << L" errno=" << errorCode
+			<< L" (0x" << std::hex << std::setw(8) << std::setfill(L'0') << errorCode << L"): \""
+			<< strerror(errorCode) << L"\"";
+#else
+		stream << Exception::BuildMessage() << " errno=" << errorCode
+               << " (0x" << std::hex << std::setw(8) << std::setfill('0') << errorCode << "): \""
+               << strerror(errorCode) << "\"";
+#endif
         return stream.str();
     }
 };

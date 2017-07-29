@@ -1,16 +1,24 @@
 #pragma once
 
 #include <cstdint>
+
+#pragma warning(disable : 4668)
 #include <windows.h>
+#pragma warning(default : 4668)
+
 #include <time.h>
+#include "osal/Unused.h"
 
 namespace OSAL {
 namespace Time {
 
 /* FILETIME of Jan 1 1970 00:00:00. */
 constexpr unsigned __int64 epoch = ((unsigned __int64)116444736000000000ULL);
+constexpr int MinutesPerHour = 60;
+constexpr int SecondsPerMinute = 60;
+constexpr size_t MAX_TIME_ZONE_NAME = 4;
 
-inline int GetTimeOfDay(struct timeval * time, struct timezone * timeZone)
+inline int GetTimeOfDay(struct timeval * time, struct timezone * UNUSED(timeZone))
 {
     FILETIME    file_time;
     SYSTEMTIME  system_time;
@@ -41,37 +49,17 @@ inline void USleep(int64_t microSeconds)
 
 struct tm
 {
-    tm()
-        : _tm()
-    {
-        Update();
-    }
-    tm(int second, int minute, int hour, int day, int month, int year)
-        : _tm()
-    {
-        _tm.tm_sec = second;
-        _tm.tm_min = minute;
-        _tm.tm_hour = hour;
-        _tm.tm_mday = day;
-        _tm.tm_mon = month;
-        _tm.tm_year = year;
-    }
-    void Update()
-    {
-        tm_tzOffset = *::__timezone();
-        tm_dstOffset = ::daylight;
-        tm_tzName = *::__tzname();;
-    }
-    tm & operator = (const ::tm & other)
-    {
-        _tm = other;
-        Update();
-        return *this;
-    }
-    struct ::tm _tm;
-    long tm_tzOffset;
-    int tm_dstOffset;
-    const char * tm_tzName;
+	tm(bool Initialize = false);
+	tm(const tm & other);
+	tm(int second, int minute, int hour, int day, int month, int year, bool initialize = false);
+	void Update();
+	tm & operator = (const tm & other);
+	tm & operator = (const ::tm & other);
+	
+	struct ::tm _tm;
+    static const long tm_tzOffset;
+	static const int tm_dstOffset;
+	static const char tm_tzName[MAX_TIME_ZONE_NAME + 1];
 };
 
 inline tm * localtime(const time_t * timep)

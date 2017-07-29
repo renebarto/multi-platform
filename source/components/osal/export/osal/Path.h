@@ -6,7 +6,6 @@ namespace OSAL {
 namespace Path {
 
 OSAL_EXPORT Char PathSeparator();
-OSAL_EXPORT String LastPartOfPath(const String & path);
 
 OSAL_EXPORT String AddSlashIfNeeded(const String & path);
 OSAL_EXPORT bool FileExists(const String & path);

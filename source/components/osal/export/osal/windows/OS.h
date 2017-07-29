@@ -17,7 +17,7 @@ OSAL_EXPORT String DemangleName(const String & mangledName);
 template <class T>
 inline String TypeName(const T & x)
 {
-    String name = typeid(x).name();
+    String name = ToString(typeid(x).name());
     const String classPrefix = _("class ");
     size_t pos = name.find(classPrefix, 0);
     if (pos == 0)
