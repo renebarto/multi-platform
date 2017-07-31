@@ -32,66 +32,65 @@ OSAL_EXPORT String ToUpper(const String & text);
 OSAL_EXPORT String Quote(const String & text);
 OSAL_EXPORT String UnQuote(const String & text);
 
-} // namespace OSAL
-
 inline std::wstring StringToWString(const std::string & value)
 {
-    using convert_type = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_type, wchar_t> converter;
+	using convert_type = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_type, wchar_t> converter;
 
-    return converter.from_bytes(value);
+	return converter.from_bytes(value);
 }
 
 inline std::string WStringToString(const std::wstring & value)
 {
-    using convert_type = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_type, wchar_t> converter;
+	using convert_type = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_type, wchar_t> converter;
 
-    return converter.to_bytes(value);
+	return converter.to_bytes(value);
 }
 
 inline OSAL::String ToString(const std::string & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return StringToWString(value);
+	return StringToWString(value);
 #else
-    return value;
+	return value;
 #endif
 }
 
 inline OSAL::String ToString(const std::wstring & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return value;
+	return value;
 #else
-    return WStringToString(value);
+	return WStringToString(value);
 #endif
 }
 
 inline std::wstring ToWideString(const OSAL::String & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return value;
+	return value;
 #else
-    return StringToWString(value);
+	return StringToWString(value);
 #endif
 }
 
 inline std::string ToNarrowString(const OSAL::String & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return WStringToString(value);
+	return WStringToString(value);
 #else
-    return value;
+	return value;
 #endif
 }
 
-inline OSAL::String _(const std::string & value) { return ToString(value); }
-inline OSAL::String _(const std::wstring & value) { return ToString(value); }
-inline OSAL::String _(const char * value) { return ToString(value); }
-inline OSAL::String _(const wchar_t * value) { return ToString(value); }
-inline OSAL::Char _(const char value) { return ToString(std::string(1, value))[0]; }
-inline OSAL::Char _(const wchar_t value) { return ToString(std::wstring(1, value))[0]; }
+} // namespace OSAL
+
+#if defined (UNICODE) || defined(_UNICODE)
+#define _(a) L##a
+#else
+#define _(a) a
+#endif
 
 #if defined(WIN_MSVC)
 #include "osal/windows/Strings.h"

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "core/ByteArray.h"
 #include "core/Core.h"
@@ -23,7 +24,7 @@ ByteArray::ByteArray(const char * data)
     Set(0, reinterpret_cast<const uint8_t *>(data), strlen(data));
 }
 
-ByteArray::ByteArray(OSAL::String data)
+ByteArray::ByteArray(std::string data)
     : Array()
 {
     Set(0, reinterpret_cast<const uint8_t *>(data.c_str()), data.length());
@@ -51,24 +52,24 @@ ByteArray & ByteArray::operator = (ByteArray && other)
 
 ByteArray ByteArray::Get(size_t offset, size_t length) const
 {
-    assert(offset + length <= size);
+    assert(offset + length <= _size);
     return ByteArray(Data() + offset, length);
 }
 
 uint8_t ByteArray::GetUInt8(size_t offset) const
 {
-    assert(offset < size);
-    return data[offset];
+    assert(offset < _size);
+    return _data[offset];
 }
 
 uint16_t ByteArray::GetUInt16(size_t offset) const
 {
-    return GetUInt8(offset) | (GetUInt8(offset + 1) << 8);
+    return static_cast<uint16_t>(GetUInt8(offset) | (GetUInt8(offset + 1) << 8));
 }
 
 uint32_t ByteArray::GetUInt32(size_t offset) const
 {
-    return GetUInt16(offset) | (GetUInt16(offset + 2) << 16);
+    return static_cast<uint32_t>(GetUInt16(offset)) | static_cast<uint32_t>(GetUInt16(offset + 2) << 16);
 }
 
 uint64_t ByteArray::GetUInt64(size_t offset) const
@@ -78,12 +79,12 @@ uint64_t ByteArray::GetUInt64(size_t offset) const
 
 uint16_t ByteArray::GetUInt16BE(size_t offset) const
 {
-    return (GetUInt8(offset) << 8) | GetUInt8(offset + 1);
+    return static_cast<uint16_t>((GetUInt8(offset) << 8) | GetUInt8(offset + 1));
 }
 
 uint32_t ByteArray::GetUInt32BE(size_t offset) const
 {
-    return (GetUInt16BE(offset) << 16) | GetUInt16BE(offset + 2);
+    return static_cast<uint32_t>((GetUInt16BE(offset) << 16)) | static_cast<uint32_t>(GetUInt16BE(offset + 2));
 }
 
 uint64_t ByteArray::GetUInt64BE(size_t offset) const
@@ -93,15 +94,15 @@ uint64_t ByteArray::GetUInt64BE(size_t offset) const
 
 void ByteArray::SetUInt8(size_t offset, uint8_t value)
 {
-    if (allocatedSize <= offset)
+    if (_allocatedSize <= offset)
     {
         AllocateSize(offset + 1);
     }
-    if (size <= offset)
+    if (_size <= offset)
     {
-        size = offset + 1;
+        _size = offset + 1;
     }
-    data[offset] = value;
+    _data[offset] = value;
 }
 
 void ByteArray::SetUInt16(size_t offset, uint16_t value)
@@ -142,17 +143,17 @@ void ByteArray::SetUInt64BE(size_t offset, uint64_t value)
 
 OSAL::String ByteArray::ToString() const
 {
-    std::ostringstream stream;
-    stream << OSAL::OS::TypeName(*this) << " Size: " << size << " Allocated: " << allocatedSize << std::endl;
-    size_t maxValuesToDisplay = std::min(size, MaxBytesToDisplay);
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << OSAL::OS::TypeName(*this) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
+    size_t maxValuesToDisplay = std::min<size_t>(_size, MaxBytesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += BytesPerRow)
     {
         for (size_t i = 0; i < BytesPerRow; i++)
         {
             if (i + offset < maxValuesToDisplay)
             {
-                uint8_t value = data[i + offset];
-                stream << std::hex << std::setw(2) << std::setfill('0') << (int)value << " ";
+                uint8_t value = _data[i + offset];
+                stream << std::hex << std::setw(2) << std::setfill(_('0')) << (int)value << _(" ");
             }
             else
             {
@@ -163,8 +164,8 @@ OSAL::String ByteArray::ToString() const
         {
             if (i + offset < maxValuesToDisplay)
             {
-                uint8_t value = data[i + offset];
-                stream << (char)(((value >= 32) && (value < 128)) ? value : '?') << " ";
+                uint8_t value = _data[i + offset];
+                stream << static_cast<OSAL::Char>(((value >= 32) && (value < 128)) ? value : _('?')) << _(" ");
             }
         }
         stream << std::endl;

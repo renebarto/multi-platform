@@ -1,17 +1,10 @@
+#include "core/TimeSpan.h"
 #include <iomanip>
 #include <sstream>
-#include "core/TimeSpan.h"
+#include <osal/OSAL.h>
 
 using namespace std;
 using namespace Core;
-
-const int64_t TimeSpan::NanoSecondsPerMicroSecond = 1000;
-const int64_t TimeSpan::NanoSecondsPerMilliSecond = 1000 * TimeSpan::NanoSecondsPerMicroSecond;
-const int64_t TimeSpan::NanoSecondsPerSecond = 1000 * TimeSpan::NanoSecondsPerMilliSecond;
-const int64_t TimeSpan::MicroSecondsPerSecond = 1000000;
-const int64_t TimeSpan::NanoSecondsPerMinute = 60 * TimeSpan::NanoSecondsPerSecond;
-const int64_t TimeSpan::NanoSecondsPerHour = 60 * TimeSpan::NanoSecondsPerMinute;
-const int64_t TimeSpan::NanoSecondsPerDay = 24 * TimeSpan::NanoSecondsPerHour;
 
 TimeSpan::TimeSpan()
     : _interval(0)
@@ -99,35 +92,35 @@ int64_t TimeSpan::MilliSeconds() const
 
 double TimeSpan::Seconds() const
 {
-    return (double)_interval / NanoSecondsPerSecond;
+    return static_cast<double>(_interval) / NanoSecondsPerSecond;
 }
 
 int TimeSpan::Minutes() const
 {
-    return _interval / NanoSecondsPerMinute;
+    return static_cast<int>(_interval / NanoSecondsPerMinute);
 }
 
 int TimeSpan::Hours() const
 {
-    return _interval / NanoSecondsPerHour;
+    return static_cast<int>(_interval / NanoSecondsPerHour);
 }
 
 int TimeSpan::Days() const
 {
-    return _interval / NanoSecondsPerDay;
+    return static_cast<int>(_interval / NanoSecondsPerDay);
 }
 
 
-string TimeSpan::ToString() const
+OSAL::String TimeSpan::ToString() const
 {
-    int days = _interval / NanoSecondsPerDay;
-    int hours = (_interval / NanoSecondsPerHour) % 24;
-    int minutes = (_interval / NanoSecondsPerMinute) % 60;
-    int seconds = (_interval / NanoSecondsPerSecond) % 60;
+    int days = static_cast<int>(_interval / NanoSecondsPerDay);
+    int hours = (_interval / NanoSecondsPerHour) % HoursPerDay;
+    int minutes = (_interval / NanoSecondsPerMinute) % MinutesPerHour;
+    int seconds = (_interval / NanoSecondsPerSecond) % SecondsPerMinute;
     int microSeconds = (_interval / NanoSecondsPerMicroSecond) % MicroSecondsPerSecond;
-    stringstream stream;
-    stream << days << " days, " << hours << " hours, "
-           << minutes << " minutes, "
-           << seconds << "." << setfill('0') << setw(6) << microSeconds << " seconds";
+    basic_stringstream<OSAL::Char> stream;
+    stream << days << _(" days, ") << hours << _(" hours, ")
+           << minutes << _(" minutes, ")
+           << seconds << _(".") << setfill(_('0')) << setw(6) << microSeconds << _(" seconds");
     return stream.str();
 }

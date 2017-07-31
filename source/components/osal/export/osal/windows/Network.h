@@ -6,8 +6,8 @@ namespace Network {
 typedef int SocketTimeout;
 typedef int SocketHandle;
 
-OSAL_EXPORT const SocketHandle InvalidHandleValue;
-OSAL_EXPORT const SocketTimeout InfiniteTimeout;
+OSAL_EXPORT extern const SocketHandle InvalidHandleValue;
+OSAL_EXPORT extern const SocketTimeout InfiniteTimeout;
 
 } // namespace Network
 } // namespace OSAL

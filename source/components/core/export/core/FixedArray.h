@@ -3,7 +3,10 @@
 #include <cassert>
 #include <initializer_list>
 #include <iostream>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include "core/Core.h"
 
 namespace Core
@@ -19,12 +22,12 @@ public:
     FixedArray(FixedArray<T> && other);
     FixedArray(std::initializer_list<T> data);
     virtual ~FixedArray();
-    size_t Size() const { return size; }
+    size_t Size() const { return _size; }
 
-    T const * Data() const { return data; }
-    operator T const * () const { return data; }
-    T * Data() { return data; }
-    operator T * () { return data; }
+    T const * Data() const { return _data; }
+    operator T const * () const { return _data; }
+    T * Data() { return _data; }
+    operator T * () { return _data; }
 
     void Clear();
 
@@ -49,8 +52,8 @@ protected:
     void AllocateSize(size_t size);
     void Free();
 
-    size_t size;
-    T * data;
+    size_t _size;
+    T * _data;
     typedef std::recursive_mutex Mutex;
     typedef std::lock_guard<Mutex> Lock;
     Mutex mutex;
@@ -58,18 +61,18 @@ protected:
 
 template<class T>
 FixedArray<T>::FixedArray(size_t size) :
-    size(0),
-    data(nullptr)
+    _size(0),
+    _data(nullptr)
 {
     AllocateSize(size);
-    this->size = size;
+    this->_size = size;
     Clear();
 }
 
 template<class T>
 FixedArray<T>::FixedArray(const T * data, size_t size) :
-    size(0),
-    data(nullptr)
+    _size(0),
+    _data(nullptr)
 {
     if (size < 0)
         return;
@@ -79,8 +82,8 @@ FixedArray<T>::FixedArray(const T * data, size_t size) :
 
 template<class T>
 FixedArray<T>::FixedArray(const FixedArray<T> & other) :
-    size(),
-    data(nullptr)
+    _size(),
+    _data(nullptr)
 {
     AllocateSize(other.Size());
     Set(0, other.Data(), other.Size());
@@ -88,17 +91,17 @@ FixedArray<T>::FixedArray(const FixedArray<T> & other) :
 
 template<class T>
 FixedArray<T>::FixedArray(FixedArray<T> && other) :
-    size(other.size),
-    data(other.data)
+    _size(other._size),
+    _data(other._data)
 {
-    other.size = 0;
-    other.data = nullptr;
+    other._size = 0;
+    other._data = nullptr;
 }
 
 template<class T>
 FixedArray<T>::FixedArray(std::initializer_list<T> data) :
-    size(0),
-    data(nullptr)
+    _size(0),
+    _data(nullptr)
 {
     AllocateSize(data.size());
     size_t offset = 0;
@@ -117,21 +120,21 @@ FixedArray<T>::~FixedArray()
 template<class T>
 void FixedArray<T>::Clear()
 {
-    bzero(data, size * sizeof(T));
+    bzero(_data, _size * sizeof(T));
 }
 
 template<class T>
 T FixedArray<T>::Get(size_t offset) const
 {
-    assert((offset >= 0) && (offset < size));
-    return data[offset];
+    assert((offset >= 0) && (offset < _size));
+    return _data[offset];
 }
 
 template<class T>
 size_t FixedArray<T>::Get(size_t offset, T * data, size_t length) const
 {
     assert((offset >= 0) && (length >= 0));
-    size_t valuesToRead = std::min(length, size - offset);
+    size_t valuesToRead = std::min(length, _size - offset);
     T * dataPtr = data;
     size_t currentOffset = offset;
     for (size_t i = 0; i < valuesToRead; i++)
@@ -145,7 +148,7 @@ template<class T>
 size_t FixedArray<T>::Get(size_t offset, FixedArray<T> & data, size_t length) const
 {
     assert((offset >= 0) && (length >= 0));
-    size_t valuesToRead = std::min(length, size - offset);
+    size_t valuesToRead = std::min(length, _size - offset);
     data.AllocateSize(valuesToRead);
     size_t currentOffset = offset;
     for (size_t i = 0; i < valuesToRead; i++)
@@ -165,23 +168,23 @@ FixedArray<T> FixedArray<T>::Get(size_t offset, size_t length) const
 template<class T>
 void FixedArray<T>::Set(size_t offset, T value)
 {
-    assert((offset >= 0) && (offset < size));
-    data[offset] = value;
+    assert((offset >= 0) && (offset < _size));
+    _data[offset] = value;
 }
 
 template<class T>
 void FixedArray<T>::Set(size_t offset, const T * data, size_t length)
 {
-    assert((offset >= 0) && (length >= 0) && (offset + length < size));
-    memcpy(this->data + offset, data, length * sizeof(T));
+    assert((offset >= 0) && (length >= 0) && (offset + length < _size));
+    memcpy(this->_data + offset, data, length * sizeof(T));
 }
 
 template<class T>
 void FixedArray<T>::Set(size_t offset, const FixedArray<T> & data)
 {
     size_t dataSize = data.Size();
-    assert((offset >= 0) && (offset + dataSize < size));
-    memcpy(this->data + offset, data.Data(), dataSize * sizeof(T));
+    assert((offset >= 0) && (offset + dataSize < _size));
+    memcpy(this->_data + offset, data.Data(), dataSize * sizeof(T));
 }
 
 template<class T>
@@ -201,10 +204,10 @@ FixedArray<T> & FixedArray<T>::operator = (FixedArray<T> && other)
 {
     if (this != &other)
     {
-        size = other.size;
-        data = other.data;
-        other.size = 0;
-        other.data = nullptr;
+        _size = other._size;
+        _data = other._data;
+        other._size = 0;
+        other._data = nullptr;
     }
 
     return *this;
@@ -215,11 +218,11 @@ bool FixedArray<T>::operator == (const FixedArray<T> & other) const
 {
     if (&other == this)
         return true;
-    if (other.size != size)
+    if (other._size != _size)
         return false;
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < _size; i++)
     {
-        if (other.data[i] != data[i])
+        if (other._data[i] != _data[i])
             return false;
     }
     return true;
@@ -234,15 +237,15 @@ bool FixedArray<T>::operator != (const FixedArray<T> & other) const
 template<class T>
 T& FixedArray<T>::operator[] (size_t offset)
 {
-    assert((offset >= 0) && (offset < size));
-    return data[offset];
+    assert((offset >= 0) && (offset < _size));
+    return _data[offset];
 }
 
 template<class T>
 const T& FixedArray<T>::operator[] (size_t offset) const
 {
-    assert((offset >= 0) && (offset < size));
-    return data[offset];
+    assert((offset >= 0) && (offset < _size));
+    return _data[offset];
 }
 
 template<class T>
@@ -261,20 +264,20 @@ void FixedArray<T>::AllocateSize(size_t newSize)
 
     Lock lock(mutex);
     Free();
-    data = (T *)malloc(newSize * sizeof(T));
-    size = newSize;
+    _data = (T *)malloc(newSize * sizeof(T));
+    _size = newSize;
 }
 
 template<class T>
 void FixedArray<T>::Free()
 {
     Lock lock(mutex);
-    if (data != nullptr)
+    if (_data != nullptr)
     {
-        free(data);
+        free(_data);
     }
-    data = nullptr;
-    size = 0;
+    _data = nullptr;
+    _size = 0;
 }
 
 template<class T>

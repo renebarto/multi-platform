@@ -5,6 +5,15 @@
 #include <sstream>
 
 #include "osal/Exports.h"
+#if defined(WIN_MSVC)
+#include "osal/windows/OSAL.h"
+#elif defined(WIN_MINGW)
+#include "osal/mingw/OSAL.h"
+#elif defined(DARWIN)
+#include "osal/darwin/OSAL.h"
+#elif defined(LINUX)
+#include "osal/linux/OSAL.h"
+#endif
 #include "osal/Unused.h"
 #include "osal/OS.h"
 #include "osal/Strings.h"
@@ -159,15 +168,9 @@ public:
     virtual String BuildMessage() const override
     {
         std::basic_ostringstream<Char> stream;
-#if defined(UNICODE) || defined(_UNICODE)
-		stream << Exception::BuildMessage() << L" errno=" << errorCode
-			<< L" (0x" << std::hex << std::setw(8) << std::setfill(L'0') << errorCode << L"): \""
-			<< strerror(errorCode) << L"\"";
-#else
-		stream << Exception::BuildMessage() << " errno=" << errorCode
-               << " (0x" << std::hex << std::setw(8) << std::setfill('0') << errorCode << "): \""
-               << strerror(errorCode) << "\"";
-#endif
+		stream << Exception::BuildMessage() << _(" errno=") << errorCode
+			<< _(" (0x") << std::hex << std::setw(8) << std::setfill(_('0')) << errorCode << _("): \"")
+			<< strerror(errorCode) << _("\"");
         return stream.str();
     }
 };
@@ -249,16 +252,6 @@ inline void ThrowOnError(const char * functionName, const char * fileName, int l
 }
 
 } // namespace OSAL
-
-#if defined(WIN_MSVC)
-#include "osal/windows/OSAL.h"
-#elif defined(WIN_MINGW)
-#include "osal/mingw/OSAL.h"
-#elif defined(DARWIN)
-#include "osal/darwin/OSAL.h"
-#elif defined(LINUX)
-#include "osal/linux/OSAL.h"
-#endif
 
 #include "osal/OS.h"
 #include "osal/Files.h"

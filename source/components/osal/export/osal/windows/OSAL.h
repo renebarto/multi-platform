@@ -3,6 +3,7 @@
 #define WARNING_PUSH __pragma(warning(push))
 #define WARNING_PUSH_N(level) __pragma(warning(push, level))
 #define WARNING_DISABLE(num) __pragma(warning(disable: num))
+#define WARNING_DEFAULT(num) __pragma(warning(default: num))
 #define WARNING_POP __pragma(warning(pop))
 
 #pragma warning(push)

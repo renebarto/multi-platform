@@ -1,7 +1,10 @@
 #pragma once
 
 #include <memory>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include <sstream>
 #include <vector>
 #include <arpa/inet.h>

@@ -1,13 +1,9 @@
 #pragma once
 
 #include <cstdint>
-
-#pragma warning(disable : 4668)
-#include <windows.h>
-#pragma warning(default : 4668)
-
 #include <time.h>
 #include "osal/Unused.h"
+#include "osal/windows/OSAL.h"
 
 namespace OSAL {
 namespace Time {
@@ -18,7 +14,7 @@ constexpr int MinutesPerHour = 60;
 constexpr int SecondsPerMinute = 60;
 constexpr size_t MAX_TIME_ZONE_NAME = 4;
 
-inline int GetTimeOfDay(struct timeval * time, struct timezone * UNUSED(timeZone))
+inline int gettimeofday(struct timeval * time, struct timezone * UNUSED(timeZone))
 {
     FILETIME    file_time;
     SYSTEMTIME  system_time;
@@ -34,7 +30,7 @@ inline int GetTimeOfDay(struct timeval * time, struct timezone * UNUSED(timeZone
 
     return 0;
 }
-inline void USleep(int64_t microSeconds)
+inline void usleep(int64_t microSeconds)
 {
     HANDLE timer;
     LARGE_INTEGER ft;
@@ -46,10 +42,28 @@ inline void USleep(int64_t microSeconds)
     WaitForSingleObject(timer, INFINITE);
     CloseHandle(timer);
 }
-
-struct tm
+inline int nanosleep(const timespec * req, timespec * rem)
 {
-	tm(bool Initialize = false);
+	HANDLE timer;
+	LARGE_INTEGER ft;
+	constexpr int64_t NanoSecondsPerSeconds = 1000000000;
+	ft.QuadPart = -(((req->tv_sec * NanoSecondsPerSeconds + req->tv_nsec) + 99) / 100); // Convert to 100 nanosecond interval, negative value indicates relative time
+
+	timer = CreateWaitableTimer(NULL, TRUE, NULL);
+	SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
+	WaitForSingleObject(timer, INFINITE);
+	if (rem)
+	{
+		rem->tv_sec = 0;
+		rem->tv_nsec = 0;
+	}
+	CloseHandle(timer);
+	return 0;
+}
+
+struct OSAL_EXPORT tm
+{
+	tm(bool initialize = false);
 	tm(const tm & other);
 	tm(int second, int minute, int hour, int day, int month, int year, bool initialize = false);
 	void Update();
@@ -80,6 +94,46 @@ inline time_t mktime(tm * tim)
 {
     return ::mktime(&(tim->_tm));
 }
+
+inline size_t strftime(char * strDest, size_t maxSize, const char * format, const ::tm * time)
+{
+	return ::strftime(strDest, maxSize, format, time);
+}
+inline size_t strftime(wchar_t * strDest, size_t maxSize, const wchar_t * format, const ::tm * time)
+{
+	return ::wcsftime(strDest, maxSize, format, time);
+}
+
+// Time / date
+// Identifier for system-wide realtime clock.
+#define CLOCK_REALTIME       0
+// Monotonic system-wide clock.
+#define CLOCK_MONOTONIC      1
+// High-resolution timer from the CPU.
+#define CLOCK_PROCESS_CPUTIME_ID 2
+// Thread-specific CPU-time clock.
+#define CLOCK_THREAD_CPUTIME_ID  3
+// Monotonic system-wide clock, not adjusted for frequency scaling.
+#define CLOCK_MONOTONIC_RAW      4
+// Identifier for system-wide realtime clock, updated only on ticks.
+#define CLOCK_REALTIME_COARSE    5
+// Monotonic system-wide clock, updated only on ticks.
+#define CLOCK_MONOTONIC_COARSE   6
+
+inline int clock_getres(int X, struct timespec * tv)
+{
+	if (!tv)
+		return EFAULT;
+	if (X != CLOCK_REALTIME)
+		return EINVAL;
+	LARGE_INTEGER performanceFrequency;
+	BOOL result = QueryPerformanceFrequency(&performanceFrequency);
+	tv->tv_sec = long(performanceFrequency.QuadPart / 1000000000);
+	tv->tv_nsec = long(performanceFrequency.QuadPart % 1000000000);
+	return result ? 0 : EINVAL;
+}
+
+OSAL_EXPORT int clock_gettime(int X, struct timespec * tv);
 
 } // namespace Time
 } // namespace OSAL

@@ -3,63 +3,63 @@
 using namespace std;
 using namespace Core;
 
-ostream & Core::operator << (ostream & stream, Core::LogLevel logLevel)
+basic_ostream<OSAL::Char> & Core::operator << (basic_ostream<OSAL::Char> & stream, Core::LogLevel logLevel)
 {
-    string str;
+    OSAL::String str;
     if ((logLevel & Core::LogLevel::Fatal) != Core::LogLevel::None)
     {
-        str += "Fatal";
+        str += _("Fatal");
     }
     if ((logLevel & Core::LogLevel::Recursion) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Recursion";
+            str += _("|");
+        str += _("Recursion");
     }
     if ((logLevel & Core::LogLevel::Error) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Error";
+            str += _("|");
+        str += _("Error");
     }
     if ((logLevel & Core::LogLevel::Warning) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Warning";
+            str += _("|");
+        str += _("Warning");
     }
     if ((logLevel & Core::LogLevel::Debug) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Debug";
+            str += _("|");
+        str += _("Debug");
     }
     if ((logLevel & Core::LogLevel::Info) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Info";
+            str += _("|");
+        str += _("Info");
     }
     if ((logLevel & Core::LogLevel::Message) != Core::LogLevel::None)
     {
         if (!str.empty())
-            str += "|";
-        str += "Message";
+            str += _("|");
+        str += _("Message");
     }
     if (logLevel == Core::LogLevel::None)
     {
-        str = "-";
+        str = _("-");
     }
     return stream << str;
 }
 
-const string LogHandler::DefaultDomain("");
+const OSAL::String LogHandler::DefaultDomain(_(""));
 
 LogHandlerInfo LogHandler::_defaultLogHandlerInfo(Core::LogLevel::All, LogHandler::DefaultLogHandler, nullptr);
-map<string, LogHandlerInfo> LogHandler::_logHandlerInfo;
+map<OSAL::String, LogHandlerInfo> LogHandler::_logHandlerInfo;
 recursive_mutex LogHandler::_guard;
 
-LogHandlerInfo LogHandler::Set(const string & domainName,
+LogHandlerInfo LogHandler::Set(const OSAL::String & domainName,
                                Core::LogLevel logLevelFilter,
                                LogHandlerFunction * newHandler,
                                void * userData)
@@ -75,7 +75,7 @@ LogHandlerInfo LogHandler::Set(const string & domainName,
     return LogHandlerInfo();
 }
 
-LogHandlerInfo LogHandler::Set(const string & domainName, const LogHandlerInfo & handlerInfo)
+LogHandlerInfo LogHandler::Set(const OSAL::String & domainName, const LogHandlerInfo & handlerInfo)
 {
     lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindOrCreateInfo(domainName);
@@ -88,7 +88,7 @@ LogHandlerInfo LogHandler::Set(const string & domainName, const LogHandlerInfo &
     return LogHandlerInfo();
 }
 
-void LogHandler::Reset(const string & domainName)
+void LogHandler::Reset(const OSAL::String & domainName)
 {
     lock_guard<recursive_mutex> lock(_guard);
     if (domainName.empty())
@@ -103,7 +103,7 @@ void LogHandler::Reset(const string & domainName)
     }
 }
 
-Core::LogLevel LogHandler::GetLogLevelFilter(const string & domainName)
+Core::LogLevel LogHandler::GetLogLevelFilter(const OSAL::String & domainName)
 {
     lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
@@ -114,7 +114,7 @@ Core::LogLevel LogHandler::GetLogLevelFilter(const string & domainName)
     return Core::LogLevel::None;
 }
 
-void LogHandler::SetLogLevelFilter(const string & domainName, Core::LogLevel logLevelFilter)
+void LogHandler::SetLogLevelFilter(const OSAL::String & domainName, Core::LogLevel logLevelFilter)
 {
     lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
@@ -124,10 +124,10 @@ void LogHandler::SetLogLevelFilter(const string & domainName, Core::LogLevel log
     }
 }
 
-void LogHandler::Log(const string & domainName,
-                     const string & componentName,
+void LogHandler::Log(const OSAL::String & domainName,
+                     const OSAL::String & componentName,
                      Core::LogLevel logLevel,
-                     const string & message)
+                     const OSAL::String & message)
 {
     lock_guard<recursive_mutex> lock(_guard);
     LogHandlerInfo * info = FindInfo(domainName);
@@ -144,13 +144,13 @@ void LogHandler::Log(const string & domainName,
     }
 }
 
-LogHandlerInfo * LogHandler::FindInfo(const string & domainName)
+LogHandlerInfo * LogHandler::FindInfo(const OSAL::String & domainName)
 {
     if (domainName.empty())
     {
         return &_defaultLogHandlerInfo;
     }
-    map<string, LogHandlerInfo>::iterator foundHandlerInfo = _logHandlerInfo.find(domainName);
+    map<OSAL::String, LogHandlerInfo>::iterator foundHandlerInfo = _logHandlerInfo.find(domainName);
     if (foundHandlerInfo == _logHandlerInfo.end())
     {
         return nullptr;
@@ -158,25 +158,30 @@ LogHandlerInfo * LogHandler::FindInfo(const string & domainName)
     return &(foundHandlerInfo->second);
 }
 
-LogHandlerInfo * LogHandler::FindOrCreateInfo(const string & domainName)
+LogHandlerInfo * LogHandler::FindOrCreateInfo(const OSAL::String & domainName)
 {
-    LogHandlerInfo * info = FindInfo(domainName);
-    if (info == nullptr)
+    LogHandlerInfo * foundInfo = FindInfo(domainName);
+    if (foundInfo == nullptr)
     {
         LogHandlerInfo info(Core::LogLevel::All, nullptr, nullptr);
-        _logHandlerInfo.insert(pair<string, LogHandlerInfo>(domainName, info));
+        _logHandlerInfo.insert(pair<OSAL::String, LogHandlerInfo>(domainName, info));
         return FindInfo(domainName);
     }
-    return info;
+    return foundInfo;
 }
 
-void LogHandler::DefaultLogHandler(const string & domainName,
-                                   const string & componentName,
+void LogHandler::DefaultLogHandler(const OSAL::String & domainName,
+                                   const OSAL::String & componentName,
                                    Core::LogLevel logLevel,
-                                   const string & message,
-                                   void * userData __attribute__((unused)))
+                                   const OSAL::String & message,
+                                   void * UNUSED(userData))
 {
-    cout << "Domain : " << (domainName.empty() ? "-" : domainName) << " Component : " << componentName
-         << " Level: " << logLevel << ": " << message << endl;
+#if defined(UNICODE) || defined(_UNICODE)
+	wcout << _("Domain : ") << (domainName.empty() ? _("-") : domainName) << _(" Component : ") << componentName
+          << _(" Level: ") << logLevel << _(": ") << message << endl;
+#else
+	cout << _("Domain : ") << (domainName.empty() ? "-" : domainName) << _(" Component : ") << componentName
+		<< _(" Level: ") << logLevel << _(": ") << message << endl;
+#endif
 }
 

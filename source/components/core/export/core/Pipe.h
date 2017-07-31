@@ -1,5 +1,7 @@
 #pragma once
 
+#include <osal/Files.h>
+
 namespace Core
 {
 
@@ -17,8 +19,8 @@ public:
     void Close();
     void CloseRead();
     void CloseWrite();
-    int Read(void * data, int numBytes);
-    int Write(void * data, int numBytes);
+	ssize_t Read(void * data, size_t numBytes);
+	ssize_t Write(void * data, size_t numBytes);
     int ReadFD() { return _fd[PipeRead]; }
     int WriteFD() { return _fd[PipeWrite]; }
 

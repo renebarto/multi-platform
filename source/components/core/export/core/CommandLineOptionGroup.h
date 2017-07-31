@@ -16,25 +16,25 @@ public:
     using List = std::vector<Ptr>;
 
     CommandLineOptionGroup() = delete;
-    CommandLineOptionGroup(const std::string & name, const std::string description = "");
+    CommandLineOptionGroup(const OSAL::String & name, const OSAL::String description = _(""));
     CommandLineOptionGroup(const CommandLineOptionGroup &) = delete;
     virtual ~CommandLineOptionGroup();
 
     CommandLineOptionGroup & operator = (const CommandLineOptionGroup &) = delete;
 
-    const std::string & Name() const
+    const OSAL::String & Name() const
     {
         return _name;
     }
-    void Name(const std::string & name)
+    void Name(const OSAL::String & name)
     {
         this->_name = name;
     }
-    const std::string & Description() const
+    const OSAL::String & Description() const
     {
         return _description;
     }
-    void Description(const std::string & description)
+    void Description(const OSAL::String & description)
     {
         this->_description = description;
     }
@@ -88,8 +88,8 @@ public:
     }
 
 protected:
-    std::string _name;
-    std::string _description;
+	OSAL::String _name;
+	OSAL::String _description;
     CommandLineOptionsList _options;
 };
 

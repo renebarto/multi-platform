@@ -6,16 +6,20 @@
 namespace OSAL {
 namespace Time {
 
-inline int GetTimeOfDay(struct timeval * time, struct timezone * timeZone)
+inline int gettimeofday(struct timeval * time, struct timezone * timeZone)
 {
     return ::gettimeofday(time, timeZone);
 }
-inline void USleep(int64_t microSeconds)
+inline void usleep(int64_t microSeconds)
 {
     ::usleep(static_cast<__useconds_t>(microSeconds));
 }
+inline int nanosleep(const timespec * req, timespec * rem)
+{
+	::nanosleep(req, res);
+}
 
-struct tm
+OSAL_EXPORT struct tm
 {
     tm()
         : _tm()
@@ -69,6 +73,15 @@ inline tm * gmtime(const time_t * timep)
 inline time_t mktime(tm * tim)
 {
     return ::mktime(&(tim->_tm));
+}
+
+inline size_t strftime(char * strDest, size_t maxSize, const char * format, const ::tm * time)
+{
+	return ::strftime(strDest, maxSize, format, time);
+}
+inline size_t strftime(wchar_t * strDest, size_t maxSize, const wchar_t * format, const ::tm * time)
+{
+	return ::wcsftime(strDest, maxSize, format, time);
 }
 
 } // namespace Time

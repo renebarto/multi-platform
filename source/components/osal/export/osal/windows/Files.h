@@ -4,11 +4,12 @@
 #include <stdio.h>
 #include <fcntl.h>
 
+typedef signed __int64 ssize_t;
+
 namespace OSAL {
 namespace Files {
 
 typedef int mode_t;
-typedef signed __int64 ssize_t;
 
 inline int fileno(FILE * file)
 {

@@ -3,7 +3,11 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <osal/OSAL.h>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include "osal/FlagOperators.h"
 #include "core/Util.h"
 
@@ -20,17 +24,18 @@ enum class LogLevel : uint8_t
     Info = 1 << 6,
     Debug = 1 << 7,
     All = Error | Warning | Message | Info | Debug,
+	Mask = Error | Warning | Message | Info | Debug,
     None = 0x00,
 };
 
 DEFINE_FLAG_OPERATORS(LogLevel, uint8_t);
 
-std::ostream & operator << (std::ostream & stream, LogLevel logLevel);
+std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, LogLevel logLevel);
 
-typedef void LogHandlerFunction(const std::string & domainName,
-                                const std::string & componentName,
+typedef void LogHandlerFunction(const OSAL::String & domainName,
+                                const OSAL::String & componentName,
                                 LogLevel logLevel,
-                                const std::string & message,
+                                const OSAL::String & message,
                                 void * userData);
 
 struct LogHandlerInfo
@@ -72,20 +77,20 @@ struct LogHandlerInfo
 class LogHandler
 {
 public:
-    static const std::string DefaultDomain;
-    static LogHandlerInfo Set(const std::string & domainName,
+    static const OSAL::String DefaultDomain;
+    static LogHandlerInfo Set(const OSAL::String & domainName,
                               LogLevel logLevelFilter,
                               LogHandlerFunction * newHandler,
                               void * userData);
-    static LogHandlerInfo Set(const std::string & domainName, const LogHandlerInfo & handlerInfo);
-    static void Reset(const std::string & domainName);
-    static LogLevel GetLogLevelFilter(const std::string & domainName);
-    static void SetLogLevelFilter(const std::string & domainName, LogLevel logLevelFilter);
+    static LogHandlerInfo Set(const OSAL::String & domainName, const LogHandlerInfo & handlerInfo);
+    static void Reset(const OSAL::String & domainName);
+    static LogLevel GetLogLevelFilter(const OSAL::String & domainName);
+    static void SetLogLevelFilter(const OSAL::String & domainName, LogLevel logLevelFilter);
 
-    static void Log(const std::string & domainName,
-                    const std::string & componentName,
+    static void Log(const OSAL::String & domainName,
+                    const OSAL::String & componentName,
                     LogLevel logLevel,
-                    const std::string & message);
+                    const OSAL::String & message);
     static bool IsFilteredOut(LogLevel logLevel);
 
 private:
@@ -93,16 +98,16 @@ private:
     typedef std::lock_guard<Mutex> Lock;
 
     static LogHandlerInfo _defaultLogHandlerInfo;
-    static std::map<std::string, LogHandlerInfo> _logHandlerInfo;
+    static std::map<OSAL::String, LogHandlerInfo> _logHandlerInfo;
     static Mutex _guard;
 
-    static LogHandlerInfo * FindInfo(const std::string & domainName);
-    static LogHandlerInfo * FindOrCreateInfo(const std::string & domainName);
+    static LogHandlerInfo * FindInfo(const OSAL::String & domainName);
+    static LogHandlerInfo * FindOrCreateInfo(const OSAL::String & domainName);
 
-    static void DefaultLogHandler(const std::string & domainName,
-                                  const std::string & componentName,
+    static void DefaultLogHandler(const OSAL::String & domainName,
+                                  const OSAL::String & componentName,
                                   LogLevel logLevel,
-                                  const std::string & message,
+                                  const OSAL::String & message,
                                   void * userData);
 };
 

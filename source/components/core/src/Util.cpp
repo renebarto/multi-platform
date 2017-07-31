@@ -1,11 +1,9 @@
 #include "core/Util.h"
 
-#include <cxxabi.h>
 #include <bitset>
 #include <climits>
 #include <cmath>
 #include <cstring>
-//#include <termios.h>
 #include <core/Core.h>
 //#include "core/ByteArray.h"
 //#include "core/DefaultLogger.h"
@@ -32,8 +30,8 @@ size_t Util::NextPowerOfTwo(size_t value)
 timespec Util::MilliSecondsToTimespec(int ms)
 {
     timespec time;
-    time.tv_sec = ms / 1000;
-    time.tv_nsec = (ms % 1000) * 1000000;
+    time.tv_sec = ms / MilliSecondsPerSecond;
+    time.tv_nsec = (ms % MilliSecondsPerSecond) * NanoSecondsPerMilliSecond;
     return time;
 }
 
@@ -78,7 +76,7 @@ void Util::Sleep(int sleepMS)
     int errorCode;
     do
     {
-        errorCode = nanosleep(&sleepTime, &sleepTime);
+        errorCode = OSAL::Time::nanosleep(&sleepTime, &sleepTime);
         if (errorCode == -1)
             errorCode = errno;
     }

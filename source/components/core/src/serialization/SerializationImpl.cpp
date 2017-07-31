@@ -7,7 +7,7 @@
 
 OSAL::String Core::Serialize(bool value)
 {
-    return value ? "true" : "false";
+    return value ? _("true") : _("false");
 }
 
 OSAL::String Core::Serialize(uint8_t value, int base)
@@ -19,22 +19,22 @@ OSAL::String Core::Serialize(uint8_t value, int base)
         case 2:
         {
             std::bitset<8> x(value);
-            stream << std::setfill('0') << std::setw(8) << x;
+            stream << std::setfill(_('0')) << std::setw(8) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(3) << (int)value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(3) << (int)value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << (int)value;
+            stream << std::dec << std::setfill(_('0')) << (int)value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(2) << (int)value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(2) << (int)value;
         }
             break;
         default:
@@ -51,23 +51,23 @@ OSAL::String Core::Serialize(int16_t value, int base)
     {
         case 2:
         {
-            std::bitset<16> x(value);
-            stream << std::setfill('0') << std::setw(16) << x;
+            std::bitset<16> x(static_cast<uint16_t>(value));
+            stream << std::setfill(_('0')) << std::setw(16) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(6) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(6) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(4) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(4) << value;
         }
             break;
         default:
@@ -85,22 +85,22 @@ OSAL::String Core::Serialize(uint16_t value, int base)
         case 2:
         {
             std::bitset<16> x(value);
-            stream << std::setfill('0') << std::setw(16) << x;
+            stream << std::setfill(_('0')) << std::setw(16) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(6) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(6) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(4) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(4) << value;
         }
             break;
         default:
@@ -117,23 +117,23 @@ OSAL::String Core::Serialize(int32_t value, int base)
     {
         case 2:
         {
-            std::bitset<32> x(value);
-            stream << std::setfill('0') << std::setw(32) << x;
+            std::bitset<32> x(static_cast<uint32_t>(value));
+            stream << std::setfill(_('0')) << std::setw(32) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(11) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(11) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(8) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(8) << value;
         }
             break;
         default:
@@ -151,22 +151,22 @@ OSAL::String Core::Serialize(uint32_t value, int base)
         case 2:
         {
             std::bitset<32> x(value);
-            stream << std::setfill('0') << std::setw(32) << x;
+            stream << std::setfill(_('0')) << std::setw(32) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(11) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(11) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(8) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(8) << value;
         }
             break;
         default:
@@ -183,23 +183,23 @@ OSAL::String Core::Serialize(int64_t value, int base)
     {
         case 2:
         {
-            std::bitset<64> x(value);
-            stream << std::setfill('0') << std::setw(64) << x;
+            std::bitset<64> x(static_cast<uint64_t>(value));
+            stream << std::setfill(_('0')) << std::setw(64) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(22) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(22) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(16) << value;
         }
             break;
         default:
@@ -217,22 +217,22 @@ OSAL::String Core::Serialize(uint64_t value, int base)
         case 2:
         {
             std::bitset<64> x(value);
-            stream << std::setfill('0') << std::setw(64) << x;
+            stream << std::setfill(_('0')) << std::setw(64) << x;
         }
             break;
         case 8:
         {
-            stream << std::oct << std::setfill('0') << std::setw(22) << value;
+            stream << std::oct << std::setfill(_('0')) << std::setw(22) << value;
         }
             break;
         case 10:
         {
-            stream << std::dec << std::setfill('0') << value;
+            stream << std::dec << std::setfill(_('0')) << value;
         }
             break;
         case 16:
         {
-            stream << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << value;
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(16) << value;
         }
             break;
         default:

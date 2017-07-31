@@ -3,7 +3,10 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include <sstream>
 
 namespace Core

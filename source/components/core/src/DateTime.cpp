@@ -5,18 +5,14 @@
 #include <cstring>
 #include <iomanip>
 #include <sstream>
-#include <sys/time.h>
+#include <osal/Strings.h>
+//#include <sys/time.h>
 #include "core/Core.h"
 #include "core/TimeSpan.h"
 
 using namespace std;
 namespace Core
 {
-
-const int64_t DateTime::MicroSecondsPerSecond = 1000000;
-const int64_t DateTime::NanoSecondsPerMicroSecond = 1000;
-const int64_t DateTime::NanoSecondsPerSecond = DateTime::NanoSecondsPerMicroSecond * DateTime::MicroSecondsPerSecond;
-static const int SecondsPerHour = 3600;
 
 int ConvertMonth(MonthType monthType)
 {
@@ -146,7 +142,7 @@ DateTime::operator timespec() const
 
 DateTime::operator timeval() const
 {
-    return timeval {_time.tv_sec, static_cast<long>(_time.tv_nsec / NanoSecondsPerMicroSecond)};
+    return timeval { static_cast<long>(_time.tv_sec), static_cast<long>(_time.tv_nsec / NanoSecondsPerMicroSecond)};
 }
 
 DateTime & DateTime::operator += (const TimeSpan & timeSpan)
@@ -192,14 +188,14 @@ bool DateTime::LessThan(const DateTime & other) const
 DateTime DateTime::NowUTC()
 {
     timespec time;
-    clock_gettime(CLOCK_REALTIME, &time);
+    OSAL::Time::clock_gettime(CLOCK_REALTIME, &time);
     return DateTime(time);
 }
 
 DateTime DateTime::NowLocal()
 {
     timespec time;
-    clock_gettime(CLOCK_REALTIME, &time);
+	OSAL::Time::clock_gettime(CLOCK_REALTIME, &time);
     return DateTime(time, true);
 }
 
@@ -411,9 +407,9 @@ TimeSpan DateTime::OffsetFromUTC() const
     return TimeSpan(-_dateTime.tm_tzOffset * NanoSecondsPerSecond);
 }
 
-std::string DateTime::TimeZoneName() const
+OSAL::String DateTime::TimeZoneName() const
 {
-    return _dateTime.tm_tzName;
+    return OSAL::ToString(_dateTime.tm_tzName);
 }
 
 bool DateTime::IsDaylightSavings() const
@@ -435,19 +431,19 @@ DateTime DateTime::ConvertToUTCTime() const
     return utcTime;
 }
 
-string DateTime::ToString() const
+OSAL::String DateTime::ToString() const
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
 
-    stream << ToString("%Y-%m-%d %H:%M:%S") << "." << setfill('0') << setw(6) << MicroSeconds();
+    stream << ToString(_("%Y-%m-%d %H:%M:%S")) << _(".") << setfill(_('0')) << setw(6) << MicroSeconds();
     return stream.str();
 }
 
-string DateTime::ToString(const string & formatString) const
+OSAL::String DateTime::ToString(const OSAL::String & formatString) const
 {
-    char buffer[1000];
-    assert(0 != strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime._tm));
-    return string(buffer);
+    OSAL::Char buffer[1000];
+    assert(0 != OSAL::Time::strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime._tm));
+    return OSAL::String(buffer);
 }
 
 void DateTime::Assign(timespec value, bool localTime)
@@ -500,7 +496,7 @@ void DateTime::Assign(int year, int month, int day, int hour, int minute, double
         _dateTime = *gmtime(&rawtime);
     }
     _time.tv_sec = rawtime;
-    _time.tv_nsec = int64_t((second - int(second)) * NanoSecondsPerSecond + 0.5);
+    _time.tv_nsec = static_cast<long>((second - int(second)) * NanoSecondsPerSecond + 0.5);
 }
 
 void DateTime::Assign(const tm & value)
@@ -532,8 +528,8 @@ DateTime operator - (const DateTime & lhs, const TimeSpan & rhs)
 
 TimeSpan operator - (const DateTime & lhs, const DateTime & rhs)
 {
-    int64_t diffNanoSeconds = (lhs._time.tv_sec * DateTime::NanoSecondsPerSecond + lhs._time.tv_nsec) -
-                              (rhs._time.tv_sec * DateTime::NanoSecondsPerSecond + rhs._time.tv_nsec);
+    int64_t diffNanoSeconds = (lhs._time.tv_sec * NanoSecondsPerSecond + lhs._time.tv_nsec) -
+                              (rhs._time.tv_sec * NanoSecondsPerSecond + rhs._time.tv_nsec);
     return TimeSpan(diffNanoSeconds);
 }
 

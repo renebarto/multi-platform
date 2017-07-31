@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include "core/Core.h"
 
 namespace Core
 {
@@ -9,14 +10,6 @@ namespace Core
 class TimeSpan
 {
 public:
-    static const int64_t NanoSecondsPerMicroSecond;
-    static const int64_t NanoSecondsPerMilliSecond;
-    static const int64_t MicroSecondsPerSecond;
-    static const int64_t NanoSecondsPerSecond;
-    static const int64_t NanoSecondsPerMinute;
-    static const int64_t NanoSecondsPerHour;
-    static const int64_t NanoSecondsPerDay;
-
     TimeSpan();
     TimeSpan(int64_t interval);
     TimeSpan(const TimeSpan & other);
@@ -41,7 +34,7 @@ public:
     int Hours() const;
     int Days() const;
 
-    virtual std::string ToString() const;
+    virtual OSAL::String ToString() const;
 
 private:
     int64_t _interval;

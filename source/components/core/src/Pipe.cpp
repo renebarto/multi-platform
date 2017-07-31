@@ -1,8 +1,8 @@
 #include "core/Pipe.h"
 
-#include <unistd.h>
 #include "core/Core.h"
 #include "osal/Pipe.h"
+#include "osal/Files.h"
 
 using namespace std;
 using namespace Core;
@@ -40,23 +40,23 @@ void Pipe::Close()
 void Pipe::CloseRead()
 {
     if (_fd[PipeRead] != -1)
-        close(_fd[PipeRead]);
+        OSAL::Files::close(_fd[PipeRead]);
     _fd[PipeRead] = -1;
 }
 
 void Pipe::CloseWrite()
 {
     if (_fd[PipeWrite] != -1)
-        close(_fd[PipeWrite]);
+		OSAL::Files::close(_fd[PipeWrite]);
     _fd[PipeWrite] = -1;
 }
 
-int Pipe::Read(void * data, int numBytes)
+ssize_t Pipe::Read(void * data, size_t numBytes)
 {
-    return read(_fd[PipeRead], data, numBytes);
+    return OSAL::Files::read(_fd[PipeRead], data, numBytes);
 }
 
-int Pipe::Write(void * data, int numBytes)
+ssize_t Pipe::Write(void * data, size_t numBytes)
 {
-    return write(_fd[PipeWrite], data, numBytes);
+    return OSAL::Files::write(_fd[PipeWrite], data, numBytes);
 }

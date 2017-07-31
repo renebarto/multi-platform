@@ -19,7 +19,7 @@ ConsoleLogger::~ConsoleLogger()
 
 ConsoleColor ColorForLogLevel(LogLevel logLevel)
 {
-    switch (logLevel)
+    switch (logLevel & LogLevel::Mask)
     {
     case LogLevel::Error:
         return ConsoleColor::Red | ConsoleColor::Intensity;
@@ -31,7 +31,11 @@ ConsoleColor ColorForLogLevel(LogLevel logLevel)
         return ConsoleColor::Green;
     case LogLevel::Debug:
         return ConsoleColor::Cyan;
-    default:
+	case LogLevel::All:
+	case LogLevel::Recursion:
+	case LogLevel::Fatal:
+	case LogLevel::None:
+	default:
         break;
     }
     return ConsoleColor::Default;
@@ -48,15 +52,15 @@ void ConsoleLogger::UnRegister()
 }
 
 void ConsoleLogger::Log(const DateTime & timestamp,
-                        const std::string & domainName,
-                        const std::string & componentName,
+                        const OSAL::String & domainName,
+                        const OSAL::String & componentName,
                         LogLevel logLevel,
-                        const std::string & message)
+                        const OSAL::String & message)
 {
     console << fgcolor(ColorForLogLevel(logLevel))
-            << timestamp << " - "
-            << (domainName.empty() ? "Default" : domainName) << ": "
-            << componentName << ": " << message
+            << timestamp << _(" - ")
+            << (domainName.empty() ? _("Default") : domainName) << _(": ")
+            << componentName << _(": ") << message
             << fgcolor(ConsoleColor::Default) << endl;
 }
 

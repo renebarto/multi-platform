@@ -18,10 +18,10 @@ String OSAL::Trim(const String & value, const String & stripChars)
     const Char * find = stripChars.c_str();
 
     size_t indexLeft = 0;
-    while ((indexLeft < value.length()) && StrChr(find, value[indexLeft]))
+    while ((indexLeft < value.length()) && Strings::strchr(find, value[indexLeft]))
         ++indexLeft;
     size_t indexRight = value.length();
-    while ((indexRight > indexLeft) && StrChr(find, value[indexRight - 1]))
+    while ((indexRight > indexLeft) && Strings::strchr(find, value[indexRight - 1]))
         --indexRight;
     return value.substr(indexLeft, indexRight - indexLeft);
 }
@@ -42,7 +42,7 @@ String OSAL::TrimLeft(const String & value, const String & stripChars)
     const Char * find = stripChars.c_str();
 
     size_t indexLeft = 0;
-    while ((indexLeft < value.length()) && StrChr(find, value[indexLeft]))
+    while ((indexLeft < value.length()) && OSAL::Strings::strchr(find, value[indexLeft]))
         ++indexLeft;
     return value.substr(indexLeft, value.length() - indexLeft);
 }
@@ -60,7 +60,7 @@ String OSAL::TrimRight(const String & value, const String & stripChars)
     const Char * find = stripChars.c_str();
 
     size_t indexRight = value.length();
-    while ((indexRight > 0) && StrChr(find, value[indexRight - 1]))
+    while ((indexRight > 0) && OSAL::Strings::strchr(find, value[indexRight - 1]))
         --indexRight;
     return value.substr(0, indexRight);
 }
@@ -93,22 +93,22 @@ bool OSAL::IsEqualIgnoreCase(const String & lhs, const String & rhs)
 
 bool OSAL::IsEqual(const char * lhs, const char * rhs)
 {
-    return OSAL::Strings::StrCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqualIgnoreCase(const char * lhs, const char * rhs)
 {
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqual(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return OSAL::Strings::StrCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcmp(lhs, rhs) == 0;
 }
 
 bool OSAL::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 #pragma warning(disable : 4242 4365)

@@ -3,7 +3,7 @@
 #include <ctime>
 #include "osal/Strings.h"
 #include "osal/Time.h"
-#include "core/TimeSpan.h"
+#include "core/Core.h"
 
 namespace Core
 {
@@ -42,10 +42,6 @@ enum class WeekDayType
 class DateTime
 {
 public:
-    static const int64_t MicroSecondsPerSecond;
-    static const int64_t NanoSecondsPerMicroSecond;
-    static const int64_t NanoSecondsPerSecond;
-
     DateTime();
     DateTime(const DateTime & other);
     DateTime(int year, int month, int day, int hour, int minute, double second);
@@ -152,13 +148,13 @@ private:
     void Assign(const tm & value);
 };
 
-inline void PrintTo(const DateTime & value, std::ostream & stream)
+inline void PrintTo(const DateTime & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }
 } // namespace Core
 
-inline std::ostream & operator << (std::ostream & stream, Core::DateTime value)
+inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, Core::DateTime value)
 {
     stream << value.ToString();
     return stream;

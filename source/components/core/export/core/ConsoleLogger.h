@@ -20,10 +20,10 @@ public:
     void UnRegister();
 
     virtual void Log(const DateTime & timestamp,
-                     const std::string & domainName,
-                     const std::string & componentName,
+                     const OSAL::String & domainName,
+                     const OSAL::String & componentName,
                      LogLevel logLevel,
-                     const std::string & message);
+                     const OSAL::String & message);
 
 protected:
     ILogger & logger;

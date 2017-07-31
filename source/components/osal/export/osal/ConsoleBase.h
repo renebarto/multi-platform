@@ -1,9 +1,6 @@
 #pragma once
 
 #include <iostream>
-#if defined(WIN_MSVC)
-#include <windows.h>
-#endif
 #include "osal/OSAL.h"
 #include "osal/FlagOperators.h"
 
@@ -62,7 +59,7 @@ template<class CharT>
 OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColorType value);
 
 template<class CharT>
-class OSAL_EXPORT ConsoleBase
+class ConsoleBase
 {
 private:
     // The type of basic IO manipulators (endl, ends, and flush) for narrow

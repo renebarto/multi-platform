@@ -1,7 +1,10 @@
 #pragma once
 
 #include <future>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include <thread>
 #include <osal/Strings.h>
 #include <core/DefaultLogger.h>

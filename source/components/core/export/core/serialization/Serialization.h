@@ -35,7 +35,7 @@ template<typename EnumType>
 struct EnumConversion
 {
     EnumType value;
-    const char * name;
+    const OSAL::Char * name;
 };
 
 template<typename EnumType>

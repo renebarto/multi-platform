@@ -9,21 +9,36 @@ namespace OSAL {
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 
-inline std::ostream * DetermineStream(int handle)
+inline std::basic_ostream<Char> * DetermineStream(int handle)
 {
+#if defined(UNICODE) || defined(_UNICODE)
     switch (handle)
     {
         case STDOUT_FILENO:
-            return &std::cout;
+            return &std::wcout;
             break;
         case STDERR_FILENO:
-            return &std::cerr;
+            return &std::wcerr;
             break;
         case STDIN_FILENO:
         default:
             std::cerr << "Invalid handle specified, please specify only stdout or stderr handle" << std::endl;
     }
-    return nullptr;
+#else
+	switch (handle)
+	{
+	case STDOUT_FILENO:
+		return &std::cout;
+		break;
+	case STDERR_FILENO:
+		return &std::cerr;
+		break;
+	case STDIN_FILENO:
+	default:
+		std::cerr << "Invalid handle specified, please specify only stdout or stderr handle" << std::endl;
+	}
+#endif
+	return nullptr;
 }
 
 inline int DetermineHandle(std::ostream * stream)
@@ -35,31 +50,31 @@ inline int DetermineHandle(std::ostream * stream)
     return -1;
 }
 
-inline const char * GetAnsiColorCode(ConsoleColorType color)
+inline const wchar_t * GetAnsiColorCode(ConsoleColorType color)
 {
-    switch (color & ConsoleColor::ColorMask)
-    {
-        case ConsoleColor::Black:
-            return "0";
-        case ConsoleColor::Red:
-            return "1";
-        case ConsoleColor::Green:
-            return "2";
-        case ConsoleColor::Yellow:
-            return "3";
-        case ConsoleColor::Blue:
-            return "4";
-        case ConsoleColor::Magenta:
-            return "5";
-        case ConsoleColor::Cyan:
-            return "6";
-        case ConsoleColor::White:
-            return "7";
-		case ConsoleColor::Default:
-		case ConsoleColor::Intensity:
-        default:
-            return nullptr;
-    };
+	switch (color & ConsoleColor::ColorMask)
+	{
+	case ConsoleColor::Black:
+		return _("0");
+	case ConsoleColor::Red:
+		return _("1");
+	case ConsoleColor::Green:
+		return _("2");
+	case ConsoleColor::Yellow:
+		return _("3");
+	case ConsoleColor::Blue:
+		return _("4");
+	case ConsoleColor::Magenta:
+		return _("5");
+	case ConsoleColor::Cyan:
+		return _("6");
+	case ConsoleColor::White:
+		return _("7");
+	case ConsoleColor::Default:
+	case ConsoleColor::Intensity:
+	default:
+		return nullptr;
+	};
 }
 
 template<class CharT>
@@ -85,29 +100,54 @@ void ConsoleBase<CharT>::SetTerminalColor(ConsoleColorType foregroundColor, Cons
 {
     if (!ShouldUseColor())
         return;
-    std::string command = "\033[0";
+#if defined(UNICODE) || defined(_UNICODE)
+	std::wstring command = L"\033[0";
     if (foregroundColor != ConsoleColor::Default)
     {
         if ((foregroundColor & ConsoleColor::Bold) == ConsoleColor::Bold)
         {
-            command += ";1";
+            command += L";1";
         }
         if ((foregroundColor & ConsoleColor::Intensity) == ConsoleColor::Intensity)
-            command += ";9";
+            command += L";9";
         else
-            command += ";3";
+            command += L";3";
         command += GetAnsiColorCode(foregroundColor);
     }
     if (backgroundColor != ConsoleColor::Default)
     {
         if ((backgroundColor & ConsoleColor::Intensity) == ConsoleColor::Intensity)
-            command += ";10";
+            command += L";10";
         else
-            command += ";4";
+            command += L";4";
         command += GetAnsiColorCode(backgroundColor);
     }
-    command += "m";
-    if (_stream)
+    command += L"m";
+#else
+	std::string command = "\033[0";
+	if (foregroundColor != ConsoleColor::Default)
+	{
+		if ((foregroundColor & ConsoleColor::Bold) == ConsoleColor::Bold)
+		{
+			command += ";1";
+		}
+		if ((foregroundColor & ConsoleColor::Intensity) == ConsoleColor::Intensity)
+			command += ";9";
+		else
+			command += ";3";
+		command += GetAnsiColorCode(foregroundColor);
+	}
+	if (backgroundColor != ConsoleColor::Default)
+	{
+		if ((backgroundColor & ConsoleColor::Intensity) == ConsoleColor::Intensity)
+			command += ";10";
+		else
+			command += ";4";
+		command += GetAnsiColorCode(backgroundColor);
+	}
+	command += "m";
+#endif
+	if (_stream)
         *_stream << command;
     _currentForegroundColor = foregroundColor;
     _currentBackgroundColor = backgroundColor;
@@ -118,10 +158,10 @@ bool ConsoleBase<CharT>::ShouldUseColor()
 {
     if (_handle == InvalidHandle)
         return false;
-    if (!OSAL::Files::IsAtty(_handle))
+    if (!OSAL::Files::isatty(_handle))
         return false;
 
-    const char * termSetting = OSAL::System::GetEnv("TERM");
+    const char * termSetting = OSAL::System::getenv("TERM");
     if (!termSetting)
         return false;
     std::string term = termSetting;

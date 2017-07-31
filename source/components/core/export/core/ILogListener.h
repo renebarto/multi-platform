@@ -13,10 +13,10 @@ public:
     virtual ~ILogListener() {}
 
     virtual void Log(const DateTime & timestamp,
-                     const std::string & domainName,
-                     const std::string & componentName,
+                     const OSAL::String & domainName,
+                     const OSAL::String & componentName,
                      LogLevel logLevel,
-                     const std::string & message) = 0;
+                     const OSAL::String & message) = 0;
 };
 
 } // namespace Core

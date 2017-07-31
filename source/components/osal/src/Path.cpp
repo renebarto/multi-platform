@@ -1,15 +1,9 @@
 #include "osal/Path.h"
 
-#if defined(UNICODE) || defined(_UNICODE)
-static const OSAL::Char _Dot = L'.';
-static const OSAL::Char _Slash = L'/';
-static const OSAL::Char * _CurrentDir = L".";
-static const OSAL::Char * _ParentDir = L"..";
-#else
-static const OSAL::Char _Dot = _Dot;
-static const OSAL::Char * _CurrentDir = ".";
-static const OSAL::Char * _ParentDir = "..";
-#endif
+static const OSAL::Char _Dot = _('.');
+static const OSAL::Char _Slash = _('/');
+static const OSAL::Char * _CurrentDir = _(".");
+static const OSAL::Char * _ParentDir = _("..");
 
 void OSAL::Path::SplitPath(const String & path, String & directory, String & fileName)
 {

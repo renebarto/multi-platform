@@ -23,7 +23,7 @@ namespace Core {
         CommandLineParser(const CommandLineParser &) = delete;
         CommandLineParser & operator = (const CommandLineParser &) = delete;
 
-        ~CommandLineParser();
+        virtual ~CommandLineParser();
 
         void AddSwitch(const OSAL::String &longName, OSAL::Char shortName,
                        const OSAL::String &description)
@@ -76,7 +76,7 @@ namespace Core {
         {
             if (index < _nonOptions.size())
                 return _nonOptions[index];
-            return "";
+            return {};
         }
 
         bool HaveOption(OSAL::Char shortName) const;
@@ -109,14 +109,14 @@ namespace Core {
             return _showHelp;
         }
         OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp = true) const;
-        OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp __attribute__((unused)),
+        OSAL::String GetHelp(const OSAL::String & applicationName, bool mainHelp,
                              const CommandLineOptionGroup::Ptr group) const;
 
         virtual void OnParseOption(const CommandLineOption::Ptr UNUSED(option))
         {
 //            _console << "Option " << option->LongName() << " argument " << option->Argument() << std::endl;
         }
-        virtual void OnParseNonOption(const std::string UNUSED(parameter))
+        virtual void OnParseNonOption(const OSAL::String UNUSED(parameter))
         {
 //            _console << "Non-option " << parameter << std::endl;
         }
@@ -165,7 +165,7 @@ namespace Core {
         OSAL::String _description;
         CommandLineNonOptionsList _nonOptions;
         CommandLineOption::List _options;
-        struct GetOptData _getOptData;
+        GetOptData _getOptData;
 
         bool InternalParse(int argc, const OSAL::Char * argv[]);
         void ExchangeOption(const OSAL::Char ** argv);

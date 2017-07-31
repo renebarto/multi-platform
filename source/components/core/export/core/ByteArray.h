@@ -54,10 +54,10 @@ public:
     }
     ByteArray & operator = (const ByteArray & other);
     ByteArray & operator = (ByteArray && other);
-    std::string ToString() const;
+    OSAL::String ToString() const;
 };
 
-inline void PrintTo(const ByteArray & value, std::ostream & stream)
+inline void PrintTo(const ByteArray & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }

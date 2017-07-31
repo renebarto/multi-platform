@@ -1,7 +1,11 @@
 #pragma once
 
 #include <list>
+#include <osal/OSAL.h>
+WARNING_PUSH
+WARNING_DISABLE(4265)
 #include <mutex>
+WARNING_POP
 #include "core/Logger.h"
 
 namespace Core
