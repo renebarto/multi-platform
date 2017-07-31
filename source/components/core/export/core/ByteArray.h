@@ -9,7 +9,7 @@
 namespace Core
 {
 
-class ByteArray : public Array<uint8_t>
+class CORE_EXPORT ByteArray : public Array<uint8_t>
 {
 public:
     ByteArray() : Array() {}
@@ -57,7 +57,7 @@ public:
     OSAL::String ToString() const;
 };
 
-inline void PrintTo(const ByteArray & value, std::basic_ostream<OSAL::Char> & stream)
+inline void PrintTo(std::basic_ostream<OSAL::Char> & stream, const ByteArray & value)
 {
     stream << value.ToString();
 }

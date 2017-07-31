@@ -14,6 +14,8 @@ OSAL_EXPORT String Platform();
 
 OSAL_EXPORT String DemangleName(const String & mangledName);
 
+WARNING_PUSH
+WARNING_DISABLE(4100)
 template <class T>
 inline String TypeName(const T & x)
 {
@@ -24,6 +26,7 @@ inline String TypeName(const T & x)
         name = name.substr(classPrefix.length());
     return name;
 }
+WARNING_POP
 
 } // namespace OS
 } // namespace OSAL

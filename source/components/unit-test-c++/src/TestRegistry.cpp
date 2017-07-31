@@ -24,10 +24,14 @@ TestRegistry::~TestRegistry()
     }
 }
 
-TestSuiteInfo * TestRegistry::GetTestSuite(const string & suiteName)
+TestSuiteInfo * TestRegistry::GetTestSuite(const OSAL::String & suiteName)
 {
 #ifdef TRACE
-    cout << "Find suite " << suiteName << " ... ";
+#if defined(UNICDE) || defined(_UNICODE)
+	wcout << L"Find suite " << suiteName << L" ... ";
+#else
+	cout << "Find suite " << suiteName << " ... ";
+#endif
 #endif
     TestSuiteInfo * testSuite = GetHead();
     while (testSuite && (testSuite->Name() != suiteName))
@@ -35,7 +39,11 @@ TestSuiteInfo * TestRegistry::GetTestSuite(const string & suiteName)
     if (!testSuite)
     {
 #ifdef TRACE
-        cout << "not found, creating new object" << endl;
+#if defined(UNICDE) || defined(_UNICODE)
+		wcout << L"not found, creating new object" << endl;
+#else
+		cout << "not found, creating new object" << endl;
+#endif
 #endif
         testSuite = new TestSuiteInfo(suiteName);
         AddSuite(testSuite);
@@ -43,7 +51,11 @@ TestSuiteInfo * TestRegistry::GetTestSuite(const string & suiteName)
     else
     {
 #ifdef TRACE
-        cout << "found" << endl;
+#if defined(UNICDE) || defined(_UNICODE)
+		wcout << L"found" << endl;
+#else
+		cout << "found" << endl;
+#endif
 #endif
     }
     return testSuite;
@@ -108,8 +120,13 @@ int TestRegistry::CountTests()
 TestRegistrar::TestRegistrar(TestRegistry & registry, Test * test)
 {
 #ifdef TRACE
+#if defined(UNICDE) || defined(_UNICODE)
+	wcout << L"Register test " << test->details.testName
+		  << L" in fixture " << test->details.fixtureName << endl;
+#else
     cout << "Register test " << test->details.testName
          << " in fixture " << test->details.fixtureName << endl;
+#endif
 #endif
     TestSuiteInfo * testSuite = registry.GetTestSuite(test->_details.suiteName);
     TestFixtureInfo * testFixture = testSuite->GetTestFixture(test->_details.fixtureName);

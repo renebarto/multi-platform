@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
 #include <unit-test-c++/TestSuiteInfo.h>
 
 namespace UnitTestCpp
@@ -18,7 +18,7 @@ public:
 
     TestRegistry & operator = (const TestRegistry &) = delete;
 
-    TestSuiteInfo * GetTestSuite(const std::string & suiteName);
+    TestSuiteInfo * GetTestSuite(const OSAL::String & suiteName);
     TestSuiteInfo * GetHead() const;
 
     int CountSuites();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <initializer_list>
 #include "core/Core.h"
@@ -54,9 +55,9 @@ public:
     void Set(size_t offset, T _data);
     void Set(size_t offset, const T * _data, size_t length);
     void Set(size_t offset, const Array<T> & _data);
-    void Append(const Array<T> & _data)
+    void Append(const Array<T> & data)
     {
-        Set(this->Size(), _data);
+        Set(this->Size(), data);
     }
     Array<T> & operator = (const Array<T> & other);
     Array<T> & operator = (Array<T> && other);
@@ -171,7 +172,7 @@ template<class T>
 size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 {
     assert(offset < _size);
-    size_t valuesToRead = std::min(length, _size - offset);
+    size_t valuesToRead = std::min<size_t>(length, _size - offset);
     memcpy(data, this->_data + offset, valuesToRead * sizeof(T));
     return valuesToRead;
 }
@@ -302,8 +303,8 @@ typename std::enable_if<std::is_integral<T>::value, void>::type PrintTo(std::ost
 template<class T>
 OSAL::String Array<T>::ToString() const
 {
-    std::ostringstream stream;
-    stream << OSAL::OS::TypeName(*this) << " Item size: " << sizeof(T) << " Size: " << _size << " Allocated: " << _allocatedSize << std::endl;
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << OSAL::OS::TypeName(*this) << _(" Item size: ") << sizeof(T) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
     size_t maxValuesToDisplay = std::min(_size, MaxValuesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
     {

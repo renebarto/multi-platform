@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
 #include <unit-test-c++/TestFixtureInfo.h>
 #include <unit-test-c++/TestResults.h>
 
@@ -13,16 +13,16 @@ class UNIT_TEST_CPP_EXPORT TestSuiteInfo
 public:
     TestSuiteInfo() = delete;
     TestSuiteInfo(const TestSuiteInfo &) = delete;
-    TestSuiteInfo(const std::string & suiteName);
+    TestSuiteInfo(const OSAL::String & suiteName);
     virtual ~TestSuiteInfo();
 
     TestSuiteInfo & operator = (const TestSuiteInfo &) = delete;
 
-    TestFixtureInfo * GetTestFixture(const std::string & fixtureName);
+    TestFixtureInfo * GetTestFixture(const OSAL::String & fixtureName);
 
     TestFixtureInfo * GetHead() const;
 
-    const std::string & Name() const;
+    const OSAL::String & Name() const;
     TestSuiteInfo * next;
 
     template <class Predicate> void RunIf(const Predicate & predicate, int const maxTestTimeInMs,
@@ -36,7 +36,7 @@ public:
 private:
     TestFixtureInfo * head;
     TestFixtureInfo * tail;
-    std::string suiteName;
+    OSAL::String suiteName;
 
     void AddFixture(TestFixtureInfo * testFixture);
 };

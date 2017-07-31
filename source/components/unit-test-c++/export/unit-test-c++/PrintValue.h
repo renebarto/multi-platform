@@ -7,7 +7,7 @@
 #include <ostream>
 #include <sstream>
 #include <osal/OSAL.h>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
 
 WARNING_PUSH_N(3)
 

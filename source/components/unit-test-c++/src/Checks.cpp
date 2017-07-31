@@ -7,12 +7,12 @@ namespace UnitTestCpp
 
 bool IsEqualIgnoreCase(const char * lhs, const char * rhs)
 {
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 bool IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 namespace internal

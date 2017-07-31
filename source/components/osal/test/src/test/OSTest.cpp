@@ -86,17 +86,17 @@ TEST_FIXTURE(OSTest, LookupClass)
 #if defined(WIN_MSVC)
 TEST_FIXTURE(OSTest, LookupFunction)
 {
-    std::string typeName = TypeName(f);
+    OSAL::String typeName = OSAL::OS::TypeName(f);
 
-    EXPECT_EQ("void __cdecl(int)", typeName);
+    EXPECT_EQ(_("void __cdecl(int)"), typeName);
 }
 
-TEST_FIXTURE(TypeNameTest, LookupClass)
+TEST_FIXTURE(OSTest, LookupClass)
 {
     A a;
-    std::string typeName = TypeName(a);
+	OSAL::String typeName = OSAL::OS::TypeName(a);
 
-    EXPECT_EQ("OS::Test::A", typeName);
+    EXPECT_EQ(_("OS::Test::A"), typeName);
 }
 #endif // defined(WIN_MSVC)
 

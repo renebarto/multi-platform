@@ -39,7 +39,7 @@ enum class WeekDayType
     Sunday = 7,
 };
 
-class DateTime
+class CORE_EXPORT DateTime
 {
 public:
     DateTime();

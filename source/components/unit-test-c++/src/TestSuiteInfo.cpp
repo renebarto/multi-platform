@@ -7,7 +7,7 @@ using namespace std;
 namespace UnitTestCpp
 {
 
-TestSuiteInfo::TestSuiteInfo(const string & suiteName)
+TestSuiteInfo::TestSuiteInfo(const OSAL::String & suiteName)
     : next(nullptr)
     , head(nullptr)
     , tail(nullptr)
@@ -26,10 +26,14 @@ TestSuiteInfo::~TestSuiteInfo()
     }
 }
 
-TestFixtureInfo * TestSuiteInfo::GetTestFixture(const string & fixtureName)
+TestFixtureInfo * TestSuiteInfo::GetTestFixture(const OSAL::String & fixtureName)
 {
 #ifdef TRACE
-    cout << "Find suite " << fixtureName << " ... ";
+#if defined(UNICDE) || defined(_UNICODE)
+	wcout << L"Find suite " << fixtureName << L" ... ";
+#else
+	cout << "Find suite " << fixtureName << " ... ";
+#endif
 #endif
     TestFixtureInfo * testFixture = head;
     while (testFixture && (testFixture->Name() != fixtureName))
@@ -37,7 +41,11 @@ TestFixtureInfo * TestSuiteInfo::GetTestFixture(const string & fixtureName)
     if (!testFixture)
     {
 #ifdef TRACE
-        cout << "not found, creating new object" << endl;
+#if defined(UNICDE) || defined(_UNICODE)
+		wcout << L"not found, creating new object" << endl;
+#else
+		cout << "not found, creating new object" << endl;
+#endif
 #endif
         testFixture = new TestFixtureInfo(fixtureName);
         AddFixture(testFixture);
@@ -45,7 +53,11 @@ TestFixtureInfo * TestSuiteInfo::GetTestFixture(const string & fixtureName)
     else
     {
 #ifdef TRACE
-        cout << "found" << endl;
+#if defined(UNICDE) || defined(_UNICODE)
+		wcout << L"found" << endl;
+#else
+		cout << "found" << endl;
+#endif
 #endif
     }
     return testFixture;
@@ -71,7 +83,7 @@ TestFixtureInfo * TestSuiteInfo::GetHead() const
     return head;
 }
 
-const string & TestSuiteInfo::Name() const
+const OSAL::String & TestSuiteInfo::Name() const
 {
     return suiteName;
 }

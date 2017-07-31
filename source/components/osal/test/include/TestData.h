@@ -11,38 +11,38 @@ extern String BuildLogPath(const String & componentName, const String & fileName
 class Data
 {
 public:
-    static const String ProjectName() { return "osal"; }
-    static const String TestDirName() { return "testdata"; }
+    static const String ProjectName() { return _("osal"); }
+    static const String TestDirName() { return _("testdata"); }
 
     static String TestDirectory()
     {
-        static String RootDir = TEST_DATA_ROOT;
+        static String RootDir = ToString(TEST_DATA_ROOT);
         return Path::CombinePath(Path::FullPath(RootDir),TestDirName());
     }
 
     static String TestDirectoryOSAL() { return Path::CombinePath(TestDirectory(), ProjectName()); }
-    static String TestLogDirectoryOSAL() { return Path::CombinePath(Path::CurrentDir(), "log"); }
-    static String LogFileRef() { return Path::CombinePath(TestDirectoryOSAL(), "log.File.ref.txt"); }
-    static String LogStreamRef() { return Path::CombinePath(TestDirectoryOSAL(), "log.Stream.ref.txt"); }
+    static String TestLogDirectoryOSAL() { return Path::CombinePath(Path::CurrentDir(), _("log")); }
+    static String LogFileRef() { return Path::CombinePath(TestDirectoryOSAL(), _("log.File.ref.txt")); }
+    static String LogStreamRef() { return Path::CombinePath(TestDirectoryOSAL(), _("log.Stream.ref.txt")); }
 
-    static String FilledDirName() { return "FilledDir"; }
+    static String FilledDirName() { return _("FilledDir"); }
     static String FilledDirPath() { return Path::CombinePath(TestDirectoryOSAL(), FilledDirName()); }
-    static String TstSubDirName() { return "TstSubDir"; }
+    static String TstSubDirName() { return _("TstSubDir"); }
     static String TstSubDirPath() { return Path::CombinePath(FilledDirPath(), TstSubDirName()); }
-    static String TstSubSubDirName() { return "TstSubSubDir"; }
+    static String TstSubSubDirName() { return _("TstSubSubDir"); }
     static String TstSubSubDirPath() { return Path::CombinePath(TstSubDirPath(), TstSubSubDirName()); }
-    static String EmptyDirPath() { return Path::CombinePath(TestDirectoryOSAL(), "EmptyDir"); }
-    static String HiddenDirPath() { return Path::CombinePath(FilledDirPath(), "HiddenDir"); }
-    static String DummyDirName() { return "Dummy"; }
+    static String EmptyDirPath() { return Path::CombinePath(TestDirectoryOSAL(), _("EmptyDir")); }
+    static String HiddenDirPath() { return Path::CombinePath(FilledDirPath(), _("HiddenDir")); }
+    static String DummyDirName() { return _("Dummy"); }
     static String DummyDirPath() { return Path::CombinePath(TestDirectoryOSAL(), DummyDirName()); }
 
-    static String RegularFileNameNoExtension() { return "a"; }
-    static String RegularFileExtension() { return ".tst"; }
+    static String RegularFileNameNoExtension() { return _("a"); }
+    static String RegularFileExtension() { return _(".tst"); }
     static String RegularFileName() { return RegularFileNameNoExtension() + RegularFileExtension(); }
     static String RegularFilePath() { return Path::CombinePath(FilledDirPath(), RegularFileName()); }
-    static String HiddenFileName() { return ".hidden.txt"; }
+    static String HiddenFileName() { return _(".hidden.txt"); }
     static String HiddenFilePath() { return Path::CombinePath(FilledDirPath(), HiddenFileName()); }
-    static String DummyFileName() { return "dummy.txt"; }
+    static String DummyFileName() { return _("dummy.txt"); }
     static String DummyFilePath() { return Path::CombinePath(FilledDirPath(), DummyFileName()); }
 
 };

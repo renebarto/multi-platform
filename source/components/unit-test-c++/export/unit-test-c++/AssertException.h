@@ -2,7 +2,8 @@
 
 #include <exception>
 #include <string>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
+#include <osal/Strings.h>
 
 namespace UnitTestCpp
 {
@@ -10,17 +11,17 @@ namespace UnitTestCpp
 class UNIT_TEST_CPP_EXPORT AssertException : public std::exception
 {
 public:
-    AssertException(const std::string & description, const std::string & fileName, int lineNumber);
+    AssertException(const OSAL::String & description, const OSAL::String & fileName, int lineNumber);
     virtual ~AssertException();
 
     virtual const char * what() const noexcept { return description.c_str(); }
 
-    const std::string & Filename() const { return fileName; }
+    const OSAL::String & Filename() const { return fileName; }
     int LineNumber() const { return lineNumber; }
 
 private:
     std::string description;
-    std::string fileName;
+    OSAL::String fileName;
     int lineNumber;
 };
 

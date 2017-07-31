@@ -14,18 +14,18 @@ using namespace std;
 namespace UnitTestCpp
 {
 
-const string StreamTestReporter::TestRunSeparator =     "[===========]";
-const string StreamTestReporter::TestSuiteSeparator =   "[   SUITE   ]";
-const string StreamTestReporter::TestFixtureSeparator = "[  FIXTURE  ]";
-const string StreamTestReporter::TestSuccessSeparator = "[ SUCCEEDED ]";
-const string StreamTestReporter::TestFailSeparator =    "[  FAILED   ]";
+const OSAL::String StreamTestReporter::TestRunSeparator =     _("[===========]");
+const OSAL::String StreamTestReporter::TestSuiteSeparator =   _("[   SUITE   ]");
+const OSAL::String StreamTestReporter::TestFixtureSeparator = _("[  FIXTURE  ]");
+const OSAL::String StreamTestReporter::TestSuccessSeparator = _("[ SUCCEEDED ]");
+const OSAL::String StreamTestReporter::TestFailSeparator =    _("[  FAILED   ]");
 
 void StreamTestReporter::ReportTestRunStart(int numberOfTestSuites,
                                             int numberOfTestFixtures,
                                             int numberOfTests)
 {
-    _stream << TestRunSeparator << " "
-           << TestRunStartMessage(numberOfTestSuites, numberOfTestFixtures, numberOfTests) << endl;
+    _stream << TestRunSeparator << _(" ")
+            << TestRunStartMessage(numberOfTestSuites, numberOfTestFixtures, numberOfTests) << endl;
 }
 
 void StreamTestReporter::ReportTestRunFinish(int numberOfTestSuites,
@@ -33,9 +33,9 @@ void StreamTestReporter::ReportTestRunFinish(int numberOfTestSuites,
                                              int numberOfTests,
                                              int milliSecondsElapsed)
 {
-    _stream << TestRunSeparator << " "
-           << TestRunFinishMessage(numberOfTestSuites, numberOfTestFixtures, numberOfTests,
-                                   milliSecondsElapsed) << endl;
+    _stream << TestRunSeparator << _(" ")
+            << TestRunFinishMessage(numberOfTestSuites, numberOfTestFixtures, numberOfTests,
+                                    milliSecondsElapsed) << endl;
 }
 
 void StreamTestReporter::ReportTestRunSummary(const TestResults * results, int milliSecondsElapsed)
@@ -48,34 +48,34 @@ void StreamTestReporter::ReportTestRunOverview(const TestResults * results)
     _stream << TestRunOverviewMessage(results) << endl;
 }
 
-void StreamTestReporter::ReportTestSuiteStart(const string & suiteName,
+void StreamTestReporter::ReportTestSuiteStart(const OSAL::String & suiteName,
                                               int numberOfTestFixtures)
 {
-    _stream << TestSuiteSeparator << " "
-           << TestSuiteStartMessage(suiteName, numberOfTestFixtures) << endl;
+    _stream << TestSuiteSeparator << _(" ")
+            << TestSuiteStartMessage(suiteName, numberOfTestFixtures) << endl;
 }
 
-void StreamTestReporter::ReportTestSuiteFinish(const string & suiteName,
+void StreamTestReporter::ReportTestSuiteFinish(const OSAL::String & suiteName,
                                                int numberOfTestFixtures,
                                                int milliSecondsElapsed)
 {
-    _stream << TestSuiteSeparator << " "
-           << TestSuiteFinishMessage(suiteName, numberOfTestFixtures, milliSecondsElapsed) << endl;
+    _stream << TestSuiteSeparator << _(" ")
+            << TestSuiteFinishMessage(suiteName, numberOfTestFixtures, milliSecondsElapsed) << endl;
 }
 
-void StreamTestReporter::ReportTestFixtureStart(const string & fixtureName,
+void StreamTestReporter::ReportTestFixtureStart(const OSAL::String & fixtureName,
                                                 int numberOfTests)
 {
-    _stream << TestFixtureSeparator << " "
-           << TestFixtureStartMessage(fixtureName, numberOfTests) << endl;
+    _stream << TestFixtureSeparator << _(" ")
+            << TestFixtureStartMessage(fixtureName, numberOfTests) << endl;
 }
 
-void StreamTestReporter::ReportTestFixtureFinish(const string & fixtureName,
+void StreamTestReporter::ReportTestFixtureFinish(const OSAL::String & fixtureName,
                                                  int numberOfTests,
                                                  int milliSecondsElapsed)
 {
-    _stream << TestFixtureSeparator << " "
-           << TestFixtureFinishMessage(fixtureName, numberOfTests, milliSecondsElapsed) << endl;
+    _stream << TestFixtureSeparator << _(" ")
+			<< TestFixtureFinishMessage(fixtureName, numberOfTests, milliSecondsElapsed) << endl;
 }
 
 void StreamTestReporter::ReportTestStart(const TestDetails & details)
@@ -92,169 +92,169 @@ void StreamTestReporter::ReportTestFinish(const TestDetails & details, bool succ
     else
         _stream << TestFailSeparator;
 
-    _stream << " " << TestFinishMessage(details, success, milliSecondsElapsed) << endl;
+    _stream << _(" ") << TestFinishMessage(details, success, milliSecondsElapsed) << endl;
 }
 
-void StreamTestReporter::ReportTestFailure(const TestDetails & details, const string & failure)
+void StreamTestReporter::ReportTestFailure(const TestDetails & details, const OSAL::String & failure)
 {
     DeferredTestReporter::ReportTestFailure(details, failure);
 }
 
-static string TestLiteral(int numberOfTests)
+static OSAL::String TestLiteral(int numberOfTests)
 {
-    return (numberOfTests == 1) ? "test" : "tests";
+    return (numberOfTests == 1) ? _("test") : _("tests");
 }
 
-static string TestFailureLiteral(int numberOfTestFailures)
+static OSAL::String TestFailureLiteral(int numberOfTestFailures)
 {
-    return (numberOfTestFailures == 1) ? "failure" : "failures";
+    return (numberOfTestFailures == 1) ? _("failure") : _("failures");
 }
 
-static string TestFixtureLiteral(int numberOfTestFixtures)
+static OSAL::String TestFixtureLiteral(int numberOfTestFixtures)
 {
-    return (numberOfTestFixtures == 1) ? "test fixture" : "test fixtures";
+    return (numberOfTestFixtures == 1) ? _("test fixture") : _("test fixtures");
 }
 
-static string TestSuiteLiteral(int numberOfTestSuites)
+static OSAL::String TestSuiteLiteral(int numberOfTestSuites)
 {
-    return (numberOfTestSuites == 1) ? "test suite" : "test suites";
+    return (numberOfTestSuites == 1) ? _("test suite") : _("test suites");
 }
 
-static string TestSuiteName(string name)
+static OSAL::String TestSuiteName(OSAL::String name)
 {
-    return (!name.empty()) ? name : "DefaultSuite";
+    return (!name.empty()) ? name : _("DefaultSuite");
 }
 
-static string TestFixtureName(string name)
+static OSAL::String TestFixtureName(OSAL::String name)
 {
-    return (!name.empty()) ? name : "DefaultFixture";
+    return (!name.empty()) ? name : _("DefaultFixture");
 }
 
-string StreamTestReporter::TestRunStartMessage(int numberOfTestSuites,
-                                               int numberOfTestFixtures,
-                                               int numberOfTests)
+OSAL::String StreamTestReporter::TestRunStartMessage(int numberOfTestSuites,
+                                                    int numberOfTestFixtures,
+                                                    int numberOfTests)
 {
-    ostringstream stream;
-    stream << "Running " << numberOfTests << " " << TestLiteral(numberOfTests)
-           << " from " << numberOfTestFixtures << " " << TestFixtureLiteral(numberOfTestFixtures)
-           << " in " << numberOfTestSuites << " " << TestSuiteLiteral(numberOfTestSuites) << " .";
+    basic_ostringstream<OSAL::Char> stream;
+    stream << _("Running ") << numberOfTests << _(" ") << TestLiteral(numberOfTests)
+           << _(" from ") << numberOfTestFixtures << _(" ") << TestFixtureLiteral(numberOfTestFixtures)
+           << _(" in ") << numberOfTestSuites << _(" ") << TestSuiteLiteral(numberOfTestSuites) << _(" .");
     return stream.str();
 }
 
-string StreamTestReporter::TestRunFinishMessage(int numberOfTestSuites,
-                                                int numberOfTestFixtures,
-                                                int numberOfTests,
-                                                int milliSecondsElapsed)
+OSAL::String StreamTestReporter::TestRunFinishMessage(int numberOfTestSuites,
+                                                      int numberOfTestFixtures,
+                                                      int numberOfTests,
+                                                      int milliSecondsElapsed)
 {
-    ostringstream stream;
-    stream << numberOfTests << " " << TestLiteral(numberOfTests)
-           << " from " << numberOfTestFixtures << " " << TestFixtureLiteral(numberOfTestFixtures)
-           << " in " << numberOfTestSuites << " " << TestSuiteLiteral(numberOfTestSuites)
-           << " ran. (" << milliSecondsElapsed <<  " ms total)";
+    basic_ostringstream<OSAL::Char> stream;
+    stream << numberOfTests << _(" ") << TestLiteral(numberOfTests)
+           << _(" from ") << numberOfTestFixtures << _(" ") << TestFixtureLiteral(numberOfTestFixtures)
+           << _(" in ") << numberOfTestSuites << _(" ") << TestSuiteLiteral(numberOfTestSuites)
+           << _(" ran. (") << milliSecondsElapsed << _(" ms total)");
     return stream.str();
 }
 
-string StreamTestReporter::TestRunSummaryMessage(const TestResults * results,
+OSAL::String StreamTestReporter::TestRunSummaryMessage(const TestResults * results,
                                                  int milliSecondsElapsed)
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
 
     if (results->GetFailureCount() > 0)
-        stream << "FAILURE: " << results->GetFailedTestCount()
-               << " out of " << results->GetTotalTestCount()
-               << " tests failed (" << results->GetFailureCount() << " "
-               << TestFailureLiteral(results->GetFailureCount()) << ")." << endl;
+        stream << _("FAILURE: ") << results->GetFailedTestCount()
+               << _(" out of ") << results->GetTotalTestCount()
+               << _(" tests failed (") << results->GetFailureCount() << _(" ")
+               << TestFailureLiteral(results->GetFailureCount()) << _(").") << endl;
     else
-        stream << "Success: " << results->GetTotalTestCount() << " "
-               << TestLiteral(results->GetTotalTestCount()) << " passed." << endl;
+        stream << _("Success: ") << results->GetTotalTestCount() << _(" ")
+               << TestLiteral(results->GetTotalTestCount()) << _(" passed.") << endl;
 
-    stream << "Test time: " << milliSecondsElapsed <<" ms." << endl;
+    stream << _("Test time: ") << milliSecondsElapsed << _(" ms.") << endl;
 
     return stream.str();
 }
 
-string StreamTestReporter::TestRunOverviewMessage(const TestResults * results)
+OSAL::String StreamTestReporter::TestRunOverviewMessage(const TestResults * results)
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
 
     if (results->GetFailureCount() > 0)
     {
-        stream << "Failures:" << endl;
+        stream << _("Failures:") << endl;
         for (auto testResult : Results())
         {
             if (testResult.Failed())
             {
                 for (auto failure : testResult.Failures())
-                    stream << testResult.fileName << ":" << failure.first << " : Failure in "
+                    stream << testResult.fileName << _(":") << failure.first << _(" : Failure in ")
                            << TestName(testResult.suiteName, testResult.fixtureName,
-                                       testResult.testName) << ": "
+                                       testResult.testName) << _(": ")
                            << failure.second << endl;
             }
         }
     }
     else
-        stream << "No failures" << endl;
+        stream << _("No failures") << endl;
 
     return stream.str();
 }
 
-string StreamTestReporter::TestSuiteStartMessage(const string & suiteName,
-                                                 int numberOfTestFixtures)
+OSAL::String StreamTestReporter::TestSuiteStartMessage(const OSAL::String & suiteName,
+                                                       int numberOfTestFixtures)
 {
-    ostringstream stream;
-    stream << TestSuiteName(suiteName) << " (" << numberOfTestFixtures << " "
-           << TestFixtureLiteral(numberOfTestFixtures) << ")";
+    basic_ostringstream<OSAL::Char> stream;
+    stream << TestSuiteName(suiteName) << _(" (") << numberOfTestFixtures << _(" ")
+           << TestFixtureLiteral(numberOfTestFixtures) << _(")");
     return stream.str();
 }
 
-string StreamTestReporter::TestSuiteFinishMessage(const string & suiteName,
-                                                  int numberOfTestFixtures,
-                                                  int milliSecondsElapsed)
+OSAL::String StreamTestReporter::TestSuiteFinishMessage(const OSAL::String & suiteName,
+                                                        int numberOfTestFixtures,
+                                                        int milliSecondsElapsed)
 {
-    ostringstream stream;
-    stream << numberOfTestFixtures << " " << TestFixtureLiteral(numberOfTestFixtures)
-           << " from " << TestSuiteName(suiteName)
-           << " (" << milliSecondsElapsed <<  " ms total)" << endl;
+    basic_ostringstream<OSAL::Char> stream;
+    stream << numberOfTestFixtures << _(" ") << TestFixtureLiteral(numberOfTestFixtures)
+           << _(" from ") << TestSuiteName(suiteName)
+           << _(" (") << milliSecondsElapsed << _(" ms total)") << endl;
     return stream.str();
 }
 
-string StreamTestReporter::TestFixtureStartMessage(const string & fixtureName, int numberOfTests)
+OSAL::String StreamTestReporter::TestFixtureStartMessage(const OSAL::String & fixtureName, int numberOfTests)
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
     stream << TestFixtureName(fixtureName)
-           << " (" << numberOfTests << " " << TestLiteral(numberOfTests) << ")";
+           << _(" (") << numberOfTests << _(" ") << TestLiteral(numberOfTests) << _(")");
     return stream.str();
 }
 
-string StreamTestReporter::TestFixtureFinishMessage(const string & fixtureName, int numberOfTests,
-                                                    int milliSecondsElapsed)
+OSAL::String StreamTestReporter::TestFixtureFinishMessage(const OSAL::String & fixtureName, int numberOfTests,
+                                                          int milliSecondsElapsed)
 {
-    ostringstream stream;
-    stream << numberOfTests << " " << TestLiteral(numberOfTests)
-           << " from " << TestFixtureName(fixtureName)
-           << " (" << milliSecondsElapsed <<  " ms total)" << endl;
+    basic_ostringstream<OSAL::Char> stream;
+    stream << numberOfTests << _(" ") << TestLiteral(numberOfTests)
+           << _(" from ") << TestFixtureName(fixtureName)
+           << _(" (") << milliSecondsElapsed << _(" ms total)") << endl;
     return stream.str();
 }
 
-string StreamTestReporter::TestFinishMessage(const TestDetails & details,
-                                             bool UNUSED(success),
-                                             int milliSecondsElapsed)
+OSAL::String StreamTestReporter::TestFinishMessage(const TestDetails & details,
+                                                   bool UNUSED(success),
+                                                   int milliSecondsElapsed)
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
     stream << TestName(details.suiteName, details.fixtureName, details.testName)
-           << " (" << milliSecondsElapsed << " ms)";
+           << _(" (") << milliSecondsElapsed << _(" ms)");
     return stream.str();
 }
 
-string StreamTestReporter::TestName(const std::string & suiteName,
-                                    const std::string & fixtureName,
-                                    const std::string & testName)
+OSAL::String StreamTestReporter::TestName(const OSAL::String & suiteName,
+                                          const OSAL::String & fixtureName,
+                                          const OSAL::String & testName)
 {
-    ostringstream stream;
+	basic_ostringstream<OSAL::Char> stream;
     if (!suiteName.empty())
-        stream << suiteName << "::";
+        stream << suiteName << _("::");
     if (!fixtureName.empty())
-        stream << fixtureName << "::";
+        stream << fixtureName << _("::");
     stream << testName;
     return stream.str();
 }

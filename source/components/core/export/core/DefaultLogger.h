@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/Exports.h"
 #include <list>
 #include <osal/OSAL.h>
 WARNING_PUSH
@@ -13,7 +14,7 @@ namespace Core
 
 class ILogListener;
 
-class DefaultLogger : public Logger
+class CORE_EXPORT DefaultLogger : public Logger
 {
 public:
     DefaultLogger() = delete;
@@ -26,6 +27,6 @@ public:
     DefaultLogger & operator = (const DefaultLogger &) = delete;
 };
 
-extern DefaultLogger & TheLogger();
+extern CORE_EXPORT DefaultLogger & TheLogger();
 
 } // namespace Core

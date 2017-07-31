@@ -8,7 +8,7 @@
 
 namespace Core {
 
-    class CommandLineParser
+    class CORE_EXPORT CommandLineParser
     {
     private:
         using CommandLineOptionsList = std::vector<CommandLineOption::Ptr>;

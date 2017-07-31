@@ -9,29 +9,29 @@ using namespace std;
 namespace
 {
 
-void ReplaceChar(string & str, char c, const string & replacement)
+void ReplaceChar(OSAL::String & str, OSAL::Char c, const OSAL::String & replacement)
 {
-    for (size_t pos = str.find(c); pos != string::npos; pos = str.find(c, pos + 1))
+    for (size_t pos = str.find(c); pos != OSAL::String::npos; pos = str.find(c, pos + 1))
         str.replace(pos, 1, replacement);
 }
 
-string XmlEscape(const string & value)
+OSAL::String XmlEscape(const OSAL::String & value)
 {
-    string escaped = value;
+    OSAL::String escaped = value;
 
-    ReplaceChar(escaped, '&', "&amp;");
-    ReplaceChar(escaped, '<', "&lt;");
-    ReplaceChar(escaped, '>', "&gt;");
-    ReplaceChar(escaped, '\'', "&apos;");
-    ReplaceChar(escaped, '\"', "&quot;");
+    ReplaceChar(escaped, _('&'), _("&amp;"));
+    ReplaceChar(escaped, _('<'), _("&lt;"));
+    ReplaceChar(escaped, _('>'), _("&gt;"));
+    ReplaceChar(escaped, _('\''), _("&apos;"));
+    ReplaceChar(escaped, _('\"'), _("&quot;"));
 
     return escaped;
 }
 
-string BuildFailureMessage(const string & file, int line, const string & message)
+OSAL::String BuildFailureMessage(const OSAL::String & file, int line, const OSAL::String & message)
 {
-    ostringstream failureMessage;
-    failureMessage << file << "(" << line << ") : " << message;
+    basic_ostringstream<OSAL::Char> failureMessage;
+    failureMessage << file << _("(") << line << _(") : ") << message;
     return failureMessage.str();
 }
 
@@ -40,8 +40,8 @@ string BuildFailureMessage(const string & file, int line, const string & message
 namespace UnitTestCpp
 {
 
-XMLTestReporter::XMLTestReporter(ostream & stream)
-    : stream(stream)
+XMLTestReporter::XMLTestReporter(basic_ostream<OSAL::Char> & _stream)
+    : _stream(_stream)
 {
 }
 
@@ -65,59 +65,59 @@ void XMLTestReporter::ReportTestRunSummary(const TestResults * results, int mill
     EndResults();
 }
 
-void XMLTestReporter::AddXmlElement(const char * encoding)
+void XMLTestReporter::AddXmlElement(const OSAL::Char * encoding)
 {
-    stream << "<?xml version=\"1.0\"";
+    _stream << _("<?xml version=\"1.0\"");
 
     if (encoding != nullptr)
-        stream << " encoding=\"" << encoding << "\"";
+        _stream << _(" encoding=\"") << encoding << _("\"");
 
-    stream << "?>" << endl;
+    _stream << _("?>") << endl;
 }
 
 void XMLTestReporter::BeginResults(int totalTestCount, int failedTestCount,
                                    int failureCount, int milliSecondsElapsed)
 {
-   stream << "<unittest-results"
-       << " tests=\"" << totalTestCount << "\""
-       << " failedtests=\"" << failedTestCount << "\""
-       << " failures=\"" << failureCount << "\""
-       << " time=\"" << milliSecondsElapsed << "\""
-       << ">" << endl;
+   _stream << _("<unittest-results")
+       << _(" tests=\"") << totalTestCount << _("\"")
+       << _(" failedtests=\"") << failedTestCount << _("\"")
+       << _(" failures=\"") << failureCount << _("\"")
+       << _(" time=\"") << milliSecondsElapsed << _("\"")
+       << _(">") << endl;
 }
 
 void XMLTestReporter::EndResults()
 {
-    stream << "</unittest-results>" << endl;
+    _stream << _("</unittest-results>") << endl;
 }
 
 void XMLTestReporter::BeginTest(const TestDetailedResult & result)
 {
-    stream << "<test"
-        << " suite=\"" << result.suiteName << "\""
-        << " fixture=\"" << result.fixtureName << "\""
-        << " name=\"" << result.testName << "\""
-        << " time=\"" << result.MilliSecondsElapsed() << "\"";
+    _stream << _("<test")
+        << _(" suite=\"") << result.suiteName << _("\"")
+        << _(" fixture=\"") << result.fixtureName << _("\"")
+        << _(" name=\"") << result.testName << _("\"")
+        << _(" time=\"") << result.MilliSecondsElapsed() << _("\"");
 }
 
 void XMLTestReporter::EndTest(const TestDetailedResult & result)
 {
     if (result.Failed())
-        stream << "</test>" << endl;
+        _stream << _("</test>") << endl;
     else
-        stream << "/>" << endl;
+        _stream << _("/>") << endl;
 }
 
 void XMLTestReporter::AddFailure(const TestDetailedResult & result)
 {
-    stream << ">" << endl; // close <test> element
+    _stream << _(">") << endl; // close <test> element
 
     for (auto failure : result.Failures())
     {
-        string const escapedMessage = XmlEscape(failure.second);
-        string const message = BuildFailureMessage(result.fileName, failure.first, escapedMessage);
+        OSAL::String const escapedMessage = XmlEscape(failure.second);
+        OSAL::String const message = BuildFailureMessage(result.fileName, failure.first, escapedMessage);
 
-        stream << "<failure" << " message=\"" << message << "\"" << "/>" << endl;
+        _stream << _("<failure") << _(" message=\"") << message << _("\"") << _("/>") << endl;
     }
 }
 

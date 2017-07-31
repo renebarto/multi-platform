@@ -5,6 +5,22 @@
 namespace OSAL {
 namespace Strings {
 
+inline char * strcpy(char * lhs, const char * rhs)
+{
+	return ::strcpy(lhs, rhs);
+}
+inline wchar_t * strcpy(wchar_t * lhs, const wchar_t * rhs)
+{
+	return ::wcscpy(lhs, rhs);
+}
+inline char * strncpy(char * lhs, const char * rhs, size_t n)
+{
+	return ::strncpy(lhs, rhs, n);
+}
+inline wchar_t * strncpy(wchar_t * lhs, const wchar_t * rhs, size_t n)
+{
+	return ::wcsncpy(lhs, rhs, n);
+}
 inline int strcmp(const char * lhs, const char * rhs)
 {
     return ::strcmp(lhs, rhs);

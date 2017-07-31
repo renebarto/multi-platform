@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
 #include <unit-test-c++/ITestReporter.h>
 #include <unit-test-c++/TestRegistry.h>
 
@@ -22,7 +22,7 @@ struct True
 
 struct UNIT_TEST_CPP_EXPORT InSelection
 {
-    InSelection(const char * suiteName, const char * fixtureName, const char * testName)
+    InSelection(const OSAL::Char * suiteName, const OSAL::Char * fixtureName, const OSAL::Char * testName)
         : suiteName(suiteName)
         , fixtureName(fixtureName)
         , testName(testName)
@@ -33,9 +33,9 @@ struct UNIT_TEST_CPP_EXPORT InSelection
     bool operator () (const TestSuiteInfo * const suite) const;
 
 private:
-    const char * suiteName;
-    const char * fixtureName;
-    const char * testName;
+    const OSAL::Char * suiteName;
+    const OSAL::Char * fixtureName;
+    const OSAL::Char * testName;
 };
 
 class UNIT_TEST_CPP_EXPORT TestRunner

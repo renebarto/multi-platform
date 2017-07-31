@@ -7,7 +7,7 @@
 namespace OSAL {
 namespace OS {
 
-class TemporaryFile
+class OSAL_EXPORT TemporaryFile
 {
 public:
     TemporaryFile();

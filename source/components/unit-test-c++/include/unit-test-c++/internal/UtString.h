@@ -307,7 +307,7 @@ bool String::CaseInsensitiveCStringEquals(const char * lhs, const char * rhs)
         return rhs == nullptr;
     if (rhs == nullptr)
         return false;
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 // Compares two wide C strings, ignoring case.  Returns true iff they
@@ -330,7 +330,7 @@ bool String::CaseInsensitiveWideCStringEquals(const wchar_t* lhs, const wchar_t*
     if (rhs == nullptr)
         return false;
 
-    return OSAL::Strings::StrCaseCmp(lhs, rhs) == 0;
+    return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
 // Returns true iff str ends with the given suffix, ignoring case.

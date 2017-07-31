@@ -7,7 +7,7 @@ using namespace std;
 namespace UnitTestCpp
 {
 
-TestFixtureInfo::TestFixtureInfo(const string & fixtureName)
+TestFixtureInfo::TestFixtureInfo(const OSAL::String & fixtureName)
     : next(nullptr)
     , head(nullptr)
     , tail(nullptr)
@@ -35,7 +35,7 @@ Test * TestFixtureInfo::GetHead() const
     return head;
 }
 
-const string & TestFixtureInfo::Name() const
+const OSAL::String & TestFixtureInfo::Name() const
 {
     return fixtureName;
 }

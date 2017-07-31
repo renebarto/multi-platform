@@ -25,24 +25,33 @@ DEFINE_FLAG_OPERATORS(MyFlags, uint8_t);
 
 using MyFlag = Flag<MyFlags, uint8_t>;
 
-template<>
-std::vector<Core::EnumConversion<MyFlags>> Core::EnumSerializationInfo<OSAL::Test::MyFlags>::Info =
-{
-    { OSAL::Test::MyFlags::ZERO, "ZERO" },
-    { OSAL::Test::MyFlags::ONE, "ONE" },
-    { OSAL::Test::MyFlags::TWO, "TWO" },
-    { OSAL::Test::MyFlags::THREE, "THREE" },
-    { OSAL::Test::MyFlags::ALL_BUT_THREE, "ALL_BUT_THREE" },
-    { OSAL::Test::MyFlags::ALL_BUT_TWO, "ALL_BUT_TWO" },
-    { OSAL::Test::MyFlags::ALL_BUT_ONE, "ALL_BUT_ONE" },
-    { OSAL::Test::MyFlags::ALL, "ALL" },
-};
+} // namespace Test
+} // namespace OSAL
 
-inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, const MyFlags & value)
+WARNING_PUSH
+WARNING_DISABLE(4592)
+template<>
+std::vector<Core::EnumConversion<OSAL::Test::MyFlags>> Core::EnumSerializationInfo<OSAL::Test::MyFlags>::Info =
+{
+    { OSAL::Test::MyFlags::ZERO, _("ZERO") },
+    { OSAL::Test::MyFlags::ONE, _("ONE") },
+    { OSAL::Test::MyFlags::TWO, _("TWO") },
+    { OSAL::Test::MyFlags::THREE, _("THREE") },
+    { OSAL::Test::MyFlags::ALL_BUT_THREE, _("ALL_BUT_THREE") },
+    { OSAL::Test::MyFlags::ALL_BUT_TWO, _("ALL_BUT_TWO") },
+    { OSAL::Test::MyFlags::ALL_BUT_ONE, _("ALL_BUT_ONE") },
+    { OSAL::Test::MyFlags::ALL, _("ALL") },
+};
+WARNING_POP
+
+inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, const OSAL::Test::MyFlags & value)
 {
     stream << Core::Serialize(value);
     return stream;
 }
+
+namespace OSAL {
+namespace Test {
 
 class FlagOperatorsTest : public UnitTestCpp::TestFixture
 {

@@ -4,10 +4,10 @@
 
 using namespace UnitTestCpp;
 
-AssertException::AssertException(const std::string & description,
-                                 const std::string & filename,
+AssertException::AssertException(const OSAL::String & description,
+                                 const OSAL::String & filename,
                                  int lineNumber)
-    : description(description)
+    : description(OSAL::ToNarrowString(description))
     , fileName(filename)
     , lineNumber(lineNumber)
 {

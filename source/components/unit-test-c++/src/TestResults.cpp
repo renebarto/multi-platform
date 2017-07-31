@@ -57,7 +57,7 @@ void TestResults::OnTestStart(const TestDetails & details)
         reporter->ReportTestStart(details);
 }
 
-void TestResults::OnTestFailure(const TestDetails & details, string result)
+void TestResults::OnTestFailure(const TestDetails & details,string result)
 {
     ++failureCount;
     if (!currentTestFailed)
@@ -66,7 +66,7 @@ void TestResults::OnTestFailure(const TestDetails & details, string result)
         currentTestFailed = true;
     }
     if (reporter)
-        reporter->ReportTestFailure(details, result);
+        reporter->ReportTestFailure(details, OSAL::ToString(result));
 }
 
 void TestResults::OnTestFinish(const TestDetails & details, int milliSecondsElapsed)

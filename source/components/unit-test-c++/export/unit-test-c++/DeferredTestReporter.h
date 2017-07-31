@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
 #include <unit-test-c++/ITestReporter.h>
 #include <unit-test-c++/TestDetailedResult.h>
 
@@ -20,20 +20,20 @@ public:
                                      int milliSecondsElapsed) override;
     virtual void ReportTestRunSummary(const TestResults * results, int milliSecondsElapsed) override;
     virtual void ReportTestRunOverview(const TestResults * results) override;
-    virtual void ReportTestSuiteStart(const std::string & suiteName,
+    virtual void ReportTestSuiteStart(const OSAL::String & suiteName,
                                       int numberOfTestFixtures) override;
-    virtual void ReportTestSuiteFinish(const std::string & suiteName,
+    virtual void ReportTestSuiteFinish(const OSAL::String & suiteName,
                                        int numberOfTestFixtures,
                                        int milliSecondsElapsed) override;
-    virtual void ReportTestFixtureStart(const std::string & fixtureName,
+    virtual void ReportTestFixtureStart(const OSAL::String & fixtureName,
                                         int numberOfTests) override;
-    virtual void ReportTestFixtureFinish(const std::string & fixtureName,
+    virtual void ReportTestFixtureFinish(const OSAL::String & fixtureName,
                                          int numberOfTests,
                                          int milliSecondsElapsed) override;
     virtual void ReportTestStart(const TestDetails & details) override;
     virtual void ReportTestFinish(const TestDetails & details, bool success,
                                   int milliSecondsElapsed) override;
-    virtual void ReportTestFailure(const TestDetails & details, const std::string & failure) override;
+    virtual void ReportTestFailure(const TestDetails & details, const OSAL::String & failure) override;
 
     using ResultList = std::vector<TestDetailedResult>;
     ResultList & Results();

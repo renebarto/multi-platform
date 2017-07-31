@@ -6,7 +6,7 @@
 namespace Core
 {
 
-class ConsoleLogger : public ILogListener
+class CORE_EXPORT ConsoleLogger : public ILogListener
 {
 public:
     ConsoleLogger() = delete;

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <osal/Strings.h>
 
 namespace UnitTestCpp
 {
@@ -15,13 +16,13 @@ public:
     TestDetailedResult() = delete;
     TestDetailedResult(const TestDetails & details);
 
-    std::string suiteName;
-    std::string fixtureName;
-    std::string testName;
-    std::string fileName;
+    OSAL::String suiteName;
+    OSAL::String fixtureName;
+    OSAL::String testName;
+    OSAL::String fileName;
     int lineNumber;
 
-    typedef std::pair<int, std::string> Failure;
+    typedef std::pair<int, OSAL::String> Failure;
     typedef std::vector<Failure> FailureList;
 
     void AddFailure(Failure failure);
@@ -38,10 +39,10 @@ private:
     int milliSecondsElapsed;
 };
 
-inline std::ostream & operator << (std::ostream & stream, const TestDetailedResult & result)
+inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, const TestDetailedResult & result)
 {
-    return stream << result.fileName << ":" << result.lineNumber << " : Test "
-                  << result.suiteName << "::" << result.fixtureName << "::" << result.testName;
+    return stream << result.fileName << _(":") << result.lineNumber << _(" : Test ")
+                  << result.suiteName << _("::") << result.fixtureName << _("::") << result.testName;
 }
 
 } // namespace UnitTestCpp

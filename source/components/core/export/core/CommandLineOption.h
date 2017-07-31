@@ -5,6 +5,7 @@
 #include "core/serialization/Serialization.h"
 #include "core/serialization/DeserializationImpl.h"
 #include "core/serialization/SerializationImpl.h"
+#include "core/Core.h"
 
 namespace Core {
 
@@ -21,7 +22,7 @@ inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Ch
     return stream;
 }
 
-class CommandLineOption
+class CORE_EXPORT CommandLineOption
 {
 public:
     using Ptr = std::shared_ptr<CommandLineOption>;

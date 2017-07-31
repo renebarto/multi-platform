@@ -2,7 +2,8 @@
 
 #include <string>
 #include <vector>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
+#include <osal/Strings.h>
 
 namespace UnitTestCpp
 {

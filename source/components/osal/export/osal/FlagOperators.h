@@ -43,7 +43,7 @@ public:
 
     Flag<T, B> operator | (const Flag<T, B> & rhs) const
     {
-        return Flag<T, B>(static_cast<B>(_value) | static_cast<B>(rhs._value));
+        return Flag<T, B>(static_cast<B>(static_cast<B>(_value) | static_cast<B>(rhs._value)));
     }
     template<typename TT, typename BB>
     friend Flag<TT, BB> operator | (const Flag<TT, BB> & lhs, const TT & rhs);
@@ -55,7 +55,7 @@ public:
     friend Flag<TT, BB> operator | (const BB & lhs, const Flag<TT, BB> & rhs);
     Flag<T, B> operator & (const Flag<T, B> & rhs) const
     {
-        return Flag<T, B>(static_cast<B>(_value) & static_cast<B>(rhs._value));
+        return Flag<T, B>(static_cast<B>(static_cast<B>(_value) & static_cast<B>(rhs._value)));
     }
     template<typename TT, typename BB>
     friend Flag<TT, BB> operator & (const Flag<TT, BB> & lhs, const TT & rhs);
@@ -67,7 +67,7 @@ public:
     friend Flag<TT, BB> operator & (const BB & lhs, const Flag<TT, BB> & rhs);
     Flag<T, B> operator ^ (const Flag<T, B> & rhs) const
     {
-        return Flag<T, B>(static_cast<B>(_value) ^ static_cast<B>(rhs._value));
+        return Flag<T, B>(static_cast<B>(static_cast<B>(_value) ^ static_cast<B>(rhs._value)));
     }
     template<typename TT, typename BB>
     friend Flag<TT, BB> operator ^ (const Flag<TT, BB> & lhs, const TT & rhs);
@@ -204,7 +204,7 @@ private:
 template<typename T, typename B>
 inline Flag<T, B> operator | (const Flag<T, B> & lhs, const T & rhs)
 {
-    return Flag<T, B>(static_cast<B>(lhs._value) | static_cast<B>(rhs));
+    return Flag<T, B>(static_cast<B>(static_cast<B>(lhs._value) | static_cast<B>(rhs)));
 }
 template<typename T, typename B>
 inline Flag<T, B> operator | (const T & lhs, const Flag<T, B> & rhs)
@@ -219,12 +219,12 @@ inline Flag<T, B> operator | (const Flag<T, B> & lhs, const B & rhs)
 template<typename T, typename B>
 inline Flag<T, B> operator | (const B & lhs, const Flag<T, B> & rhs)
 {
-    return lhs | static_cast<B>(rhs._value);
+    return static_cast<B>(lhs | static_cast<B>(rhs._value));
 }
 template<typename T, typename B>
 inline Flag<T, B> operator & (const Flag<T, B> & lhs, const T & rhs)
 {
-    return Flag<T, B>(static_cast<B>(lhs._value) & static_cast<B>(rhs));
+    return Flag<T, B>(static_cast<B>(static_cast<B>(lhs._value) & static_cast<B>(rhs)));
 }
 template<typename T, typename B>
 inline Flag<T, B> operator & (const T & lhs, const Flag<T, B> & rhs)
@@ -239,12 +239,12 @@ inline Flag<T, B> operator & (const Flag<T, B> & lhs, const B & rhs)
 template<typename T, typename B>
 inline Flag<T, B> operator & (const B & lhs, const Flag<T, B> & rhs)
 {
-    return lhs & static_cast<B>(rhs._value);
+    return static_cast<B>(lhs & static_cast<B>(rhs._value));
 }
 template<typename T, typename B>
 inline Flag<T, B> operator ^ (const Flag<T, B> & lhs, const T & rhs)
 {
-    return Flag<T, B>(static_cast<B>(lhs._value) ^ static_cast<B>(rhs));
+    return Flag<T, B>(static_cast<B>(static_cast<B>(lhs._value) ^ static_cast<B>(rhs)));
 }
 template<typename T, typename B>
 inline Flag<T, B> operator ^ (const T & lhs, const Flag<T, B> & rhs)
@@ -259,7 +259,7 @@ inline Flag<T, B> operator ^ (const Flag<T, B> & lhs, const B & rhs)
 template<typename T, typename B>
 inline Flag<T, B> operator ^ (const B & lhs, const Flag<T, B> & rhs)
 {
-    return lhs ^ static_cast<B>(rhs._value);
+    return static_cast<B>(lhs ^ static_cast<B>(rhs._value));
 }
 
 template<typename T, typename B>

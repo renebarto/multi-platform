@@ -63,7 +63,7 @@ void ConsoleTestReporter::ReportTestRunOverview(const TestResults * results)
     _stream << TestRunOverviewMessage(results) << endl;
 }
 
-void ConsoleTestReporter::ReportTestSuiteStart(const string & suiteName, int numberOfTestFixtures)
+void ConsoleTestReporter::ReportTestSuiteStart(const OSAL::String & suiteName, int numberOfTestFixtures)
 {
     if (console.ShouldUseColor())
         console.SetTerminalColor(OSAL::ConsoleColor::Cyan);
@@ -76,7 +76,7 @@ void ConsoleTestReporter::ReportTestSuiteStart(const string & suiteName, int num
     _stream << " " << TestSuiteStartMessage(suiteName, numberOfTestFixtures) << endl;
 }
 
-void ConsoleTestReporter::ReportTestSuiteFinish(const string & suiteName,
+void ConsoleTestReporter::ReportTestSuiteFinish(const OSAL::String & suiteName,
                                                 int numberOfTestFixtures,
                                                 int milliSecondsElapsed)
 {
@@ -92,7 +92,7 @@ void ConsoleTestReporter::ReportTestSuiteFinish(const string & suiteName,
                                             milliSecondsElapsed) << endl;
 }
 
-void ConsoleTestReporter::ReportTestFixtureStart(const string & fixtureName, int numberOfTests)
+void ConsoleTestReporter::ReportTestFixtureStart(const OSAL::String & fixtureName, int numberOfTests)
 {
     if (console.ShouldUseColor())
         console.SetTerminalColor(OSAL::ConsoleColor::Yellow);
@@ -105,7 +105,7 @@ void ConsoleTestReporter::ReportTestFixtureStart(const string & fixtureName, int
     _stream << " " << TestFixtureStartMessage(fixtureName, numberOfTests) << endl;
 }
 
-void ConsoleTestReporter::ReportTestFixtureFinish(const string & fixtureName,
+void ConsoleTestReporter::ReportTestFixtureFinish(const OSAL::String & fixtureName,
                                                   int numberOfTests,
                                                   int milliSecondsElapsed)
 {
@@ -145,7 +145,7 @@ void ConsoleTestReporter::ReportTestFinish(const TestDetails & details, bool suc
     _stream << " " << TestFinishMessage(details, success, milliSecondsElapsed) << endl;
 }
 
-void ConsoleTestReporter::ReportTestFailure(TestDetails const& details, const string & failure)
+void ConsoleTestReporter::ReportTestFailure(TestDetails const& details, const OSAL::String & failure)
 {
     DeferredTestReporter::ReportTestFailure(details, failure);
 }

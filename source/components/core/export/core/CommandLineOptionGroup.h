@@ -9,7 +9,7 @@ namespace Core
 
 typedef std::vector<CommandLineOption::Ptr> CommandLineOptionsList;
 
-class CommandLineOptionGroup
+class CORE_EXPORT CommandLineOptionGroup
 {
 public:
     using Ptr = std::shared_ptr<CommandLineOptionGroup>;

@@ -1,98 +1,141 @@
-#include "osal/Path.h"
+#include "osal/Time.h"
 
 #include <climits>
 #include <direct.h>
-#include <sys/stat.h>
-#include "osal/OSAL.h"
 
-static const OSAL::Char _PathSeparator = _('/');
-static const OSAL::Char * _TildeDir = _("~/");
+namespace OSAL {
+namespace Time {
 
-OSAL::Char OSAL::Path::PathSeparator()
-{
-    return _PathSeparator;
-}
+	const tm & BaseTime()
+	{
+		static tm baseTime;
+		return baseTime;
+	}
+	const long tm::tm_tzOffset = 0;
+	const int tm::tm_dstOffset = 0;
+	const char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = "";
 
-OSAL::String OSAL::Path::AddSlashIfNeeded(const String & path)
-{
-    String result = path;
-    if ((path.length() > 0) && (path[path.length() - 1] != _PathSeparator))
-        result += _PathSeparator;
-    return result;
-}
+	tm::tm(bool initialize)
+		: _tm()
+	{
+		if (initialize)
+			Update();
+	}
 
-bool OSAL::Path::FileExists(const String & path)
-{
-    struct stat status;
-    memset(&status, 0, sizeof(status));
-    stat(ToNarrowString(path).c_str(), &status);
-    return (S_ISREG(status.st_mode));
-}
+	tm::tm(const tm & other)
+		: _tm(other._tm)
+	{
+	}
+	tm::tm(int second, int minute, int hour, int day, int month, int year, bool initialize)
+		: _tm()
+	{
+		if (initialize)
+			Update();
+		_tm.tm_sec = second;
+		_tm.tm_min = minute;
+		_tm.tm_hour = hour;
+		_tm.tm_mday = day;
+		_tm.tm_mon = month;
+		_tm.tm_year = year;
+	}
+	void tm::Update()
+	{
+		*(const_cast<int *>(&tm_dstOffset)) = 0;
+		*(const_cast<long *>(&tm_tzOffset)) = 0;
+		char * tzName = "EST";
+		strncpy(const_cast<char *>(tm_tzName), tzName, MAX_TIME_ZONE_NAME + 1);
+	}
+	tm & tm::operator = (const tm & other)
+	{
+		if (&other != this)
+		{
+			_tm = other._tm;
+			*(const_cast<int *>(&tm_dstOffset)) = other.tm_dstOffset;
+			*(const_cast<long *>(&tm_tzOffset)) = other.tm_tzOffset;
+			strncpy(const_cast<char *>(tm_tzName), other.tm_tzName, MAX_TIME_ZONE_NAME + 1);
+		}
+		return *this;
+	}
+	tm & tm::operator = (const ::tm & other)
+	{
+		_tm = other;
+		const tm & baseTime = BaseTime();
+		*(const_cast<int *>(&tm_dstOffset)) = baseTime.tm_dstOffset;
+		*(const_cast<long *>(&tm_tzOffset)) = baseTime.tm_tzOffset;
+		strncpy(const_cast<char *>(tm_tzName), baseTime.tm_tzName, MAX_TIME_ZONE_NAME + 1);
+		return *this;
+	}
 
-bool OSAL::Path::DirectoryExists(const String & path)
-{
-    struct stat status;
-    memset(&status, 0, sizeof(status));
-	stat(ToNarrowString(path).c_str(), &status);
-	return (S_ISDIR(status.st_mode));
-}
+	static LARGE_INTEGER GetFileTimeOffset()
+	{
+		SYSTEMTIME s;
+		FILETIME f;
+		LARGE_INTEGER t;
 
-void OSAL::Path::MakeSureDirectoryExists(const String & path)
-{
-    if (FileExists(path))
-    {
-        _unlink(ToNarrowString(path).c_str());
-    }
-}
+		s.wYear = 1970;
+		s.wMonth = 1;
+		s.wDay = 1;
+		s.wHour = 0;
+		s.wMinute = 0;
+		s.wSecond = 0;
+		s.wMilliseconds = 0;
+		SystemTimeToFileTime(&s, &f);
+		t.QuadPart = f.dwHighDateTime;
+		t.QuadPart <<= 32;
+		t.QuadPart |= f.dwLowDateTime;
+		return (t);
+	}
 
-void OSAL::Path::MakeSureFileDoesNotExist(const String & path)
-{
-    struct stat status;
-    memset(&status, 0, sizeof(status));
-	const char * filePath = ToNarrowString(path).c_str();
-    stat(filePath, &status);
-    if (S_ISDIR(status.st_mode))
-        return;
-    if (S_ISREG(status.st_mode))
-    {
-		_unlink(filePath);
-    }
-    _mkdir(filePath);
-}
+	int clock_gettime(int X, struct timespec * tv)
+	{
+		LARGE_INTEGER t;
+		FILETIME f;
+		double                  microseconds;
+		static LARGE_INTEGER    offset{};
+		static double           frequencyToMicroseconds;
+		static bool             initialized{};
+		static BOOL             usePerformanceCounter{};
 
-OSAL::String OSAL::Path::ResolveTilde(const String & path)
-{
-    if (path.length() < 2)
-        return path;
-    if (path.substr(0, 2) != _TildeDir)
-        return path;
-    return CombinePath(ToString("HOME"), path.substr(2));
-}
+		if (!tv)
+			return EFAULT;
+		if (X != CLOCK_REALTIME)
+			return EINVAL;
+		if (!initialized)
+		{
+			LARGE_INTEGER performanceFrequency;
+			initialized = true;
+			usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
+			if (usePerformanceCounter)
+			{
+				QueryPerformanceCounter(&offset);
+				frequencyToMicroseconds = (double)performanceFrequency.QuadPart / 1000000.0;
+			}
+			else
+			{
+				offset = GetFileTimeOffset();
+				frequencyToMicroseconds = 10.;
+			}
+		}
+		if (usePerformanceCounter)
+			QueryPerformanceCounter(&t);
+		else
+		{
+			GetSystemTimeAsFileTime(&f);
+			t.QuadPart = f.dwHighDateTime;
+			t.QuadPart <<= 32;
+			t.QuadPart |= f.dwLowDateTime;
+		}
 
-OSAL::String OSAL::Path::FullPath(const String & path)
-{
-    Char buffer[PATH_MAX];
-    String resolvedPath = ResolveTilde(path);
+		t.QuadPart -= offset.QuadPart;
+		microseconds = (double)t.QuadPart / frequencyToMicroseconds;
+		t.QuadPart = LONGLONG(microseconds);
+		tv->tv_sec = long(t.QuadPart / 1000000000);
+		tv->tv_nsec = long(t.QuadPart % 1000000000);
+		time_t timeSeconds;
+		timeSeconds = time(nullptr);
+		tv->tv_sec += long(timeSeconds);
+		return (0);
+	}
 
-#if defined(UNICODE) || defined(_UNICODE)
-    const Char * fullpath = _wfullpath(const_cast<Char *>(resolvedPath.c_str()), buffer, sizeof(buffer) / sizeof(Char));
-#else
-    const Char * fullpath = _fullpath(const_cast<Char *>(resolvedPath.c_str()), buffer, sizeof(buffer) / sizeof(Char));
-#endif
-    if (fullpath == nullptr)
-        ThrowOnError(__func__, __FILE__, __LINE__, errno);
-    return String(fullpath);
-}
-
-OSAL::String OSAL::Path::CurrentDir()
-{
-    char * currentDirectory = _getcwd(nullptr, 0);
-    if (currentDirectory == nullptr)
-    {
-        ThrowOnError(__func__, __FILE__, __LINE__, errno);
-    }
-    String result = ToString(currentDirectory);
-    free(currentDirectory);
-    return FullPath(result);
-}
-
+} // namespace Time
+} // namespace OSAL

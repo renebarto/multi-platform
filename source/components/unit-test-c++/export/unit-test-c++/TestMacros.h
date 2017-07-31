@@ -8,7 +8,7 @@
 class Test##Name : public UnitTestCpp::Test                                                        \
 {                                                                                                  \
 public:                                                                                            \
-    Test##Name() : Test(#Name, "", GetSuiteName(), __FILE__, __LINE__) {}                          \
+    Test##Name() : Test(#Name, _(""), GetSuiteName(), __FILE__, __LINE__) {}                       \
 private:                                                                                           \
     virtual void RunImpl() const;                                                                  \
 } test##Name##Instance;                                                                            \
@@ -56,9 +56,9 @@ void Test##Fixture##Name::RunImpl() const                                       
     bool ctorOk = false;                                                                           \
     try                                                                                            \
     {                                                                                              \
-        Fixture##Name##Helper fixtureHelper(_details);                                              \
+        Fixture##Name##Helper fixtureHelper(_details);                                             \
         ctorOk = true;                                                                             \
-        UnitTestCpp::ExecuteTest(fixtureHelper, _details);                                          \
+        UnitTestCpp::ExecuteTest(fixtureHelper, _details);                                         \
     }                                                                                              \
     catch (const ::UnitTestCpp::AssertException & e)                                               \
     {                                                                                              \
@@ -99,7 +99,7 @@ void Fixture##Name##Helper::RunImpl()
 #define TEST_SUITE(Name)                                                                           \
     namespace Suite##Name                                                                          \
     {                                                                                              \
-        inline char const* GetSuiteName()                                                          \
+        inline char const * GetSuiteName()                                                         \
         {                                                                                          \
             return #Name ;                                                                         \
         }                                                                                          \

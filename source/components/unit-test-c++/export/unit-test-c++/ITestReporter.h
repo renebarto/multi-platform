@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <osal/Strings.h>
 
 namespace UnitTestCpp
 {
@@ -23,14 +24,14 @@ public:
     virtual void ReportTestRunSummary(const TestResults * results,
                                       int milliSecondsElapsed) = 0;
     virtual void ReportTestRunOverview(const TestResults * results) = 0;
-    virtual void ReportTestSuiteStart(const std::string & suiteName,
+    virtual void ReportTestSuiteStart(const OSAL::String & suiteName,
                                       int numberOfTests) = 0;
-    virtual void ReportTestSuiteFinish(const std::string & suiteName,
+    virtual void ReportTestSuiteFinish(const OSAL::String & suiteName,
                                        int numberOfTests, 
                                        int milliSecondsElapsed) = 0;
-    virtual void ReportTestFixtureStart(const std::string & fixtureName,
+    virtual void ReportTestFixtureStart(const OSAL::String & fixtureName,
                                         int numberOfTests) = 0;
-    virtual void ReportTestFixtureFinish(const std::string & fixtureName,
+    virtual void ReportTestFixtureFinish(const OSAL::String & fixtureName,
                                          int numberOfTests, 
                                          int milliSecondsElapsed) = 0;
     virtual void ReportTestStart(const TestDetails & details) = 0;
@@ -38,7 +39,7 @@ public:
                                   bool success, 
                                   int milliSecondsElapsed) = 0;
     virtual void ReportTestFailure(const TestDetails & details,
-                                   const std::string & failure) = 0;
+                                   const OSAL::String & failure) = 0;
 };
 
 } // namespace UnitTestCpp

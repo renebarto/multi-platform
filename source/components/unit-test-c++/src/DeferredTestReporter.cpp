@@ -31,23 +31,23 @@ void DeferredTestReporter::ReportTestRunOverview(const TestResults * UNUSED(_res
 {
 }
 
-void DeferredTestReporter::ReportTestSuiteStart(const string & UNUSED(suiteName),
+void DeferredTestReporter::ReportTestSuiteStart(const OSAL::String & UNUSED(suiteName),
                                                 int UNUSED(numberOfTestFixtures))
 {
 }
 
-void DeferredTestReporter::ReportTestSuiteFinish(const string & UNUSED(suiteName),
+void DeferredTestReporter::ReportTestSuiteFinish(const OSAL::String & UNUSED(suiteName),
                                                  int UNUSED(numberOfTests),
                                                  int UNUSED(milliSecondsElapsed))
 {
 }
 
-void DeferredTestReporter::ReportTestFixtureStart(const string & UNUSED(fixtureName),
+void DeferredTestReporter::ReportTestFixtureStart(const OSAL::String & UNUSED(fixtureName),
                                                   int UNUSED(numberOfTests))
 {
 }
 
-void DeferredTestReporter::ReportTestFixtureFinish(const string & UNUSED(fixtureName),
+void DeferredTestReporter::ReportTestFixtureFinish(const OSAL::String & UNUSED(fixtureName),
                                                    int UNUSED(numberOfTests),
                                                    int UNUSED(milliSecondsElapsed))
 {
@@ -66,7 +66,7 @@ void DeferredTestReporter::ReportTestFinish(const TestDetails & UNUSED(details),
     result.MilliSecondsElapsed(milliSecondsElapsed);
 }
 
-void DeferredTestReporter::ReportTestFailure(const TestDetails & details, const string & failure)
+void DeferredTestReporter::ReportTestFailure(const TestDetails & details, const OSAL::String & failure)
 {
     TestDetailedResult & result = _results.back();
     result.AddFailure(TestDetailedResult::Failure(details.lineNumber, failure));

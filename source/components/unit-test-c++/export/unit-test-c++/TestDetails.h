@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <unit-test-c++/exports.h>
+#include <unit-test-c++/Exports.h>
+#include <osal/Strings.h>
 
 namespace UnitTestCpp
 {
@@ -9,16 +10,16 @@ namespace UnitTestCpp
 class UNIT_TEST_CPP_EXPORT TestDetails
 {
 public:
-    TestDetails(const std::string & testName,
-                const std::string & fixtureName,
-                const std::string & suiteName,
-                const std::string & fileName, int lineNumber);
+    TestDetails(const OSAL::String & testName,
+                const OSAL::String & fixtureName,
+                const OSAL::String & suiteName,
+                const OSAL::String & fileName, int lineNumber);
     TestDetails(const TestDetails & details, int lineNumber);
 
-    const std::string suiteName;
-    const std::string fixtureName;
-    const std::string testName;
-    const std::string fileName;
+    const OSAL::String suiteName;
+    const OSAL::String fixtureName;
+    const OSAL::String testName;
+    const OSAL::String fileName;
     const int lineNumber;
 };
 

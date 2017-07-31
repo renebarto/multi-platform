@@ -1,6 +1,5 @@
 #include "unit-test-c++/UnitTestC++.h"
 
-#include <unistd.h>
 #include "core/ByteArray.h"
 #include "osal/Path.h"
 #include "TestData.h"
@@ -41,20 +40,20 @@ TEST_FIXTURE(PathTest, DirectoryExists)
 
 TEST_FIXTURE(PathTest, ResolveTilde)
 {
-    EXPECT_EQ(".", Path::ResolveTilde("."));
+    EXPECT_EQ(_("."), Path::ResolveTilde(_(".")));
     EXPECT_EQ(Test::Data::FilledDirPath(), Path::ResolveTilde(Test::Data::FilledDirPath()));
-    string home = getenv("HOME");
-    string expected = Path::CombinePath(home, "data");
-    EXPECT_EQ(expected, Path::ResolveTilde("~/data"));
+	OSAL::String home = OSAL::System::getenv(_("HOME"));
+    OSAL::String expected = Path::CombinePath(home, _("data"));
+    EXPECT_EQ(expected, Path::ResolveTilde(_("~/data")));
 }
 
 TEST_FIXTURE(PathTest, SplitPath)
 {
-    string path = Test::Data::RegularFilePath();
-    string directoryActual;
-    string fileNameActual;
-    string directoryExpected = Test::Data::FilledDirPath();
-    string fileNameExpected = Test::Data::RegularFileName();
+	OSAL::String path = Test::Data::RegularFilePath();
+	OSAL::String directoryActual;
+	OSAL::String fileNameActual;
+	OSAL::String directoryExpected = Test::Data::FilledDirPath();
+	OSAL::String fileNameExpected = Test::Data::RegularFileName();
 
     Path::SplitPath(path, directoryActual, fileNameActual);
     EXPECT_EQ(directoryExpected, directoryActual);
@@ -63,16 +62,16 @@ TEST_FIXTURE(PathTest, SplitPath)
 
 TEST_FIXTURE(PathTest, Extension)
 {
-    string path = Test::Data::RegularFilePath();
-    string expected = Test::Data::RegularFileExtension();
+	OSAL::String path = Test::Data::RegularFilePath();
+	OSAL::String expected = Test::Data::RegularFileExtension();
 
     EXPECT_EQ(expected, Path::Extension(path));
 }
 
 TEST_FIXTURE(PathTest, StripExtension)
 {
-    string path = Test::Data::RegularFilePath();
-    string expected = Path::CombinePath(Test::Data::FilledDirPath(), Test::Data::RegularFileNameNoExtension());
+	OSAL::String path = Test::Data::RegularFilePath();
+	OSAL::String expected = Path::CombinePath(Test::Data::FilledDirPath(), Test::Data::RegularFileNameNoExtension());
 
     EXPECT_EQ(expected, Path::StripExtension(path));
 }
@@ -91,9 +90,9 @@ TEST_FIXTURE(PathTest, CreatePathWithDefault)
 
 TEST_FIXTURE(PathTest, CombinePath)
 {
-    string basePath = "/Home/User";
-    string subDirectory = "/Subdirectory";
-    string expected = basePath + "/" + subDirectory;
+	OSAL::String basePath = _("/Home/User");
+	OSAL::String subDirectory = _("/Subdirectory");
+	OSAL::String expected = basePath + Path::PathSeparator() + subDirectory;
 
     EXPECT_EQ(expected, Path::CombinePath(basePath, subDirectory));
 }
@@ -112,15 +111,15 @@ TEST_FIXTURE(PathTest, FullPath)
     //     result = result.substr(0, pathDelimiterPos + 1) + subDirectory;
     // string expected = result;
     // EXPECT_EQ(expected, Path::FullPath(relativePath));
-    string home = getenv("HOME");
-    EXPECT_EQ(home, Path::FullPath("~/"));
+	OSAL::String home = OSAL::System::getenv(_("HOME"));
+    EXPECT_EQ(home, Path::FullPath(_("~/")));
 }
 
 TEST_FIXTURE(PathTest, StripPathToSubDirectory)
 {
-    string currentDirectory = Test::Data::RegularFilePath();
-    string stripToDirectory = Test::Data::TestDirName();
-    string result = currentDirectory;
+	OSAL::String currentDirectory = Test::Data::RegularFilePath();
+	OSAL::String stripToDirectory = Test::Data::TestDirName();
+	OSAL::String result = currentDirectory;
     size_t pathDelimiterPos = result.find_last_of('/');
     if (pathDelimiterPos != string::npos)
         result = result.substr(0, pathDelimiterPos);
@@ -130,61 +129,61 @@ TEST_FIXTURE(PathTest, StripPathToSubDirectory)
     pathDelimiterPos = result.find_last_of('/');
     if (pathDelimiterPos != string::npos)
         result = result.substr(0, pathDelimiterPos);
-    string expected = result;
+	OSAL::String expected = result;
     EXPECT_EQ(expected, Path::StripPathToSubDirectory(currentDirectory, stripToDirectory));
 }
 
 TEST_FIXTURE(PathTest, RelativePath1)
 {
-    string currentDirectory = Path::CurrentDir();
-    string newPath = "/usr";
-    EXPECT_EQ(0, chdir(newPath.c_str()));
-    string subDirectory = "lib";
-    string expected = "./" + subDirectory;
-    string fullPath = Path::CombinePath(newPath, subDirectory);
+	OSAL::String currentDirectory = Path::CurrentDir();
+	OSAL::String newPath = _("/usr");
+    EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
+	OSAL::String subDirectory = _("lib");
+	OSAL::String expected = OSAL::String(_(".")) + Path::PathSeparator() + subDirectory;
+	OSAL::String fullPath = Path::CombinePath(newPath, subDirectory);
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
-    EXPECT_EQ(0, chdir(currentDirectory.c_str()));
+    EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
 
 TEST_FIXTURE(PathTest, RelativePath2)
 {
-    string currentDirectory = Path::CurrentDir();
-    string rootDir = "/usr";
-    string newPath = Path::CombinePath(rootDir, "lib");
-    EXPECT_EQ(0, chdir(newPath.c_str()));
-    string subDirectory = "bin";
-    string expected = "../" + subDirectory;
-    string fullPath = Path::CombinePath(rootDir, subDirectory);
+	OSAL::String currentDirectory = Path::CurrentDir();
+	OSAL::String rootDir = _("/usr");
+	OSAL::String newPath = Path::CombinePath(rootDir, _("lib"));
+    EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
+	OSAL::String subDirectory = _("bin");
+	OSAL::String expected = OSAL::String(_("..")) + Path::PathSeparator() + subDirectory;
+	OSAL::String fullPath = Path::CombinePath(rootDir, subDirectory);
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
-    EXPECT_EQ(0, chdir(currentDirectory.c_str()));
+    EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
 
 TEST_FIXTURE(PathTest, RelativePath3)
 {
-    string currentDirectory = Path::CurrentDir();
-    string newPath = "/usr";
-    EXPECT_EQ(0, chdir(newPath.c_str()));
-    string subDirectory = "lib";
-    string expected = ".";
-    string fullPath = newPath;
+	OSAL::String currentDirectory = Path::CurrentDir();
+	OSAL::String newPath = _("/usr");
+    EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
+	OSAL::String subDirectory = _("lib");
+	OSAL::String expected = _(".");
+	OSAL::String fullPath = newPath;
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
-    EXPECT_EQ(0, chdir(currentDirectory.c_str()));
+    EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
 
 TEST_FIXTURE(PathTest, RelativePath4)
 {
-    string expected = "/usr/lib";
-    string fullPath = "/usr/lib";
+	OSAL::String expected = _("/usr/lib");
+	OSAL::String fullPath = _("/usr/lib");
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
 }
 
 TEST_FIXTURE(PathTest, CurrentDir)
 {
-    string currentDirectory = Path::CurrentDir();
-    string newPath = "/usr/lib";
-    EXPECT_EQ(0, chdir(newPath.c_str()));
-    string newCurrentDirectory = Path::CurrentDir();
-    EXPECT_EQ(0, chdir(currentDirectory.c_str()));
+	OSAL::String currentDirectory = Path::CurrentDir();
+	OSAL::String newPath = _("/usr/lib");
+    EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
+	OSAL::String newCurrentDirectory = Path::CurrentDir();
+    EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
     EXPECT_EQ(newPath, newCurrentDirectory);
 }
 

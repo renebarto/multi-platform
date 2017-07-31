@@ -5,10 +5,10 @@ using namespace std;
 namespace UnitTestCpp
 {
 
-TestDetails::TestDetails(const string & testName,
-                         const string & fixtureName,
-                         const string & suiteName,
-                         const string & fileName, int lineNumber)
+TestDetails::TestDetails(const OSAL::String & testName,
+                         const OSAL::String & fixtureName,
+                         const OSAL::String & suiteName,
+                         const OSAL::String & fileName, int lineNumber)
     : suiteName(suiteName)
     , fixtureName(fixtureName)
     , testName(testName)

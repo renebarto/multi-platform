@@ -23,7 +23,10 @@ Test::Test(const string & testName,
            const string & fixtureName,
            const string & suiteName,
            const string & fileName, int lineNumber)
-    : TestInfo(testName, fixtureName, suiteName, fileName, lineNumber)
+    : TestInfo(OSAL::ToString(testName), 
+			   OSAL::ToString(fixtureName), 
+               OSAL::ToString(suiteName), 
+               OSAL::ToString(fileName), lineNumber)
     , _next(nullptr)
 {
 }

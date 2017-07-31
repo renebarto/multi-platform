@@ -25,55 +25,55 @@ TEST_SUITE(osal)
 
 TEST_FIXTURE(StringTest, Trim)
 {
-    EXPECT_EQ("abc", Trim("abc", "'\""));
-    EXPECT_EQ("abc", Trim("'abc'", "'\""));
-    EXPECT_EQ("abc", Trim("\"abc\"", "'\""));
-    EXPECT_EQ("a'bc", Trim("\"a'bc\"", "'\""));
+    EXPECT_EQ(_("abc"), Trim(_("abc"), _("'\"")));
+    EXPECT_EQ(_("abc"), Trim(_("'abc'"), _("'\"")));
+    EXPECT_EQ(_("abc"), Trim(_("\"abc\""), _("'\"")));
+    EXPECT_EQ(_("a'bc"), Trim(_("\"a'bc\""), _("'\"")));
 }
 
 TEST_FIXTURE(StringTest, TrimSpaces)
 {
-    EXPECT_EQ("abc", TrimSpaces("abc"));
-    EXPECT_EQ("abc", TrimSpaces(" abc "));
-    EXPECT_EQ("ab c", TrimSpaces(" ab c "));
+    EXPECT_EQ(_("abc"), TrimSpaces(_("abc")));
+    EXPECT_EQ(_("abc"), TrimSpaces(_(" abc ")));
+    EXPECT_EQ(_("ab c"), TrimSpaces(_(" ab c ")));
 }
 
 TEST_FIXTURE(StringTest, TrimLeft)
 {
-    EXPECT_EQ("abc", TrimLeft("abc", "'\""));
-    EXPECT_EQ("abc'", TrimLeft("'abc'", "'\""));
-    EXPECT_EQ("abc\"", TrimLeft("\"abc\"", "'\""));
-    EXPECT_EQ("a'bc\"", TrimLeft("\"a'bc\"", "'\""));
+    EXPECT_EQ(_("abc"), TrimLeft(_("abc"), _("'\"")));
+    EXPECT_EQ(_("abc'"), TrimLeft(_("'abc'"), _("'\"")));
+    EXPECT_EQ(_("abc\""), TrimLeft(_("\"abc\""), _("'\"")));
+    EXPECT_EQ(_("a'bc\""), TrimLeft(_("\"a'bc\""), _("'\"")));
 }
 
 TEST_FIXTURE(StringTest, TrimSpacesLeft)
 {
-    EXPECT_EQ("abc", TrimSpacesLeft("abc"));
-    EXPECT_EQ("abc ", TrimSpacesLeft(" abc "));
-    EXPECT_EQ("ab c ", TrimSpacesLeft(" ab c "));
+    EXPECT_EQ(_("abc"), TrimSpacesLeft(_("abc")));
+    EXPECT_EQ(_("abc "), TrimSpacesLeft(_(" abc ")));
+    EXPECT_EQ(_("ab c "), TrimSpacesLeft(_(" ab c ")));
 }
 
 TEST_FIXTURE(StringTest, TrimRight)
 {
-    EXPECT_EQ("abc", TrimRight("abc", "'\""));
-    EXPECT_EQ("'abc", TrimRight("'abc'", "'\""));
-    EXPECT_EQ("\"abc", TrimRight("\"abc\"", "'\""));
-    EXPECT_EQ("\"a'bc", TrimRight("\"a'bc\"", "'\""));
+    EXPECT_EQ(_("abc"), TrimRight(_("abc"), _("'\"")));
+    EXPECT_EQ(_("'abc"), TrimRight(_("'abc'"), _("'\"")));
+    EXPECT_EQ(_("\"abc"), TrimRight(_("\"abc\""), _("'\"")));
+    EXPECT_EQ(_("\"a'bc"), TrimRight(_("\"a'bc\""), _("'\"")));
 }
 
 TEST_FIXTURE(StringTest, TrimSpaceRight)
 {
-    EXPECT_EQ("abc", TrimSpacesRight("abc"));
-    EXPECT_EQ(" abc", TrimSpacesRight(" abc "));
-    EXPECT_EQ(" ab c", TrimSpacesRight(" ab c "));
+    EXPECT_EQ(_("abc"), TrimSpacesRight(_("abc")));
+    EXPECT_EQ(_(" abc"), TrimSpacesRight(_(" abc ")));
+    EXPECT_EQ(_(" ab c"), TrimSpacesRight(_(" ab c ")));
 }
 
 TEST_FIXTURE(StringTest, IsEqualString)
 {
-    String aString("Test");
-    String aString2("Test");
-    String aString3("TEST");
-    String aString4("Test1");
+    String aString(_("Test"));
+    String aString2(_("Test"));
+    String aString3(_("TEST"));
+    String aString4(_("Test1"));
     EXPECT_TRUE(IsEqual(aString, aString));
     EXPECT_TRUE(IsEqual(aString, aString2));
     EXPECT_FALSE(IsEqual(aString, aString3));
@@ -88,10 +88,10 @@ TEST_FIXTURE(StringTest, IsEqualString)
 
 TEST_FIXTURE(StringTest, IsEqualIgnoreCaseString)
 {
-    String aString("Test");
-    String aString2("Test");
-    String aString3("TEST");
-    String aString4("Test1");
+    String aString(_("Test"));
+    String aString2(_("Test"));
+    String aString3(_("TEST"));
+    String aString4(_("Test1"));
     EXPECT_TRUE(IsEqualIgnoreCase(aString, aString));
     EXPECT_TRUE(IsEqualIgnoreCase(aString, aString2));
     EXPECT_TRUE(IsEqualIgnoreCase(aString, aString3));
@@ -175,55 +175,51 @@ TEST_FIXTURE(StringTest, IsEqualIgnoreCaseWCharPtr)
     EXPECT_TRUE(IsEqualIgnoreCase(aString3, aString2));
     EXPECT_FALSE(IsEqualIgnoreCase(aString3, aString4));
 }
-//String ToLower(const String & text);
-//String ToUpper(const String & text);
-//String Quote(const String & text);
-//String UnQuote(const String & text);
 
 TEST_FIXTURE(StringTest, ToLower)
 {
-    String input("Test");
-    String expected("test");
+    String input(_("Test"));
+    String expected(_("test"));
     String actual = ToLower(input);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(StringTest, ToUpper)
 {
-    String input("Test");
-    String expected("TEST");
+    String input(_("Test"));
+    String expected(_("TEST"));
     String actual = ToUpper(input);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(StringTest, QuoteUnquoted)
 {
-    String input("Test");
-    String expected("\"Test\"");
+    String input(_("Test"));
+    String expected(_("\"Test\""));
     String actual = Quote(input);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(StringTest, QuoteQuoted)
 {
-    String input("\"Test\"");
-    String expected("\"Test\"");
+    String input(_("\"Test\""));
+    String expected(_("\"Test\""));
     String actual = Quote(input);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(StringTest, UnQuoteUnquoted)
 {
-    String input("Test");
-    String expected("Test");
+    String input(_("Test"));
+    String expected(_("Test"));
     String actual = UnQuote(input);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(StringTest, UnQuoteQuoted)
 {
-    String input("\"Test\"");
-    String expected("Test");
+    String input(_("\"Test\""));
+    String expected(_("Test"));
     String actual = UnQuote(input);
     EXPECT_EQ(expected, actual);
 }
