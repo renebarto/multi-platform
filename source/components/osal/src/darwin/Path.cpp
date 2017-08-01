@@ -79,13 +79,13 @@ OSAL::String OSAL::Path::FullPath(const String & path)
 
 OSAL::String OSAL::Path::CurrentDir()
 {
-    char * currentDirectory = get_current_dir_name();
+    char buffer[PATH_MAX];
+    char * currentDirectory = getcwd(buffer, sizeof(buffer));
     if (currentDirectory == nullptr)
     {
         ThrowOnError(__func__, __FILE__, __LINE__, errno);
     }
     String result(currentDirectory);
-    free(currentDirectory);
     return FullPath(result);
 }
 

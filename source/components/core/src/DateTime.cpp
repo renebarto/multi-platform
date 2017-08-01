@@ -142,15 +142,16 @@ DateTime::operator timespec() const
 
 DateTime::operator timeval() const
 {
-    return timeval { static_cast<long>(_time.tv_sec), static_cast<long>(_time.tv_nsec / NanoSecondsPerMicroSecond)};
+    return timeval { static_cast<OSAL::Time::TimeValSeconds>(_time.tv_sec),
+                     static_cast<OSAL::Time::TimeValMicroSeconds>(_time.tv_nsec / NanoSecondsPerMicroSecond)};
 }
 
 DateTime & DateTime::operator += (const TimeSpan & timeSpan)
 {
     bool isLocalTime = (_dateTime.tm_tzOffset != 0);
     timespec newTime;
-    newTime.tv_nsec = static_cast<long>((_time.tv_nsec + timeSpan.NanoSeconds()) % NanoSecondsPerSecond);
-    newTime.tv_sec = static_cast<long>(_time.tv_sec + (_time.tv_nsec + timeSpan.NanoSeconds()) / NanoSecondsPerSecond);
+    newTime.tv_nsec = static_cast<OSAL::Time::TimeValSeconds>((_time.tv_nsec + timeSpan.NanoSeconds()) % NanoSecondsPerSecond);
+    newTime.tv_sec = static_cast<OSAL::Time::TimeValMicroSeconds>(_time.tv_sec + (_time.tv_nsec + timeSpan.NanoSeconds()) / NanoSecondsPerSecond);
     Assign(newTime, isLocalTime);
     return *this;
 }
@@ -159,8 +160,8 @@ DateTime & DateTime::operator -= (const TimeSpan & timeSpan)
 {
     bool isLocalTime = (_dateTime.tm_tzOffset != 0);
     timespec newTime;
-    newTime.tv_nsec = static_cast<long>((_time.tv_nsec - (timeSpan.NanoSeconds() % NanoSecondsPerSecond) + NanoSecondsPerSecond) % NanoSecondsPerSecond);
-    newTime.tv_sec = static_cast<long>(_time.tv_sec - timeSpan.NanoSeconds() / NanoSecondsPerSecond - (newTime.tv_nsec > _time.tv_nsec ? 1 : 0));
+    newTime.tv_nsec = static_cast<OSAL::Time::TimeValSeconds>((_time.tv_nsec - (timeSpan.NanoSeconds() % NanoSecondsPerSecond) + NanoSecondsPerSecond) % NanoSecondsPerSecond);
+    newTime.tv_sec = static_cast<OSAL::Time::TimeValMicroSeconds>(_time.tv_sec - timeSpan.NanoSeconds() / NanoSecondsPerSecond - (newTime.tv_nsec > _time.tv_nsec ? 1 : 0));
     Assign(newTime, isLocalTime);
     return *this;
 }
