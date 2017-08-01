@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unit-test-c++/Exports.h>
+#include <unit-test-c++/exports.h>
 #include <unit-test-c++/Test.h>
 #include <unit-test-c++/TestResults.h>
 #include <unit-test-c++/Timer.h>

@@ -2,8 +2,9 @@
 
 #include <sys/socket.h>
 #include <memory>
-#include "core/ByteArray.h"
 #include "osal/OSAL.h"
+#include "core/ByteArray.h"
+#include "network/exports.h"
 
 namespace Network
 {

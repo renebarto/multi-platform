@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unit-test-c++/Exports.h>
+#include <unit-test-c++/exports.h>
 #include <unit-test-c++/TestDetails.h>
 #include <osal/Strings.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Exports.h"
+#include "core/exports.h"
 #include <list>
 #include <osal/OSAL.h>
 WARNING_PUSH

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <osal/OSAL.h>
-#include "core/Exports.h"
+#include "core/exports.h"
 
 namespace Core
 {

@@ -2,7 +2,7 @@
 
 #include <exception>
 #include <string>
-#include <unit-test-c++/Exports.h>
+#include <unit-test-c++/exports.h>
 
 namespace UnitTestCpp
 {

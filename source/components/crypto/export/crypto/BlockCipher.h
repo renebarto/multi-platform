@@ -2,6 +2,7 @@
 
 #include "osal/Strings.h"
 #include "core/ByteArray.h"
+#include "crypto/exports.h"
 
 namespace Crypto
 {

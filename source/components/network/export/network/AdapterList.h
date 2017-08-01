@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include "network/exports.h"
 
 namespace Network
 {

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "core/Core.h"
 #include <stdexcept>
+#include "core/Core.h"
+#include "xml/exports.h"
 
 namespace XMLParser
 {

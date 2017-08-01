@@ -1,4 +1,4 @@
-#include "osal/Exports.h"
+#include "osal/exports.h"
 #if WIN_MSVC
 #pragma warning(disable : 4668)
 #endif

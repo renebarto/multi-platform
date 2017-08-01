@@ -2,7 +2,7 @@
 
 #include <string>
 #include <osal/Console.h>
-#include <unit-test-c++/Exports.h>
+#include <unit-test-c++/exports.h>
 #include <unit-test-c++/StreamTestReporter.h>
 
 namespace UnitTestCpp

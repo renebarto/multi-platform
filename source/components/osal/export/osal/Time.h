@@ -1,6 +1,6 @@
 #pragma once
 
-#include <osal/Exports.h>
+#include <osal/exports.h>
 
 #if defined(WIN_MSVC)
 #include "osal/windows/Time.h"

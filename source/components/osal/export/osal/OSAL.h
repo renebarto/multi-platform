@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "osal/Exports.h"
+#include "osal/exports.h"
 #if defined(WIN_MSVC)
 #include "osal/windows/OSAL.h"
 #elif defined(WIN_MINGW)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osal/Exports.h"
+#include "osal/exports.h"
 
 #include "osal/Unused.h"
 

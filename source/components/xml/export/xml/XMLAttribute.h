@@ -3,11 +3,11 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "core/Core.h"
-#include "core/Util.h"
+#include <core/Core.h>
+#include <core/Util.h>
 #include <core/serialization/DeserializationImpl.h>
-#include "network/IPV4Address.h"
-#include "network/IPV6Address.h"
+#include <network/IPV4Address.h>
+#include <network/IPV6Address.h>
 #include "xml/XMLBase.h"
 
 namespace XMLParser

@@ -751,7 +751,7 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC)
     DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
     tm localTime = *localtime(&time);
-    int64_t expected = localTime.tm_gmtoff * DateTime::MicroSecondsPerSecond;
+    int64_t expected = localTime.tm_gmtoff * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
@@ -761,7 +761,7 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC_SummerTime)
     DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
     tm localTime = *localtime(&time);
-    int64_t expected = localTime.tm_gmtoff * DateTime::MicroSecondsPerSecond;
+    int64_t expected = localTime.tm_gmtoff * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }

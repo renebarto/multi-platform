@@ -3,6 +3,7 @@
 #include <cassert>
 #include <initializer_list>
 #include <iostream>
+#include "osal/OSAL.h"
 WARNING_PUSH
 WARNING_DISABLE(4265)
 #include <mutex>
@@ -252,7 +253,7 @@ template<class T>
 std::string FixedArray<T>::ToString() const
 {
     std::ostringstream stream;
-    stream << OSAL::OS::TypeName(*this) << " Item size: " << sizeof(T) << " Size: " << size;
+    stream << OSAL::OS::TypeName(*this) << " Item size: " << sizeof(T) << " Size: " << _size;
     return stream.str();
 }
 

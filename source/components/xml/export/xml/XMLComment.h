@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include "xml/XMLNode.h"
 #include "xml/XMLVisitor.h"
-#include <memory>
 
 namespace XMLParser
 {

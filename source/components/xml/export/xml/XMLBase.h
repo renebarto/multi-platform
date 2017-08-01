@@ -1,9 +1,9 @@
 #pragma once
 
-#include "xml/XMLDefs.h"
-#include "xml/XMLErrorInfo.h"
 #include <cassert>
 #include <memory>
+#include "xml/XMLDefs.h"
+#include "xml/XMLErrorInfo.h"
 
 namespace XMLParser
 {

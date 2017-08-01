@@ -1,7 +1,7 @@
 #pragma once
 
 #include <osal/OSAL.h>
-#include <unit-test-c++/Exports.h>
+#include <unit-test-c++/exports.h>
 
 namespace UnitTestCpp
 {

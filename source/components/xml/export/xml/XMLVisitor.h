@@ -1,6 +1,7 @@
 #pragma once
 
 #include "xml/XMLAttribute.h"
+
 #include "xml/XMLBase.h"
 
 /**

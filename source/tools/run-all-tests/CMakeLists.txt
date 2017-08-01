@@ -36,7 +36,6 @@ set(TOOLS_RUNALLTESTS_DEPENDENCIES
     crypto.test-lib
     network.test-lib
     osal.test-lib
-    simd.test-lib
     unit-test-c++.test-lib
     xml.test-lib
     ${LINK_NO_WHOLE_LIB})
