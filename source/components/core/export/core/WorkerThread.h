@@ -57,15 +57,15 @@ protected:
         {
 
             pThis->SetSignalMask();
-            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Thread starting");
+            TheLogger().Debug(ComponentName, _("WorkerThread ") + pThis->GetName() + _(": Thread starting"));
             pThis->_birthEvent.Set();
             result = pThis->Thread();
-            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Thread stopping");
+            TheLogger().Debug(ComponentName, _("WorkerThread ") + pThis->GetName() + _(": Thread stopping"));
             pThis->_state = ThreadState::Finished;
         }
         catch (const std::exception & e)
         {
-            TheLogger().Debug(ComponentName, "WorkerThread " + pThis->GetName() + ": Exception thown: " + e.what());
+            TheLogger().Debug(ComponentName, _("WorkerThread ") + pThis->GetName() + _(": Exception thown: ") + OSAL::ToString(e.what()));
             throw;
         }
         return result;
@@ -80,7 +80,7 @@ protected:
         sigaddset(&signalMaskSet, SIGQUIT);
         if (pthread_sigmask(SIG_BLOCK, &signalMaskSet, nullptr) != 0)
             throw OSAL::SystemError(__func__, __FILE__, __LINE__, errno,
-                                    "Cannot set signal mask for thread");
+                                    _("Cannot set signal mask for thread"));
     }
 };
 

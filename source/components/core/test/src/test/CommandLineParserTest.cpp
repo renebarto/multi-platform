@@ -14,43 +14,43 @@ public:
     virtual void TearDown();
     void CheckDefinedVerboseBrief(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption("verbose"));
-        EXPECT_TRUE(parser.HaveOption("brief"));
+        EXPECT_TRUE(parser.HaveOption(_("verbose")));
+        EXPECT_TRUE(parser.HaveOption(_("brief")));
     }
     void CheckDefinedAdd(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption('a'));
-        EXPECT_TRUE(parser.HaveOption("add"));
+        EXPECT_TRUE(parser.HaveOption(_('a')));
+        EXPECT_TRUE(parser.HaveOption(_("add")));
     }
     void CheckDefinedAddOnly(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.HaveOption('a'));
-        EXPECT_TRUE(parser.HaveOption("add"));
+        EXPECT_FALSE(parser.HaveOption(_('a')));
+        EXPECT_TRUE(parser.HaveOption(_("add")));
     }
     void CheckNotDefinedAdd(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.HaveOption('a'));
-        EXPECT_FALSE(parser.HaveOption("add"));
+        EXPECT_FALSE(parser.HaveOption(_('a')));
+        EXPECT_FALSE(parser.HaveOption(_("add")));
     }
     void CheckDefinedAppend(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption('b'));
-        EXPECT_TRUE(parser.HaveOption("append"));
+        EXPECT_TRUE(parser.HaveOption(_('b')));
+        EXPECT_TRUE(parser.HaveOption(_("append")));
     }
     void CheckDefinedDelete(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption('d'));
-        EXPECT_TRUE(parser.HaveOption("delete"));
+        EXPECT_TRUE(parser.HaveOption(_('d')));
+        EXPECT_TRUE(parser.HaveOption(_("delete")));
     }
     void CheckDefinedCreate(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption('c'));
-        EXPECT_TRUE(parser.HaveOption("create"));
+        EXPECT_TRUE(parser.HaveOption(_('c')));
+        EXPECT_TRUE(parser.HaveOption(_("create")));
     }
     void CheckDefinedFile(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.HaveOption('f'));
-        EXPECT_TRUE(parser.HaveOption("file"));
+        EXPECT_TRUE(parser.HaveOption(_('f')));
+        EXPECT_TRUE(parser.HaveOption(_("file")));
     }
     void CheckDefinedOptions(const CommandLineParser &parser) const
     {
@@ -63,87 +63,87 @@ public:
     }
     void CheckFoundVerbose(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption("verbose"));
+        EXPECT_TRUE(parser.FoundOption(_("verbose")));
     }
     void CheckNotFoundVerbose(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption("verbose"));
+        EXPECT_FALSE(parser.FoundOption(_("verbose")));
     }
     void CheckFoundBrief(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption("brief"));
+        EXPECT_TRUE(parser.FoundOption(_("brief")));
     }
     void CheckNotFoundBrief(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption("brief"));
+        EXPECT_FALSE(parser.FoundOption(_("brief")));
     }
     void CheckFoundAdd(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption('a'));
-        EXPECT_TRUE(parser.FoundOption("add"));
+        EXPECT_TRUE(parser.FoundOption_('a'));
+        EXPECT_TRUE(parser.FoundOption(_("add")));
     }
     void CheckNotFoundAdd(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption('a'));
-        EXPECT_FALSE(parser.FoundOption("add"));
+        EXPECT_FALSE(parser.FoundOption_('a'));
+        EXPECT_FALSE(parser.FoundOption(_("add")));
     }
     void CheckFoundAppend(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption('b'));
-        EXPECT_TRUE(parser.FoundOption("append"));
+        EXPECT_TRUE(parser.FoundOption_('b'));
+        EXPECT_TRUE(parser.FoundOption(_("append")));
     }
     void CheckNotFoundAppend(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption('b'));
-        EXPECT_FALSE(parser.FoundOption("append"));
+        EXPECT_FALSE(parser.FoundOption_('b'));
+        EXPECT_FALSE(parser.FoundOption(_("append")));
     }
     void CheckFoundDelete(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption('d'));
-        EXPECT_TRUE(parser.FoundOption("delete"));
+        EXPECT_TRUE(parser.FoundOption_('d'));
+        EXPECT_TRUE(parser.FoundOption_("delete"));
     }
     void CheckNotFoundDelete(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption('d'));
-        EXPECT_FALSE(parser.FoundOption("delete"));
+        EXPECT_FALSE(parser.FoundOption_('d'));
+        EXPECT_FALSE(parser.FoundOption_("delete"));
     }
     void CheckFoundDelete(const CommandLineParser &parser, const OSAL::String & value) const
     {
         CheckFoundDelete(parser);
-        EXPECT_EQ(value, parser.GetOption('d'));
-        EXPECT_EQ(value, parser.GetOption("delete"));
+        EXPECT_EQ(value, parser.GetOption_('d'));
+        EXPECT_EQ(value, parser.GetOption_("delete"));
     }
     void CheckFoundCreate(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption('c'));
-        EXPECT_TRUE(parser.FoundOption("create"));
+        EXPECT_TRUE(parser.FoundOption_('c'));
+        EXPECT_TRUE(parser.FoundOption_("create"));
     }
     void CheckNotFoundCreate(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption('c'));
-        EXPECT_FALSE(parser.FoundOption("create"));
+        EXPECT_FALSE(parser.FoundOption_('c'));
+        EXPECT_FALSE(parser.FoundOption_("create"));
     }
     void CheckFoundCreate(const CommandLineParser &parser, const OSAL::String & value) const
     {
         CheckFoundCreate(parser);
-        EXPECT_EQ(value, parser.GetOption('c'));
-        EXPECT_EQ(value, parser.GetOption("create"));
+        EXPECT_EQ(value, parser.GetOption_('c'));
+        EXPECT_EQ(value, parser.GetOption_("create"));
     }
     void CheckFoundFile(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption('f'));
-        EXPECT_TRUE(parser.FoundOption("file"));
+        EXPECT_TRUE(parser.FoundOption_('f'));
+        EXPECT_TRUE(parser.FoundOption_("file"));
     }
     void CheckNotFoundFile(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption('f'));
-        EXPECT_FALSE(parser.FoundOption("file"));
+        EXPECT_FALSE(parser.FoundOption_('f'));
+        EXPECT_FALSE(parser.FoundOption_("file"));
     }
     void CheckFoundFile(const CommandLineParser &parser, const OSAL::String & value) const
     {
         CheckFoundFile(parser);
-        EXPECT_EQ(value, parser.GetOption('f'));
-        EXPECT_EQ(value, parser.GetOption("file"));
+        EXPECT_EQ(value, parser.GetOption_('f'));
+        EXPECT_EQ(value, parser.GetOption_("file"));
     }
     void CheckNotFoundOptions(const CommandLineParser &parser) const
     {
@@ -194,8 +194,8 @@ public:
         CheckFoundDelete(parser);
         CheckNotFoundCreate(parser);
         CheckNotFoundFile(parser);
-        EXPECT_EQ(value, parser.GetOption('d'));
-        EXPECT_EQ(value, parser.GetOption("delete"));
+        EXPECT_EQ(value, parser.GetOption_('d'));
+        EXPECT_EQ(value, parser.GetOption_("delete"));
     }
     void CheckFoundFileOnly(const CommandLineParser &parser, const OSAL::String & value) const
     {
@@ -206,8 +206,8 @@ public:
         CheckNotFoundDelete(parser);
         CheckNotFoundCreate(parser);
         CheckFoundFile(parser);
-        EXPECT_EQ(value, parser.GetOption('f'));
-        EXPECT_EQ(value, parser.GetOption("file"));
+        EXPECT_EQ(value, parser.GetOption_('f'));
+        EXPECT_EQ(value, parser.GetOption_("file"));
     }
 };
 

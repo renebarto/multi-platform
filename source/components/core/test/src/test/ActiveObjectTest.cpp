@@ -16,7 +16,7 @@ class MyActiveObject: public ActiveObject<int>
 public:
     static bool isDeleted;
 
-    MyActiveObject(): ActiveObject("ActiveObjTst1")
+    MyActiveObject(): ActiveObject(_("ActiveObjTst1"))
     {
         MyActiveObject::isDeleted = false;
     }
@@ -35,7 +35,7 @@ bool MyActiveObject::isDeleted;
 class MyActiveObject2: public ActiveObject<int>
 {
 public:
-    MyActiveObject2() : ActiveObject("ActiveObjTst2") {}
+    MyActiveObject2() : ActiveObject(_("ActiveObjTst2")) {}
     virtual void InitThread() { }
     virtual int Run()
     {

@@ -8,7 +8,7 @@
 class Test##Name : public UnitTestCpp::Test                                                        \
 {                                                                                                  \
 public:                                                                                            \
-    Test##Name() : Test(#Name, _(""), GetSuiteName(), __FILE__, __LINE__) {}                       \
+    Test##Name() : Test(#Name, "", GetSuiteName(), __FILE__, __LINE__) {}                       \
 private:                                                                                           \
     virtual void RunImpl() const;                                                                  \
 } test##Name##Instance;                                                                            \

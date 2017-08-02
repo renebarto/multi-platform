@@ -26,6 +26,9 @@ inline int nanosleep(const timespec * req, timespec * rem)
     return ::nanosleep(req, rem);
 }
 
+using TimeValSeconds = long;
+using TimeValMicroSeconds = long;
+
 struct OSAL_EXPORT tm
 {
     tm(bool initialize = false);

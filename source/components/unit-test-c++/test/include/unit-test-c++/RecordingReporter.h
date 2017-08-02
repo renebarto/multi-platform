@@ -58,20 +58,20 @@ public:
     void ReportTestRunOverview(const TestResults * UNUSED(results))
     {
     }
-    virtual void ReportTestSuiteStart(const std::string & UNUSED(suiteName),
+    virtual void ReportTestSuiteStart(const OSAL::String & UNUSED(suiteName),
                                       int UNUSED(numberOfTestFixtures))
     {
     }
-    virtual void ReportTestSuiteFinish(const std::string & UNUSED(suiteName),
+    virtual void ReportTestSuiteFinish(const OSAL::String & UNUSED(suiteName),
                                        int UNUSED(numberOfTestFixtures),
                                        int UNUSED(milliSecondsElapsed))
     {
     }
-    virtual void ReportTestFixtureStart(const std::string & UNUSED(fixtureName),
+    virtual void ReportTestFixtureStart(const OSAL::String & UNUSED(fixtureName),
                                         int UNUSED(numberOfTests))
     {
     }
-    virtual void ReportTestFixtureFinish(const std::string & UNUSED(fixtureName),
+    virtual void ReportTestFixtureFinish(const OSAL::String & UNUSED(fixtureName),
                                          int UNUSED(numberOfTests),
                                          int UNUSED(milliSecondsElapsed))
     {
@@ -93,7 +93,7 @@ public:
         lastFinishedTest = details.testName;
         lastFinishedTestTime = milliSecondsElapsed;
     }
-    virtual void ReportTestFailure(const TestDetails & details, const std::string & failure)
+    virtual void ReportTestFailure(const TestDetails & details, const OSAL::String & failure)
     {
         ++testFailedCount;
         lastFailedFile = details.fileName;
@@ -105,22 +105,22 @@ public:
     }
 
     int testRunCount;
-    std::string lastStartedSuite;
-    std::string lastStartedFixture;
-    std::string lastStartedTest;
+    OSAL::String lastStartedSuite;
+    OSAL::String lastStartedFixture;
+    OSAL::String lastStartedTest;
 
     int testFailedCount;
-    std::string lastFailedFile;
+    OSAL::String lastFailedFile;
     int lastFailedLine;
-    std::string lastFailedSuite;
-    std::string lastFailedFixture;
-    std::string lastFailedTest;
-    std::string lastFailedMessage;
+    OSAL::String lastFailedSuite;
+    OSAL::String lastFailedFixture;
+    OSAL::String lastFailedTest;
+    OSAL::String lastFailedMessage;
 
     int testFinishedCount;
-    std::string lastFinishedSuite;
-    std::string lastFinishedFixture;
-    std::string lastFinishedTest;
+    OSAL::String lastFinishedSuite;
+    OSAL::String lastFinishedFixture;
+    OSAL::String lastFinishedTest;
     int lastFinishedTestTime;
 
     int summaryTotalTestCount;

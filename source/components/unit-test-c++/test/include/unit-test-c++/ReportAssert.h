@@ -6,7 +6,7 @@
 namespace UnitTestCpp
 {
 
-inline void ReportAssert(std::string description, std::string filename, int lineNumber)
+inline void ReportAssert(OSAL::String description, OSAL::String filename, int lineNumber)
 {
     throw AssertException(description, filename, lineNumber);
 }

@@ -52,9 +52,9 @@ TEST (ExceptionsInFixtureAreReportedAsHappeningInTheFixture)
         list2.GetHead()->RunIf(True(), 0, &result);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Unhandled exception") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("fixture") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("ThrowingThingie") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Unhandled exception")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("fixture")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("ThrowingThingie")) != string::npos);
 }
 
 struct DummyFixture : public TestFixture
@@ -97,9 +97,9 @@ TEST(TestAddedWithTEST_EXMacroGetsDefaultSuite)
     CHECK(macroTestRegistry1.GetHead() != 0);
     CHECK(macroTestRegistry1.GetHead()->GetHead() != 0);
     CHECK(macroTestRegistry1.GetHead()->GetHead()->GetHead() != 0);
-    ASSERT_EQ("MacroTestHelper1", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.testName);
-    ASSERT_EQ("", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.fixtureName);
-    ASSERT_EQ("unit_test_cpp", macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.suiteName);
+    ASSERT_EQ(_("MacroTestHelper1"), macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.testName);
+    ASSERT_EQ(_(""), macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.fixtureName);
+    ASSERT_EQ(_("unit_test_cpp"), macroTestRegistry1.GetHead()->GetHead()->GetHead()->_details.suiteName);
 }
 
 TestRegistry macroTestRegistry2;
@@ -112,9 +112,9 @@ TEST(TestAddedWithTEST_FIXTURE_EXMacroGetsDefaultSuite)
     CHECK(macroTestRegistry2.GetHead() != 0);
     CHECK(macroTestRegistry2.GetHead()->GetHead() != 0);
     CHECK(macroTestRegistry2.GetHead()->GetHead()->GetHead() != 0);
-    ASSERT_EQ("MacroTestHelper2", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.testName);
-    ASSERT_EQ("DummyFixture", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.fixtureName);
-    ASSERT_EQ("unit_test_cpp", macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.suiteName);
+    ASSERT_EQ(_("MacroTestHelper2"), macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.testName);
+    ASSERT_EQ(_("DummyFixture"), macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.fixtureName);
+    ASSERT_EQ(_("unit_test_cpp"), macroTestRegistry2.GetHead()->GetHead()->GetHead()->_details.suiteName);
 }
 
 struct FixtureCtorThrows : public TestFixture
@@ -144,7 +144,7 @@ TEST(FixturesWithThrowingCtorsAreFailures)
 
     int const failureCount = result.GetFailedTestCount();
     ASSERT_EQ(1, failureCount);
-    ASSERT_TRUE(reporter.lastFailedMessage.find("while constructing fixture") != string::npos);
+    ASSERT_TRUE(reporter.lastFailedMessage.find(_("while constructing fixture")) != string::npos);
 }
 
 struct FixtureDtorThrows : public TestFixture
@@ -194,7 +194,7 @@ struct FixtureCtorAsserts : public TestFixture
 {
     FixtureCtorAsserts()
     {
-        UnitTestCpp::ReportAssert("assert failure", "file", FailingLine);
+        UnitTestCpp::ReportAssert(_("assert failure"), _("file"), FailingLine);
     }
     void SetUp() {}
     void TearDown() {}
@@ -217,7 +217,7 @@ TEST(CorrectlyReportsFixturesWithCtorsThatAssert)
     const int failureCount = result.GetFailedTestCount();
     ASSERT_EQ(1, failureCount);
     ASSERT_EQ(FailingLine, reporter.lastFailedLine);
-    ASSERT_TRUE(reporter.lastFailedMessage.find("assert failure") != string::npos);
+    ASSERT_TRUE(reporter.lastFailedMessage.find(_("assert failure")) != string::npos);
 }
 
 // We're really testing if it's possible to use the same suite in two files
@@ -237,7 +237,7 @@ TEST_SUITE(SameTestSuite)
 TEST(CUR_TEST_NAME)
 {
     const UnitTestCpp::TestDetails* details = CurrentTest::Details();
-    ASSERT_EQ(STRINGIFY(CUR_TEST_NAME), details->testName);
+    ASSERT_EQ(OSAL::ToString(STRINGIFY(CUR_TEST_NAME)), details->testName);
 }
 
 #undef CUR_TEST_NAME

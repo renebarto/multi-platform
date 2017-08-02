@@ -7,7 +7,7 @@ namespace UnitTestCpp
 namespace _Test
 {
 
-static TestDetails const TheTestDetails("testname", "fixturename", "suitename", "filename", 123);
+static TestDetails const TheTestDetails(_("testname"), _("fixturename"), _("suitename"), _("filename"), 123);
 
 TEST_SUITE(unit_test_cpp)
 {
@@ -65,9 +65,9 @@ TEST(NotifiesReporterOfTestStartWithCorrectInfo)
     results.OnTestStart(TheTestDetails);
 
     ASSERT_EQ(1, reporter.testRunCount);
-    ASSERT_EQ("suitename", reporter.lastStartedSuite);
-    ASSERT_EQ("fixturename", reporter.lastStartedFixture);
-    ASSERT_EQ("testname", reporter.lastStartedTest);
+    ASSERT_EQ(_("suitename"), reporter.lastStartedSuite);
+    ASSERT_EQ(_("fixturename"), reporter.lastStartedFixture);
+    ASSERT_EQ(_("testname"), reporter.lastStartedTest);
 }
 
 TEST(NotifiesReporterOfTestFailureWithCorrectInfo)
@@ -77,11 +77,11 @@ TEST(NotifiesReporterOfTestFailureWithCorrectInfo)
 
     results.OnTestFailure(TheTestDetails, "failurestring");
     ASSERT_EQ(1, reporter.testFailedCount);
-    ASSERT_EQ("filename", reporter.lastFailedFile);
+    ASSERT_EQ(_("filename"), reporter.lastFailedFile);
     ASSERT_EQ(123, reporter.lastFailedLine);
-    ASSERT_EQ("suitename", reporter.lastFailedSuite);
-    ASSERT_EQ("testname", reporter.lastFailedTest);
-    ASSERT_EQ("failurestring", reporter.lastFailedMessage);
+    ASSERT_EQ(_("suitename"), reporter.lastFailedSuite);
+    ASSERT_EQ(_("testname"), reporter.lastFailedTest);
+    ASSERT_EQ(_("failurestring"), reporter.lastFailedMessage);
 }
 
 TEST(NotifiesReporterOfCheckFailureWithCorrectInfo)
@@ -94,11 +94,11 @@ TEST(NotifiesReporterOfCheckFailureWithCorrectInfo)
 
     CHECK(false);
     ASSERT_EQ(1, reporter.testFailedCount);
-    ASSERT_EQ("filename", reporter.lastFailedFile);
+    ASSERT_EQ(_("filename"), reporter.lastFailedFile);
     ASSERT_EQ(123, reporter.lastFailedLine);
-    ASSERT_EQ("suitename", reporter.lastFailedSuite);
-    ASSERT_EQ("testname", reporter.lastFailedTest);
-    ASSERT_EQ("failurestring", reporter.lastFailedMessage);
+    ASSERT_EQ(_("suitename"), reporter.lastFailedSuite);
+    ASSERT_EQ(_("testname"), reporter.lastFailedTest);
+    ASSERT_EQ(_("failurestring"), reporter.lastFailedMessage);
 }
 
 TEST(NotifiesReporterOfTestEnd)
@@ -108,8 +108,8 @@ TEST(NotifiesReporterOfTestEnd)
 
     results.OnTestFinish(TheTestDetails, 1234);
     ASSERT_EQ(1, reporter.testFinishedCount);
-    ASSERT_EQ("testname", reporter.lastFinishedTest);
-    ASSERT_EQ("suitename", reporter.lastFinishedSuite);
+    ASSERT_EQ(_("testname"), reporter.lastFinishedTest);
+    ASSERT_EQ(_("suitename"), reporter.lastFinishedSuite);
     ASSERT_EQ(1234, reporter.lastFinishedTestTime);
 }
 

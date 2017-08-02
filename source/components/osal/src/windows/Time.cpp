@@ -15,6 +15,7 @@ const tm & BaseTime()
 const long tm::tm_tzOffset = 0;
 const int tm::tm_dstOffset = 0;
 const OSAL::Char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
+static constexpr int SecondsPerMinute = 60;
 
 tm::tm(bool initialize)
 : _tm()

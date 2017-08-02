@@ -69,9 +69,9 @@ TEST(ExpectTrueFailureIncludesCheckContents)
         EXPECT_TRUE(yaddayadda);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Value of: yaddayadda") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Actual: false") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Expected: true") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Value of: yaddayadda")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Actual: false")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Expected: true")) != string::npos);
 }
 
 TEST(ExpectFalseSucceedsOnFalse)
@@ -126,9 +126,9 @@ TEST(ExpectFalseFailureIncludesCheckContents)
         EXPECT_FALSE(yaddayadda);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Value of: yaddayadda") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Actual: true") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Expected: false") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Value of: yaddayadda")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Actual: true")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Expected: false")) != string::npos);
 }
 
 int ThrowingFunction()
@@ -159,7 +159,7 @@ TEST(CheckFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_TRUE(ThrowingFunction() == 1);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("ThrowingFunction() == 1") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("ThrowingFunction() == 1")) != string::npos);
 }
 
 int g_sideEffect = 0;
@@ -217,17 +217,16 @@ TEST(CheckEqualFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_EQ(1, 123);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -237,17 +236,16 @@ TEST(CheckEqualFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_EQ(ThrowingFunction(), 123);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -260,8 +258,8 @@ TEST(CheckEqualFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_EQ(ThrowingFunction(), 123);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("ThrowingFunction()") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("123") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("ThrowingFunction()")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("123")) != string::npos);
 }
 
 TEST(CheckEqualDoesNotHaveSideEffectsWhenPassing)
@@ -335,17 +333,16 @@ TEST(ExpectEqualFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_EQ(1, 123);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -355,17 +352,17 @@ TEST(ExpectEqualFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"),
+                                                   _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_EQ(ThrowingFunction(), 123);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -378,8 +375,8 @@ TEST(ExpectEqualFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_EQ(ThrowingFunction(), 123);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("ThrowingFunction()") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("123") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("ThrowingFunction()")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("123")) != string::npos);
 }
 
 TEST(ExpectEqualDoesNotHaveSideEffectsWhenPassing)
@@ -453,17 +450,16 @@ TEST(ExpectNotEqualFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_NE(1, 1);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -473,17 +469,16 @@ TEST(ExpectNotEqualFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails const testDetails("testName", "fixtureName", "suiteName",
-                                                   "filename", -1);
+        UnitTestCpp::TestDetails const testDetails(_("testName"), _("fixtureName"), _("suiteName"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_NE(ThrowingFunction(), 1);    line = __LINE__;
     }
 
-    EXPECT_EQ("testName", reporter.lastFailedTest);
-    EXPECT_EQ("suiteName", reporter.lastFailedSuite);
-    EXPECT_EQ("fixtureName", reporter.lastFailedFixture);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("testName"), reporter.lastFailedTest);
+    EXPECT_EQ(_("suiteName"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("fixtureName"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -496,8 +491,8 @@ TEST(ExpectNotEqualFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_NE(ThrowingFunction(), 123);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("ThrowingFunction()") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("123") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("ThrowingFunction()")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("123")) != string::npos);
 }
 
 TEST(ExpectNotEqualDoesNotHaveSideEffectsWhenPassing)
@@ -571,16 +566,16 @@ TEST(CheckCloseFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("test", "fixture", "suite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("test"), _("fixture"), _("suite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_NEAR(1.0f, 1.1f, 0.01f);    line = __LINE__;
     }
 
-    EXPECT_EQ("test", reporter.lastFailedTest);
-    EXPECT_EQ("fixture", reporter.lastFailedFixture);
-    EXPECT_EQ("suite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("test"), reporter.lastFailedTest);
+    EXPECT_EQ(_("fixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("suite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -590,16 +585,15 @@ TEST(CheckCloseFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("closeTest", "closeFixture", "closeSuite",
-                                             "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("closeTest"), _("closeFixture"), _("closeSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
         EXPECT_NEAR((float)ThrowingFunction(), 1.0001f, 0.1f);    line = __LINE__;
     }
 
-    EXPECT_EQ("closeTest", reporter.lastFailedTest);
-    EXPECT_EQ("closeFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("closeSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("closeTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("closeFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("closeSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -612,8 +606,8 @@ TEST(CheckCloseFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_NEAR((float)ThrowingFunction(), 1.0001f, 0.1f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("(float)ThrowingFunction()") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("1.0001f") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("(float)ThrowingFunction()")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("1.0001f")) != string::npos);
 }
 
 TEST(CheckCloseDoesNotHaveSideEffectsWhenPassing)
@@ -687,16 +681,16 @@ TEST(ExpectNearFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("test", "fixture", "suite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("test"), _("fixture"), _("suite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         EXPECT_NEAR (1.0f, 1.1f, 0.01f);    line = __LINE__;
     }
 
-    EXPECT_EQ("test", reporter.lastFailedTest);
-    EXPECT_EQ("fixture", reporter.lastFailedFixture);
-    EXPECT_EQ("suite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("test"), reporter.lastFailedTest);
+    EXPECT_EQ(_("fixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("suite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -706,16 +700,15 @@ TEST(ExpectNearFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("closeTest", "closeFixture", "closeSuite",
-                                             "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("closeTest"), _("closeFixture"), _("closeSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
         EXPECT_NEAR ((float)ThrowingFunction(), 1.0001f, 0.1f);    line = __LINE__;
     }
 
-    EXPECT_EQ("closeTest", reporter.lastFailedTest);
-    EXPECT_EQ("closeFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("closeSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("closeTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("closeFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("closeSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -728,8 +721,8 @@ TEST(ExpectNearFailureBecauseOfExceptionIncludesCheckContents)
         EXPECT_NEAR ((float)ThrowingFunction(), 1.0001f, 0.1f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("(float)ThrowingFunction()") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("1.0001f") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("(float)ThrowingFunction()")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("1.0001f")) != string::npos);
 }
 
 TEST(ExpectNearDoesNotHaveSideEffectsWhenPassing)
@@ -810,10 +803,10 @@ TEST(CheckArrayCloseFailureIncludesCheckExpectedAndActual)
         EXPECT_ARRAY_NEAR(data1, data2, 4, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Value of: data2") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Actual: { 0, 1, 3, 3 }") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Expected: data1") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Which is: { 0, 1, 2, 3 }") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Value of: data2")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Actual: { 0, 1, 3, 3 }")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Expected: data1")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Which is: { 0, 1, 2, 3 }")) != string::npos);
 }
 
 TEST(CheckArrayCloseFailureContainsCorrectDetails)
@@ -822,8 +815,7 @@ TEST(CheckArrayCloseFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("arrayCloseTest", "arrayCloseFixture",
-                                             "arrayCloseSuite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("arrayCloseTest"), _("arrayCloseFixture"), _("arrayCloseSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         int const data1[4] = { 0, 1, 2, 3 };
@@ -831,10 +823,10 @@ TEST(CheckArrayCloseFailureContainsCorrectDetails)
         EXPECT_ARRAY_NEAR(data1, data2, 4, 0.01f);     line = __LINE__;
     }
 
-    EXPECT_EQ("arrayCloseTest", reporter.lastFailedTest);
-    EXPECT_EQ("arrayCloseFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("arrayCloseSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("arrayCloseTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("arrayCloseFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("arrayCloseSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -844,18 +836,17 @@ TEST(CheckArrayCloseFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("arrayCloseTest", "arrayCloseFixture",
-                                             "arrayCloseSuite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("arrayCloseTest"), _("arrayCloseFixture"), _("arrayCloseSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         int const data[4] = { 0, 1, 2, 3 };
         EXPECT_ARRAY_NEAR(data, ThrowingObject(), 4, 0.01f); line = __LINE__;
     }
 
-    EXPECT_EQ("arrayCloseTest", reporter.lastFailedTest);
-    EXPECT_EQ("arrayCloseFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("arrayCloseSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("arrayCloseTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("arrayCloseFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("arrayCloseSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -871,7 +862,7 @@ TEST(CheckArrayCloseFailureIncludesTolerance)
         EXPECT_ARRAY_NEAR(data1, data2, 4, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("0.01") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("0.01")) != string::npos);
 }
 
 
@@ -905,8 +896,8 @@ TEST(CheckArrayCloseFailureOnExceptionIncludesCheckContents)
         EXPECT_ARRAY_NEAR(data, obj, 3, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("data") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("obj") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("data")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("obj")) != string::npos);
 }
 
 
@@ -957,10 +948,10 @@ TEST(CheckArrayEqualFailureIncludesCheckExpectedAndActual)
         EXPECT_ARRAY_EQ(data1, data2, 4);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Value of: data2") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Actual: { 0, 1, 3, 3 }") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Expected: data1") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Which is: { 0, 1, 2, 3 }") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Value of: data2")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Actual: { 0, 1, 3, 3 }")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Expected: data1")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Which is: { 0, 1, 2, 3 }")) != string::npos);
 }
 
 TEST(CheckArrayEqualFailureContainsCorrectInfo)
@@ -976,8 +967,8 @@ TEST(CheckArrayEqualFailureContainsCorrectInfo)
         EXPECT_ARRAY_EQ(data1, data2, 4);     line = __LINE__;
     }
 
-    EXPECT_EQ("CheckArrayEqualFailureContainsCorrectInfo", reporter.lastFailedTest);
-    EXPECT_EQ(__FILE__, reporter.lastFailedFile);
+    EXPECT_EQ(_("CheckArrayEqualFailureContainsCorrectInfo"), reporter.lastFailedTest);
+    EXPECT_EQ(OSAL::ToString(__FILE__), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -1011,8 +1002,8 @@ TEST(CheckArrayEqualFailureOnExceptionIncludesCheckContents)
         EXPECT_ARRAY_EQ(data, obj, 3);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("data"));
-    EXPECT_TRUE(reporter.lastFailedMessage.find("obj"));
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("data")));
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("obj")));
 }
 
 float const* FunctionWithSideEffects2()
@@ -1107,10 +1098,10 @@ TEST(CheckArray2DCloseFailureIncludesCheckExpectedAndActual)
         EXPECT_ARRAY2D_NEAR(data1, data2, 2, 2, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Value of: data2") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Actual: { { 0, 1 }, { 3, 3 } }") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Expected: data1") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("Which is: { { 0, 1 }, { 2, 3 } }") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Value of: data2")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Actual: { { 0, 1 }, { 3, 3 } }")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Expected: data1")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("Which is: { { 0, 1 }, { 2, 3 } }")) != string::npos);
 }
 
 TEST(CheckArray2DCloseFailureContainsCorrectDetails)
@@ -1119,8 +1110,7 @@ TEST(CheckArray2DCloseFailureContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("array2DCloseTest", "array2DCloseFixture",
-                                             "array2DCloseSuite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("array2DCloseTest"), _("array2DCloseFixture"), _("array2DCloseSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         int const data1[2][2] = { {0, 1}, {2, 3} };
@@ -1128,10 +1118,10 @@ TEST(CheckArray2DCloseFailureContainsCorrectDetails)
         EXPECT_ARRAY2D_NEAR(data1, data2, 2, 2, 0.01f);     line = __LINE__;
     }
 
-    EXPECT_EQ("array2DCloseTest", reporter.lastFailedTest);
-    EXPECT_EQ("array2DCloseFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("array2DCloseSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("array2DCloseTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("array2DCloseFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("array2DCloseSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -1141,18 +1131,17 @@ TEST(CheckArray2DCloseFailureBecauseOfExceptionContainsCorrectDetails)
     RecordingReporter reporter;
     {
         UnitTestCpp::TestResults testResults(&reporter);
-        UnitTestCpp::TestDetails testDetails("array2DCloseTest", "array2DCloseFixture",
-                                             "array2DCloseSuite", "filename", -1);
+        UnitTestCpp::TestDetails testDetails(_("array2DCloseTest"), _("array2DCloseFixture"), _("array2DCloseSuite"), _("filename"), -1);
         ScopedCurrentTest scopedResults(testResults, &testDetails);
 
         const float data[2][2] = { {0, 1}, {2, 3} };
         EXPECT_ARRAY2D_NEAR(data, ThrowingObject2D(), 2, 2, 0.01f);   line = __LINE__;
     }
 
-    EXPECT_EQ("array2DCloseTest", reporter.lastFailedTest);
-    EXPECT_EQ("array2DCloseFixture", reporter.lastFailedFixture);
-    EXPECT_EQ("array2DCloseSuite", reporter.lastFailedSuite);
-    EXPECT_EQ("filename", reporter.lastFailedFile);
+    EXPECT_EQ(_("array2DCloseTest"), reporter.lastFailedTest);
+    EXPECT_EQ(_("array2DCloseFixture"), reporter.lastFailedFixture);
+    EXPECT_EQ(_("array2DCloseSuite"), reporter.lastFailedSuite);
+    EXPECT_EQ(_("filename"), reporter.lastFailedFile);
     EXPECT_EQ(line, reporter.lastFailedLine);
 }
 
@@ -1168,7 +1157,7 @@ TEST(CheckArray2DCloseFailureIncludesTolerance)
         EXPECT_ARRAY2D_NEAR(data1, data2, 2, 2, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("0.01") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("0.01")) != string::npos);
 }
 
 TEST(CheckArray2DCloseFailsOnException)
@@ -1201,8 +1190,8 @@ TEST(CheckArray2DCloseFailureOnExceptionIncludesCheckContents)
         EXPECT_ARRAY2D_NEAR(data, obj, 2, 2, 0.01f);
     }
 
-    EXPECT_TRUE(reporter.lastFailedMessage.find("data") != string::npos);
-    EXPECT_TRUE(reporter.lastFailedMessage.find("obj") != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("data")) != string::npos);
+    EXPECT_TRUE(reporter.lastFailedMessage.find(_("obj")) != string::npos);
 }
 
 float const* const* FunctionWithSideEffects3()

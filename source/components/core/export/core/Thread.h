@@ -1,13 +1,14 @@
 #pragma once
 
-#include <future>
 WARNING_PUSH
 WARNING_DISABLE(4265)
+WARNING_DISABLE(4355)
+#include <future>
 #include <mutex>
-WARNING_POP
 #include <thread>
 #include <osal/Strings.h>
 #include <core/DefaultLogger.h>
+WARNING_POP
 
 namespace Core
 {
@@ -54,7 +55,7 @@ public:
     {
         Destroy();
 
-        TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Create thread");
+        TheLogger().Debug(ComponentName, _("Thread ") + GetName() + _(": Create thread"));
 
         Lock lock(_threadMutex);
         try
@@ -69,7 +70,7 @@ public:
                 pthread_setname_np(_thread.native_handle(), _name.c_str());
             }
 
-            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Thread created");
+            TheLogger().Debug(ComponentName, _("Thread ") + GetName() + _(": Thread created"));
         }
         catch (const std::exception & e)
         {
@@ -83,12 +84,12 @@ public:
         Lock lock(_threadMutex);
         if (IsAlive())
         {
-            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Destroy thread");
+            TheLogger().Debug(ComponentName, _("Thread ") + GetName() + _(": Destroy thread"));
 
             WaitForDeath();
             _state = ThreadState::Killed;
 
-            TheLogger().Debug(ComponentName, "Thread " + GetName() + ": Thread died");
+            TheLogger().Debug(ComponentName, _("Thread ") + GetName() + _(": Thread died"));
         }
     }
 
@@ -179,7 +180,7 @@ protected:
     ThreadState _state;
     void Cleanup()
     {
-        TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Cleanup for thread");
+        TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + _(": Cleanup for thread"));
 
         Destroy();
         Lock lock(_threadMutex);

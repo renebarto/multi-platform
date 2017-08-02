@@ -8,10 +8,10 @@ class CommandLineOptionsParser : public Core::CommandLineParser
 public:
     CommandLineOptionsParser(OSAL::Console & console);
 
-    std::string testSuiteName;
-    std::string testFixtureName;
-    std::string testName;
-    std::string xmlOutput;
+    OSAL::String testSuiteName;
+    OSAL::String testFixtureName;
+    OSAL::String testName;
+    OSAL::String xmlOutput;
 };
 
 

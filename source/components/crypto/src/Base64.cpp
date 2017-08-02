@@ -38,10 +38,10 @@ size_t Base64::Encode(const char * dataIn, size_t dataLengthIn, char * dataOut, 
     size_t numNewLines = 0;
     for (size_t group = 0; group < charGroups; ++group)
     {
-        dataOut[offsetOut++] = ByteToChar(dataIn[offsetIn] >> 2);
-        dataOut[offsetOut++] = ByteToChar(((dataIn[offsetIn] & 0x03) << 4) | (dataIn[offsetIn + 1] >> 4));
-        dataOut[offsetOut++] = ByteToChar(((dataIn[offsetIn + 1] & 0x0F) << 2) | (dataIn[offsetIn + 2] >> 6));
-        dataOut[offsetOut++] = ByteToChar(dataIn[offsetIn + 2] & 0x3F);
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(dataIn[offsetIn] >> 2));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(((dataIn[offsetIn] & 0x03) << 4) | (dataIn[offsetIn + 1] >> 4)));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(((dataIn[offsetIn + 1] & 0x0F) << 2) | (dataIn[offsetIn + 2] >> 6)));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(dataIn[offsetIn + 2] & 0x3F));
         offsetIn += GroupSizeBytes;
         if ((offsetOut - numNewLines) % LineSizeChars == 0)
         {
@@ -52,16 +52,16 @@ size_t Base64::Encode(const char * dataIn, size_t dataLengthIn, char * dataOut, 
 
     if (bytesLeftOver == 1)
     {
-        dataOut[offsetOut++] = ByteToChar(dataIn[offsetIn] >> 2);
-        dataOut[offsetOut++] = ByteToChar((dataIn[offsetIn] & 0x03) << 4);
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(dataIn[offsetIn] >> 2));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>((dataIn[offsetIn] & 0x03) << 4));
         dataOut[offsetOut++] = '=';
         dataOut[offsetOut++] = '=';
     }
     else if (bytesLeftOver == 2)
     {
-        dataOut[offsetOut++] = ByteToChar(dataIn[offsetIn] >> 2);
-        dataOut[offsetOut++] = ByteToChar(((dataIn[offsetIn] & 0x03) << 4) | (dataIn[offsetIn + 1] >> 4));
-        dataOut[offsetOut++] = ByteToChar((dataIn[offsetIn + 1] & 0x0F) << 2);
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(dataIn[offsetIn] >> 2));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>(((dataIn[offsetIn] & 0x03) << 4) | (dataIn[offsetIn + 1] >> 4)));
+        dataOut[offsetOut++] = ByteToChar(static_cast<uint8_t>((dataIn[offsetIn + 1] & 0x0F) << 2));
         dataOut[offsetOut++] = '=';
     }
 

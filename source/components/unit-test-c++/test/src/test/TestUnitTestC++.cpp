@@ -70,7 +70,7 @@ TEST(CheckThrowMacroSucceedsOnCorrectException)
 
 TEST(CheckAssertSucceeds)
 {
-    EXPECT_ASSERT(UnitTestCpp::ReportAssert("desc", "file", 0));
+    EXPECT_ASSERT(UnitTestCpp::ReportAssert(_("desc"), _("file"), 0));
 }
 
 TEST(CheckThrowMacroFailsOnMissingException)

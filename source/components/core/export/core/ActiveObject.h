@@ -32,11 +32,11 @@ public:
         {
             _isDying = true;
 
-            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Signaling thread to shut down");
+            TheLogger().Debug(ComponentName, _("Thread ") + this->GetName() + _(": Signaling thread to shut down"));
 
             FlushThread();
 
-            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Waiting for thread to shut down");
+            TheLogger().Debug(ComponentName, _("Thread ") + this->GetName() + _(": Waiting for thread to shut down"));
 
             WorkerThread<Result>::WaitForDeath();
             WorkerThread<Result>::Destroy();
@@ -73,17 +73,17 @@ protected:
                 _isAlive = true;
             }
 
-            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread starting");
+            TheLogger().Debug(ComponentName, _("Thread ") + this->GetName() + _(": Thread starting"));
 
             InitThread();
             result = Run();
             ExitThread();
 
-            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread shutting down");
+            TheLogger().Debug(ComponentName, _("Thread ") + this->GetName() + _(": Thread shutting down"));
         }
         catch (const std::exception & e)
         {
-            TheLogger().Debug(ComponentName, "Thread " + this->GetName() + ": Thread threw exception: " + e.what());
+            TheLogger().Debug(ComponentName, _("Thread ") + this->GetName() + _(": Thread threw exception: ") + OSAL::ToString(e.what()));
             Lock lock(_mutex);
             _isAlive = false;
             throw;

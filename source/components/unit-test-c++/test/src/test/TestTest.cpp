@@ -324,22 +324,22 @@ TEST(CrashingTestsAreReportedAsFailures)
 TEST(TestWithUnspecifiedFixtureAndSuiteGetsDefaultFixtureAndSuite)
 {
     Test test("test");
-    ASSERT_EQ("", test._details.fixtureName);
-    ASSERT_EQ("", test._details.suiteName);
+    ASSERT_EQ(_(""), test._details.fixtureName);
+    ASSERT_EQ(_(""), test._details.suiteName);
 }
 
 TEST(TestReflectsSpecifiedFixtureName)
 {
     Test test("test", "testFixture");
-    ASSERT_EQ("testFixture", test._details.fixtureName);
-    ASSERT_EQ("", test._details.suiteName);
+    ASSERT_EQ(_("testFixture"), test._details.fixtureName);
+    ASSERT_EQ(_(""), test._details.suiteName);
 }
 
 TEST(TestReflectsSpecifiedFixtureAndSuiteName)
 {
     Test test("test", "testFixture", "testSuite");
-    ASSERT_EQ("testFixture", test._details.fixtureName);
-    ASSERT_EQ("testSuite", test._details.suiteName);
+    ASSERT_EQ(_("testFixture"), test._details.fixtureName);
+    ASSERT_EQ(_("testSuite"), test._details.suiteName);
 }
 
 void Fail()
