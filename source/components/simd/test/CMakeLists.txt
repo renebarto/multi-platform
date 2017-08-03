@@ -62,7 +62,7 @@ display_list("Dependencies                : " ${COMPONENTS_SIMD_TEST_DEPENDENCIE
 set(LIB_NAME ${PROJECT_NAME}-lib)
 
 # add the test library
-add_library(${LIB_NAME} STATIC ${COMPONENTS_SIMD_TEST_SOURCES_TEST})
+add_library(${LIB_NAME} SHARED ${COMPONENTS_SIMD_TEST_SOURCES_TEST})
 target_link_libraries(${LIB_NAME} ${COMPONENTS_SIMD_TEST_LIB_LIBS})
 target_include_directories(${LIB_NAME} PRIVATE ${COMPONENTS_SIMD_TEST_INCLUDE_DIRS})
 target_compile_definitions(${LIB_NAME} PRIVATE ${COMPONENTS_SIMD_TEST_DEFINITIONS})

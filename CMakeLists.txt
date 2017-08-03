@@ -79,7 +79,7 @@ message(STATUS "CMAKE_PROGRAM_PATH      : ${CMAKE_INCLUDE_PATH}")
 set(OUTPUT_BASE_DIR ${CMAKE_SOURCE_DIR}/output)
 message(STATUS "Output base directory   : " ${OUTPUT_BASE_DIR})
 
-if (NOT WIN_MSVC)
+if (NOT WIN_MSVC AND NOT APPLE)
 	set(LINK_WHOLE_LIB -Wl,--whole-archive)
 	set(LINK_NO_WHOLE_LIB -Wl,--no-whole-archive)
 	set(LINK_RPATH -Wl,-rpath,'\$ORIGIN/../lib/')
