@@ -7,7 +7,7 @@
 using namespace std;
 using namespace OSAL;
 
-void OSAL::SetThreadName(std::thread & thread, OSAL::String threadName)
+void OSAL::SetThreadName(std::thread & thread, const OSAL::String & threadName)
 {
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
 

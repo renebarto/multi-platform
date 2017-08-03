@@ -32,7 +32,7 @@ static void RaiseException(THREADNAME_INFO & info)
 #pragma warning(pop)
 }
 
-void OSAL::Thread::SetThreadName(std::thread & thread, OSAL::String threadName)
+void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & threadName)
 {
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
 

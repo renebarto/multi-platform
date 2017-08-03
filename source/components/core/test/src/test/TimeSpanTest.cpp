@@ -181,12 +181,12 @@ TEST_FIXTURE(TimeSpanTest, ToString)
     int minutes = timeSpan.Minutes() % 60;
     int seconds = (int)timeSpan.Seconds() % 60;
     int microSeconds = timeSpan.MicroSeconds() % 1000000;
-    stringstream stream;
-    stream << days << " days, " << hours << " hours, "
-           << minutes << " minutes, "
-           << seconds << "." << setfill('0') << setw(6) << microSeconds << " seconds";
-    string expected = stream.str();
-    string actual = timeSpan.ToString();
+    basic_stringstream<OSAL::Char> stream;
+    stream << days << _(" days, ") << hours << _(" hours, ")
+           << minutes << _(" minutes, ")
+           << seconds << _(".") << setfill(_('0')) << setw(6) << microSeconds << _(" seconds");
+    OSAL::String expected = stream.str();
+    OSAL::String actual = timeSpan.ToString();
     EXPECT_EQ(expected, actual);
 }
 

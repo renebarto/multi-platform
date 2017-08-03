@@ -19,7 +19,7 @@ public:
     bool isFlagged;
 
     MyWorkerThread():
-        WorkerThread<int>("MyWorkerThread"),
+        WorkerThread<int>(_("MyWorkerThread")),
         isFlagged(false)
     {
         MyWorkerThread::isDeleted = false;
@@ -43,18 +43,14 @@ class WorkerThreadTest : public UnitTestCpp::TestFixture
 public:
     virtual void SetUp();
     virtual void TearDown();
-
-    MyWorkerThread * thread;
 };
 
 void WorkerThreadTest::SetUp()
 {
-    thread = 0;
 }
 
 void WorkerThreadTest::TearDown()
 {
-    delete thread;
 }
 
 TEST_FIXTURE(WorkerThreadTest, Construction)

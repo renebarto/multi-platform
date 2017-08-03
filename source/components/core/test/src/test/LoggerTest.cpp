@@ -10,12 +10,12 @@ namespace Test {
 
 TEST_SUITE(core) {
 
-static const string DomainName = "Domain";
+static const OSAL::String DomainName = _("Domain");
 static const LogLevel LogLevelFilterAll = LogLevel::All;
 static const LogLevel LogLevelFilterError = LogLevel::Error;
 static const LogLevel LogLevelFilterWarning = LogLevel::Warning;
-static const string ComponentName = "LoggerTest";
-static const string Message = "Message";
+static const OSAL::String ComponentName = _("LoggerTest");
+static const OSAL::String Message = _("Message");
 static const char * Exception = "Exception";
 
 class DummyException : public exception
@@ -35,25 +35,25 @@ public:
     }
 
     void Log(const DateTime & timestamp,
-             const std::string & domainName,
-             const std::string & componentName,
+             const OSAL::String & domainName,
+             const OSAL::String & componentName,
              LogLevel logLevel,
-             const std::string & message)
+             const OSAL::String & message)
     {
-        ++this->logCount;
-        this->timestamp = timestamp;
-        this->domainName = domainName;
-        this->componentName = componentName;
-        this->logLevel = logLevel;
-        this->message = message;
+        ++this->_logCount;
+        this->_timestamp = timestamp;
+        this->_domainName = domainName;
+        this->_componentName = componentName;
+        this->_logLevel = logLevel;
+        this->_message = message;
     }
 
-    int logCount{};
-    DateTime timestamp{};
-    string domainName{};
-    string componentName{};
-    LogLevel logLevel{};
-    string message{};
+    int _logCount {};
+    DateTime _timestamp {};
+    OSAL::String _domainName {};
+    OSAL::String _componentName {};
+    LogLevel _logLevel {};
+    OSAL::String _message {};
 };
 
 class LoggerTest : public UnitTestCpp::TestFixture
@@ -94,11 +94,11 @@ TEST_FIXTURE(LoggerTest, GetSetLogLevelFilter)
 TEST_FIXTURE(LoggerTest, ErrorNoListener)
 {
     logger.Error(ComponentName, Message);
-    EXPECT_EQ(0, listener.logCount);
-    EXPECT_EQ(string(), listener.domainName);
-    EXPECT_EQ(string(), listener.componentName);
-    EXPECT_EQ(LogLevel::None, listener.logLevel);
-    EXPECT_EQ(string(), listener.message);
+    EXPECT_EQ(0, listener._logCount);
+    EXPECT_EQ(OSAL::String(), listener._domainName);
+    EXPECT_EQ(OSAL::String(), listener._componentName);
+    EXPECT_EQ(LogLevel::None, listener._logLevel);
+    EXPECT_EQ(OSAL::String(), listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, ErrorFiltered)
@@ -106,88 +106,88 @@ TEST_FIXTURE(LoggerTest, ErrorFiltered)
     logger.AddObserver(&listener);
     logger.SetLogLevelFilter(LogLevelFilterWarning);
     logger.Error(ComponentName, Message);
-    EXPECT_EQ(0, listener.logCount);
-    EXPECT_EQ(string(), listener.domainName);
-    EXPECT_EQ(string(), listener.componentName);
-    EXPECT_EQ(LogLevel::None, listener.logLevel);
-    EXPECT_EQ(string(), listener.message);
+    EXPECT_EQ(0, listener._logCount);
+    EXPECT_EQ(OSAL::String(), listener._domainName);
+    EXPECT_EQ(OSAL::String(), listener._componentName);
+    EXPECT_EQ(LogLevel::None, listener._logLevel);
+    EXPECT_EQ(OSAL::String(), listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, Error)
 {
     logger.AddObserver(&listener);
     logger.Error(ComponentName, Message);
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Error, listener.logLevel);
-    EXPECT_EQ(Message, listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Error, listener._logLevel);
+    EXPECT_EQ(Message, listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, ErrorException)
 {
     logger.AddObserver(&listener);
     logger.Error(ComponentName, Message, DummyException());
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Error, listener.logLevel);
-    EXPECT_EQ(Message + " (" + Exception + ")", listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Error, listener._logLevel);
+    EXPECT_EQ(Message + _(" (") + OSAL::ToString(Exception) + _(")"), listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, Warn)
 {
     logger.AddObserver(&listener);
     logger.Warn(ComponentName, Message);
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Warning, listener.logLevel);
-    EXPECT_EQ(Message, listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Warning, listener._logLevel);
+    EXPECT_EQ(Message, listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, WarnException)
 {
     logger.AddObserver(&listener);
     logger.Warn(ComponentName, Message, DummyException());
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Warning, listener.logLevel);
-    EXPECT_EQ(Message + " (" + Exception + ")", listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Warning, listener._logLevel);
+    EXPECT_EQ(Message + _(" (") + OSAL::ToString(Exception) + _(")"), listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, Message)
 {
     logger.AddObserver(&listener);
     logger.Message(ComponentName, Message);
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Message, listener.logLevel);
-    EXPECT_EQ(Message, listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Message, listener._logLevel);
+    EXPECT_EQ(Message, listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, Info)
 {
     logger.AddObserver(&listener);
     logger.Info(ComponentName, Message);
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Info, listener.logLevel);
-    EXPECT_EQ(Message, listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Info, listener._logLevel);
+    EXPECT_EQ(Message, listener._message);
 }
 
 TEST_FIXTURE(LoggerTest, Debug)
 {
     logger.AddObserver(&listener);
     logger.Debug(ComponentName, Message);
-    EXPECT_EQ(1, listener.logCount);
-    EXPECT_EQ(DomainName, listener.domainName);
-    EXPECT_EQ(ComponentName, listener.componentName);
-    EXPECT_EQ(LogLevel::Debug, listener.logLevel);
-    EXPECT_EQ(Message, listener.message);
+    EXPECT_EQ(1, listener._logCount);
+    EXPECT_EQ(DomainName, listener._domainName);
+    EXPECT_EQ(ComponentName, listener._componentName);
+    EXPECT_EQ(LogLevel::Debug, listener._logLevel);
+    EXPECT_EQ(Message, listener._message);
 }
 
 } // TEST_SUITE(core)

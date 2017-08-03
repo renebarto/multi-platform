@@ -15,10 +15,10 @@ TEST_SUITE(core)
     static const LogLevel LogLevelFilterAll     = LogLevel::All;
     static const LogLevel LogLevelFilterError   = LogLevel::Error;
     static const LogLevel LogLevelFilterWarning = LogLevel::Warning;
-    static const string ComponentName           = "ConsoleLoggerTest";
-    static const string Error                   = "Error";
-    static const string Warning                 = "Warning";
-    static const string Message                 = "Message";
+    static const OSAL::String ComponentName     = _("ConsoleLoggerTest");
+    static const OSAL::String Error             = _("Error");
+    static const OSAL::String Warning           = _("Warning");
+    static const OSAL::String Message           = _("Message");
     static const char * Exception               = "Exception";
 
     class DummyException : public exception

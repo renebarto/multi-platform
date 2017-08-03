@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <signal.h>
+#include "osal/Signal.h"
 #include "core/ManualEvent.h"
 #include "core/Thread.h"
 
@@ -73,12 +73,14 @@ protected:
 
     void SetSignalMask()
     {
-        sigset_t signalMaskSet;
-        sigemptyset(&signalMaskSet);
-        sigaddset(&signalMaskSet, SIGTERM);
-        sigaddset(&signalMaskSet, SIGINT);
-        sigaddset(&signalMaskSet, SIGQUIT);
-        if (pthread_sigmask(SIG_BLOCK, &signalMaskSet, nullptr) != 0)
+        OSAL::Signal::sigset_t signalMaskSet;
+        OSAL::Signal::sigemptyset(&signalMaskSet);
+        OSAL::Signal::sigaddset(&signalMaskSet, SIGTERM);
+        OSAL::Signal::sigaddset(&signalMaskSet, SIGINT);
+#if defined(SIGQUIT)
+        OSAL::Signal::sigaddset(&signalMaskSet, SIGQUIT);
+#endif
+        if (pthread_sigmask(OSAL::Signal::SIG_BLOCK, &signalMaskSet, nullptr) != 0)
             throw OSAL::SystemError(__func__, __FILE__, __LINE__, errno,
                                     _("Cannot set signal mask for thread"));
     }

@@ -10,7 +10,7 @@ WARNING_POP
 namespace OSAL {
 namespace Thread {
 
-void SetThreadName(std::thread & thread, OSAL::String threadName);
+void SetThreadName(std::thread & thread, const OSAL::String & threadName);
 bool IsThreadSelf(std::thread & thread);
 
 } // namespace Thread

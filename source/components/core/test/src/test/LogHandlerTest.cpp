@@ -8,7 +8,7 @@ namespace Test {
 
 TEST_SUITE(core) {
 
-const string DomainName = "Domain";
+const OSAL::String DomainName = _("Domain");
 
 class LogHandlerTest : public UnitTestCpp::TestFixture
 {
@@ -16,122 +16,122 @@ public:
     virtual void SetUp();
     virtual void TearDown();
 
-    static void MyHandlerDefault(const std::string & domainName,
-                                 const std::string & componentName,
+    static void MyHandlerDefault(const OSAL::String & domainName,
+                                 const OSAL::String & componentName,
                                  LogLevel logLevel,
-                                 const std::string & message,
+                                 const OSAL::String & message,
                                  void * userData)
     {
         LogHandlerTest * pThis = reinterpret_cast<LogHandlerTest *>(userData);
-        pThis->domainNameDefault = domainName;
-        pThis->componentNameDefault = componentName;
-        pThis->logLevelDefault = logLevel;
-        pThis->messageDefault = message;
+        pThis->_domainNameDefault = domainName;
+        pThis->_componentNameDefault = componentName;
+        pThis->_logLevelDefault = logLevel;
+        pThis->_messageDefault = message;
     }
-    static void MyHandler(const std::string & domainName,
-                          const std::string & componentName,
+    static void MyHandler(const OSAL::String & domainName,
+                          const OSAL::String & componentName,
                           LogLevel logLevel,
-                          const std::string & message,
+                          const OSAL::String & message,
                           void * userData)
     {
         LogHandlerTest * pThis = reinterpret_cast<LogHandlerTest *>(userData);
-        pThis->domainName = domainName;
-        pThis->componentName = componentName;
-        pThis->logLevel = logLevel;
-        pThis->message = message;
+        pThis->_domainName = domainName;
+        pThis->_componentName = componentName;
+        pThis->_logLevel = logLevel;
+        pThis->_message = message;
     }
-    string domainNameDefault{};
-    string componentNameDefault{};
-    LogLevel logLevelDefault{};
-    string messageDefault{};
-    string domainName{};
-    string componentName{};
-    LogLevel logLevel{};
-    string message{};
-    LogHandlerInfo savedHandler;
+    OSAL::String _domainNameDefault {};
+    OSAL::String _componentNameDefault {};
+    LogLevel _logLevelDefault {};
+    OSAL::String _messageDefault {};
+    OSAL::String _domainName {};
+    OSAL::String _componentName {};
+    LogLevel _logLevel {};
+    OSAL::String _message {};
+    LogHandlerInfo _savedHandler ;
 
-    void ExpectDefault(const std::string & domainName,
-                       const std::string & componentName,
+    void ExpectDefault(const OSAL::String & domainName,
+                       const OSAL::String & componentName,
                        LogLevel logLevel,
-                       const std::string & message)
+                       const OSAL::String & message)
     {
-        EXPECT_EQ(domainName, this->domainNameDefault);
-        EXPECT_EQ(componentName, this->componentNameDefault);
-        EXPECT_EQ(logLevel, this->logLevelDefault);
-        EXPECT_EQ(message, this->messageDefault);
+        EXPECT_EQ(domainName, this->_domainNameDefault);
+        EXPECT_EQ(componentName, this->_componentNameDefault);
+        EXPECT_EQ(logLevel, this->_logLevelDefault);
+        EXPECT_EQ(message, this->_messageDefault);
     }
-    void ExpectDomain(const std::string & domainName,
-                      const std::string & componentName,
+    void ExpectDomain(const OSAL::String & domainName,
+                      const OSAL::String & componentName,
                       LogLevel logLevel,
-                      const std::string & message)
+                      const OSAL::String & message)
     {
-        EXPECT_EQ(domainName, this->domainName);
-        EXPECT_EQ(componentName, this->componentName);
-        EXPECT_EQ(logLevel, this->logLevel);
-        EXPECT_EQ(message, this->message);
+        EXPECT_EQ(domainName, this->_domainName);
+        EXPECT_EQ(componentName, this->_componentName);
+        EXPECT_EQ(logLevel, this->_logLevel);
+        EXPECT_EQ(message, this->_message);
     }
 };
 
 void LogHandlerTest::SetUp()
 {
-    savedHandler = LogHandler::Set(LogHandler::DefaultDomain, LogLevel::All, MyHandlerDefault, this);
+    _savedHandler = LogHandler::Set(LogHandler::DefaultDomain, LogLevel::All, MyHandlerDefault, this);
 }
 
 void LogHandlerTest::TearDown()
 {
-    LogHandler::Set(LogHandler::DefaultDomain, savedHandler);
+    LogHandler::Set(LogHandler::DefaultDomain, _savedHandler);
     LogHandler::Reset(DomainName);
 }
 
 TEST_FIXTURE(LogHandlerTest, DefaultHandler)
 {
-    LogHandler::Log(LogHandler::DefaultDomain, "LogHandlerTest", LogLevel::Error, "Should not be shown on console");
+    LogHandler::Log(LogHandler::DefaultDomain, _("LogHandlerTest"), LogLevel::Error, _("Should not be shown on console"));
 }
 
 TEST_FIXTURE(LogHandlerTest, NonExistingDomainHandler)
 {
-    LogHandler::Log("Dummy", "LogHandlerTest", LogLevel::Error, "Should not be shown on console");
+    LogHandler::Log(_("Dummy"), _("LogHandlerTest"), LogLevel::Error, _("Should not be shown on console"));
 }
 
 TEST_FIXTURE(LogHandlerTest, ResetDefaultDomainHandler)
 {
     LogHandler::Reset(LogHandler::DefaultDomain);
-    LogHandler::Log(LogHandler::DefaultDomain, "LogHandlerTest", LogLevel::Error, "Should be shown on cout");
+    LogHandler::Log(LogHandler::DefaultDomain, _("LogHandlerTest"), LogLevel::Error, _("Should be shown on cout"));
 }
 
 TEST_FIXTURE(LogHandlerTest, ResetNonExistingDomainHandler)
 {
-    LogHandler::Reset("Dummy");
-    LogHandler::Log("Dummy", "LogHandlerTest", LogLevel::Error, "Should not be shown on cout");
+    LogHandler::Reset(_("Dummy"));
+    LogHandler::Log(_("Dummy"), _("LogHandlerTest"), LogLevel::Error, _("Should not be shown on cout"));
     LogHandler::Reset(LogHandler::DefaultDomain);
-    LogHandler::Log("Dummy", "LogHandlerTest", LogLevel::Error, "Should be shown on cout");
+    LogHandler::Log(_("Dummy"), _("LogHandlerTest"), LogLevel::Error, _("Should be shown on cout"));
 }
 
 TEST_FIXTURE(LogHandlerTest, SetDefaultHandler)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage = "Message";
+    OSAL::String aMessage = _("Message");
 
     LogHandler::Set(LogHandler::DefaultDomain, LogLevel::All, MyHandlerDefault, this);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
     ExpectDefault(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDomain("", "", LogLevel::None, "");
+    ExpectDomain(_(""), _(""), LogLevel::None, _(""));
 
     LogHandler::Log(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
     ExpectDefault(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
-    ExpectDomain("", "", LogLevel::None, "");
+    ExpectDomain(_(""), _(""), LogLevel::None, _(""));
 }
 
 TEST_FIXTURE(LogHandlerTest, SetDomainHandler)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage = "Message";
+    OSAL::String aMessage = _("Message");
 
     LogHandler::Set(DomainName, LogLevel::All, MyHandler, this);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDefault("", "", LogLevel::None, "");
+    ExpectDefault(_(""), _(""), LogLevel::None, _(""));
     ExpectDomain(DomainName, aComponentName, aLogLevel, aMessage);
 
     LogHandler::Log(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
@@ -141,31 +141,31 @@ TEST_FIXTURE(LogHandlerTest, SetDomainHandler)
 
 TEST_FIXTURE(LogHandlerTest, SetDefaultHandlerInfo)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage = "Message";
+    OSAL::String aMessage = _("Message");
 
     LogHandlerInfo info(LogLevel::All, MyHandlerDefault, this);
     LogHandler::Set(LogHandler::DefaultDomain, info);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
     ExpectDefault(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDomain("", "", LogLevel::None, "");
+    ExpectDomain(_(""), _(""), LogLevel::None, _(""));
 
     LogHandler::Log(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
     ExpectDefault(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
-    ExpectDomain("", "", LogLevel::None, "");
+    ExpectDomain(_(""), _(""), LogLevel::None, _(""));
 }
 
 TEST_FIXTURE(LogHandlerTest, SetDomainHandlerInfo)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage = "Message";
+    OSAL::String aMessage = _("Message");
 
     LogHandlerInfo info(LogLevel::All, MyHandler, this);
     LogHandler::Set(DomainName, info);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDefault("", "", LogLevel::None, "");
+    ExpectDefault(_(""), _(""), LogLevel::None, _(""));
     ExpectDomain(DomainName, aComponentName, aLogLevel, aMessage);
 
     LogHandler::Log(LogHandler::DefaultDomain, aComponentName, aLogLevel, aMessage);
@@ -175,11 +175,11 @@ TEST_FIXTURE(LogHandlerTest, SetDomainHandlerInfo)
 
 TEST_FIXTURE(LogHandlerTest, SetDomainHandler2)
 {
-    string DomainName2 = "Domain2";
-    string aComponentName = "LogHandlerTest";
+    OSAL::String DomainName2 = _("Domain2");
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage1 = "Message1";
-    string aMessage2 = "Message2";
+    OSAL::String aMessage1 = _("Message1");
+    OSAL::String aMessage2 = _("Message2");
 
     LogHandler::Set(DomainName, LogLevel::All, MyHandler, this);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage1);
@@ -196,14 +196,14 @@ TEST_FIXTURE(LogHandlerTest, SetDomainHandler2)
 
 TEST_FIXTURE(LogHandlerTest, ResetDomainHandler)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Error;
-    string aMessage1 = "Message1";
-    string aMessage2 = "Message2";
+    OSAL::String aMessage1 = _("Message1");
+    OSAL::String aMessage2 = _("Message2");
 
     LogHandler::Set(DomainName, LogLevel::All, MyHandler, this);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage1);
-    ExpectDefault("", "", LogLevel::None, "");
+    ExpectDefault(_(""), _(""), LogLevel::None, _(""));
     ExpectDomain(DomainName, aComponentName, aLogLevel, aMessage1);
 
     LogHandler::Reset(DomainName);
@@ -232,18 +232,18 @@ TEST_FIXTURE(LogHandlerTest, GetSetLogLevelFilterDomain)
 
 TEST_FIXTURE(LogHandlerTest, SetLogLevelFiltered)
 {
-    string aComponentName = "LogHandlerTest";
+    OSAL::String aComponentName = _("LogHandlerTest");
     LogLevel aLogLevel = LogLevel::Warning;
-    string aMessage = "Message";
+    OSAL::String aMessage = _("Message");
 
     LogHandler::Set(DomainName, LogLevel::Error, MyHandler, this);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDefault("", "", LogLevel::None, "");
-    ExpectDomain("", "", LogLevel::None, "");
+    ExpectDefault(_(""), _(""), LogLevel::None, _(""));
+    ExpectDomain(_(""), _(""), LogLevel::None, _(""));
 
     LogHandler::SetLogLevelFilter(DomainName, LogLevel::Warning);
     LogHandler::Log(DomainName, aComponentName, aLogLevel, aMessage);
-    ExpectDefault("", "", LogLevel::None, "");
+    ExpectDefault(_(""), _(""), LogLevel::None, _(""));
     ExpectDomain(DomainName, aComponentName, aLogLevel, aMessage);
 }
 

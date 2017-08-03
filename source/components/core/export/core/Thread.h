@@ -7,7 +7,9 @@ WARNING_DISABLE(4355)
 #include <mutex>
 #include <thread>
 #include <osal/Strings.h>
+#include <osal/Thread.h>
 #include <core/DefaultLogger.h>
+
 WARNING_POP
 
 namespace Core
@@ -67,12 +69,12 @@ public:
             this->_state = ThreadState::Running;
             if (!this->_name.empty())
             {
-                pthread_setname_np(_thread.native_handle(), _name.c_str());
+                OSAL::Thread::SetThreadName(_thread, _name);
             }
 
             TheLogger().Debug(ComponentName, _("Thread ") + GetName() + _(": Thread created"));
         }
-        catch (const std::exception & e)
+        catch (const std::exception &)
         {
             Cleanup();
             throw;
@@ -149,12 +151,12 @@ public:
         if (!IsAlive())
             return;
         Lock lock(_threadMutex);
-        if (_thread.native_handle() != pthread_self())
+        if (OSAL::Thread::IsThreadSelf(_thread))
         {
-            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Wait for thread to die");
+            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + _(": Wait for thread to die"));
             _thread.join();
             _state = ThreadState::Finished;
-            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + ": Thread died");
+            TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + _(": Thread died"));
         }
     }
 

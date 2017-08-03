@@ -1,5 +1,6 @@
 #include <unit-test-c++/UnitTestC++.h>
 
+#include "osal/Pipe.h"
 #include "core/Pipe.h"
 #include "core/Util.h"
 
@@ -36,7 +37,7 @@ TEST_FIXTURE(PipeTest, ConstructDefault)
 TEST_FIXTURE(PipeTest, Construct)
 {
     int fd[2];
-    EXPECT_NE(-1, pipe(fd));
+    EXPECT_NE(-1, OSAL::Pipe::pipe(fd));
     Pipe pipe(fd[0], fd[1]);
     EXPECT_EQ(fd[0], pipe.ReadFD());
 // cppcheck-suppress arrayIndexOutOfBounds
@@ -93,11 +94,11 @@ TEST_FIXTURE(PipeTest, ReadWrite)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     };
-    ssize_t size = sizeof(reference);
+    constexpr ssize_t size = sizeof(reference);
     uint8_t actual[size];
-    EXPECT_EQ(size, pipe.Write(reference, size));
-    EXPECT_EQ(size, pipe.Read(actual, size));
-    Util::Compare(reference, actual, size);
+    EXPECT_EQ(size, pipe.Write(reference, static_cast<size_t>(size)));
+    EXPECT_EQ(size, pipe.Read(actual, static_cast<size_t>(size)));
+    Util::Compare(reference, actual, static_cast<size_t>(size));
 }
 
 } // TEST_SUITE(core)

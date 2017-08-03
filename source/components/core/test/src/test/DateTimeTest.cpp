@@ -750,8 +750,8 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC)
 {
     DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    int64_t expected = localTime.tm_gmtoff * MicroSecondsPerSecond;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    int64_t expected = localTime.tm_tzOffset * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
@@ -760,8 +760,8 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC_SummerTime)
 {
     DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    int64_t expected = localTime.tm_gmtoff * MicroSecondsPerSecond;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    int64_t expected = localTime.tm_tzOffset * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
@@ -770,9 +770,9 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameLocal)
 {
     DateTime dateTime(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    string nameExpected = localTime.tm_zone;
-    string nameActual = dateTime.TimeZoneName();
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    OSAL::String nameExpected = localTime.tm_tzName;
+    OSAL::String nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
 
@@ -780,9 +780,9 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameLocalSummerTime)
 {
     DateTime dateTime(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    string nameExpected = localTime.tm_zone;
-    string nameActual = dateTime.TimeZoneName();
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    OSAL::String nameExpected = localTime.tm_tzName;
+    OSAL::String nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
 
@@ -790,9 +790,9 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameUTC)
 {
     DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *gmtime(&time);
-    string nameExpected = localTime.tm_zone;
-    string nameActual = dateTime.TimeZoneName();
+    OSAL::Time::tm localTime = *OSAL::Time::gmtime(&time);
+    OSAL::String nameExpected = localTime.tm_tzName;
+    OSAL::String nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
 
@@ -847,14 +847,14 @@ TEST_FIXTURE(DateTimeTest, ConvertToUTCTime)
 TEST_FIXTURE(DateTimeTest, ToString)
 {
     DateTime dateTime(2014, 02, 26, 1, 2, 3, 567891);
-    EXPECT_EQ("2014-02-26 01:02:03.567891", dateTime.ToString());
+    EXPECT_EQ(_("2014-02-26 01:02:03.567891"), dateTime.ToString());
 }
 
 TEST_FIXTURE(DateTimeTest, ToStringFormat)
 {
     DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3);
-    EXPECT_EQ("2014-02-26 01:02:03", dateTime.ToString("%F %T"));
-    EXPECT_EQ("2014-02-26 01:02:03 GMT", dateTime.ToString("%F %T %Z"));
+    EXPECT_EQ(_("2014-02-26 01:02:03"), dateTime.ToString(_("%F %T")));
+    EXPECT_EQ(_("2014-02-26 01:02:03 GMT"), dateTime.ToString(_("%F %T %Z")));
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
