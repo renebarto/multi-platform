@@ -39,7 +39,7 @@ struct sigset_t
     std::bitset<320> set;
 };
 
-struct sigaction
+struct sigaction_t
 {
     void(*sa_handler)(int);
     void(*sa_sigaction)(int, siginfo_t *, void *);
@@ -48,7 +48,7 @@ struct sigaction
     void(*sa_restorer)(void);
 };
 
-inline int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
+inline int sigaction(int signum, const sigaction_t *act, sigaction_t *oldact)
 {
     return -1;
 }
@@ -107,12 +107,12 @@ inline int sigismember(const sigset_t *set, int signum)
 
 enum SignalHow
 {
-    SIG_BLOCK = 0,
-    SIG_UNBLCOK = 1,
-    SIG_SETMASK = 2,
+    Block = 0,
+    Unblock = 1,
+    SetMask = 2,
 };
 
-OSAL_EXPORT int pthread_sigmask(int how, const sigset_t *set, sigset_t *oldset);
+OSAL_EXPORT int pthread_sigmask(SignalHow how, const sigset_t *set, sigset_t *oldset);
 
 } // namespace Signal
 } // namespace OSAL

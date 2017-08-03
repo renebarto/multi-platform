@@ -7,7 +7,7 @@
 using namespace std;
 using namespace OSAL;
 
-void OSAL::SetThreadName(std::thread & thread, const OSAL::String & threadName)
+void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & threadName)
 {
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
 
@@ -15,7 +15,7 @@ void OSAL::SetThreadName(std::thread & thread, const OSAL::String & threadName)
 	pthread_setname_np(handle, threadNameNarrow.c_str());
 }
 
-bool OSAL::IsThreadSelf(std::thread & thread)
+bool OSAL::Thread::IsThreadSelf(std::thread & thread)
 {
 	return thread.native_handle() == pthread_self();
 }

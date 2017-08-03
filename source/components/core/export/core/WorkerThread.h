@@ -80,7 +80,7 @@ protected:
 #if defined(SIGQUIT)
         OSAL::Signal::sigaddset(&signalMaskSet, SIGQUIT);
 #endif
-        if (pthread_sigmask(OSAL::Signal::SIG_BLOCK, &signalMaskSet, nullptr) != 0)
+        if (pthread_sigmask(OSAL::Signal::Block, &signalMaskSet, nullptr) != 0)
             throw OSAL::SystemError(__func__, __FILE__, __LINE__, errno,
                                     _("Cannot set signal mask for thread"));
     }

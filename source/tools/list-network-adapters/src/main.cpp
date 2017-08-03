@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main(int argc, const char * argv[])
+int main(int UNUSED(argc), const char * UNUSED(argv[]))
 {
     Network::AdapterList adapterList;
 

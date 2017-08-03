@@ -151,7 +151,7 @@ public:
         if (!IsAlive())
             return;
         Lock lock(_threadMutex);
-        if (OSAL::Thread::IsThreadSelf(_thread))
+        if (!OSAL::Thread::IsThreadSelf(_thread))
         {
             TheLogger().Debug(ComponentName, OSAL::OS::TypeName(*this) + _(": Wait for thread to die"));
             _thread.join();

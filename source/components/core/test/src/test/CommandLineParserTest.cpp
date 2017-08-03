@@ -115,18 +115,18 @@ public:
     }
     void CheckFoundCreate(const CommandLineParser &parser) const
     {
-        EXPECT_TRUE(parser.FoundOption(_('d')));
+        EXPECT_TRUE(parser.FoundOption(_('c')));
         EXPECT_TRUE(parser.FoundOption(_("create")));
     }
     void CheckNotFoundCreate(const CommandLineParser &parser) const
     {
-        EXPECT_FALSE(parser.FoundOption(_('d')));
+        EXPECT_FALSE(parser.FoundOption(_('c')));
         EXPECT_FALSE(parser.FoundOption(_("create")));
     }
     void CheckFoundCreate(const CommandLineParser &parser, const OSAL::String & value) const
     {
         CheckFoundCreate(parser);
-        EXPECT_EQ(value, parser.GetOption(_('d')));
+        EXPECT_EQ(value, parser.GetOption(_('c')));
         EXPECT_EQ(value, parser.GetOption(_("create")));
     }
     void CheckFoundFile(const CommandLineParser &parser) const

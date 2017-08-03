@@ -405,7 +405,7 @@ int DateTime::WeekOfYear() const
 
 TimeSpan DateTime::OffsetFromUTC() const
 {
-    return TimeSpan(-_dateTime.tm_tzOffset * NanoSecondsPerSecond);
+    return TimeSpan(-(_dateTime.tm_tzOffset + (_dateTime._tm.tm_isdst ? _dateTime.tm_dstOffset : 0)) * NanoSecondsPerSecond);
 }
 
 OSAL::String DateTime::TimeZoneName() const
@@ -487,13 +487,13 @@ void DateTime::Assign(int year, int month, int day, int hour, int minute, double
     {
         if (local._tm.tm_isdst)
         {
-            rawtime -= SecondsPerHour;
+            rawtime += local.tm_dstOffset;
         }
         _dateTime = *localtime(&rawtime);
     }
     else
     {
-        rawtime += local.tm_tzOffset;
+        rawtime -= local.tm_tzOffset;
         _dateTime = *gmtime(&rawtime);
     }
     _time.tv_sec = rawtime;

@@ -25,6 +25,8 @@ void DateTimeTest::TearDown()
 {
 }
 
+static const time_t Epoch20140226_000203UTC = 1393372923;
+
 TEST_FIXTURE(DateTimeTest, Construction)
 {
     DateTime dateTime;
@@ -216,7 +218,7 @@ TEST_FIXTURE(DateTimeTest, ConstructionEpoch)
     int microSeconds = 0;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    time_t epochTime = 1393372923;
+    time_t epochTime = Epoch20140226_000203UTC;
     DateTime dateTime(epochTime);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -242,7 +244,7 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeSpec)
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    timespec timeSpec = { 1393372923, 4000 };
+    timespec timeSpec = { Epoch20140226_000203UTC, 4000 };
     DateTime dateTime(timeSpec);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -268,7 +270,7 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeVal)
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    timeval timeVal = { 1393372923, 4 };
+    timeval timeVal = { Epoch20140226_000203UTC, 4 };
     DateTime dateTime(timeVal);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -312,7 +314,7 @@ TEST_FIXTURE(DateTimeTest, AssignmentEpoch)
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 0;
-    time_t epochTime = 1393372923;
+    time_t epochTime = Epoch20140226_000203UTC;
     DateTime dateTime;
     dateTime = epochTime;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -333,7 +335,7 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeSpec)
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 4;
-    timespec timeSpec = { 1393372923, 4000 };
+    timespec timeSpec = { Epoch20140226_000203UTC, 4000 };
     DateTime dateTime;
     dateTime = timeSpec;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -354,7 +356,7 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeVal)
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 4;
-    timeval timeVal = { 1393372923, 4 };
+    timeval timeVal = { Epoch20140226_000203UTC, 4 };
     DateTime dateTime;
     dateTime = timeVal;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -376,7 +378,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromLocalTime)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    time_t epochExpected = 1393372923 + static_cast<time_t>(dateTime.OffsetFromUTC().Seconds());
+    time_t epochExpected = Epoch20140226_000203UTC;
     EXPECT_EQ(epochExpected, time_t(dateTime));
 }
 
@@ -390,7 +392,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromUTCTime)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateUTC(year, month, day, hour, minute, second, microSeconds);
-    time_t epochExpected = 1393372923;
+    time_t epochExpected = Epoch20140226_000203UTC;
     EXPECT_EQ(epochExpected, time_t(dateTime));
 }
 
@@ -404,7 +406,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeSpec)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    timespec timeSpecExpected = { 1393372923, 4000 };
+    timespec timeSpecExpected = { Epoch20140226_000203UTC, 4000 };
     timespec timeSpecActual = timespec(dateTime);
     EXPECT_EQ(timeSpecExpected.tv_sec, timeSpecActual.tv_sec);
     EXPECT_EQ(timeSpecExpected.tv_nsec, timeSpecActual.tv_nsec);
@@ -420,7 +422,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeVal)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    timeval timeValExpected = { 1393372923, 4 };
+    timeval timeValExpected = { Epoch20140226_000203UTC, 4 };
     timeval timeValActual = timeval(dateTime);
     EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
     EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
@@ -751,7 +753,7 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC)
     DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
-    int64_t expected = localTime.tm_tzOffset * MicroSecondsPerSecond;
+    int64_t expected = -localTime.tm_tzOffset * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
@@ -761,7 +763,7 @@ TEST_FIXTURE(DateTimeTest, OffsetFromUTC_SummerTime)
     DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
-    int64_t expected = localTime.tm_tzOffset * MicroSecondsPerSecond;
+    int64_t expected = -(localTime.tm_tzOffset + localTime.tm_dstOffset) * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }

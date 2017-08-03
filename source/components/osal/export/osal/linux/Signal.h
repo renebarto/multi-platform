@@ -1,11 +1,13 @@
 #pragma once
 
+#include <signal.h>
+
 namespace OSAL {
 namespace Signal {
 
-using struct sigaction = ::struct sigaction;
+typedef struct ::sigaction sigaction_t;
 
-inline int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
+inline int sigaction(int signum, const sigaction_t *act, sigaction_t *oldact)
 {
     return ::sigaction(signum, act, oldact);
 }
@@ -44,7 +46,14 @@ inline int sigismember(const sigset_t *set, int signum)
     return ::sigismember(set, signum);
 }
 
-inline int pthread_sigmask(int how, const sigset_t *set, sigset_t *oldset)
+enum SignalHow
+{
+    Block = SIG_BLOCK,
+    Unblock = SIG_UNBLOCK,
+    SetMask = SIG_SETMASK,
+};
+
+inline int pthread_sigmask(SignalHow how, const sigset_t *set, sigset_t *oldset)
 {
     return ::pthread_sigmask(how, set, oldset);
 }

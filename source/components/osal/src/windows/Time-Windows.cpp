@@ -6,22 +6,18 @@
 namespace OSAL {
 namespace Time {
 
-const tm & BaseTime()
-{
-    static tm baseTime;
-    return baseTime;
-}
-
-const long tm::tm_tzOffset = 0;
-const int tm::tm_dstOffset = 0;
-const OSAL::Char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
+long tm::tm_tzOffset = 0;
+int tm::tm_dstOffset = 0;
+OSAL::Char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
+OSAL::Char tm::tm_tzNameDst[MAX_TIME_ZONE_NAME + 1] = _("");
+bool tm::initialized = false;
 static constexpr int SecondsPerMinute = 60;
 
-tm::tm(bool initialize)
-: _tm()
+tm::tm()
+    : _tm()
 {
-    if (initialize)
-        Update();
+    if (!initialized)
+        Initialize();
 }
 
 tm::tm(const tm & other)
@@ -32,8 +28,8 @@ tm::tm(const tm & other)
 tm::tm(int second, int minute, int hour, int day, int month, int year, bool initialize)
 : _tm()
 {
-    if (initialize)
-        Update();
+    if (!initialized)
+        Initialize();
     _tm.tm_sec = second;
     _tm.tm_min = minute;
     _tm.tm_hour = hour;
@@ -42,25 +38,17 @@ tm::tm(int second, int minute, int hour, int day, int month, int year, bool init
     _tm.tm_year = year;
 }
 
-void tm::Update()
+void tm::Initialize()
 {
     TIME_ZONE_INFORMATION timeZoneInformation;
     DWORD result = GetTimeZoneInformation(&timeZoneInformation);
-    switch (result)
-    {
-        case TIME_ZONE_ID_UNKNOWN:
-            break;
-        case TIME_ZONE_ID_STANDARD:
-            OSAL::Strings::strncpy(const_cast<OSAL::Char *>(tm_tzName), timeZoneInformation.StandardName,
-                                   MAX_TIME_ZONE_NAME + 1);
-            break;
-        case TIME_ZONE_ID_DAYLIGHT:
-            OSAL::Strings::strncpy(const_cast<OSAL::Char *>(tm_tzName), timeZoneInformation.DaylightName,
-                                   MAX_TIME_ZONE_NAME + 1);
-            break;
-    }
-    *(const_cast<long *>(&tm_tzOffset)) = SecondsPerMinute * (timeZoneInformation.Bias + timeZoneInformation.StandardBias);
-    *(const_cast<int *>(&tm_dstOffset)) = SecondsPerMinute * timeZoneInformation.DaylightBias;
+    tm_tzOffset= SecondsPerMinute * (timeZoneInformation.Bias + timeZoneInformation.StandardBias);
+    tm_dstOffset= SecondsPerMinute * timeZoneInformation.DaylightBias;
+    OSAL::Strings::strncpy(tm_tzName, timeZoneInformation.StandardName,
+                           MAX_TIME_ZONE_NAME + 1);
+    OSAL::Strings::strncpy(tm_tzNameDst, timeZoneInformation.DaylightName,
+                           MAX_TIME_ZONE_NAME + 1);
+    initialized = true;
 }
 
 tm & tm::operator=(const tm & other)
