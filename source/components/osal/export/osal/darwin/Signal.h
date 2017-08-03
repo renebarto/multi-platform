@@ -12,11 +12,11 @@ inline int sigaction(int signum, const sigaction_t *act, sigaction_t *oldact)
     return ::sigaction(signum, act, oldact);
 }
 
-using sighandler_t = ::sighandler_t;
+using sighandler_t = void (*)(int);
 
 inline sighandler_t signal(int signum, sighandler_t handler)
 {
-    return ::signal(signum, handler);
+    return ::bsd_signal(signum, handler);
 }
 
 using sigset_t = ::sigset_t;
@@ -49,7 +49,7 @@ public:
     {
         return sigismember(&_set, signum);
     }
-    sigset_t get() const
+    const sigset_t & get() const
     {
         return _set;
     }

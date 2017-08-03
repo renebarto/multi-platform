@@ -13,7 +13,7 @@ WARNING_DISABLE(4265)
 #include <mutex>
 WARNING_POP
 #include "core/ByteArray.h"
-#include "osal/Network.h"
+#include "osal/Network-Darwin.h"
 #include "network/Address.h"
 
 namespace Network

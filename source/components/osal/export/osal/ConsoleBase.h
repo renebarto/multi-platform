@@ -58,6 +58,16 @@ DEFINE_FLAG_OPERATORS(ConsoleColor, int);
 template<class CharT>
 OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColorType value);
 
+struct OSAL_EXPORT _SetForegroundColor
+{
+    ConsoleColorType color;
+};
+
+struct OSAL_EXPORT _SetBackgroundColor
+{
+    ConsoleColorType color;
+};
+
 template<class CharT>
 class ConsoleBase
 {
@@ -96,6 +106,9 @@ public:
         return *this;
     }
 
+    ConsoleBase & operator << (_SetForegroundColor color);
+    ConsoleBase & operator << (_SetBackgroundColor color);
+
 protected:
     std::basic_ostream<CharT> * _stream;
     int _handle;
@@ -107,20 +120,6 @@ protected:
 
 };
 
-struct OSAL_EXPORT _SetForegroundColor
-{
-    ConsoleColorType color;
-};
-
-struct OSAL_EXPORT _SetBackgroundColor
-{
-    ConsoleColorType color;
-};
-
-template<class CharT>
-OSAL_EXPORT ConsoleBase<CharT> & operator << (ConsoleBase<CharT> & stream, _SetForegroundColor color);
-template<class CharT>
-OSAL_EXPORT ConsoleBase<CharT> & operator << (ConsoleBase<CharT> & stream, _SetBackgroundColor color);
 
 } // namespace OSAL
 

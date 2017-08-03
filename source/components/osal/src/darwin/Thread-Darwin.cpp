@@ -12,12 +12,13 @@ void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & thre
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
 
 	auto handle = thread.native_handle();
-	pthread_setname_np(handle, threadNameNarrow.c_str());
+	pthread_setname_np(threadNameNarrow.c_str());
 }
 
 void OSAL::Thread::SetThreadNameSelf(const OSAL::String & threadName)
 {
-	SetThreadName(*this, threadName);
+    std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
+    pthread_setname_np(threadNameNarrow.c_str());
 }
 
 bool OSAL::Thread::IsThreadSelf(std::thread & thread)

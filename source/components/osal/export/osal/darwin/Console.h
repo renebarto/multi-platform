@@ -120,13 +120,13 @@ bool ConsoleBase<CharT>::ShouldUseColor()
         return false;
     std::string term = termSetting;
     const bool term_supports_color =
-    (term == "xterm") ||
-    (term == "xterm-color") ||
-    (term == "xterm-256color") ||
-    (term == "screen") ||
-    (term == "screen-256color") ||
-    (term == "linux") ||
-    (term == "cygwin");
+        (term == "xterm") ||
+        (term == "xterm-color") ||
+        (term == "xterm-256color") ||
+        (term == "screen") ||
+        (term == "screen-256color") ||
+        (term == "linux") ||
+        (term == "cygwin");
     return term_supports_color;
 }
 

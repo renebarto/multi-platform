@@ -32,17 +32,17 @@ inline void ConsoleBase<CharT>::ResetTerminalColor()
 }
 
 template<class CharT>
-inline ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetForegroundColor color)
+inline ConsoleBase<CharT> & ConsoleBase<CharT>::operator<<(_SetForegroundColor color)
 {
-    stream.SetForegroundColor(color.color);
-    return stream;
+    SetForegroundColor(color.color);
+    return *this;
 }
 
 template<class CharT>
-inline ConsoleBase<CharT> &operator<<(ConsoleBase<CharT> &stream, _SetBackgroundColor color)
+inline ConsoleBase<CharT> & ConsoleBase<CharT>::operator<<(_SetBackgroundColor color)
 {
-    stream.SetBackgroundColor(color.color);
-    return stream;
+    SetBackgroundColor(color.color);
+    return *this;
 }
 
 typedef ConsoleBase<Char> Console;

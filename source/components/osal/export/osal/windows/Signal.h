@@ -60,50 +60,62 @@ inline sighandler_t signal(int signum, sighandler_t handler)
     return ::signal(signum, handler);
 }
 
-inline int sigemptyset(sigset_t *set)
+class SignalSet
 {
-    if (set == nullptr)
-        return -1;
-    set->set.reset();
-    return 0;
-}
+public:
+    SignalSet()
+            : _set()
+    {
+        clear();
+    }
+    int clear()
+    {
+        if (set == nullptr)
+            return -1;
+        set->set.reset();
+        return 0;
+    }
+    int fill()
+    {
+        if (set == nullptr)
+            return -1;
+        set->set.set();
+        return 0;
+    }
+    int add(int signum)
+    {
+        if (set == nullptr)
+            return -1;
+        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
+            return -1;
+        set->set.set(static_cast<size_t>(signum));
+        return 0;
+    }
+    int remove(int signum)
+    {
+        if (set == nullptr)
+            return -1;
+        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
+            return -1;
+        set->set.reset(static_cast<size_t>(signum));
+        return 0;
+    }
+    bool contains(int signum)
+    {
+        if (set == nullptr)
+            return -1;
+        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
+            return -1;
+        return (set->set.test(static_cast<size_t>(signum))) ? 1 : 0;
+    }
+    sigset_t get() const
+    {
+        return _set;
+    }
 
-inline int sigfillset(sigset_t *set)
-{
-    if (set == nullptr)
-        return -1;
-    set->set.set();
-    return 0;
-}
-
-inline int sigaddset(sigset_t *set, int signum)
-{
-    if (set == nullptr)
-        return -1;
-    if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-        return -1;
-    set->set.set(static_cast<size_t>(signum));
-    return 0;
-}
-
-inline int sigdelset(sigset_t *set, int signum)
-{
-    if (set == nullptr)
-        return -1;
-    if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-        return -1;
-    set->set.reset(static_cast<size_t>(signum));
-    return 0;
-}
-
-inline int sigismember(const sigset_t *set, int signum)
-{
-    if (set == nullptr)
-        return -1;
-    if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-        return -1;
-    return (set->set.test(static_cast<size_t>(signum))) ? 1 : 0;
-}
+private:
+    sigset_t _set;
+};
 
 enum SignalHow
 {

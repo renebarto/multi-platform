@@ -26,14 +26,14 @@ namespace has_insertion_operator_impl
         template<typename T> any_t(T const&);
     };
 
-    no operator<<(std::ostream const&, any_t const&);
+    no operator<<(std::basic_ostream<OSAL::Char> const&, any_t const&);
 
-    yes& test(std::ostream&);
+    yes& test(std::basic_ostream<OSAL::Char>&);
     no test(no);
 
     template<typename T>
     struct has_insertion_operator {
-        static std::ostream &s;
+        static std::basic_ostream<OSAL::Char> &s;
         static const T &t;
         static bool const value = sizeof(test(s << t)) == sizeof(yes);
     };
@@ -89,7 +89,7 @@ template <typename T>
 std::string PrintToString(const T& value);
 
 template <typename T>
-void DefaultPrintNonContainerTo(const T& value, std::ostream & stream)
+void DefaultPrintNonContainerTo(const T& value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value;
 }
@@ -97,7 +97,7 @@ void DefaultPrintNonContainerTo(const T& value, std::ostream & stream)
 std::string WideStringToUtf8(const std::wstring & value);
 
 template <typename T>
-void UniversalPrint(const T& value, std::ostream & stream);
+void UniversalPrint(const T& value, std::basic_ostream<OSAL::Char> & stream);
 
 WARNING_PUSH
 WARNING_DISABLE(4242)
@@ -125,7 +125,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
                     std::false_type isEnum,
                     std::false_type isPointer,
                     const C& container,
-                    std::ostream & stream)
+                    std::basic_ostream<OSAL::Char> & stream)
 {
     const size_t MaxCount = 32;  // The maximum number of elements to print.
     stream << '{';
@@ -161,7 +161,7 @@ WARNING_POP
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container pointer";
 //}
@@ -172,7 +172,7 @@ WARNING_POP
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container enum";
 //}
@@ -183,7 +183,7 @@ WARNING_POP
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container enum pointer";
 //}
@@ -194,7 +194,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
                     std::false_type UNUSED(isEnum),
                     std::false_type UNUSED(isPointer),
                     const T& value,
-                    std::ostream & stream)
+                    std::basic_ostream<OSAL::Char> & stream)
 {
     for (auto x : value)
         UniversalPrint(x, stream);
@@ -206,7 +206,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container class pointer";
 //}
@@ -217,7 +217,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container enum class";
 //}
@@ -228,7 +228,7 @@ void DefaultPrintTo(IsContainer /* dummy */,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "container enum class pointer";
 //}
@@ -240,7 +240,7 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
                     std::false_type UNUSED(isEnum),
                     std::false_type UNUSED(isPointer),
                     const T& value,
-                    std::ostream & stream)
+                    std::basic_ostream<OSAL::Char> & stream)
 {
     DefaultPrintNonContainerTo(value, stream);
 }
@@ -252,7 +252,7 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
                     std::false_type,
                     std::true_type,
                     const T& value,
-                    std::ostream & stream)
+                    std::basic_ostream<OSAL::Char> & stream)
 {
     if (value == nullptr)
     {
@@ -293,7 +293,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
                std::true_type UNUSED(isEnum),
                std::false_type UNUSED(isPointer),
                const T& value,
-               std::ostream & stream)
+               std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value;
 }
@@ -306,7 +306,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
                std::true_type UNUSED(isEnum),
                std::false_type UNUSED(isPointer),
                const T& value,
-               std::ostream & stream)
+               std::basic_ostream<OSAL::Char> & stream)
 {
     stream << (int)value;
 }
@@ -318,7 +318,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "enum " << (int)*_value;
 //}
@@ -331,7 +331,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
                std::false_type,
                std::false_type,
                const T& value,
-               std::ostream & stream)
+               std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value;
 }
@@ -344,7 +344,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
                std::false_type UNUSED(isEnum),
                std::false_type UNUSED(isPointer),
                const T& UNUSED(value),
-               std::ostream & stream)
+               std::basic_ostream<OSAL::Char> & stream)
 {
 #if defined(WIN_MSVC)
     stream << typeid(T).name();
@@ -360,7 +360,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::false_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "class pointer " << ConvertTypeName(typeid(T).name());
 //}
@@ -371,7 +371,7 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isEnum,
 //                    std::false_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "class enum " << ConvertTypeName(typeid(T).name());
 //}
@@ -382,74 +382,74 @@ DefaultPrintTo(IsNotContainer /* dummy */,
 //                    std::true_type isEnum,
 //                    std::true_type isPointer,
 //                    const T& _value,
-//                    std::ostream & stream)
+//                    std::basic_ostream<OSAL::Char> & stream)
 //{
 //    stream << "class enum pointer " << ConvertTypeName(typeid(T).name());
 //}
 
 template <typename T>
-void PrintTo(const T& value, std::ostream & stream)
+void PrintTo(const T& value, std::basic_ostream<OSAL::Char> & stream)
 {
     DefaultPrintTo(IsContainerTest<T>(0), std::is_class<T>(), std::is_enum<T>(), std::is_pointer<T>(), value, stream);
 }
 
-UNIT_TEST_CPP_EXPORT void PrintTo(unsigned char c, std::ostream & stream);
-UNIT_TEST_CPP_EXPORT void PrintTo(signed char c, std::ostream & stream);
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(char c, std::ostream & stream)
+UNIT_TEST_CPP_EXPORT void PrintTo(unsigned char c, std::basic_ostream<OSAL::Char> & stream);
+UNIT_TEST_CPP_EXPORT void PrintTo(signed char c, std::basic_ostream<OSAL::Char> & stream);
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(char c, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(static_cast<unsigned char>(c), stream);
 }
 
-UNIT_TEST_CPP_EXPORT void PrintTo(wchar_t wc, std::ostream & stream);
+UNIT_TEST_CPP_EXPORT void PrintTo(wchar_t wc, std::basic_ostream<OSAL::Char> & stream);
 
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(bool x, std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(bool x, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << (x ? "true" : "false");
 }
 
-UNIT_TEST_CPP_EXPORT void PrintTo(const char* s, std::ostream & stream);
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(char* s, std::ostream & stream)
+UNIT_TEST_CPP_EXPORT void PrintTo(const char* s, std::basic_ostream<OSAL::Char> & stream);
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(char* s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const char*>(s), stream);
 }
 
 // signed/unsigned char is often used for representing binary data, so
 // we print pointers to it as void* to be safe.
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const signed char * s, std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const signed char * s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const void *>(s), stream);
 }
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(signed char * s, std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(signed char * s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const void *>(s), stream);
 }
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const unsigned char * s, std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const unsigned char * s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const void *>(s), stream);
 }
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(unsigned char * s, std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(unsigned char * s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const void *>(s), stream);
 }
-UNIT_TEST_CPP_EXPORT void PrintTo(const wchar_t * s, std::ostream & stream);
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(wchar_t * s, std::ostream & stream)
+UNIT_TEST_CPP_EXPORT void PrintTo(const wchar_t * s, std::basic_ostream<OSAL::Char> & stream);
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(wchar_t * s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintTo(ImplicitCast_<const wchar_t*>(s), stream);
 }
 
-UNIT_TEST_CPP_EXPORT void PrintStringTo(const std::string & s, std::ostream & stream);
-inline void PrintTo(const std::string & s, std::ostream & stream)
+UNIT_TEST_CPP_EXPORT void PrintStringTo(const std::string & s, std::basic_ostream<OSAL::Char> & stream);
+inline void PrintTo(const std::string & s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintStringTo(s, stream);
 }
 
-UNIT_TEST_CPP_EXPORT void PrintWideStringTo(const std::wstring & s, std::ostream & stream);
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const std::wstring & s, std::ostream & stream)
+UNIT_TEST_CPP_EXPORT void PrintWideStringTo(const std::wstring & s, std::basic_ostream<OSAL::Char> & stream);
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(const std::wstring & s, std::basic_ostream<OSAL::Char> & stream)
 {
     PrintWideStringTo(s, stream);
 }
 
-/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(std::nullptr_t UNUSED(p), std::ostream & stream)
+/*UNIT_TEST_CPP_EXPORT*/ inline void PrintTo(std::nullptr_t UNUSED(p), std::basic_ostream<OSAL::Char> & stream)
 {
     PrintStringTo("nullptr", stream);
 }
@@ -461,7 +461,7 @@ public:
     // Note: we deliberately don't call this PrintTo(), as that name
     // conflicts with ::testing::internal::PrintTo in the body of the
     // function.
-    static void Print(const T& value, std::ostream & stream)
+    static void Print(const T& value, std::basic_ostream<OSAL::Char> & stream)
     {
         // By default, ::testing::internal::PrintTo() is used for printing
         // the _value.
@@ -478,7 +478,7 @@ public:
 // Prints the given number of elements in an array, without printing
 // the curly braces.
 template <typename T>
-void PrintRawArrayTo(const T a[], size_t count, std::ostream & stream)
+void PrintRawArrayTo(const T a[], size_t count, std::basic_ostream<OSAL::Char> & stream)
 {
     UniversalPrint(a[0], stream);
     for (size_t i = 1; i != count; i++)
@@ -491,7 +491,7 @@ void PrintRawArrayTo(const T a[], size_t count, std::ostream & stream)
 // UniversalPrintArray(begin, len, os) prints an array of 'len'
 // elements, starting at address 'begin'.
 template <typename T>
-void UniversalPrintArray(const T * begin, size_t len, std::ostream & stream)
+void UniversalPrintArray(const T * begin, size_t len, std::basic_ostream<OSAL::Char> & stream)
 {
     if (len == 0)
     {
@@ -521,10 +521,10 @@ void UniversalPrintArray(const T * begin, size_t len, std::ostream & stream)
 }
 
 // This overload prints a (const) char array compactly.
-UNIT_TEST_CPP_EXPORT void UniversalPrintArray(const char * begin, size_t len, std::ostream & stream);
+UNIT_TEST_CPP_EXPORT void UniversalPrintArray(const char * begin, size_t len, std::basic_ostream<OSAL::Char> & stream);
 
 // This overload prints a (const) wchar_t array compactly.
-UNIT_TEST_CPP_EXPORT void UniversalPrintArray(const wchar_t * begin, size_t len, std::ostream & stream);
+UNIT_TEST_CPP_EXPORT void UniversalPrintArray(const wchar_t * begin, size_t len, std::basic_ostream<OSAL::Char> & stream);
 
 // Implements printing an array type T[N].
 template <typename T, size_t N>
@@ -533,7 +533,7 @@ class UniversalPrinter<T[N]>
 public:
     // Prints the given array, omitting some elements when there are too
     // many.
-    static void Print(const T (&a)[N], std::ostream & stream)
+    static void Print(const T (&a)[N], std::basic_ostream<OSAL::Char> & stream)
     {
         UniversalPrintArray(a, N, stream);
     }
@@ -544,7 +544,7 @@ template <typename T>
 class UniversalPrinter<T&>
 {
 public:
-    static void Print(const T& value, std::ostream & stream)
+    static void Print(const T& value, std::basic_ostream<OSAL::Char> & stream)
     {
         // Prints the address of the _value.  We use reinterpret_cast here
         // as static_cast doesn't compile when T is a function type.
@@ -556,7 +556,7 @@ public:
 };
 
 template <typename T>
-void UniversalPrint(const T& value, std::ostream & stream)
+void UniversalPrint(const T& value, std::basic_ostream<OSAL::Char> & stream)
 {
     typedef T T1;
     UniversalPrinter<T1>::Print(value, stream);
@@ -566,7 +566,7 @@ template <typename T>
 class ValuePrinter
 {
 public:
-    static void Print(const T& value, std::ostream & stream)
+    static void Print(const T& value, std::basic_ostream<OSAL::Char> & stream)
     {
         UniversalPrint(value, stream);
     }
@@ -576,7 +576,7 @@ public:
 //class ValuePrinter<T&>
 //{
 //public:
-//    static void Print(const T& _value, std::ostream & stream)
+//    static void Print(const T& _value, std::basic_ostream<OSAL::Char> & stream)
 //    {
 //        UniversalPrint(_value, stream);
 //    }
@@ -586,7 +586,7 @@ template <typename T, size_t N>
 class ValuePrinter<T[N]>
 {
 public:
-    static void Print(const T (&value)[N], std::ostream & stream)
+    static void Print(const T (&value)[N], std::basic_ostream<OSAL::Char> & stream)
     {
         UniversalPrinter<T[N]>::Print(value, stream);
     }
@@ -596,7 +596,7 @@ public:
 //class ValuePrinter<const char*>
 //{
 //public:
-//    static void Print(const char * str, std::ostream & stream)
+//    static void Print(const char * str, std::basic_ostream<OSAL::Char> & stream)
 //    {
 //        if (str == nullptr)
 //        {
@@ -612,7 +612,7 @@ public:
 //class ValuePrinter<char *>
 //{
 //public:
-//    static void Print(char* str, std::ostream & stream)
+//    static void Print(char* str, std::basic_ostream<OSAL::Char> & stream)
 //    {
 //        ValuePrinter<const char *>::Print(str, stream);
 //    }
@@ -621,7 +621,7 @@ public:
 //class ValuePrinter<const wchar_t *>
 //{
 //public:
-//    static void Print(const wchar_t* str, std::ostream & stream)
+//    static void Print(const wchar_t* str, std::basic_ostream<OSAL::Char> & stream)
 //    {
 //        if (str == nullptr)
 //        {
@@ -637,14 +637,14 @@ public:
 //class ValuePrinter<wchar_t *>
 //{
 //public:
-//    static void Print(wchar_t* str, std::ostream & stream)
+//    static void Print(wchar_t* str, std::basic_ostream<OSAL::Char> & stream)
 //    {
 //        ValuePrinter<const wchar_t *>::Print(str, stream);
 //    }
 //};
 //
 //template <typename T>
-//void UniversalTersePrint(const T& _value, std::ostream & stream)
+//void UniversalTersePrint(const T& _value, std::basic_ostream<OSAL::Char> & stream)
 //{
 //    ValuePrinter<T>::Print(_value, stream);
 //}

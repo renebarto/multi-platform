@@ -44,14 +44,14 @@ std::vector<Core::EnumConversion<OSAL::Test::MyFlags>> Core::EnumSerializationIn
 };
 WARNING_POP
 
-inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, const OSAL::Test::MyFlags & value)
+namespace OSAL {
+namespace Test {
+
+inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, const MyFlags & value)
 {
     stream << Core::Serialize(value);
     return stream;
 }
-
-namespace OSAL {
-namespace Test {
 
 class FlagOperatorsTest : public UnitTestCpp::TestFixture
 {

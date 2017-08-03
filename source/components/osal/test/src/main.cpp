@@ -51,10 +51,10 @@ int main(int argc, const OSAL::Char* argv[])
     else
     {
         UnitTestCpp::ConsoleTestReporter reporter;
-        const OSAL::Char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
-        const OSAL::Char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
-        const OSAL::Char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
-        if ((suiteName != 0) || (fixtureName != 0) || (testName != 0))
+        const OSAL::Char * suiteName = parser.testSuiteName.empty() ? nullptr : parser.testSuiteName.c_str();
+        const OSAL::Char * fixtureName = parser.testFixtureName.empty() ? nullptr : parser.testFixtureName.c_str();
+        const OSAL::Char * testName = parser.testName.empty() ? nullptr : parser.testName.c_str();
+        if ((suiteName != nullptr) || (fixtureName != nullptr) || (testName != nullptr))
         {
             return RunSelectedTests(reporter, UnitTestCpp::InSelection(suiteName, fixtureName, testName));
         }

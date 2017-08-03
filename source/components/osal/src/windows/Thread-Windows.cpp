@@ -47,6 +47,11 @@ void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & thre
     RaiseException(info);
 }
 
+void OSAL::Thread::SetThreadNameSelf(const OSAL::String & threadName)
+{
+	SetThreadName(*this, threadName);
+}
+
 bool OSAL::Thread::IsThreadSelf(std::thread & thread)
 {
 	return static_cast<HANDLE>(thread.native_handle()) == GetCurrentThread();

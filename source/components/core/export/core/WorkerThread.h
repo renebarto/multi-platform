@@ -73,14 +73,14 @@ protected:
 
     void SetSignalMask()
     {
-        OSAL::Signal::sigset_t signalMaskSet;
-        OSAL::Signal::sigemptyset(&signalMaskSet);
-        OSAL::Signal::sigaddset(&signalMaskSet, SIGTERM);
-        OSAL::Signal::sigaddset(&signalMaskSet, SIGINT);
+        OSAL::Signal::SignalSet signalMaskSet;
+        signalMaskSet.clear();
+        signalMaskSet.add(SIGTERM);
+        signalMaskSet.add(SIGINT);
 #if defined(SIGQUIT)
-        OSAL::Signal::sigaddset(&signalMaskSet, SIGQUIT);
+        signalMaskSet.add(SIGQUIT);
 #endif
-        if (pthread_sigmask(OSAL::Signal::Block, &signalMaskSet, nullptr) != 0)
+        if (!OSAL::Thread::SetSignalMask(signalMaskSet))
             throw OSAL::SystemError(__func__, __FILE__, __LINE__, errno,
                                     _("Cannot set signal mask for thread"));
     }
