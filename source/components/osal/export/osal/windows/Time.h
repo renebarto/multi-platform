@@ -68,13 +68,13 @@ using TimeValMicroSeconds = long;
 
 struct OSAL_EXPORT tm
 {
-    tm(bool initialize = false);
+    tm();
 
     tm(const tm & other);
 
-    tm(int second, int minute, int hour, int day, int month, int year, bool initialize = false);
+    tm(int second, int minute, int hour, int day, int month, int year);
 
-    void Update();
+    void Initialize();
 
     tm & operator=(const tm & other);
 
@@ -87,6 +87,7 @@ struct OSAL_EXPORT tm
     static int tm_dstOffset;
     static OSAL::Char tm_tzName[MAX_TIME_ZONE_NAME + 1];
     static OSAL::Char tm_tzNameDst[MAX_TIME_ZONE_NAME + 1];
+    static bool initialized;
 };
 
 inline tm * localtime(const time_t * timep)

@@ -14,77 +14,77 @@ namespace internal
 class String
 {
 public:
-    // Clones a 0-terminated C string, allocating memory using new.  The
+    // Clones a 0-terminated C OSAL::String, allocating memory using new.  The
     // caller is responsible for deleting the return _value using
-    // delete[].  Returns the cloned string, or nullptr if the input is
+    // delete[].  Returns the cloned OSAL::String, or nullptr if the input is
     // nullptr.
     //
-    // This is different from strdup() in string.h, which allocates
+    // This is different from strdup() in OSAL::String.h, which allocates
     // memory using malloc().
     static const char * CloneCString(const char * c_str);
 
     // Compares two C strings.  Returns true iff they have the same content.
     //
     // Unlike strcmp(), this function can handle nullptr argument(s).  A
-    // nullptr C string is considered different to any non-nullptr C string,
-    // including the empty string.
+    // nullptr C OSAL::String is considered different to any non-nullptr C OSAL::String,
+    // including the empty OSAL::String.
     static bool CStringEquals(const char* lhs, const char* rhs);
 
-    // Converts a wide C string to a String using the UTF-8 encoding.
+    // Converts a wide C OSAL::String to a String using the UTF-8 encoding.
     // nullptr will be converted to "(null)".  If an error occurred during
-    // the conversion, "(failed to convert from wide string)" is
+    // the conversion, "(failed to convert from wide OSAL::String)" is
     // returned.
-    static string ShowWideCString(const wchar_t* wide_c_str);
+    static OSAL::String ShowWideCString(const wchar_t* wide_c_str);
 
     // Compares two wide C strings.  Returns true iff they have the same
     // content.
     //
     // Unlike wcscmp(), this function can handle nullptr argument(s).  A
-    // nullptr C string is considered different to any non-nullptr C string,
-    // including the empty string.
-    static bool WideCStringEquals(const wchar_t* lhs, const wchar_t* rhs);
+    // nullptr C OSAL::String is considered different to any non-nullptr C OSAL::String,
+    // including the empty OSAL::String.
+    static bool CStringEquals(const wchar_t* lhs, const wchar_t* rhs);
 
     // Compares two C strings, ignoring case.  Returns true iff they
     // have the same content.
     //
     // Unlike strcasecmp(), this function can handle nullptr argument(s).
-    // A nullptr C string is considered different to any non-nullptr C string,
-    // including the empty string.
+    // A nullptr C OSAL::String is considered different to any non-nullptr C OSAL::String,
+    // including the empty OSAL::String.
     static bool CaseInsensitiveCStringEquals(const char* lhs, const char* rhs);
 
     // Compares two wide C strings, ignoring case.  Returns true iff they
     // have the same content.
     //
     // Unlike wcscasecmp(), this function can handle nullptr argument(s).
-    // A nullptr C string is considered different to any non-nullptr wide C string,
-    // including the empty string.
+    // A nullptr C OSAL::String is considered different to any non-nullptr wide C OSAL::String,
+    // including the empty OSAL::String.
     // NB: The implementations on different platforms slightly differ.
     // On windows, this method uses _wcsicmp which compares according to LC_CTYPE
     // environment variable. On GNU platform this method uses wcscasecmp
     // which compares according to LC_CTYPE category of the current locale.
     // On MacOS X, it uses towlower, which also uses LC_CTYPE category of the
     // current locale.
-    static bool CaseInsensitiveWideCStringEquals(const wchar_t* lhs, const wchar_t* rhs);
+    static bool CaseInsensitiveCStringEquals(const wchar_t* lhs, const wchar_t* rhs);
 
-    // Returns true iff the given string ends with the given suffix, ignoring
-    // case. Any string is considered to end with an empty suffix.
-    static bool EndsWithCaseInsensitive(const string& str, const string& suffix);
+    // Returns true iff the given OSAL::String ends with the given suffix, ignoring
+    // case. Any OSAL::String is considered to end with an empty suffix.
+    static bool EndsWithCaseInsensitive(const OSAL::String& str, const OSAL::String& suffix);
 
     // Formats an int _value as "%02d".
-    static string FormatIntWidth2(int value);  // "%02d" for width == 2
+    static OSAL::String FormatIntWidth2(int value);  // "%02d" for width == 2
 
     // Formats an int _value as "%X".
-    static string FormatHexInt(int value);
+    static OSAL::String FormatHexInt(int value);
 
     // Formats a byte as "%02X".
-    static string FormatByte(unsigned char value);
+    static OSAL::String FormatByte(unsigned char value);
 
 private:
     String();  // Not meant to be instantiated.
 };  // class String
 
 // The following two functions only make sense if the the system
-// uses UTF-16 for wide string encoding. All supported systems
+// uses UTF-16 for wide OSAL::String encoding. All supported systems
 // with 16 bit wchar_t (Windows, Cygwin, Symbian OS) do use UTF-16.
 
 // Determines if the arguments constitute UTF-16 surrogate pair
@@ -108,17 +108,17 @@ inline uint32_t CreateCodePointFromUtf16SurrogatePair(wchar_t first,
            static_cast<uint32_t>(first);
 }
 
-// Converts the buffer in a stringstream to an string, converting NUL
+// Converts the buffer in a stringstream to an OSAL::String, converting NUL
 // bytes to "\\0" along the way.
-string StringStreamToString(stringstream* ss)
+std::string StringStreamToString(stringstream * ss)
 {
-    const string& str = ss->str();
-    const char* const start = str.c_str();
-    const char* const end = start + str.length();
+    const std::string & str = ss->str();
+    const char * const start = str.c_str();
+    const char * const end = start + str.length();
 
-    string result;
+    std::string result;
     result.reserve(2 * static_cast<uint64_t>(end - start));
-    for (const char* ch = start; ch != end; ++ch)
+    for (const char * ch = start; ch != end; ++ch)
     {
         if (*ch == '\0')
         {
@@ -167,17 +167,17 @@ inline uint32_t ChopLowBits(uint32_t* bits, int n)
     return low_bits;
 }
 
-// Converts a Unicode code point to a narrow string in UTF-8 encoding.
+// Converts a Unicode code point to a narrow OSAL::String in UTF-8 encoding.
 // code_point parameter is of type uint32_t because wchar_t may not be
 // wide enough to contain a code point.
 // If the code_point is not a valid Unicode code point
 // (i.e. outside of Unicode range U+0 to U+10FFFF) it will be converted
 // to "(Invalid Unicode 0xXXXXXXXX)".
-string CodePointToUtf8(uint32_t code_point)
+std::string CodePointToUtf8(uint32_t code_point)
 {
     if (code_point > kMaxCodePoint4)
     {
-        return "(Invalid Unicode 0x" + String::FormatHexInt(static_cast<int>(code_point)) + ")";
+        return "(Invalid Unicode 0x" + OSAL::ToNarrowString(String::FormatHexInt(static_cast<int>(code_point))) + ")";
     }
 
     char str[5];  // Big enough for the largest valid code point.
@@ -211,20 +211,20 @@ string CodePointToUtf8(uint32_t code_point)
     return str;
 }
 
-// Converts a wide string to a narrow string in UTF-8 encoding.
-// The wide string is assumed to have the following encoding:
+// Converts a wide OSAL::String to a narrow OSAL::String in UTF-8 encoding.
+// The wide OSAL::String is assumed to have the following encoding:
 //   UTF-16 if sizeof(wchar_t) == 2 (on Windows, Cygwin, Symbian OS)
 //   UTF-32 if sizeof(wchar_t) == 4 (on Linux)
-// Parameter str points to a null-terminated wide string.
+// Parameter str points to a null-terminated wide OSAL::String.
 // Parameter num_chars may additionally limit the number
-// of wchar_t characters processed. -1 is used when the entire string
+// of wchar_t characters processed. -1 is used when the entire OSAL::String
 // should be processed.
-// If the string contains code points that are not valid Unicode code points
+// If the OSAL::String contains code points that are not valid Unicode code points
 // (i.e. outside of Unicode range U+0 to U+10FFFF) they will be output
-// as '(Invalid Unicode 0xXXXXXXXX)'. If the string is in UTF16 encoding
+// as '(Invalid Unicode 0xXXXXXXXX)'. If the OSAL::String is in UTF16 encoding
 // and contains invalid UTF-16 surrogate pairs, values in those pairs
 // will be encoded as individual Unicode characters from Basic Normal Plane.
-string WideStringToUtf8(const wchar_t* str, int num_chars)
+std::string WideStringToUtf8(const wchar_t* str, int num_chars)
 {
     if (num_chars == -1)
         num_chars = static_cast<int>(wcslen(str));
@@ -256,8 +256,8 @@ string WideStringToUtf8(const wchar_t* str, int num_chars)
 // Compares two C strings.  Returns true iff they have the same content.
 //
 // Unlike strcmp(), this function can handle nullptr argument(s).  A nullptr
-// C string is considered different to any non-nullptr C string,
-// including the empty string.
+// C OSAL::String is considered different to any non-nullptr C OSAL::String,
+// including the empty OSAL::String.
 bool String::CStringEquals(const char * lhs, const char * rhs)
 {
     if (lhs == nullptr)
@@ -269,22 +269,22 @@ bool String::CStringEquals(const char * lhs, const char * rhs)
     return strcmp(lhs, rhs) == 0;
 }
 
-// Converts a wide C string to an string using the UTF-8 encoding.
+// Converts a wide C OSAL::String to an OSAL::String using the UTF-8 encoding.
 // nullptr will be converted to "(null)".
-string String::ShowWideCString(const wchar_t * wide_c_str)
+OSAL::String String::ShowWideCString(const wchar_t * wide_c_str)
 {
-    if (wide_c_str == nullptr)  return "(null)";
+    if (wide_c_str == nullptr)  return _("(null)");
 
-    return internal::WideStringToUtf8(wide_c_str, -1);
+    return OSAL::ToString(internal::WideStringToUtf8(wide_c_str, -1));
 }
 
 // Compares two wide C strings.  Returns true iff they have the same
 // content.
 //
 // Unlike wcscmp(), this function can handle nullptr argument(s).  A nullptr
-// C string is considered different to any non-nullptr C string,
-// including the empty string.
-bool String::WideCStringEquals(const wchar_t * lhs, const wchar_t * rhs)
+// C OSAL::String is considered different to any non-nullptr C OSAL::String,
+// including the empty OSAL::String.
+bool String::CStringEquals(const wchar_t * lhs, const wchar_t * rhs)
 {
     if (lhs == nullptr)
         return rhs == nullptr;
@@ -299,8 +299,8 @@ bool String::WideCStringEquals(const wchar_t * lhs, const wchar_t * rhs)
 // the same content.
 //
 // Unlike strcasecmp(), this function can handle nullptr argument(s).  A
-// nullptr C string is considered different to any non-nullptr C string,
-// including the empty string.
+// nullptr C OSAL::String is considered different to any non-nullptr C OSAL::String,
+// including the empty OSAL::String.
 bool String::CaseInsensitiveCStringEquals(const char * lhs, const char * rhs)
 {
     if (lhs == nullptr)
@@ -314,15 +314,15 @@ bool String::CaseInsensitiveCStringEquals(const char * lhs, const char * rhs)
 // have the same content.
 //
 // Unlike wcscasecmp(), this function can handle nullptr argument(s).
-// A nullptr C string is considered different to any non-nullptr wide C string,
-// including the empty string.
+// A nullptr C OSAL::String is considered different to any non-nullptr wide C OSAL::String,
+// including the empty OSAL::String.
 // NB: The implementations on different platforms slightly differ.
 // On windows, this method uses _wcsicmp which compares according to LC_CTYPE
 // environment variable. On GNU platform this method uses wcscasecmp
 // which compares according to LC_CTYPE category of the current locale.
 // On MacOS X, it uses towlower, which also uses LC_CTYPE category of the
 // current locale.
-bool String::CaseInsensitiveWideCStringEquals(const wchar_t* lhs, const wchar_t* rhs)
+bool String::CaseInsensitiveCStringEquals(const wchar_t* lhs, const wchar_t* rhs)
 {
     if (lhs == nullptr)
         return rhs == nullptr;
@@ -334,8 +334,8 @@ bool String::CaseInsensitiveWideCStringEquals(const wchar_t* lhs, const wchar_t*
 }
 
 // Returns true iff str ends with the given suffix, ignoring case.
-// Any string is considered to end with an empty suffix.
-bool String::EndsWithCaseInsensitive(const string& str, const string& suffix)
+// Any OSAL::String is considered to end with an empty suffix.
+bool String::EndsWithCaseInsensitive(const OSAL::String& str, const OSAL::String& suffix)
 {
     const size_t str_len = str.length();
     const size_t suffix_len = suffix.length();
@@ -344,26 +344,26 @@ bool String::EndsWithCaseInsensitive(const string& str, const string& suffix)
 }
 
 // Formats an int _value as "%02d".
-string String::FormatIntWidth2(int value)
+OSAL::String String::FormatIntWidth2(int value)
 {
-    stringstream ss;
-    ss << setfill('0') << setw(2) << value;
+    basic_stringstream<OSAL::Char> ss;
+    ss << setfill(_('0')) << setw(2) << value;
     return ss.str();
 }
 
 // Formats an int _value as "%X".
-string String::FormatHexInt(int value)
+OSAL::String String::FormatHexInt(int value)
 {
-    stringstream ss;
+    basic_stringstream<OSAL::Char> ss;
     ss << hex << uppercase << value;
     return ss.str();
 }
 
 // Formats a byte as "%02X".
-string String::FormatByte(unsigned char value)
+OSAL::String String::FormatByte(unsigned char value)
 {
-    stringstream ss;
-    ss << setfill('0') << setw(2) << hex << uppercase
+    basic_stringstream<OSAL::Char> ss;
+    ss << setfill(_('0')) << setw(2) << hex << uppercase
        << static_cast<unsigned int>(value);
     return ss.str();
 }
@@ -404,58 +404,58 @@ inline bool IsXDigit(wchar_t ch)
 // The template argument UnsignedChar is the unsigned version of Char,
 // which is the type of c.
 template <typename UnsignedChar, typename Char>
-static CharFormat PrintAsCharLiteralTo(Char c, ostream & os)
+static CharFormat PrintAsCharLiteralTo(Char c, std::basic_ostream<OSAL::Char> & os)
 {
     switch (static_cast<wchar_t>(c))
     {
     case L'\0':
-        os << "\\0";
+        os << _("\\0");
         break;
     case L'\'':
-        os << "\\'";
+        os << _("\\'");
         break;
     case L'\\':
-        os << "\\\\";
+        os << _("\\\\");
         break;
     case L'\a':
-        os << "\\a";
+        os << _("\\a");
         break;
     case L'\b':
-        os << "\\b";
+        os << _("\\b");
         break;
     case L'\f':
-        os << "\\f";
+        os << _("\\f");
         break;
     case L'\n':
-        os << "\\n";
+        os << _("\\n");
         break;
     case L'\r':
-        os << "\\r";
+        os << _("\\r");
         break;
     case L'\t':
-        os << "\\t";
+        os << _("\\t");
         break;
     case L'\v':
-        os << "\\v";
+        os << _("\\v");
         break;
     default:
         if (IsPrintableAscii(static_cast<wchar_t>(c)))
         {
-            os << static_cast<char>(c);
+            os << static_cast<OSAL::Char>(c);
             return kAsIs;
         }
         else
         {
-            os << "\\x" + String::FormatHexInt(static_cast<UnsignedChar>(c));
+            os << _("\\x") + String::FormatHexInt(static_cast<UnsignedChar>(c));
             return kHexEscape;
         }
     }
     return kSpecialEscape;
 }
 
-// Prints a wchar_t c as if it's part of a string literal, escaping it when
+// Prints a wchar_t c as if it's part of a OSAL::String literal, escaping it when
 // necessary; returns how c was formatted.
-static CharFormat PrintAsStringLiteralTo(wchar_t c, ostream & os)
+static CharFormat PrintAsStringLiteralTo(wchar_t c, std::basic_ostream<OSAL::Char> & os)
 {
     switch (c)
     {
@@ -470,9 +470,9 @@ static CharFormat PrintAsStringLiteralTo(wchar_t c, ostream & os)
     }
 }
 
-// Prints a char c as if it's part of a string literal, escaping it when
+// Prints a char c as if it's part of a OSAL::String literal, escaping it when
 // necessary; returns how c was formatted.
-static CharFormat PrintAsStringLiteralTo(char c, ostream & os)
+static CharFormat PrintAsStringLiteralTo(char c, std::basic_ostream<OSAL::Char> & os)
 {
     return PrintAsStringLiteralTo(static_cast<wchar_t>(static_cast<unsigned char>(c)), os);
 }
@@ -482,7 +482,7 @@ static CharFormat PrintAsStringLiteralTo(char c, ostream & os)
 // using the standard C++ escape sequence.  The template argument
 // UnsignedChar is the unsigned version of Char, which is the type of c.
 template <typename UnsignedChar, typename Char>
-void PrintCharAndCodeTo(Char c, ostream & os)
+void PrintCharAndCodeTo(Char c, std::basic_ostream<OSAL::Char> & os)
 {
     // First, print c as a literal in the most readable form we can find.
     os << ((sizeof(c) > 1) ? "L'" : "'");
@@ -515,7 +515,7 @@ void PrintCharAndCodeTo(Char c, ostream & os)
 // The array starts at begin, the length is len, it may include '\0' characters
 // and may not be NUL-terminated.
 template <typename CharType>
-static void PrintCharsAsStringTo(const CharType* begin, size_t len, ostream & os)
+static void PrintCharsAsStringTo(const CharType* begin, size_t len, std::basic_ostream<OSAL::Char> & os)
 {
     const char* const kQuoteBegin = sizeof(CharType) == 1 ? "\"" : "L\"";
     os << kQuoteBegin;
@@ -526,7 +526,7 @@ static void PrintCharsAsStringTo(const CharType* begin, size_t len, ostream & os
         if (is_previous_hex && IsXDigit(cur))
         {
             // Previous character is of '\x..' form and this character can be
-            // interpreted as another hexadecimal digit in its number. Break string to
+            // interpreted as another hexadecimal digit in its number. Break OSAL::String to
             // disambiguate.
             os << "\" " << kQuoteBegin;
         }

@@ -86,7 +86,7 @@ const bool ImplicitlyConvertible<From, To>::value;
 inline bool IsTrue(bool condition) { return condition; }
 
 template <typename T>
-std::string PrintToString(const T& value);
+OSAL::String PrintToString(const T& value);
 
 template <typename T>
 void DefaultPrintNonContainerTo(const T& value, std::basic_ostream<OSAL::Char> & stream)
@@ -650,9 +650,9 @@ public:
 //}
 //
 template <typename T>
-std::string PrintToString(const T& value)
+OSAL::String PrintToString(const T& value)
 {
-    std::stringstream ss;
+    std::basic_stringstream<OSAL::Char> ss;
     ValuePrinter<T>::Print(value, ss);
     return ss.str();
 }

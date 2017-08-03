@@ -50,7 +50,7 @@ class FormatForComparison
 public:
     static std::string Format(const ToPrint& value)
     {
-        return PrintToString(value);
+        return OSAL::ToNarrowString(PrintToString(value));
     }
 };
 
@@ -60,7 +60,7 @@ typedef uint64_t BiggestInt;
 //class FormatForComparison<ToPrint[N], OtherOperand>
 //{
 //public:
-//    static std::string Format(const ToPrint[N] _value)
+//    static OSAL::String Format(const ToPrint[N] _value)
 //    {
 //        PrintToString(_value);
 //        //        return FormatForComparison<const ToPrint *, OtherOperand>::Format(_value);
@@ -80,7 +80,7 @@ AssertionResult CheckTrue(const std::string & valueName, const Value & value)
     {
         return BooleanFailure(valueName,
                               "true",
-                              PrintToString(value));
+                              OSAL::ToNarrowString(PrintToString(value)));
     }
     return AssertionSuccess();
 }
@@ -92,7 +92,7 @@ AssertionResult CheckFalse(const std::string & valueName, const Value & value)
     {
         return BooleanFailure(valueName,
                               "false",
-                              PrintToString(value));
+                              OSAL::ToNarrowString(PrintToString(value)));
     }
     return AssertionSuccess();
 }
@@ -613,7 +613,7 @@ AssertionResult CheckArrayEqual(const std::string & expectedExpression,
         return EqArrayFailure(expectedExpression, actualExpression, countExpression,
                               FormatForComparisonFailureMessage(expected, actual),
                               FormatForComparisonFailureMessage(actual, expected),
-                              PrintToString(count));
+                              OSAL::ToNarrowString(PrintToString(count)));
     }
     return AssertionSuccess();
 }
@@ -645,7 +645,7 @@ AssertionResult CheckArrayClose(const std::string & expectedExpression,
                                  FormatForComparisonFailureMessage(expected, actual),
                                  FormatForComparisonFailureMessage(actual, expected),
                                  FormatForComparisonFailureMessage(tolerance, expected),
-                                 PrintToString(count));
+                                 OSAL::ToNarrowString(PrintToString(count)));
     }
     return AssertionSuccess();
 }
@@ -670,8 +670,8 @@ AssertionResult CheckArray2DClose(const std::string & expectedExpression,
                                    FormatForComparisonFailureMessage(expected, actual),
                                    FormatForComparisonFailureMessage(actual, expected),
                                    FormatForComparisonFailureMessage(tolerance, expected),
-                                   PrintToString(rows),
-                                   PrintToString(columns));
+                                   OSAL::ToNarrowString(PrintToString(rows)),
+                                   OSAL::ToNarrowString(PrintToString(columns)));
     }
     return AssertionSuccess();
 }

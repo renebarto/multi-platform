@@ -1,6 +1,7 @@
 #pragma once
 
 #include <signal.h>
+#include "osal/OSAL.h"
 WARNING_PUSH
 WARNING_DISABLE(4265)
 #include <bitset>
@@ -70,45 +71,35 @@ public:
     }
     int clear()
     {
-        if (set == nullptr)
-            return -1;
-        set->set.reset();
+        _set.set.reset();
         return 0;
     }
     int fill()
     {
-        if (set == nullptr)
-            return -1;
-        set->set.set();
+        _set.set.set();
         return 0;
     }
     int add(int signum)
     {
-        if (set == nullptr)
+        if ((signum < 0) || (static_cast<size_t>(signum) >= _set.set.size()))
             return -1;
-        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-            return -1;
-        set->set.set(static_cast<size_t>(signum));
+        _set.set.set(static_cast<size_t>(signum));
         return 0;
     }
     int remove(int signum)
     {
-        if (set == nullptr)
+        if ((signum < 0) || (static_cast<size_t>(signum) >= _set.set.size()))
             return -1;
-        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-            return -1;
-        set->set.reset(static_cast<size_t>(signum));
+        _set.set.reset(static_cast<size_t>(signum));
         return 0;
     }
-    bool contains(int signum)
+    int contains(int signum)
     {
-        if (set == nullptr)
+        if ((signum < 0) || (static_cast<size_t>(signum) >= _set.set.size()))
             return -1;
-        if ((signum < 0) || (static_cast<size_t>(signum) >= set->set.size()))
-            return -1;
-        return (set->set.test(static_cast<size_t>(signum))) ? 1 : 0;
+        return (_set.set.test(static_cast<size_t>(signum))) ? 1 : 0;
     }
-    sigset_t get() const
+    const sigset_t & get() const
     {
         return _set;
     }

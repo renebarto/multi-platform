@@ -5,7 +5,7 @@ namespace Signal {
 
 static sigset_t signalMask;
 
-int pthread_sigmask(int how, const sigset_t *set, sigset_t *oldset)
+int pthread_sigmask(SignalHow how, const sigset_t *set, sigset_t *oldset)
 {
     if (oldset != nullptr)
         *oldset = signalMask;
@@ -13,14 +13,14 @@ int pthread_sigmask(int how, const sigset_t *set, sigset_t *oldset)
         return 0;
     switch (how)
     {
-    case SIG_BLOCK:
+    case SignalHow::Block:
         signalMask.set |= set->set;
         break;
-    case SIG_UNBLOCK:
+    case SignalHow::Unblock:
         signalMask.set &= (~set->set);
         break;
-    case SIG_SETMASK:
-        signalMask = set;
+    case SignalHow::SetMask:
+        signalMask = *set;
         break;
     default:
         return -1;

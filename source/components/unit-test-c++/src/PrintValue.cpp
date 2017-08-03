@@ -12,18 +12,18 @@ string WideStringToUtf8(const wstring & value)
     return internal::WideStringToUtf8(&value[0], static_cast<int>(value.length()));
 }
 
-void PrintTo(unsigned char c, ostream & os)
+void PrintTo(unsigned char c, std::basic_ostream<OSAL::Char> & os)
 {
     internal::PrintCharAndCodeTo<unsigned char>(c, os);
 }
-void PrintTo(signed char c, ostream & os)
+void PrintTo(signed char c, std::basic_ostream<OSAL::Char> & os)
 {
     internal::PrintCharAndCodeTo<unsigned char>(c, os);
 }
 
 // Prints a wchar_t as a symbol if it is printable or as its internal
 // code otherwise and also as its code.  L'\0' is printed as "L'\\0'".
-void PrintTo(wchar_t wc, ostream & os)
+void PrintTo(wchar_t wc, std::basic_ostream<OSAL::Char> & os)
 {
     internal::PrintCharAndCodeTo<wchar_t>(wc, os);
 }

@@ -21,12 +21,12 @@ tm::tm()
 }
 
 tm::tm(const tm & other)
-: _tm(other._tm)
+    : _tm(other._tm)
 {
 }
 
-tm::tm(int second, int minute, int hour, int day, int month, int year, bool initialize)
-: _tm()
+tm::tm(int second, int minute, int hour, int day, int month, int year)
+    : _tm()
 {
     if (!initialized)
         Initialize();
@@ -41,7 +41,7 @@ tm::tm(int second, int minute, int hour, int day, int month, int year, bool init
 void tm::Initialize()
 {
     TIME_ZONE_INFORMATION timeZoneInformation;
-    DWORD result = GetTimeZoneInformation(&timeZoneInformation);
+    /* DWORD result = */ GetTimeZoneInformation(&timeZoneInformation);
     tm_tzOffset= SecondsPerMinute * (timeZoneInformation.Bias + timeZoneInformation.StandardBias);
     tm_dstOffset= SecondsPerMinute * timeZoneInformation.DaylightBias;
     OSAL::Strings::strncpy(tm_tzName, timeZoneInformation.StandardName,

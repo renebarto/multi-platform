@@ -45,11 +45,11 @@ public:
     {
         return sigdelset(&_set, signum);
     }
-    bool contains(int signum)
+    int contains(int signum)
     {
         return sigismember(&_set, signum);
     }
-    sigset_t get() const
+    const sigset_t & get() const
     {
         return _set;
     }

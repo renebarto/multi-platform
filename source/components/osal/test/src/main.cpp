@@ -9,7 +9,11 @@
 
 static const OSAL::String moduleName = _("osal");
 
-int main(int argc, const OSAL::Char* argv[])
+#if defined(UNICODE) || defined(_UNICODE)
+int wmain(int argc, const wchar_t * argv[])
+#else
+int main(int argc, const char * argv[])
+#endif
 {
     OSAL::Console console;
 
@@ -26,6 +30,7 @@ int main(int argc, const OSAL::Char* argv[])
         exit(1);
     }
 
+    console << _("Application: ") << applicationName << std::endl;
     console << _("XML output : ") << parser.xmlOutput << std::endl;
     console << _("Suite      : ") << parser.testSuiteName << std::endl;
     console << _("Fixture    : ") << parser.testFixtureName << std::endl;

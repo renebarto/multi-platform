@@ -45,7 +45,7 @@ public:
     {
         return sigdelset(&_set, signum);
     }
-    bool contains(int signum)
+    int contains(int signum)
     {
         return sigismember(&_set, signum);
     }

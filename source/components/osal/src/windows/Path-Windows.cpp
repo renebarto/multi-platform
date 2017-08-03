@@ -5,8 +5,8 @@
 #include <sys/stat.h>
 #include "osal/OSAL.h"
 
-static const OSAL::Char _PathSeparator = _('/');
-static const OSAL::Char * _TildeDir = _("~/");
+static const OSAL::Char _PathSeparator = _('\\');
+static const OSAL::Char * _TildeDir = _("~\\");
 
 OSAL::Char OSAL::Path::PathSeparator()
 {
@@ -66,7 +66,12 @@ OSAL::String OSAL::Path::ResolveTilde(const String & path)
         return path;
     if (path.substr(0, 2) != _TildeDir)
         return path;
-    return CombinePath(ToString("HOME"), path.substr(2));
+#if defined(WIN_MSVC)
+    OSAL::String home = OSAL::System::getenv(_("USERPROFILE"));
+#else
+    OSAL::String home = OSAL::System::getenv(_("HOME"));
+#endif
+    return CombinePath(home, path.substr(2));
 }
 
 OSAL::String OSAL::Path::FullPath(const String & path)
@@ -75,9 +80,9 @@ OSAL::String OSAL::Path::FullPath(const String & path)
     String resolvedPath = ResolveTilde(path);
 
 #if defined(UNICODE) || defined(_UNICODE)
-    const Char * fullpath = _wfullpath(const_cast<Char *>(resolvedPath.c_str()), buffer, sizeof(buffer) / sizeof(Char));
+    const Char * fullpath = _wfullpath(buffer, resolvedPath.c_str(), sizeof(buffer) / sizeof(Char));
 #else
-    const Char * fullpath = _fullpath(const_cast<Char *>(resolvedPath.c_str()), buffer, sizeof(buffer) / sizeof(Char));
+    const Char * fullpath = _fullpath(buffer, resolvedPath.c_str(), sizeof(buffer) / sizeof(Char));
 #endif
     if (fullpath == nullptr)
         ThrowOnError(__func__, __FILE__, __LINE__, errno);

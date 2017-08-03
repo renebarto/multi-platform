@@ -96,7 +96,7 @@ TEST_FIXTURE(OSTest, LookupClass)
     A a;
 	OSAL::String typeName = OSAL::OS::TypeName(a);
 
-    EXPECT_EQ(_("OS::Test::A"), typeName);
+    EXPECT_EQ(_("OSAL::Test::A"), typeName);
 }
 #endif // defined(WIN_MSVC)
 
