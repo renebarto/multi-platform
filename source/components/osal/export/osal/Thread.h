@@ -16,7 +16,7 @@ void SetThreadNameSelf(const OSAL::String & threadName);
 bool IsThreadSelf(std::thread & thread);
 inline bool SetSignalMask(const OSAL::Signal::SignalSet & signalMaskSet)
 {
-    return (pthread_sigmask(OSAL::Signal::SignalHow::Block, &(signalMaskSet.get()), nullptr) != 0);
+    return (pthread_sigmask(OSAL::Signal::SignalHow::Block, &(signalMaskSet.get()), nullptr) == 0);
 }
 
 } // namespace Thread

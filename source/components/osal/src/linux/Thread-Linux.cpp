@@ -5,22 +5,34 @@
 #include "osal/OSAL.h"
 
 using namespace std;
-using namespace OSAL;
 
-void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & threadName)
+namespace OSAL
+{
+namespace Thread
+{
+
+static void SetThreadName(pthread_t threadID, const OSAL::String & threadName)
 {
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
 
-	auto handle = thread.native_handle();
-	pthread_setname_np(handle, threadNameNarrow.c_str());
+    pthread_setname_np(threadID, threadNameNarrow.c_str());
 }
 
-void OSAL::Thread::SetThreadNameSelf(const OSAL::String & threadName)
+void SetThreadName(std::thread & thread, const OSAL::String & threadName)
 {
-	SetThreadName(*this, threadName);
+    SetThreadName(thread.native_handle(), threadName);
 }
 
-bool OSAL::Thread::IsThreadSelf(std::thread & thread)
+void SetThreadNameSelf(const OSAL::String & threadName)
 {
-	return thread.native_handle() == pthread_self();
+    SetThreadName(pthread_self(), threadName);
 }
+
+bool IsThreadSelf(std::thread & thread)
+{
+    return thread.native_handle() == pthread_self();
+}
+
+} // namespace Thread
+} // namespace OSAL
+

@@ -66,7 +66,7 @@ protected:
         catch (const std::exception & e)
         {
             TheLogger().Debug(ComponentName, _("WorkerThread ") + pThis->GetName() + _(": Exception thown: ") + OSAL::ToString(e.what()));
-            throw;
+            pThis->_birthEvent.Set();
         }
         return result;
     }

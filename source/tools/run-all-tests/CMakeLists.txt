@@ -31,20 +31,40 @@ list_to_string(TOOLS_RUNALLTESTS_LINK_OPTIONS TOOLS_RUNALLTESTS_LINK_OPTIONS_STR
 
 set(TOOLS_RUNALLTESTS_DEPENDENCIES
     ${CMAKE_THREAD_LIBS_INIT}
-    ${LINK_WHOLE_LIB}
-    core.test-lib
-    crypto.test-lib
-    network.test-lib
-    osal.test-lib
-    unit-test-c++.test-lib
-    xml.test-lib
-    ${LINK_NO_WHOLE_LIB})
+    core
+    osal
+    unit-test-c++
+#    ${LINK_WHOLE_LIB}
+#    crypto.test-lib
+#    network.test-lib
+#    xml.test-lib
+#    ${LINK_NO_WHOLE_LIB}
+    )
 
 set(TOOLS_RUNALLTESTS_LIBS
     ${TOOLS_RUNALLTESTS_DEPENDENCIES})
 
 file(GLOB TOOLS_RUNALLTESTS_SOURCES src/*.cpp)
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES include/*.h)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/include/osal/*.h)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include/unit-test-c++/*.h)
+
+list(APPEND TOOLS_RUNALLTESTS_SOURCES
+    ${TOOLS_RUNALLTESTS_SOURCES_OSAL}
+    ${TOOLS_RUNALLTESTS_SOURCES_CORE}
+    ${TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP})
+list(APPEND TOOLS_RUNALLTESTS_INCLUDES
+    ${TOOLS_RUNALLTESTS_INCLUDES_OSAL}
+    ${TOOLS_RUNALLTESTS_INCLUDES_CORE}
+    ${TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP})
+list(APPEND TOOLS_RUNALLTESTS_INCLUDE_DIRS
+    ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/core/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include)
 
 display_list("Defines                     : " ${TOOLS_RUNALLTESTS_DEFINITIONS} )
 display_list("Compiler options            : " ${TOOLS_RUNALLTESTS_OPTIONS} )

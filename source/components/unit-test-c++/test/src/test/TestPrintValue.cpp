@@ -160,7 +160,7 @@ basic_ostream<OSAL::Char> & operator<<(basic_ostream<OSAL::Char> & os, const MyC
 #if defined(WIN_MSVC)
 const OSAL::String expectedName = _("class Suiteunit_test_cpp::SuitePrintValue::MyClass");
 #elif defined(LINUX) || defined(DARWIN) || defined(WIN_MINGW)
-const OSAL::String expectedName = _("Suiteunit_test_cpp::Suiteunit_test_cpp::SuitePrintValue::MyClass");
+const OSAL::String expectedName = _("Suiteunit_test_cpp::SuitePrintValue::MyClass");
 #endif
 
 TEST_FIXTURE(PrintValueTest, PrintToStringClass)

@@ -2,7 +2,7 @@
 
 #include "core/ByteArray.h"
 #include "osal/Path.h"
-#include "TestData.h"
+#include "osal/TestData.h"
 
 using namespace std;
 
@@ -120,8 +120,6 @@ TEST_FIXTURE(PathTest, FullPath)
 #else
     OSAL::String home = OSAL::System::getenv(_("HOME"));
 #endif
-    if (home[home.length() - 1] != Path::PathSeparator())
-        home += Path::PathSeparator();
     EXPECT_EQ(home, Path::FullPath(OSAL::String(_("~")) + Path::PathSeparator()));
 }
 

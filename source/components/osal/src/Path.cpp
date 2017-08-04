@@ -105,8 +105,7 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
     isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
 #endif
 #else
-    bool isAbsolutePath = ((index == 1) && (fullpath[0] == PathSeparator()); // All paths start with /
-
+    bool isAbsolutePath = (index == 1); // All paths start with /
 #endif
     if (isAbsolutePath)
     {
