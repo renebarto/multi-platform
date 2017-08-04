@@ -34,41 +34,69 @@ set(TOOLS_RUNALLTESTS_DEPENDENCIES
     core
     osal
     unit-test-c++
-#    ${LINK_WHOLE_LIB}
-#    crypto.test-lib
-#    network.test-lib
-#    xml.test-lib
-#    ${LINK_NO_WHOLE_LIB}
+    crypto
+    network
+    xml
     )
 
 set(TOOLS_RUNALLTESTS_LIBS
     ${TOOLS_RUNALLTESTS_DEPENDENCIES})
 
 file(GLOB TOOLS_RUNALLTESTS_SOURCES src/*.cpp)
-file(GLOB TOOLS_RUNALLTESTS_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
-file(GLOB TOOLS_RUNALLTESTS_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
-file(GLOB TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES include/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/include/osal/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include/unit-test-c++/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/src/test/*.cpp)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include/crypto/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/src/test/*.cpp)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/include/network/*.h)
+
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/src/test/*.cpp)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/include/xml/*.h)
 
 list(APPEND TOOLS_RUNALLTESTS_SOURCES
     ${TOOLS_RUNALLTESTS_SOURCES_OSAL}
     ${TOOLS_RUNALLTESTS_SOURCES_CORE}
-    ${TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP})
+    ${TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP}
+    ${TOOLS_RUNALLTESTS_SOURCES_CRYPTO}
+    ${TOOLS_RUNALLTESTS_SOURCES_NETWORK}
+    ${TOOLS_RUNALLTESTS_SOURCES_XML}
+    )
 list(APPEND TOOLS_RUNALLTESTS_INCLUDES
     ${TOOLS_RUNALLTESTS_INCLUDES_OSAL}
     ${TOOLS_RUNALLTESTS_INCLUDES_CORE}
-    ${TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP})
+    ${TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP}
+    ${TOOLS_RUNALLTESTS_INCLUDES_CRYPTO}
+    ${TOOLS_RUNALLTESTS_INCLUDES_NETWORK}
+    ${TOOLS_RUNALLTESTS_INCLUDES_XML}
+    )
 list(APPEND TOOLS_RUNALLTESTS_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
-    ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include)
+    ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/network/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
+    )
 
 display_list("Defines                     : " ${TOOLS_RUNALLTESTS_DEFINITIONS} )
 display_list("Compiler options            : " ${TOOLS_RUNALLTESTS_OPTIONS} )
 display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_OSAL} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_CORE} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_CRYPTO} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_NETWORK} )
+display_list("Source files                : " ${TOOLS_RUNALLTESTS_SOURCES_XML} )
 display_list("Include files               : " ${TOOLS_RUNALLTESTS_INCLUDES} )
 display_list("Include dirs                : " ${TOOLS_RUNALLTESTS_INCLUDE_DIRS} )
 display_list("Link libs                   : " ${TOOLS_RUNALLTESTS_LIBS} )
