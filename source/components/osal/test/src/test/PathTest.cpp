@@ -137,44 +137,44 @@ TEST_FIXTURE(PathTest, StripPathToSubDirectory)
     pathDelimiterPos = result.find_last_of(Path::PathSeparator());
     if (pathDelimiterPos != string::npos)
         result = result.substr(0, pathDelimiterPos);
-	OSAL::String expected = result;
+    OSAL::String expected = result;
     EXPECT_EQ(expected, Path::StripPathToSubDirectory(currentDirectory, stripToDirectory));
 }
 
 TEST_FIXTURE(PathTest, RelativePath1)
 {
-	OSAL::String currentDirectory = Path::CurrentDir();
+    OSAL::String currentDirectory = Path::CurrentDir();
     OSAL::String rootDir = Path::StripPathToSubDirectory(Test::Data::RegularFilePath(), _("testdata"));
     OSAL::String newPath = rootDir;
     EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
-	OSAL::String subDirectory = _("xml");
-	OSAL::String expected = OSAL::String(_(".")) + Path::PathSeparator() + subDirectory;
-	OSAL::String fullPath = Path::CombinePath(newPath, subDirectory);
+    OSAL::String subDirectory = _("xml");
+    OSAL::String expected = OSAL::String(_(".")) + Path::PathSeparator() + subDirectory;
+    OSAL::String fullPath = Path::CombinePath(newPath, subDirectory);
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
     EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
 
 TEST_FIXTURE(PathTest, RelativePath2)
 {
-	OSAL::String currentDirectory = Path::CurrentDir();
+    OSAL::String currentDirectory = Path::CurrentDir();
     OSAL::String rootDir = Path::StripPathToSubDirectory(Test::Data::RegularFilePath(), _("testdata"));
     OSAL::String newPath = Path::CombinePath(rootDir, _("osal"));
     EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
     OSAL::String subDirectory = _("xml");
     OSAL::String expected = Path::CombinePath(_(".."), subDirectory);
-	OSAL::String fullPath = Path::CombinePath(rootDir, subDirectory);
+    OSAL::String fullPath = Path::CombinePath(rootDir, subDirectory);
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
     EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
 
 TEST_FIXTURE(PathTest, RelativePath3)
 {
-	OSAL::String currentDirectory = Path::CurrentDir();
+    OSAL::String currentDirectory = Path::CurrentDir();
     OSAL::String rootDir = Path::StripPathToSubDirectory(Test::Data::RegularFilePath(), _("testdata"));
     OSAL::String newPath = rootDir;
     EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
-	OSAL::String expected = _(".");
-	OSAL::String fullPath = newPath;
+    OSAL::String expected = _(".");
+    OSAL::String fullPath = newPath;
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
     EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
 }
@@ -192,10 +192,10 @@ TEST_FIXTURE(PathTest, RelativePath4)
 
 TEST_FIXTURE(PathTest, CurrentDir)
 {
-	OSAL::String currentDirectory = Path::CurrentDir();
+    OSAL::String currentDirectory = Path::CurrentDir();
     OSAL::String newPath = Path::StripPathToSubDirectory(Test::Data::RegularFilePath(), _("testdata"));
     EXPECT_EQ(0, OSAL::System::chdir(newPath.c_str()));
-	OSAL::String newCurrentDirectory = Path::CurrentDir();
+    OSAL::String newCurrentDirectory = Path::CurrentDir();
     EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
     EXPECT_EQ(newPath, newCurrentDirectory);
 }

@@ -23,7 +23,7 @@ public:
     virtual OSAL::String ToString() const = 0;
 };
 
-inline void PrintTo(const Digest & value, std::ostream & stream)
+inline void PrintTo(const Digest & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }

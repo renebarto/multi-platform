@@ -236,7 +236,7 @@ inline MD5::Word MD5::GetData(const WorkspaceBlock * block, size_t i)
     return block->l[i];
 }
 #else
-inline SHA1::Word SHABLK0(SHA1::WorkspaceBlock & block, size_t i)
+inline MD5::Word MD5::GetData(const WorkspaceBlock * block, size_t i)
 {
     return (ROTLEFT(block->l[i], 24) & 0xFF00FF00) | (ROTLEFT(block->l[i], 8) & 0x00FF00FF);
 }

@@ -37,8 +37,8 @@ struct TestDataBase64
 const vector<TestDataBase64> TestVectors1 =
 {
     {
-        "fo",
-        "Zm8=",
+        _("fo"),
+        _("Zm8="),
     },
 };
 
@@ -62,8 +62,8 @@ TEST_FIXTURE(Base64Test, Process1)
 const vector<TestDataBase64> TestVectors2 =
 {
     {
-        "foobar",
-        "Zm9vYmFy",
+        _("foobar"),
+        _("Zm9vYmFy"),
     },
 };
 
@@ -87,14 +87,14 @@ TEST_FIXTURE(Base64Test, Process2)
 const vector<TestDataBase64> TestVectors3 =
 {
     {
-        "Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust"
+        _("Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust"
         " of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, "
-        "exceeds the short vehemence of any carnal pleasure.",
-        "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\n"
+        "exceeds the short vehemence of any carnal pleasure."),
+            _("TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlz\n"
         "IHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2Yg\n"
         "dGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGlu\n"
         "dWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRo\n"
-        "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=",
+        "ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4="),
     },
 };
 

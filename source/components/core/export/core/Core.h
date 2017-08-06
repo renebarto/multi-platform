@@ -10,7 +10,7 @@
 namespace Core
 {
 
-extern const OSAL::String ComponentName;
+CORE_EXPORT extern const OSAL::String ComponentName;
 
 constexpr int64_t NanoSecondsPerMicroSecond = 1000;
 constexpr int64_t MicroSecondsPerMilliSecond = 1000;

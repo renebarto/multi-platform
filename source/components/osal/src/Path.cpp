@@ -89,7 +89,7 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
     size_t index = 0;
     while ((index < currentDir.length()) && (index < fullPath.length()) && (currentDir[index] == fullPath[index]))
         index++;
-	String relativePath = {};
+    String relativePath = {};
 #if defined(WIN_MSVC)
     bool isAbsolutePath = false;
 #if defined(UNICODE) || defined(_UNICODE)

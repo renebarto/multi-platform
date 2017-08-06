@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <sstream>
+#include <core/exports.h>
 //#include <byteswap.h>
 
 namespace Core
@@ -13,7 +14,7 @@ class ByteArray;
 namespace Util
 {
 
-size_t NextPowerOfTwo(size_t value);
+CORE_EXPORT size_t NextPowerOfTwo(size_t value);
 
 //template<class T> T BitsToBytes(T numBits) {
 //    return (numBits + 7) / 8;
@@ -28,7 +29,7 @@ timespec MilliSecondsToTimespec(int ms);
 //timespec ConvertDurationToTimeSpec(std::chrono::milliseconds duration);
 //timespec ConvertDurationToTimeSpec(std::chrono::microseconds duration);
 //timespec ConvertDurationToTimeSpec(std::chrono::nanoseconds duration);
-void Sleep(int sleepMS);
+CORE_EXPORT void Sleep(int sleepMS);
 //int KBHit(void);
 //
 //int NumDigits(int64_t);

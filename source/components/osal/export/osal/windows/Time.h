@@ -10,10 +10,12 @@ namespace OSAL {
 namespace Time {
 
 /* FILETIME of Jan 1 1970 00:00:00. */
-constexpr unsigned __int64 epoch = ((unsigned __int64)116444736000000000ULL);
+constexpr unsigned __int64
+epoch = ((unsigned
+__int64)116444736000000000ULL);
 constexpr size_t MAX_TIME_ZONE_NAME = 4;
 
-inline int gettimeofday(struct timeval * time, struct timezone * UNUSED(timeZone))
+inline int gettimeofday(struct timeval *time, struct timezone *UNUSED(timeZone))
 {
     FILETIME file_time;
     SYSTEMTIME system_time;
@@ -30,37 +32,36 @@ inline int gettimeofday(struct timeval * time, struct timezone * UNUSED(timeZone
     return 0;
 }
 
-inline void usleep(int64_t microSeconds)
+inline bool sleep(const LARGE_INTEGER & timerValue)
 {
-    HANDLE timer;
+    HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
+    if (!timer)
+        return false;
+    if (!SetWaitableTimer(timer, &timerValue, 0, NULL, NULL, 0))
+        return false;
+    DWORD result = WaitForSingleObject(timer, INFINITE);
+    if ((result == WAIT_FAILED) || (result == WAIT_TIMEOUT))
+        return false;
+    CloseHandle(timer);
+    return true;
+}
+
+inline int usleep(int64_t microSeconds)
+{
     LARGE_INTEGER ft;
 
     ft.QuadPart = -(10 * microSeconds); // Convert to 100 nanosecond interval, negative value indicates relative time
-
-    timer = CreateWaitableTimer(NULL, TRUE, NULL);
-    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-    WaitForSingleObject(timer, INFINITE);
-    CloseHandle(timer);
+    return sleep(ft) ? 0 : -1;
 }
 
-inline int nanosleep(const timespec * req, timespec * rem)
+inline int nanosleep(const timespec * req, timespec * UNUSED(rem))
 {
-    HANDLE timer;
     LARGE_INTEGER ft;
-    constexpr int64_t NanoSecondsPerSeconds = 1000000000;
-    ft.QuadPart = -(((req->tv_sec * NanoSecondsPerSeconds + req->tv_nsec) + 99) /
+    constexpr int64_t NanoSecondsPerSecond = 1000000000;
+    ft.QuadPart = -(((req->tv_sec * NanoSecondsPerSecond + req->tv_nsec) + 99) /
                     100); // Convert to 100 nanosecond interval, negative value indicates relative time
 
-    timer = CreateWaitableTimer(NULL, TRUE, NULL);
-    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-    WaitForSingleObject(timer, INFINITE);
-    if (rem)
-    {
-        rem->tv_sec = 0;
-        rem->tv_nsec = 0;
-    }
-    CloseHandle(timer);
-    return 0;
+    return sleep(ft) ? 0 : -1;
 }
 
 using TimeValSeconds = long;

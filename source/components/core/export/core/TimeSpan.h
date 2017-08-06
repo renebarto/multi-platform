@@ -7,7 +7,7 @@
 namespace Core
 {
 
-class TimeSpan
+class CORE_EXPORT TimeSpan
 {
 public:
     TimeSpan();
@@ -18,12 +18,12 @@ public:
     TimeSpan & operator = (int64_t interval);
     TimeSpan & operator = (const TimeSpan & other);
 
-    friend bool operator == (const TimeSpan & lhs, const TimeSpan & rhs);
-    friend bool operator == (int64_t lhs, const TimeSpan & rhs);
-    friend bool operator == (const TimeSpan & lhs, int64_t rhs);
-    friend bool operator != (const TimeSpan & lhs, const TimeSpan & rhs);
-    friend bool operator != (int64_t lhs, const TimeSpan & rhs);
-    friend bool operator != (const TimeSpan & lhs, int64_t rhs);
+    friend CORE_EXPORT bool operator == (const TimeSpan & lhs, const TimeSpan & rhs);
+    friend CORE_EXPORT bool operator == (int64_t lhs, const TimeSpan & rhs);
+    friend CORE_EXPORT bool operator == (const TimeSpan & lhs, int64_t rhs);
+    friend CORE_EXPORT bool operator != (const TimeSpan & lhs, const TimeSpan & rhs);
+    friend CORE_EXPORT bool operator != (int64_t lhs, const TimeSpan & rhs);
+    friend CORE_EXPORT bool operator != (const TimeSpan & lhs, int64_t rhs);
 
     operator int64_t () const;
     int64_t NanoSeconds() const;
@@ -40,11 +40,11 @@ private:
     int64_t _interval;
 };
 
-bool operator == (const TimeSpan & lhs, const TimeSpan & rhs);
-bool operator == (int64_t lhs, const TimeSpan & rhs);
-bool operator == (const TimeSpan & lhs, int64_t rhs);
-bool operator != (const TimeSpan & lhs, const TimeSpan & rhs);
-bool operator != (int64_t lhs, const TimeSpan & rhs);
-bool operator != (const TimeSpan & lhs, int64_t rhs);
+CORE_EXPORT bool operator == (const TimeSpan & lhs, const TimeSpan & rhs);
+CORE_EXPORT bool operator == (int64_t lhs, const TimeSpan & rhs);
+CORE_EXPORT bool operator == (const TimeSpan & lhs, int64_t rhs);
+CORE_EXPORT bool operator != (const TimeSpan & lhs, const TimeSpan & rhs);
+CORE_EXPORT bool operator != (int64_t lhs, const TimeSpan & rhs);
+CORE_EXPORT bool operator != (const TimeSpan & lhs, int64_t rhs);
 
 } // namespace Core

@@ -13,7 +13,7 @@ namespace Core
 
 class ILogListener;
 
-class Logger : public ILogger
+class CORE_EXPORT Logger : public ILogger
 {
 public:
     Logger() = delete;

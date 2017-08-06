@@ -54,7 +54,7 @@ inline int sigaction(int signum, const sigaction_t *act, sigaction_t *oldact)
     return -1;
 }
 
-using sighandler_t = ::_crt_signal_t;
+using sighandler_t = ::__p_sig_fn_t;
 
 inline sighandler_t signal(int signum, sighandler_t handler)
 {
@@ -110,9 +110,9 @@ private:
 
 enum SignalHow
 {
-    Block = 0,
-    Unblock = 1,
-    SetMask = 2,
+    Block = SIG_BLOCK,
+    Unblock = SIG_UNBLOCK,
+    SetMask = SIG_SETMASK,
 };
 
 OSAL_EXPORT int SetSignalMask(SignalHow how, const sigset_t *set, sigset_t *oldset);

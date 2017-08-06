@@ -1,21 +1,22 @@
 #pragma once
 
+#include "core/Core.h"
 #include "core/serialization/Serialization.h"
 #include "core/Nullable.h"
 
 namespace Core {
 
-bool Deserialize(const OSAL::String & text, bool & value);
-bool Deserialize(const OSAL::String & text, int8_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, uint8_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, int16_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, uint16_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, int32_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, uint32_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, int64_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, uint64_t & value, int base = 10);
-bool Deserialize(const OSAL::String & text, float & value);
-bool Deserialize(const OSAL::String & text, double & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, bool & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, int8_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, uint8_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, int16_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, uint16_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, int32_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, uint32_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, int64_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, uint64_t & value, int base = 10);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, float & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, double & value);
 inline bool Deserialize(const OSAL::String & text, OSAL::String & value)
 {
     value = text;

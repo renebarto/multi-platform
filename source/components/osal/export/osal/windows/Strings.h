@@ -75,12 +75,12 @@ inline const wchar_t * strchr(const wchar_t * str, const wchar_t character)
     return ::wcschr(str, character);
 }
 
-inline const size_t strlen(const char * str)
+inline size_t strlen(const char * str)
 {
     return ::strlen(str);
 }
 
-inline const size_t strlen(const wchar_t * str)
+inline size_t strlen(const wchar_t * str)
 {
     return ::wcslen(str);
 }

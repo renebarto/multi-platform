@@ -30,7 +30,7 @@ enum class LogLevel : uint8_t
 
 DEFINE_FLAG_OPERATORS(LogLevel, uint8_t);
 
-std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, LogLevel logLevel);
+CORE_EXPORT std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, LogLevel logLevel);
 
 typedef void LogHandlerFunction(const OSAL::String & domainName,
                                 const OSAL::String & componentName,
@@ -74,7 +74,7 @@ struct LogHandlerInfo
     void * _userData;
 };
 
-class LogHandler
+class CORE_EXPORT LogHandler
 {
 public:
     static const OSAL::String DefaultDomain;

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "osal/linux/Adapter.h"
+#include "osal/linux/AdapterList.h"
+
 namespace OSAL {
 namespace Network {
 

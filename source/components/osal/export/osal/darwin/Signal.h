@@ -65,7 +65,7 @@ enum SignalHow
     SetMask = SIG_SETMASK,
 };
 
-inline int pthread_sigmask(SignalHow how, const sigset_t *set, sigset_t *oldset)
+inline int SetSignalMask(SignalHow how, const sigset_t *set, sigset_t *oldset)
 {
     return ::pthread_sigmask(how, set, oldset);
 }

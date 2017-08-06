@@ -1,11 +1,12 @@
 #pragma once
 
+#include <core/Core.h>
 #include <osal/Files.h>
 
 namespace Core
 {
 
-class Pipe
+class CORE_EXPORT Pipe
 {
 public:
     Pipe();

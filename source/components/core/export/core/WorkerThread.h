@@ -1,6 +1,10 @@
 #pragma once
 
+WARNING_PUSH
+WARNING_DISABLE(4265)
+WARNING_DISABLE(4355)
 #include <chrono>
+WARNING_POP
 #include "osal/Signal.h"
 #include "core/ManualEvent.h"
 #include "core/Thread.h"

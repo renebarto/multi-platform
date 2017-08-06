@@ -1,21 +1,22 @@
 #pragma once
 
+#include "core/Core.h"
 #include "core/serialization/Serialization.h"
 #include "core/Nullable.h"
 
 namespace Core {
 
-OSAL::String Serialize(bool value);
-OSAL::String Serialize(uint8_t value, int base = 10);
-OSAL::String Serialize(int16_t value, int base = 10);
-OSAL::String Serialize(uint16_t value, int base = 10);
-OSAL::String Serialize(int32_t value, int base = 10);
-OSAL::String Serialize(uint32_t value, int base = 10);
-OSAL::String Serialize(int64_t value, int base = 10);
-OSAL::String Serialize(uint64_t value, int base = 10);
-OSAL::String Serialize(float value, int precision = 16);
-OSAL::String Serialize(double value, int precision = 16);
-OSAL::String Serialize(OSAL::String value, bool quote = true);
+CORE_EXPORT OSAL::String Serialize(bool value);
+CORE_EXPORT OSAL::String Serialize(uint8_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(int16_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(uint16_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(int32_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(uint32_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(int64_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(uint64_t value, int base = 10);
+CORE_EXPORT OSAL::String Serialize(float value, int precision = 16);
+CORE_EXPORT OSAL::String Serialize(double value, int precision = 16);
+CORE_EXPORT OSAL::String Serialize(OSAL::String value, bool quote = true);
 
 template<typename EnumType>
 OSAL::String Serialize(const EnumType & value)

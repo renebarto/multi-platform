@@ -9,7 +9,11 @@
 
 static const std::string moduleName = "osal";
 
-int main(int argc, const char* argv[])
+#if defined(UNICODE) || defined(_UNICODE)
+int wmain(int argc, const wchar_t * argv[])
+#else
+int main(int argc, const char * argv[])
+#endif
 {
     OSAL::Console console;
 
@@ -19,7 +23,7 @@ int main(int argc, const char* argv[])
     Core::ConsoleLogger logger(Core::TheLogger(), console);
 
     CommandLineOptionsParser parser(console);
-    std::string applicationName = argv[0];
+    OSAL::String applicationName = argv[0];
 
     if (!parser.Parse(argc, argv))
     {
@@ -35,13 +39,13 @@ int main(int argc, const char* argv[])
 
     if (!parser.xmlOutput.empty())
     {
-        std::ofstream outputFile;
+        std::basic_ofstream<OSAL::Char> outputFile;
 
         outputFile.open(parser.xmlOutput);
         UnitTestCpp::XMLTestReporter reporter(outputFile);
-        const char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
-        const char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
-        const char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
+        const OSAL::Char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
+        const OSAL::Char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
+        const OSAL::Char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
         if ((suiteName != 0) || (fixtureName != 0) || (testName != 0))
         {
             return RunSelectedTests(reporter, UnitTestCpp::InSelection(suiteName, fixtureName, testName));
@@ -51,9 +55,9 @@ int main(int argc, const char* argv[])
     else
     {
         UnitTestCpp::ConsoleTestReporter reporter;
-        const char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
-        const char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
-        const char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
+        const OSAL::Char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
+        const OSAL::Char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
+        const OSAL::Char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
         if ((suiteName != 0) || (fixtureName != 0) || (testName != 0))
         {
             return RunSelectedTests(reporter, UnitTestCpp::InSelection(suiteName, fixtureName, testName));

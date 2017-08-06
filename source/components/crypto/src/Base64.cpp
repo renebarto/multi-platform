@@ -70,11 +70,12 @@ size_t Base64::Encode(const char * dataIn, size_t dataLengthIn, char * dataOut, 
 
 void Base64::Encode(const OSAL::String & dataIn, OSAL::String & dataOut)
 {
-    size_t length = Encode(dataIn.c_str(), dataIn.length(), nullptr);
+    std::string dataInNarrow(OSAL::ToNarrowString(dataIn));
+    size_t length = Encode(dataInNarrow.c_str(), dataInNarrow.length(), nullptr);
     char * str = new char[length + 1];
-    Encode(dataIn.c_str(), dataIn.length(), str);
+    Encode(dataInNarrow.c_str(), dataInNarrow.length(), str);
     str[length] = '\0';
-    dataOut = str;
+    dataOut = OSAL::ToString(str);
     delete [] str;
 }
 
@@ -148,11 +149,12 @@ size_t Base64::Decode(const char * dataIn, size_t dataLengthIn, char * dataOut)
 
 void Base64::Decode(const OSAL::String & dataIn, OSAL::String & dataOut)
 {
-    size_t length = Decode(dataIn.c_str(), dataIn.length(), nullptr);
+    std::string dataInNarrow(OSAL::ToNarrowString(dataIn));
+    size_t length = Decode(dataInNarrow.c_str(), dataInNarrow.length(), nullptr);
     char * str = new char[length + 1];
-    Decode(dataIn.c_str(), dataIn.length(), str);
+    Decode(dataInNarrow.c_str(), dataInNarrow.length(), str);
     str[length] = '\0';
-    dataOut = str;
+    dataOut = OSAL::ToString(str);
     delete [] str;
 }
 

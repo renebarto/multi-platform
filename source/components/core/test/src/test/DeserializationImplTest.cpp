@@ -64,7 +64,10 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt16)
     EXPECT_TRUE(Deserialize(_("12345"), actual));
     EXPECT_EQ(expected, actual);
 
-    expected = 0xabcd;
+    WARNING_PUSH
+    WARNING_DISABLE(4309)
+    expected = static_cast<int16_t>(0xabcd);
+    WARNING_POP
     EXPECT_TRUE(Deserialize(_("aBcD"), actual, 16));
     EXPECT_EQ(expected, actual);
 
@@ -135,7 +138,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt64)
 TEST_FIXTURE(DeserializationImplTest, DeserializeUInt64)
 {
     uint64_t expected = 9223372036854775808ULL;
-    uint64_t actual;
+    uint64_t actual{};
     EXPECT_TRUE(Deserialize(_("9223372036854775808"), actual));
     EXPECT_EQ(expected, actual);
 
@@ -154,7 +157,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeFloat)
     EXPECT_TRUE(Deserialize(_("1.002E+03"), actual));
     EXPECT_EQ(expected, actual);
 
-    expected = 5.0E-37;
+    expected = 5.0E-37F;
     EXPECT_TRUE(Deserialize(_("5e-37"), actual));
     EXPECT_EQ(expected, actual);
 

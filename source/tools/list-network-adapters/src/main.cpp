@@ -1,11 +1,14 @@
 #include <iostream>
 
-#include "network/Adapter.h"
-#include "network/AdapterList.h"
+#include "osal/Network.h"
 
 using namespace std;
 
-int main(int UNUSED(argc), const char * UNUSED(argv[]))
+#if defined(UNICODE) || defined(_UNICODE)
+int wmain(int argc, const wchar_t * argv[])
+#else
+int main(int argc, const char * argv[])
+#endif
 {
     Network::AdapterList adapterList;
 

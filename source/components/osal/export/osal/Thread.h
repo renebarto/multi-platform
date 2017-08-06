@@ -11,12 +11,12 @@ WARNING_POP
 namespace OSAL {
 namespace Thread {
 
-void SetThreadName(std::thread & thread, const OSAL::String & threadName);
-void SetThreadNameSelf(const OSAL::String & threadName);
-bool IsThreadSelf(std::thread & thread);
+OSAL_EXPORT void SetThreadName(std::thread & thread, const OSAL::String & threadName);
+OSAL_EXPORT void SetThreadNameSelf(const OSAL::String & threadName);
+OSAL_EXPORT bool IsThreadSelf(std::thread & thread);
 inline bool SetSignalMask(const OSAL::Signal::SignalSet & signalMaskSet)
 {
-    return (pthread_sigmask(OSAL::Signal::SignalHow::Block, &(signalMaskSet.get()), nullptr) == 0);
+    return (SetSignalMask(OSAL::Signal::SignalHow::Block, &(signalMaskSet.get()), nullptr) == 0);
 }
 
 } // namespace Thread

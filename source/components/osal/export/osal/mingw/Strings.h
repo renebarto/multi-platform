@@ -7,66 +7,134 @@
 namespace OSAL {
 namespace Strings {
 
-inline int wcscasecmp(const wchar_t * s1, const wchar_t * s2)
+inline char * strcpy(char * lhs, const char * rhs)
 {
-    while ((*s1 != '\0') && towlower(static_cast<wint_t>(*s1)) == towlower(static_cast<wint_t>(*s2)))
-    {
-        s1++;
-        s2++;
-    }
-    return towlower(static_cast<wint_t>(*s1)) - towlower(static_cast<wint_t>(*s2));
+    return ::strcpy(lhs, rhs);
 }
 
-inline int wcsncasecmp(const wchar_t * s1, const wchar_t * s2, size_t size)
+inline wchar_t * strcpy(wchar_t * lhs, const wchar_t * rhs)
 {
-    size_t count = size;
-    while ((count-- > 0) && (*s1 != '\0') && towlower(static_cast<wint_t>(*s1)) == towlower(static_cast<wint_t>(*s2)))
-    {
-        s1++;
-        s2++;
-    }
-    return towlower(static_cast<wint_t>(*s1)) - towlower(static_cast<wint_t>(*s2));
+    return ::wcscpy(lhs, rhs);
 }
 
-inline int StrCmp(const char * lhs, const char * rhs)
+inline char * strncpy(char * lhs, const char * rhs, size_t n)
+{
+    return ::strncpy(lhs, rhs, n);
+}
+
+inline wchar_t * strncpy(wchar_t * lhs, const wchar_t * rhs, size_t n)
+{
+    return ::wcsncpy(lhs, rhs, n);
+}
+
+inline int strcmp(const char * lhs, const char * rhs)
 {
     return ::strcmp(lhs, rhs);
 }
-inline int StrCmp(const wchar_t * lhs, const wchar_t * rhs)
+
+inline int strcmp(const wchar_t * lhs, const wchar_t * rhs)
 {
     return ::wcscmp(lhs, rhs);
 }
-inline int StrCmp(const char * lhs, const char * rhs, size_t size)
+
+inline int strcmp(const char * lhs, const char * rhs, size_t size)
 {
     return ::strncmp(lhs, rhs, size);
 }
-inline int StrCmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
+
+inline int strcmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
 {
     return ::wcsncmp(lhs, rhs, size);
 }
-inline int StrCaseCmp(const char * lhs, const char * rhs)
+
+inline int strcasecmp(const char * lhs, const char * rhs)
 {
-    return ::strcasecmp(lhs, rhs);
+    return ::_stricmp(lhs, rhs);
 }
-inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs)
+
+inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs)
 {
-    return wcscasecmp(lhs, rhs);
+    return ::_wcsicmp(lhs, rhs);
 }
-inline int StrCaseCmp(const char * lhs, const char * rhs, size_t size)
+
+inline int strcasecmp(const char * lhs, const char * rhs, size_t size)
 {
-    return ::strncasecmp(lhs, rhs, size);
+    return ::_strnicmp(lhs, rhs, size);
 }
-inline int StrCaseCmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
+
+inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
 {
-    return wcsncasecmp(lhs, rhs, size);
+    return ::_wcsnicmp(lhs, rhs, size);
 }
-inline const char * StrChr(const char * str, const char character)
+
+inline const char * strchr(const char * str, const char character)
 {
     return ::strchr(str, character);
 }
-inline const wchar_t * StrChr(const wchar_t * str, const wchar_t character)
+
+inline const wchar_t * strchr(const wchar_t * str, const wchar_t character)
 {
     return ::wcschr(str, character);
+}
+
+inline size_t strlen(const char * str)
+{
+    return ::strlen(str);
+}
+
+inline size_t strlen(const wchar_t * str)
+{
+    return ::wcslen(str);
+}
+
+inline int toupper(char c)
+{
+    return ::toupper(c);
+}
+
+inline int toupper(wchar_t c)
+{
+    return ::towupper(c);
+}
+
+inline int tolower(char c)
+{
+    return ::tolower(c);
+}
+
+inline int tolower(wchar_t c)
+{
+    return ::towlower(c);
+}
+
+inline long strtol(const char * nptr, char ** endptr, int base)
+{
+    return ::strtol(nptr, endptr, base);
+}
+
+inline long strtol(const wchar_t * nptr, wchar_t ** endptr, int base)
+{
+    return ::wcstol(nptr, endptr, base);
+}
+
+inline long long strtoll(const char * nptr, char ** endptr, int base)
+{
+    return ::strtoll(nptr, endptr, base);
+}
+
+inline long long strtoll(const wchar_t * nptr, wchar_t ** endptr, int base)
+{
+    return ::wcstoll(nptr, endptr, base);
+}
+
+inline unsigned long long strtoull(const char * nptr, char ** endptr, int base)
+{
+    return ::strtoull(nptr, endptr, base);
+}
+
+inline unsigned long long strtoull(const wchar_t * nptr, wchar_t ** endptr, int base)
+{
+    return ::wcstoull(nptr, endptr, base);
 }
 
 } // namespace Strings

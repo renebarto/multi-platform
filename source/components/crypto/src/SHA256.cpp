@@ -204,7 +204,7 @@ inline SHA256Base::Word SHA256Base::SHABLK0(SHA256Base::WorkspaceBlock * block, 
 }
 
 #else
-inline static SHA256Base::Word SHA256Base::SHABLK0(SHA256Base::WorkspaceBlock * block, size_t i)
+inline SHA256Base::Word SHA256Base::SHABLK0(SHA256Base::WorkspaceBlock * block, size_t i)
 {
     return block->l[i];
 }

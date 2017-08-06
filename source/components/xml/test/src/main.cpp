@@ -9,7 +9,11 @@
 
 static const std::string moduleName = "core";
 
+#if defined(UNICODE) || defined(_UNICODE)
+int wmain(int argc, const wchar_t * argv[])
+#else
 int main(int argc, const char * argv[])
+#endif
 {
     OSAL::Console console;
 
@@ -19,7 +23,7 @@ int main(int argc, const char * argv[])
     Core::ConsoleLogger logger(Core::TheLogger(), console);
 
     CommandLineOptionsParser parser(console);
-    std::string applicationName = argv[0];
+    OSAL::String applicationName = argv[0];
 
     if (!parser.Parse(argc, argv))
     {

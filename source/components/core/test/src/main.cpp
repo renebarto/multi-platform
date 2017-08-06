@@ -9,7 +9,11 @@
 
 static const OSAL::String moduleName = _("core");
 
-int main(int argc, const OSAL::Char * argv[])
+#if defined(UNICODE) || defined(_UNICODE)
+int wmain(int argc, const wchar_t * argv[])
+#else
+int main(int argc, const char * argv[])
+#endif
 {
     OSAL::Console console;
 
