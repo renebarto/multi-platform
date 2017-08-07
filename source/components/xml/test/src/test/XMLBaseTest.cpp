@@ -8,11 +8,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 const XMLError ErrorCode = XMLError::Error;
 const string ErrorDescription = "Error";
@@ -190,6 +187,4 @@ TEST_FIXTURE(XMLBaseTest, EncodeStringCombined)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
-

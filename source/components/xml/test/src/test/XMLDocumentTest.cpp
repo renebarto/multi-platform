@@ -8,11 +8,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 class XMLDocumentTest: public UnitTestCpp::TestFixture
 {
@@ -758,6 +755,4 @@ TEST_FIXTURE(XMLDocumentTest, ParseSimpleString)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
-

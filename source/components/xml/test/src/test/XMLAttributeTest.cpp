@@ -8,11 +8,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 const string Name = "name";
 const string NameUppercase = "Name";
@@ -271,6 +268,5 @@ TEST_FIXTURE(XMLAttributeTest, GenerateString)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
 

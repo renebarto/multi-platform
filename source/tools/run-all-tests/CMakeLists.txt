@@ -54,6 +54,9 @@ file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/com
 file(GLOB TOOLS_RUNALLTESTS_SOURCES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include/unit-test-c++/*.h)
 
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
+
 file(GLOB TOOLS_RUNALLTESTS_SOURCES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include/crypto/*.h)
 
@@ -75,6 +78,7 @@ list(APPEND TOOLS_RUNALLTESTS_INCLUDES
     ${TOOLS_RUNALLTESTS_INCLUDES_OSAL}
     ${TOOLS_RUNALLTESTS_INCLUDES_CORE}
     ${TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP}
+    ${TOOLS_RUNALLTESTS_INCLUDES_JSON}
     ${TOOLS_RUNALLTESTS_INCLUDES_CRYPTO}
     ${TOOLS_RUNALLTESTS_INCLUDES_NETWORK}
     ${TOOLS_RUNALLTESTS_INCLUDES_XML}
@@ -84,6 +88,7 @@ list(APPEND TOOLS_RUNALLTESTS_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
     ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/json/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
     )

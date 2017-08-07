@@ -2,7 +2,7 @@
 
 #include <net/if.h>
 #include <memory>
-#include "network/exports.h"
+#include "core/exports.h"
 #include "network/Address.h"
 
 namespace Network

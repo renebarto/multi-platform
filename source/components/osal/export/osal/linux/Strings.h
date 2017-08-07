@@ -107,6 +107,26 @@ inline int tolower(wchar_t c)
     return ::towlower(c);
 }
 
+inline bool isspace(char c)
+{
+    return ::isspace(c);
+}
+
+inline bool isspace(wchar_t c)
+{
+    return ::iswspace(c);
+}
+
+inline bool isdigit(char c)
+{
+    return ::isdigit(c);
+}
+
+inline bool isdigitisspace(wchar_t c)
+{
+    return ::iswdigit(c);
+}
+
 inline long strtol(const char * nptr, char ** endptr, int base)
 {
     return ::strtol(nptr, endptr, base);

@@ -5,11 +5,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 const int Row = 2;
 const int Col = 3;
@@ -65,6 +62,4 @@ TEST_FIXTURE(XMLCursorTest, Clear)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
-

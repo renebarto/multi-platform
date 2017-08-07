@@ -13,11 +13,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 const int Tab = 4;
 const string Document = "doc";
@@ -680,6 +677,4 @@ TEST_FIXTURE(XMLElementTest, AcceptWithElements)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
-

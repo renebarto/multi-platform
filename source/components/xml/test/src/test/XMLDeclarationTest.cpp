@@ -9,11 +9,8 @@
 
 using namespace std;
 
-namespace XMLParser
-{
-
-namespace Test
-{
+namespace XMLParser {
+namespace Test {
 
 const string Version = "Version";
 const string Encoding = "Encoding";
@@ -241,6 +238,4 @@ TEST_FIXTURE(XMLDeclarationTest, Accept)
 }
 
 } // namespace Test
-
 } // namespace XMLParser
-

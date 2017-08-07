@@ -35,5 +35,5 @@ OSAL_EXPORT String StripPathToSubDirectory(const String & path, const String & s
 #elif defined(DARWIN)
 #include "osal/darwin/Path.h"
 #elif defined(LINUX)
-#include "osal/linux/Path-Linux.h"
+#include "osal/linux/Path.h"
 #endif
