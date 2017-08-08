@@ -42,6 +42,21 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeBool)
     EXPECT_FALSE(Deserialize(_("1234"), actual));
 }
 
+TEST_FIXTURE(DeserializationImplTest, DeserializeInt8)
+{
+    int8_t expected = 127;
+    int8_t actual;
+    EXPECT_TRUE(Deserialize(_("127"), actual));
+    EXPECT_EQ(expected, actual);
+
+    expected = 0x55;
+    EXPECT_TRUE(Deserialize(_("55"), actual, 16));
+    EXPECT_EQ(expected, actual);
+
+    EXPECT_FALSE(Deserialize(_("xyz"), actual));
+    EXPECT_FALSE(Deserialize(_("1234"), actual));
+}
+
 TEST_FIXTURE(DeserializationImplTest, DeserializeUInt8)
 {
     uint8_t expected = 254;
@@ -174,6 +189,20 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeDouble)
     expected = 1e-200;
     EXPECT_TRUE(Deserialize(_("1e-200"), actual));
     EXPECT_EQ(expected, actual);
+
+    EXPECT_FALSE(Deserialize(_("xyz"), actual));
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeLongDouble)
+{
+    long double expected = 1000002;
+    long double actual;
+    EXPECT_TRUE(Deserialize(_("1.000002E+06"), actual));
+    EXPECT_EQ(expected, actual);
+
+    expected = 1e-200;
+    EXPECT_TRUE(Deserialize(_("1e-200"), actual));
+    EXPECT_NEAR(expected, actual, 1e-10);
 
     EXPECT_FALSE(Deserialize(_("xyz"), actual));
 }

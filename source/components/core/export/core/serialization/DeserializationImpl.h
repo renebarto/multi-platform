@@ -17,6 +17,7 @@ CORE_EXPORT bool Deserialize(const OSAL::String & text, int64_t & value, int bas
 CORE_EXPORT bool Deserialize(const OSAL::String & text, uint64_t & value, int base = 10);
 CORE_EXPORT bool Deserialize(const OSAL::String & text, float & value);
 CORE_EXPORT bool Deserialize(const OSAL::String & text, double & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, long double & value);
 inline bool Deserialize(const OSAL::String & text, OSAL::String & value)
 {
     value = text;

@@ -1,30 +1,13 @@
-#include "json/JSONValue.h"
+#include "Parse.h"
+#include "json/Null.h"
+#include "json/Boolean.h"
+#include "json/String.h"
+#include "json/Number.h"
 
 namespace JSON
 {
 
-enum TokenType
-{
-    InvalidToken,
-    NullToken,
-    TrueToken,
-    FalseToken,
-    CurlyBraceOpen,
-    CurlyBraceClose,
-    SquareBracketOpen,
-    SquareBracketClose,
-    Comma,
-    Number,
-    QuotedString,
-};
-
-struct Token
-{
-    TokenType type;
-    OSAL::String value;
-};
-
-static bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
+bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
 {
     term = {};
     OSAL::Char ch;
@@ -48,6 +31,9 @@ static bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term
         case _('"'):
         {
             OSAL::String result;
+            result += ch;
+            if (!stream.get(ch))
+                return false;
             while (ch != _('"'))
             {
                 result += ch;
@@ -73,7 +59,7 @@ static bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term
     }
 }
 
-static Token GetToken(std::basic_istream<OSAL::Char> & stream)
+Token GetToken(std::basic_istream<OSAL::Char> & stream)
 {
     OSAL::String term;
     if (!GetTerm(stream, term))
@@ -122,6 +108,7 @@ static Token GetToken(std::basic_istream<OSAL::Char> & stream)
         }
         if ((index < term.length()) && OSAL::Strings::tolower(term[index]) == _('e'))
         {
+            ++index;
             if ((index < term.length()) && ((term[index] == _('+')) || (term[index] == _('-'))))
                 ++index;
             if (index >= term.length())
@@ -141,72 +128,19 @@ ValuePtr Parse(std::basic_istream<OSAL::Char> & stream)
     Token token = GetToken(stream);
     switch (token.type)
     {
-        case FalseToken:
+        case TokenType::FalseToken:
             return std::make_shared<Boolean>(false);
-        case TrueToken:
+        case TokenType::TrueToken:
             return std::make_shared<Boolean>(true);
-        case NullToken:
+        case TokenType::NullToken:
             return std::make_shared<Null>();
+        case TokenType::QuotedString:
+            return std::make_shared<String>(token.value);
+        case TokenType::Number:
+            return std::make_shared<Number>(token.value);
         default:
             return nullptr;
     }
-}
-
-Value::Value()
-{
-
-}
-
-Null::Null()
-{
-}
-
-bool Null::Deserialize(std::basic_istream<OSAL::Char> & stream)
-{
-    Token token = GetToken(stream);
-    switch (token.type)
-    {
-        case NullToken:
-            return true;
-        default:
-            return false;
-    }
-}
-
-void Null::Serialize(std::basic_ostream<OSAL::Char> & stream)
-{
-    stream << _("null");
-}
-
-Boolean::Boolean()
-    : _value()
-{
-}
-
-Boolean::Boolean(bool value)
-    : _value(value)
-{
-}
-
-bool Boolean::Deserialize(std::basic_istream<OSAL::Char> & stream)
-{
-    Token token = GetToken(stream);
-    switch (token.type)
-    {
-        case FalseToken:
-            _value = false;
-            return true;
-        case TrueToken:
-            _value = true;
-            return true;
-        default:
-            return false;
-    }
-}
-
-void Boolean::Serialize(std::basic_ostream<OSAL::Char> & stream)
-{
-    stream << (_value ? _("true") : _("false"));
 }
 
 } // namespace JSON

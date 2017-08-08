@@ -35,6 +35,15 @@ TEST_FIXTURE(SerializationImplTest, SerializeBool)
     EXPECT_EQ(_("false"), Serialize(value));
 }
 
+TEST_FIXTURE(SerializationImplTest, SerializeInt8)
+{
+    int8_t value = 0x55;
+    EXPECT_EQ(_("01010101"), Serialize(value, 2));
+    EXPECT_EQ(_("125"), Serialize(value, 8));
+    EXPECT_EQ(_("85"), Serialize(value, 10));
+    EXPECT_EQ(_("55"), Serialize(value, 16));
+}
+
 TEST_FIXTURE(SerializationImplTest, SerializeUInt8)
 {
     uint8_t value = 0xAA;
@@ -110,6 +119,17 @@ TEST_FIXTURE(SerializationImplTest, SerializeFloat)
 TEST_FIXTURE(SerializationImplTest, SerializeDouble)
 {
     double value = 1.00002E05;
+    EXPECT_EQ(_("100002"), Serialize(value));
+    value = 1e-200;
+    EXPECT_EQ(_("1e-200"), Serialize(value));
+    value = 1.001e-200;
+    EXPECT_EQ(_("1.001e-200"), Serialize(value));
+    EXPECT_EQ(_("1e-200"), Serialize(value, 2));
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeLongDouble)
+{
+    long double value = 1.00002E05;
     EXPECT_EQ(_("100002"), Serialize(value));
     value = 1e-200;
     EXPECT_EQ(_("1e-200"), Serialize(value));

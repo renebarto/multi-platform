@@ -10,6 +10,39 @@ OSAL::String Core::Serialize(bool value)
     return value ? _("true") : _("false");
 }
 
+OSAL::String Core::Serialize(int8_t value, int base)
+{
+    std::basic_ostringstream<OSAL::Char> stream;
+
+    switch (base)
+    {
+        case 2:
+        {
+            std::bitset<8> x(static_cast<uint8_t>(value));
+            stream << std::setfill(_('0')) << std::setw(8) << x;
+        }
+            break;
+        case 8:
+        {
+            stream << std::oct << std::setfill(_('0')) << std::setw(3) << (int)value;
+        }
+            break;
+        case 10:
+        {
+            stream << std::dec << std::setfill(_('0')) << (int)value;
+        }
+            break;
+        case 16:
+        {
+            stream << std::hex << std::uppercase << std::setfill(_('0')) << std::setw(2) << (int)value;
+        }
+            break;
+        default:
+            assert(false);
+    }
+    return stream.str();
+}
+
 OSAL::String Core::Serialize(uint8_t value, int base)
 {
     std::basic_ostringstream<OSAL::Char> stream;
@@ -251,6 +284,15 @@ OSAL::String Core::Serialize(float value, int precision)
 }
 
 OSAL::String Core::Serialize(double value, int precision)
+{
+    std::basic_ostringstream<OSAL::Char> stream;
+
+    stream << std::setprecision(precision) << value;
+
+    return stream.str();
+}
+
+OSAL::String Core::Serialize(long double value, int precision)
 {
     std::basic_ostringstream<OSAL::Char> stream;
 

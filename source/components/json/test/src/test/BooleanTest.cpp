@@ -2,29 +2,29 @@
 
 #include <string>
 //#include "xml/TestData.h"
-#include "json/JSONValue.h"
+#include "json/Boolean.h"
 
 using namespace std;
 
 namespace JSON {
 namespace Test {
 
-class JSONBooleanTest: public UnitTestCpp::TestFixture
+class BooleanTest: public UnitTestCpp::TestFixture
 {
 public:
     virtual void SetUp();
     virtual void TearDown();
 };
 
-void JSONBooleanTest::SetUp()
+void BooleanTest::SetUp()
 {
 }
 
-void JSONBooleanTest::TearDown()
+void BooleanTest::TearDown()
 {
 }
 
-TEST_FIXTURE(JSONBooleanTest, Construct)
+TEST_FIXTURE(BooleanTest, Construct)
 {
     Boolean target;
 
@@ -32,7 +32,16 @@ TEST_FIXTURE(JSONBooleanTest, Construct)
     EXPECT_FALSE(target.GetValue());
 }
 
-TEST_FIXTURE(JSONBooleanTest, Deserialize)
+TEST_FIXTURE(BooleanTest, ConstructInitializer)
+{
+    bool value = true;
+    Boolean target(value);
+
+    EXPECT_EQ(ValueType::Boolean, target.Type());
+    EXPECT_EQ(value, target.GetValue());
+}
+
+TEST_FIXTURE(BooleanTest, Deserialize)
 {
     Boolean target;
 
@@ -48,14 +57,14 @@ TEST_FIXTURE(JSONBooleanTest, Deserialize)
     stream.str(_("garbage"));
     stream.clear();
     EXPECT_FALSE(target.Deserialize(stream));
-    EXPECT_TRUE(target.GetValue());
+    EXPECT_FALSE(target.GetValue());
     stream.str(_(""));
     stream.clear();
     EXPECT_FALSE(target.Deserialize(stream));
-    EXPECT_TRUE(target.GetValue());
+    EXPECT_FALSE(target.GetValue());
 }
 
-TEST_FIXTURE(JSONBooleanTest, Serialize)
+TEST_FIXTURE(BooleanTest, Serialize)
 {
     Boolean target;
 
@@ -68,23 +77,6 @@ TEST_FIXTURE(JSONBooleanTest, Serialize)
     target.SetValue(true);
     target.Serialize(stream);
     EXPECT_EQ(_("true"), stream.str());
-}
-
-TEST_FIXTURE(JSONBooleanTest, Parse)
-{
-    std::basic_istringstream<OSAL::Char> stream(_("false true garbage"));
-    ValuePtr target = Parse(stream);
-    EXPECT_NOT_NULL(target);
-    EXPECT_EQ(ValueType::Boolean, target->Type());
-    EXPECT_FALSE(static_pointer_cast<Boolean>(target)->GetValue());
-
-    target = Parse(stream);
-    EXPECT_NOT_NULL(target);
-    EXPECT_EQ(ValueType::Boolean, target->Type());
-    EXPECT_TRUE(static_pointer_cast<Boolean>(target)->GetValue());
-
-    target = Parse(stream);
-    EXPECT_NULL(target);
 }
 
 } // namespace Test

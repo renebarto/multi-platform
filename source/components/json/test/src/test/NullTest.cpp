@@ -2,36 +2,36 @@
 
 #include <string>
 //#include "xml/TestData.h"
-#include "json/JSONValue.h"
+#include "json/Null.h"
 
 using namespace std;
 
 namespace JSON {
 namespace Test {
 
-class JSONNullTest: public UnitTestCpp::TestFixture
+class NullTest: public UnitTestCpp::TestFixture
 {
 public:
     virtual void SetUp();
     virtual void TearDown();
 };
 
-void JSONNullTest::SetUp()
+void NullTest::SetUp()
 {
 }
 
-void JSONNullTest::TearDown()
+void NullTest::TearDown()
 {
 }
 
-TEST_FIXTURE(JSONNullTest, Construct)
+TEST_FIXTURE(NullTest, Construct)
 {
     Null target;
 
     EXPECT_EQ(ValueType::Null, target.Type());
 }
 
-TEST_FIXTURE(JSONNullTest, Deserialize)
+TEST_FIXTURE(NullTest, Deserialize)
 {
     Null target;
 
@@ -44,7 +44,7 @@ TEST_FIXTURE(JSONNullTest, Deserialize)
     EXPECT_FALSE(target.Deserialize(stream));
 }
 
-TEST_FIXTURE(JSONNullTest, Serialize)
+TEST_FIXTURE(NullTest, Serialize)
 {
     Null target;
 
