@@ -16,8 +16,10 @@ enum class TokenType
     SquareBracketOpen,
     SquareBracketClose,
     Comma,
+    Colon,
     Number,
     QuotedString,
+    Key,
 };
 
 struct Token

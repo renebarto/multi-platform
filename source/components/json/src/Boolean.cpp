@@ -33,7 +33,7 @@ bool Boolean::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Boolean::Serialize(std::basic_ostream<OSAL::Char> & stream)
+void Boolean::Serialize(std::basic_ostream<OSAL::Char> & stream) const
 {
     stream << (_value ? _("true") : _("false"));
 }

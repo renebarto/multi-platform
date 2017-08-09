@@ -122,9 +122,29 @@ inline bool isdigit(char c)
     return ::isdigit(c);
 }
 
-inline bool isdigitisspace(wchar_t c)
+inline bool isdigit(wchar_t c)
 {
     return ::iswdigit(c);
+}
+
+inline bool isalpha(char c)
+{
+    return ::isalpha(c);
+}
+
+inline bool isalpha(wchar_t c)
+{
+    return ::iswalpha(c);
+}
+
+inline bool isalnum(char c)
+{
+    return ::isalnum(c);
+}
+
+inline bool isalnum(wchar_t c)
+{
+    return ::iswalnum(c);
 }
 
 inline long strtol(const char * nptr, char ** endptr, int base)

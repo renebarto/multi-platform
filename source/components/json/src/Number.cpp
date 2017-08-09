@@ -140,7 +140,7 @@ bool Number::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Number::Serialize(std::basic_ostream<OSAL::Char> & stream)
+void Number::Serialize(std::basic_ostream<OSAL::Char> & stream) const
 {
     stream << _value;
 }

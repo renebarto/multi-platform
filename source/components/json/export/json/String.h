@@ -11,7 +11,7 @@ public:
     String(const OSAL::String & value);
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) override;
-    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream) override;
+    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream) const override;
 
     virtual ValueType Type() const override { return ValueType::String; }
     const OSAL::String & GetValue() const { return _value; }

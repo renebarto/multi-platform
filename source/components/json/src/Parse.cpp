@@ -7,6 +7,16 @@
 namespace JSON
 {
 
+static bool IsValidKeyStartCharacter(OSAL::Char ch)
+{
+    return OSAL::Strings::isalpha(ch);
+}
+
+static bool IsValidCharacter(OSAL::Char ch)
+{
+    return OSAL::Strings::isalnum(ch) || (ch == _('-')) || (ch == _('+')) || (ch == _('.'));
+}
+
 bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
 {
     term = {};
@@ -26,6 +36,7 @@ bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
         case _('['):
         case _(']'):
         case _(','):
+        case _(':'):
             term = ch;
             return true;
         case _('"'):
@@ -47,12 +58,13 @@ bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
         default:
         {
             OSAL::String result;
-            while (!OSAL::Strings::isspace(ch))
+            while (IsValidCharacter(ch))
             {
                 result += ch;
                 if (!stream.get(ch))
                     break;
             }
+            stream.putback(ch);
             term = result;
             return true;
         }
@@ -80,6 +92,8 @@ Token GetToken(std::basic_istream<OSAL::Char> & stream)
         return Token { TokenType::SquareBracketClose, term };
     if (OSAL::IsEqualIgnoreCase(term, _(",")))
         return Token { TokenType::Comma, term };
+    if (OSAL::IsEqualIgnoreCase(term, _(":")))
+        return Token { TokenType::Colon, term };
     if ((term.length() >= 2) && (term[0] == _('"')) && (term[term.length() - 1] == _('"')))
     {
         return Token { TokenType::QuotedString, term.substr(1, term.length() - 2)};
@@ -119,6 +133,10 @@ Token GetToken(std::basic_istream<OSAL::Char> & stream)
         if (index < term.length())
             return Token { TokenType::InvalidToken, term };
         return Token { TokenType::Number, term };
+    }
+    if ((term.length() >= 1) && (IsValidKeyStartCharacter(term[0])))
+    {
+        return Token { TokenType::Key, term };
     }
     return Token { TokenType::InvalidToken, term };
 }

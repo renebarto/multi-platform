@@ -22,7 +22,7 @@ bool Null::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Null::Serialize(std::basic_ostream<OSAL::Char> & stream)
+void Null::Serialize(std::basic_ostream<OSAL::Char> & stream) const
 {
     stream << _("null");
 }

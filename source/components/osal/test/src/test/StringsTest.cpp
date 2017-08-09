@@ -240,6 +240,11 @@ TEST_FIXTURE(StringTest, WStringToString)
     EXPECT_EQ(expected, actual);
 }
 
+TEST_FIXTURE(StringTest, MoreTests)
+{
+    FAIL();
+}
+
 } // TEST_SUITE(osal)
 
 } // namespace Test
