@@ -9,6 +9,17 @@ class Number : public Value
 public:
     Number();
     Number(const OSAL::String & value);
+    Number(int8_t value);
+    Number(uint8_t value);
+    Number(int16_t value);
+    Number(uint16_t value);
+    Number(int32_t value);
+    Number(uint32_t value);
+    Number(int64_t value);
+    Number(uint64_t value);
+    Number(float value);
+    Number(double value);
+    Number(long double value);
     virtual ~Number() {};
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) override;

@@ -6,6 +6,8 @@
 namespace JSON
 {
 
+static constexpr size_t IndentSize = 4;
+
 Number::Number()
     : _value()
 {
@@ -13,6 +15,61 @@ Number::Number()
 
 Number::Number(const OSAL::String & value)
     : _value(value)
+{
+}
+
+Number::Number(int8_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(uint8_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(int16_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(uint16_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(int32_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(uint32_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(int64_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(uint64_t value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(float value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(double value)
+    : _value(Core::Serialize(value))
+{
+}
+
+Number::Number(long double value)
+    : _value(Core::Serialize(value))
 {
 }
 
@@ -153,6 +210,10 @@ bool Number::Deserialize(std::basic_istream<OSAL::Char> & stream)
 
 void Number::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
 {
+    for (int i = 0; i < indentDepth; i++)
+    {
+        stream << OSAL::String(IndentSize, _(' '));
+    }
     stream << _value;
 }
 

@@ -54,7 +54,7 @@ TEST_FIXTURE(NumberTest, Construct)
     EXPECT_FALSE(target.GetValue(longdoubleValue));
 }
 
-TEST_FIXTURE(NumberTest, ConstructInitializer)
+TEST_FIXTURE(NumberTest, ConstructInitializerString)
 {
     OSAL::String value("123");
     Number target(value);
@@ -94,6 +94,174 @@ TEST_FIXTURE(NumberTest, ConstructInitializer)
     long double longdoubleValue;
     EXPECT_TRUE(target.GetValue(longdoubleValue));
     EXPECT_EQ(123, longdoubleValue);
+}
+
+TEST_FIXTURE(NumberTest, ConstructInitializerInt8)
+{
+    int8_t value = 123;
+    Number target(value);
+
+    EXPECT_EQ(ValueType::Number, target.Type());
+    EXPECT_EQ(_("123"), target.GetValue());
+    int8_t int8Value;
+    EXPECT_TRUE(target.GetValue(int8Value));
+    EXPECT_EQ(static_cast<int8_t>(value), int8Value);
+    uint8_t uint8Value;
+    EXPECT_TRUE(target.GetValue(uint8Value));
+    EXPECT_EQ(static_cast<uint8_t>(value), uint8Value);
+    int16_t int16Value;
+    EXPECT_TRUE(target.GetValue(int16Value));
+    EXPECT_EQ(static_cast<int16_t>(value), int16Value);
+    uint16_t uint16Value;
+    EXPECT_TRUE(target.GetValue(uint16Value));
+    EXPECT_EQ(static_cast<uint16_t>(value), uint16Value);
+    int32_t int32Value;
+    EXPECT_TRUE(target.GetValue(int32Value));
+    EXPECT_EQ(static_cast<int32_t>(value), int32Value);
+    uint32_t uint32Value;
+    EXPECT_TRUE(target.GetValue(uint32Value));
+    EXPECT_EQ(static_cast<uint32_t>(value), uint32Value);
+    int64_t int64Value;
+    EXPECT_TRUE(target.GetValue(int64Value));
+    EXPECT_EQ(static_cast<int64_t>(value), int64Value);
+    uint64_t uint64Value;
+    EXPECT_TRUE(target.GetValue(uint64Value));
+    EXPECT_EQ(static_cast<uint64_t>(value), uint64Value);
+    float floatValue;
+    EXPECT_TRUE(target.GetValue(floatValue));
+    EXPECT_EQ(static_cast<float>(value), floatValue);
+    double doubleValue;
+    EXPECT_TRUE(target.GetValue(doubleValue));
+    EXPECT_EQ(static_cast<double>(value), doubleValue);
+    long double longdoubleValue;
+    EXPECT_TRUE(target.GetValue(longdoubleValue));
+    EXPECT_EQ(static_cast<long double>(value), longdoubleValue);
+}
+
+TEST_FIXTURE(NumberTest, ConstructInitializerUInt8)
+{
+    uint8_t value = 234;
+    Number target(value);
+
+    EXPECT_EQ(ValueType::Number, target.Type());
+    EXPECT_EQ(_("234"), target.GetValue());
+    int8_t int8Value;
+    EXPECT_FALSE(target.GetValue(int8Value));
+    EXPECT_EQ(0, int8Value);
+    uint8_t uint8Value;
+    EXPECT_TRUE(target.GetValue(uint8Value));
+    EXPECT_EQ(static_cast<uint8_t>(value), uint8Value);
+    int16_t int16Value;
+    EXPECT_TRUE(target.GetValue(int16Value));
+    EXPECT_EQ(static_cast<int16_t>(value), int16Value);
+    uint16_t uint16Value;
+    EXPECT_TRUE(target.GetValue(uint16Value));
+    EXPECT_EQ(static_cast<uint16_t>(value), uint16Value);
+    int32_t int32Value;
+    EXPECT_TRUE(target.GetValue(int32Value));
+    EXPECT_EQ(static_cast<int32_t>(value), int32Value);
+    uint32_t uint32Value;
+    EXPECT_TRUE(target.GetValue(uint32Value));
+    EXPECT_EQ(static_cast<uint32_t>(value), uint32Value);
+    int64_t int64Value;
+    EXPECT_TRUE(target.GetValue(int64Value));
+    EXPECT_EQ(static_cast<int64_t>(value), int64Value);
+    uint64_t uint64Value;
+    EXPECT_TRUE(target.GetValue(uint64Value));
+    EXPECT_EQ(static_cast<uint64_t>(value), uint64Value);
+    float floatValue;
+    EXPECT_TRUE(target.GetValue(floatValue));
+    EXPECT_EQ(static_cast<float>(value), floatValue);
+    double doubleValue;
+    EXPECT_TRUE(target.GetValue(doubleValue));
+    EXPECT_EQ(static_cast<double>(value), doubleValue);
+    long double longdoubleValue;
+    EXPECT_TRUE(target.GetValue(longdoubleValue));
+    EXPECT_EQ(static_cast<long double>(value), longdoubleValue);
+}
+
+TEST_FIXTURE(NumberTest, ConstructInitializerInt16)
+{
+    int16_t value = 23456;
+    Number target(value);
+
+    EXPECT_EQ(ValueType::Number, target.Type());
+    EXPECT_EQ(_("23456"), target.GetValue());
+    int8_t int8Value;
+    EXPECT_FALSE(target.GetValue(int8Value));
+    EXPECT_EQ(0, int8Value);
+    uint8_t uint8Value;
+    EXPECT_FALSE(target.GetValue(uint8Value));
+    EXPECT_EQ(0, uint8Value);
+    int16_t int16Value;
+    EXPECT_TRUE(target.GetValue(int16Value));
+    EXPECT_EQ(static_cast<int16_t>(value), int16Value);
+    uint16_t uint16Value;
+    EXPECT_TRUE(target.GetValue(uint16Value));
+    EXPECT_EQ(static_cast<uint16_t>(value), uint16Value);
+    int32_t int32Value;
+    EXPECT_TRUE(target.GetValue(int32Value));
+    EXPECT_EQ(static_cast<int32_t>(value), int32Value);
+    uint32_t uint32Value;
+    EXPECT_TRUE(target.GetValue(uint32Value));
+    EXPECT_EQ(static_cast<uint32_t>(value), uint32Value);
+    int64_t int64Value;
+    EXPECT_TRUE(target.GetValue(int64Value));
+    EXPECT_EQ(static_cast<int64_t>(value), int64Value);
+    uint64_t uint64Value;
+    EXPECT_TRUE(target.GetValue(uint64Value));
+    EXPECT_EQ(static_cast<uint64_t>(value), uint64Value);
+    float floatValue;
+    EXPECT_TRUE(target.GetValue(floatValue));
+    EXPECT_EQ(static_cast<float>(value), floatValue);
+    double doubleValue;
+    EXPECT_TRUE(target.GetValue(doubleValue));
+    EXPECT_EQ(static_cast<double>(value), doubleValue);
+    long double longdoubleValue;
+    EXPECT_TRUE(target.GetValue(longdoubleValue));
+    EXPECT_EQ(static_cast<long double>(value), longdoubleValue);
+}
+
+TEST_FIXTURE(NumberTest, ConstructInitializerUInt16)
+{
+    int16_t value = 34567;
+    Number target(value);
+
+    EXPECT_EQ(ValueType::Number, target.Type());
+    EXPECT_EQ(_("34567"), target.GetValue());
+    int8_t int8Value;
+    EXPECT_FALSE(target.GetValue(int8Value));
+    EXPECT_EQ(0, int8Value);
+    uint8_t uint8Value;
+    EXPECT_FALSE(target.GetValue(uint8Value));
+    EXPECT_EQ(0, uint8Value);
+    int16_t int16Value;
+    EXPECT_FALSE(target.GetValue(int16Value));
+    EXPECT_EQ(0, int16Value);
+    uint16_t uint16Value;
+    EXPECT_TRUE(target.GetValue(uint16Value));
+    EXPECT_EQ(static_cast<uint16_t>(value), uint16Value);
+    int32_t int32Value;
+    EXPECT_TRUE(target.GetValue(int32Value));
+    EXPECT_EQ(static_cast<int32_t>(value), int32Value);
+    uint32_t uint32Value;
+    EXPECT_TRUE(target.GetValue(uint32Value));
+    EXPECT_EQ(static_cast<uint32_t>(value), uint32Value);
+    int64_t int64Value;
+    EXPECT_TRUE(target.GetValue(int64Value));
+    EXPECT_EQ(static_cast<int64_t>(value), int64Value);
+    uint64_t uint64Value;
+    EXPECT_TRUE(target.GetValue(uint64Value));
+    EXPECT_EQ(static_cast<uint64_t>(value), uint64Value);
+    float floatValue;
+    EXPECT_TRUE(target.GetValue(floatValue));
+    EXPECT_EQ(static_cast<float>(value), floatValue);
+    double doubleValue;
+    EXPECT_TRUE(target.GetValue(doubleValue));
+    EXPECT_EQ(static_cast<double>(value), doubleValue);
+    long double longdoubleValue;
+    EXPECT_TRUE(target.GetValue(longdoubleValue));
+    EXPECT_EQ(static_cast<long double>(value), longdoubleValue);
 }
 
 TEST_FIXTURE(NumberTest, DeserializeInteger)

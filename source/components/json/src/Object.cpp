@@ -8,7 +8,7 @@
 namespace JSON
 {
 
-static size_t IndentSize = 4;
+static constexpr size_t IndentSize = 4;
 
 KVPair::KVPair()
     : _key()
@@ -73,7 +73,7 @@ void KVPair::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth)
     }
     stream << _("\"") << _key << _("\" : ");
     if (_value != nullptr)
-        _value->Serialize(stream, indentDepth);
+        _value->Serialize(stream, 0);
     else
         stream << _("null");
 }

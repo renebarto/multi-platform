@@ -82,6 +82,12 @@ TEST_FIXTURE(ObjectTest, AddPairDifferentKeys)
     ASSERT_EQ(size_t {1}, target.Size());
     EXPECT_TRUE(target.AddPair({key2, value2}));
     ASSERT_EQ(size_t {2}, target.Size());
+    auto iterator = target.GetIterator();
+    EXPECT_EQ(key1, (*iterator).GetKey());
+    EXPECT_EQ(value1, (*iterator).GetValue());
+    ++iterator;
+    EXPECT_EQ(key2, (*iterator).GetKey());
+    EXPECT_EQ(value2, (*iterator).GetValue());
 }
 
 TEST_FIXTURE(ObjectTest, AddPairDuplicateKeys)
@@ -98,6 +104,12 @@ TEST_FIXTURE(ObjectTest, AddPairDuplicateKeys)
     ASSERT_EQ(size_t {2}, target.Size());
     EXPECT_FALSE(target.AddPair({key2, value1}));
     ASSERT_EQ(size_t {2}, target.Size());
+    auto iterator = target.GetIterator();
+    EXPECT_EQ(key1, (*iterator).GetKey());
+    EXPECT_EQ(value1, (*iterator).GetValue());
+    ++iterator;
+    EXPECT_EQ(key2, (*iterator).GetKey());
+    EXPECT_EQ(value2, (*iterator).GetValue());
 }
 
 TEST_FIXTURE(ObjectTest, DeserializeSinglePair)

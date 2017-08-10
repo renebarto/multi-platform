@@ -6,6 +6,8 @@
 namespace JSON
 {
 
+static constexpr size_t IndentSize = 4;
+
 Boolean::Boolean()
     : _value()
 {
@@ -35,6 +37,10 @@ bool Boolean::Deserialize(std::basic_istream<OSAL::Char> & stream)
 
 void Boolean::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
 {
+    for (int i = 0; i < indentDepth; i++)
+    {
+        stream << OSAL::String(IndentSize, _(' '));
+    }
     stream << (_value ? _("true") : _("false"));
 }
 

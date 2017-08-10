@@ -7,124 +7,106 @@
 
 namespace JSON {
 
-class KVPair
+using ValueList = std::vector<ValuePtr>;
+class Array : public Value
 {
 public:
-    KVPair();
-    KVPair(const OSAL::String & key, const ValuePtr & value);
-
-    const OSAL::String & GetKey() const { return _key; }
-    void SetKey(const OSAL::String & value) { _key = value; }
-    const ValuePtr GetValue() const { return _value; }
-    void SetValue(const ValuePtr value) { _value = value; }
-    bool Deserialize(std::basic_istream<OSAL::Char> & stream);
-    void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const;
-
-private:
-    OSAL::String _key;
-    ValuePtr _value;
-};
-
-using KVList = std::map<OSAL::String, ValuePtr>;
-
-class Object : public Value
-{
-public:
-    Object();
-    Object(const std::initializer_list<KVPair> & elements);
-    virtual ~Object() {};
+    Array();
+    Array(const std::initializer_list<ValuePtr> & elements);
+    virtual ~Array() {};
 
     class Iterator
     {
     public:
-        Iterator(KVList & container)
-            : _begin(container.begin())
-            , _current(_begin)
-            , _end(container.end())
+        Iterator(ValueList & container)
+        : _begin(container.begin())
+        , _current(_begin)
+        , _end(container.end())
         {
         }
         bool AtBegin() const { return _current == _begin; }
         bool AtEnd() const { return _current == _end; }
         void Reset() { _current = _begin; }
-        KVPair operator++()
+        ValuePtr operator++()
         {
             if (!AtEnd())
                 ++_current;
             return operator *();
         }
-        KVPair operator++(int)
+        ValuePtr operator++(int)
         {
-            KVPair result = operator *();
+            ValuePtr result = operator *();
             if (!AtEnd())
                 ++_current;
             return std::move(result);
         }
 
-        KVPair operator *()
+        ValuePtr operator *()
         {
             if (AtEnd())
                 throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
 
-            return KVPair(_current->first, _current->second);
+            return *_current;
         }
 
     private:
-        KVList::iterator _begin;
-        KVList::iterator _current;
-        KVList::iterator _end;
+        ValueList::iterator _begin;
+        ValueList::iterator _current;
+        ValueList::iterator _end;
     };
 
     class ConstIterator
     {
     public:
-        ConstIterator(const KVList & container)
-            : _begin(container.begin())
-            , _current(_begin)
-            , _end(container.end())
+        ConstIterator(const ValueList & container)
+        : _begin(container.begin())
+        , _current(_begin)
+        , _end(container.end())
         {
         }
         bool AtBegin() const { return _current == _begin; }
         bool AtEnd() const { return _current == _end; }
         void Reset() { _current = _begin; }
-        KVPair operator++()
+        ValuePtr operator++()
         {
             if (!AtEnd())
                 ++_current;
             return operator *();
         }
-        KVPair operator++(int)
+        ValuePtr operator++(int)
         {
-            KVPair result = operator *();
+            ValuePtr result = operator *();
             if (!AtEnd())
                 ++_current;
             return std::move(result);
         }
 
-        KVPair operator *()
+        ValuePtr operator *()
         {
             if (AtEnd())
                 throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
 
-            return KVPair(_current->first, _current->second);
+            return *_current;
         }
 
     private:
-        KVList::const_iterator _begin;
-        KVList::const_iterator _current;
-        KVList::const_iterator _end;
+        ValueList::const_iterator _begin;
+        ValueList::const_iterator _current;
+        ValueList::const_iterator _end;
     };
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) override;
     virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const override;
 
-    virtual ValueType Type() const override { return ValueType::Object; }
-    bool AddPair(const KVPair & pair);
+    virtual ValueType Type() const override { return ValueType::Array; }
+
+    void AddValue(ValuePtr value);
     size_t Size() const { return _elements.size(); }
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }
 
 private:
-    KVList _elements;
+    ValueList _elements;
 };
 
 } // namepsace JSON

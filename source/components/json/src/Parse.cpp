@@ -7,11 +7,6 @@
 namespace JSON
 {
 
-static bool IsValidKeyStartCharacter(OSAL::Char ch)
-{
-    return OSAL::Strings::isalpha(ch);
-}
-
 static bool IsValidCharacter(OSAL::Char ch)
 {
     return OSAL::Strings::isalnum(ch) || (ch == _('-')) || (ch == _('+')) || (ch == _('.'));
