@@ -24,11 +24,14 @@ bool Null::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Null::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
+void Null::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth, bool indentInitial) const
 {
-    for (int i = 0; i < indentDepth; i++)
+    if (indentInitial)
     {
-        stream << OSAL::String(IndentSize, _(' '));
+        for (int i = 0; i < indentDepth; i++)
+        {
+            stream << OSAL::String(IndentSize, _(' '));
+        }
     }
     stream << _("null");
 }

@@ -69,11 +69,14 @@ bool Array::Deserialize(std::basic_istream<OSAL::Char> & stream)
     return (token.type == TokenType::CurlyBraceClose);
 }
 
-void Array::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth) const
+void Array::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth, bool indentInitial) const
 {
-    for (int i = 0; i < indentDepth; i++)
+    if (indentInitial)
     {
-        stream << OSAL::String(IndentSize, _(' '));
+        for (int i = 0; i < indentDepth; i++)
+        {
+            stream << OSAL::String(IndentSize, _(' '));
+        }
     }
     stream << _('[') << std::endl;
     ConstIterator iterator = GetIterator();

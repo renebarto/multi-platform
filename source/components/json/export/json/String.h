@@ -12,7 +12,7 @@ public:
     virtual ~String() {};
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) override;
-    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const override;
+    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0, bool indentInitial = true) const override;
 
     virtual ValueType Type() const override { return ValueType::String; }
     const OSAL::String & GetValue() const { return _value; }

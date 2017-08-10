@@ -7,6 +7,8 @@
 #include "json/String.h"
 #include "json/Number.h"
 #include "json/Null.h"
+#include "json/Object.h"
+#include "json/Array.h"
 
 using namespace std;
 
@@ -86,6 +88,40 @@ TEST_FIXTURE(ParseTest, ParseNumber)
 
     target = Parse(stream);
     EXPECT_NULL(target);
+}
+
+TEST_FIXTURE(ParseTest, ParseObject)
+{
+    std::basic_istringstream<OSAL::Char> stream(_("{ \"x\":true, \"y\":1234 }"));
+    ValuePtr target = Parse(stream);
+    ASSERT_NOT_NULL(target);
+    ASSERT_EQ(ValueType::Object, target->Type());
+    auto object = static_pointer_cast<Object>(target);
+    EXPECT_EQ(size_t(2), object->Size());
+    auto iterator = object->GetIterator();
+    EXPECT_EQ(_("x"), (*iterator).GetKey());
+    EXPECT_EQ(ValueType::Boolean, (*iterator).GetValue()->Type());
+    EXPECT_TRUE(dynamic_pointer_cast<Boolean>((*iterator).GetValue())->GetValue());
+    iterator++;
+    EXPECT_EQ(_("y"), (*iterator).GetKey());
+    EXPECT_EQ(ValueType::Number, (*iterator).GetValue()->Type());
+    EXPECT_EQ(_("1234"), dynamic_pointer_cast<Number>((*iterator).GetValue())->GetValue());
+}
+
+TEST_FIXTURE(ParseTest, ParseArray)
+{
+    std::basic_istringstream<OSAL::Char> stream(_("[ true, 1234 ]"));
+    ValuePtr target = Parse(stream);
+    ASSERT_NOT_NULL(target);
+    ASSERT_EQ(ValueType::Array, target->Type());
+    auto object = static_pointer_cast<Array>(target);
+    EXPECT_EQ(size_t(2), object->Size());
+    auto iterator = object->GetIterator();
+    EXPECT_EQ(ValueType::Boolean, (*iterator)->Type());
+    EXPECT_TRUE(dynamic_pointer_cast<Boolean>(*iterator)->GetValue());
+    iterator++;
+    EXPECT_EQ(ValueType::Number, (*iterator)->Type());
+    EXPECT_EQ(_("1234"), dynamic_pointer_cast<Number>(*iterator)->GetValue());
 }
 
 } // namespace Test

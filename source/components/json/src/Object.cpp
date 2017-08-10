@@ -36,33 +36,13 @@ bool KVPair::Deserialize(std::basic_istream<OSAL::Char> & stream)
     if (token.type != TokenType::Colon)
         return false;
 
-    ValuePtr value;
-    token = GetToken(stream);
-    switch (token.type)
-    {
-        case TokenType::NullToken:
-            _key = key;
-            _value = std::make_shared<Null>();
-            return true;
-        case TokenType::FalseToken:
-            _key = key;
-            _value = std::make_shared<Boolean>(false);
-            return true;
-        case TokenType::TrueToken:
-            _key = key;
-            _value = std::make_shared<Boolean>(true);
-            return true;
-        case TokenType::Number:
-            _key = key;
-            _value = std::make_shared<Number>(token.value);
-            return true;
-        case TokenType::QuotedString:
-            _key = key;
-            _value = std::make_shared<String>(token.value);
-            return true;
-        default:
-            return false;
-    }
+    ValuePtr value = Parse(stream);
+    if (value == nullptr)
+        return false;
+
+    _key = key;
+    _value = value;
+    return true;
 }
 
 void KVPair::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth) const
@@ -73,7 +53,9 @@ void KVPair::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth)
     }
     stream << _("\"") << _key << _("\" : ");
     if (_value != nullptr)
-        _value->Serialize(stream, 0);
+    {
+        _value->Serialize(stream, indentDepth, false);
+    }
     else
         stream << _("null");
 }
@@ -139,11 +121,14 @@ bool Object::Deserialize(std::basic_istream<OSAL::Char> & stream)
     return (token.type == TokenType::CurlyBraceClose);
 }
 
-void Object::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth) const
+void Object::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth, bool indentInitial) const
 {
-    for (int i = 0; i < indentDepth; i++)
+    if (indentInitial)
     {
-        stream << OSAL::String(IndentSize, _(' '));
+        for (int i = 0; i < indentDepth; i++)
+        {
+            stream << OSAL::String(IndentSize, _(' '));
+        }
     }
     stream << _('{') << std::endl;
     ConstIterator iterator = GetIterator();

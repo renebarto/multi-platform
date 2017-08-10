@@ -79,6 +79,15 @@ TEST_FIXTURE(StringTest, DeserializeEmpty)
     EXPECT_EQ(_(""), target.GetValue());
 }
 
+TEST_FIXTURE(StringTest, DeserializeSpecialChars)
+{
+    String target;
+
+    std::basic_istringstream<OSAL::Char> stream(_("\"\\\"\\\\\\/\\b\\f\\n\\r\\t\\u0154\""));
+    EXPECT_TRUE(target.Deserialize(stream));
+    EXPECT_EQ(_("\"\\/\b\f\n\r\t\u0154"), target.GetValue());
+}
+
 TEST_FIXTURE(StringTest, SerializeEmptyString)
 {
     String target;

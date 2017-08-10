@@ -176,7 +176,9 @@ bool Core::Deserialize(const OSAL::String & text, int64_t & value, int base /*= 
     // For some strange reason stroull behaves incorrectly in some cases.
     long long result = OSAL::Strings::strtoll(text.c_str(), nullptr, base);
     unsigned long long result_ull = OSAL::Strings::strtoull(text.c_str(), nullptr, base);
-    if ((base == 10) && ((result < LLONG_MIN) || (result > LLONG_MAX)))
+    if (result < LLONG_MIN)
+        return false;
+    if ((result >= 0) && (result_ull > LLONG_MAX))
         return false;
     if ((base == 16) && (result_ull > LLONG_MAX))
         value = static_cast<long long>(result_ull);

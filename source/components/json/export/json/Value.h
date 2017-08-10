@@ -19,11 +19,11 @@ enum class ValueType
 class Value
 {
 public:
-    Value();
+    Value() {}
     virtual ~Value() {};
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) = 0;
-    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const = 0;
+    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0, bool indentInitial = true) const = 0;
 
     virtual ValueType Type() const = 0;
 

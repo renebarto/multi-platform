@@ -7,6 +7,7 @@ namespace JSON
 {
 
 static constexpr size_t IndentSize = 4;
+static constexpr int NumDigitsFloat = 8;
 
 Number::Number()
     : _value()
@@ -59,7 +60,7 @@ Number::Number(uint64_t value)
 }
 
 Number::Number(float value)
-    : _value(Core::Serialize(value))
+    : _value(Core::Serialize(value, NumDigitsFloat))
 {
 }
 
@@ -181,7 +182,7 @@ void Number::SetValue(uint64_t value)
 
 void Number::SetValue(float value)
 {
-    _value = Core::Serialize(value, 8);
+    _value = Core::Serialize(value, NumDigitsFloat);
 }
 
 void Number::SetValue(double value)
@@ -208,11 +209,14 @@ bool Number::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Number::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
+void Number::Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth, bool indentInitial) const
 {
-    for (int i = 0; i < indentDepth; i++)
+    if (indentInitial)
     {
-        stream << OSAL::String(IndentSize, _(' '));
+        for (int i = 0; i < indentDepth; i++)
+        {
+            stream << OSAL::String(IndentSize, _(' '));
+        }
     }
     stream << _value;
 }

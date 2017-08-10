@@ -3,6 +3,8 @@
 #include "json/Boolean.h"
 #include "json/String.h"
 #include "json/Number.h"
+#include "json/Object.h"
+#include "json/Array.h"
 
 namespace JSON
 {
@@ -42,7 +44,69 @@ bool GetTerm(std::basic_istream<OSAL::Char> & stream, OSAL::String & term)
                 return false;
             while (ch != _('"'))
             {
-                result += ch;
+                if (ch == _('\\'))
+                {
+                    if (!stream.get(ch))
+                        return false;
+                    switch(ch)
+                    {
+                        case _('\"'):
+                            result += _('\"');
+                            break;
+                        case _('\\'):
+                            result += _('\\');
+                            break;
+                        case _('/'):
+                            result += _('/');
+                            break;
+                        case _('b'):
+                            result += _('\b');
+                            break;
+                        case _('f'):
+                            result += _('\f');
+                            break;
+                        case _('n'):
+                            result += _('\n');
+                            break;
+                        case _('r'):
+                            result += _('\r');
+                            break;
+                        case _('t'):
+                            result += _('\t');
+                            break;
+                        case _('u'):
+                        {
+                            OSAL::String hexDigits;
+                            for (int i = 0; i < 4; ++i)
+                            {
+                                if (!stream.get(ch))
+                                    return false;
+                                hexDigits += ch;
+                            }
+                            uint16_t hexCode;
+                            Core::Deserialize(hexDigits, hexCode, 16);
+                            if ((hexCode & 0xFF80) == 0)
+                            {
+                                result += static_cast<OSAL::Char>(hexCode);
+                            } else if ((hexCode & 0xF800) == 0)
+                            {
+                                result += static_cast<OSAL::Char>(((hexCode & 0x07C0) >> 6) | 0xC0);
+                                result += static_cast<OSAL::Char>(((hexCode & 0x003F) >> 0) | 0x80);
+                            } else
+                            {
+                                result += static_cast<OSAL::Char>(((hexCode & 0xF000) >> 12) | 0xE0);
+                                result += static_cast<OSAL::Char>(((hexCode & 0x0FC0) >> 6) | 0x80);
+                                result += static_cast<OSAL::Char>(((hexCode & 0x003F) >> 0) | 0x80);
+                            }
+                            break;
+                        }
+                        default:
+                            return false;
+                    }
+                }
+                else
+                    result += ch;
+
                 if (!stream.get(ch))
                     return false;
             }
@@ -147,6 +211,22 @@ ValuePtr Parse(std::basic_istream<OSAL::Char> & stream)
             return std::make_shared<String>(token.value);
         case TokenType::Number:
             return std::make_shared<Number>(token.value);
+        case TokenType::CurlyBraceOpen:
+        {
+            stream.putback(token.value[0]);
+            auto object = std::make_shared<Object>();
+            if (!object->Deserialize(stream))
+                return nullptr;
+            return object;
+        }
+        case TokenType::SquareBracketOpen:
+        {
+            stream.putback(token.value[0]);
+            auto object = std::make_shared<Array>();
+            if (!object->Deserialize(stream))
+                return nullptr;
+            return object;
+        }
         default:
             return nullptr;
     }
