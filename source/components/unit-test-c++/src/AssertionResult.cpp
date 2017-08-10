@@ -128,7 +128,8 @@ AssertionResult CloseFailure(const std::string& expectedExpression,
                              const std::string& toleranceExpression,
                              const std::string& expectedValue,
                              const std::string& actualValue,
-                             const std::string& toleranceValue)
+                             const std::string& toleranceValue,
+                             const std::string& differenceValue)
 {
     ostringstream stream;
     stream << "Value of: " << actualExpression;
@@ -147,6 +148,7 @@ AssertionResult CloseFailure(const std::string& expectedExpression,
     {
         stream << "\n  (+/-) " << toleranceValue;
     }
+    stream << "\n  Difference: " << differenceValue;
 
     return AssertionResult(true, stream.str());
 }

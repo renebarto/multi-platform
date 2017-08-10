@@ -41,7 +41,7 @@ TEST_FIXTURE(StringTest, ConstructInitializer)
     EXPECT_EQ(value, target.GetValue());
 }
 
-TEST_FIXTURE(StringTest, Deserialize)
+TEST_FIXTURE(StringTest, DeserializeEmptyString)
 {
     String target;
 
@@ -50,30 +50,49 @@ TEST_FIXTURE(StringTest, Deserialize)
     std::basic_istringstream<OSAL::Char> stream(_("\"\""));
     EXPECT_TRUE(target.Deserialize(stream));
     EXPECT_EQ(_(""), target.GetValue());
-    stream.str(_("\"Some text\""));
-    stream.clear();
+}
+
+TEST_FIXTURE(StringTest, DeserializeString)
+{
+    String target;
+
+    std::basic_istringstream<OSAL::Char> stream(_("\"Some text\""));
     EXPECT_TRUE(target.Deserialize(stream));
     EXPECT_EQ(_("Some text"), target.GetValue());
-    stream.str(_("garbage"));
-    stream.clear();
-    EXPECT_FALSE(target.Deserialize(stream));
-    EXPECT_EQ(_(""), target.GetValue());
-    stream.str(_(""));
-    stream.clear();
+}
+
+TEST_FIXTURE(StringTest, DeserializeInvalid)
+{
+    String target;
+
+    std::basic_istringstream<OSAL::Char> stream(_("garbage"));
     EXPECT_FALSE(target.Deserialize(stream));
     EXPECT_EQ(_(""), target.GetValue());
 }
 
-TEST_FIXTURE(StringTest, Serialize)
+TEST_FIXTURE(StringTest, DeserializeEmpty)
 {
     String target;
 
-    EXPECT_EQ(ValueType::String, target.Type());
+    std::basic_istringstream<OSAL::Char> stream(_(""));
+    EXPECT_FALSE(target.Deserialize(stream));
     EXPECT_EQ(_(""), target.GetValue());
+}
+
+TEST_FIXTURE(StringTest, SerializeEmptyString)
+{
+    String target;
+
     std::basic_ostringstream<OSAL::Char> stream;
     target.Serialize(stream);
     EXPECT_EQ(_("\"\""), stream.str());
-    stream.str(_(""));
+}
+
+TEST_FIXTURE(StringTest, SerializeString)
+{
+    String target;
+
+    std::basic_ostringstream<OSAL::Char> stream;
     target.SetValue(_("Some text"));
     target.Serialize(stream);
     EXPECT_EQ(_("\"Some text\""), stream.str());

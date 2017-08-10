@@ -134,10 +134,6 @@ Token GetToken(std::basic_istream<OSAL::Char> & stream)
             return Token { TokenType::InvalidToken, term };
         return Token { TokenType::Number, term };
     }
-    if ((term.length() >= 1) && (IsValidKeyStartCharacter(term[0])))
-    {
-        return Token { TokenType::Key, term };
-    }
     return Token { TokenType::InvalidToken, term };
 }
 

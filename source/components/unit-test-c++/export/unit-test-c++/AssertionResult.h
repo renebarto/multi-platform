@@ -53,7 +53,8 @@ UNIT_TEST_CPP_EXPORT extern AssertionResult CloseFailure(const std::string& expe
                                                          const std::string& toleranceExpression,
                                                          const std::string& expectedValue,
                                                          const std::string& actualValue,
-                                                         const std::string& toleranceValue);
+                                                         const std::string& toleranceValue,
+                                                         const std::string& differenceValue);
 UNIT_TEST_CPP_EXPORT extern AssertionResult EqArrayFailure(const std::string& expectedExpression,
                                                            const std::string& actualExpression,
                                                            const std::string& countExpression,

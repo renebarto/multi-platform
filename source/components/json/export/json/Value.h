@@ -20,9 +20,10 @@ class Value
 {
 public:
     Value();
+    virtual ~Value() {};
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) = 0;
-    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream) const = 0;
+    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const = 0;
 
     virtual ValueType Type() const = 0;
 
@@ -34,7 +35,7 @@ ValuePtr Parse(std::basic_istream<OSAL::Char> & stream);
 
 inline void PrintTo(std::basic_ostream<OSAL::Char> & stream, const Value & value)
 {
-    value.Serialize(stream);
+    value.Serialize(stream, 0);
 }
 
 

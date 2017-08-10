@@ -30,7 +30,7 @@ bool String::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void String::Serialize(std::basic_ostream<OSAL::Char> & stream) const
+void String::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
 {
     stream << _('"') << _value << _('"');
 }

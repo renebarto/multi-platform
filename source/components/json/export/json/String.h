@@ -9,9 +9,10 @@ class String : public Value
 public:
     String();
     String(const OSAL::String & value);
+    virtual ~String() {};
 
     virtual bool Deserialize(std::basic_istream<OSAL::Char> & stream) override;
-    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream) const override;
+    virtual void Serialize(std::basic_ostream<OSAL::Char> & stream, int indentDepth = 0) const override;
 
     virtual ValueType Type() const override { return ValueType::String; }
     const OSAL::String & GetValue() const { return _value; }

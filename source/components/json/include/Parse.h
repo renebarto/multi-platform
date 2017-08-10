@@ -19,7 +19,6 @@ enum class TokenType
     Colon,
     Number,
     QuotedString,
-    Key,
 };
 
 struct Token

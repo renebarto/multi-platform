@@ -18,56 +18,67 @@ Number::Number(const OSAL::String & value)
 
 bool Number::GetValue(int8_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(uint8_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(int16_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(uint16_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(int32_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(uint32_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(int64_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(uint64_t & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(float & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(double & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
 bool Number::GetValue(long double & value) const
 {
+    value = {};
     return Core::Deserialize(_value, value);
 }
 
@@ -140,7 +151,7 @@ bool Number::Deserialize(std::basic_istream<OSAL::Char> & stream)
     }
 }
 
-void Number::Serialize(std::basic_ostream<OSAL::Char> & stream) const
+void Number::Serialize(std::basic_ostream<OSAL::Char> & stream, int UNUSED(indentDepth)) const
 {
     stream << _value;
 }

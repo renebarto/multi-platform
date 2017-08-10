@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tgmath.h>
 #include <sstream>
 #include <string>
 #include <osal/Unused.h>
@@ -592,7 +593,8 @@ AssertionResult CheckClose(const std::string & expectedExpression,
         return CloseFailure(expectedExpression, actualExpression, toleranceExpression,
                             FormatForComparisonFailureMessage(expected, actual),
                             FormatForComparisonFailureMessage(actual, expected),
-                            FormatForComparisonFailureMessage(tolerance, expected));
+                            FormatForComparisonFailureMessage(tolerance, expected),
+                            FormatForComparisonFailureMessage(std::abs(expected - actual), expected));
     }
     return AssertionSuccess();
 }

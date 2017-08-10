@@ -41,7 +41,7 @@ TEST_FIXTURE(BooleanTest, ConstructInitializer)
     EXPECT_EQ(value, target.GetValue());
 }
 
-TEST_FIXTURE(BooleanTest, Deserialize)
+TEST_FIXTURE(BooleanTest, DeserializeFalse)
 {
     Boolean target;
 
@@ -50,30 +50,56 @@ TEST_FIXTURE(BooleanTest, Deserialize)
     std::basic_istringstream<OSAL::Char> stream(_("false"));
     EXPECT_TRUE(target.Deserialize(stream));
     EXPECT_FALSE(target.GetValue());
-    stream.str(_("true"));
-    stream.clear();
-    EXPECT_TRUE(target.Deserialize(stream));
-    EXPECT_TRUE(target.GetValue());
-    stream.str(_("garbage"));
-    stream.clear();
-    EXPECT_FALSE(target.Deserialize(stream));
-    EXPECT_FALSE(target.GetValue());
-    stream.str(_(""));
-    stream.clear();
-    EXPECT_FALSE(target.Deserialize(stream));
-    EXPECT_FALSE(target.GetValue());
 }
 
-TEST_FIXTURE(BooleanTest, Serialize)
+TEST_FIXTURE(BooleanTest, DeserializeTrue)
 {
     Boolean target;
 
     EXPECT_EQ(ValueType::Boolean, target.Type());
     EXPECT_FALSE(target.GetValue());
+    std::basic_istringstream<OSAL::Char> stream(_("true"));
+    EXPECT_TRUE(target.Deserialize(stream));
+    EXPECT_TRUE(target.GetValue());
+}
+
+TEST_FIXTURE(BooleanTest, DeserializeInvalid)
+{
+    Boolean target;
+
+    EXPECT_EQ(ValueType::Boolean, target.Type());
+    EXPECT_FALSE(target.GetValue());
+    std::basic_istringstream<OSAL::Char> stream(_("garbage"));
+    EXPECT_FALSE(target.Deserialize(stream));
+    EXPECT_FALSE(target.GetValue());
+}
+
+TEST_FIXTURE(BooleanTest, DeserializeEmpty)
+{
+    Boolean target;
+
+    EXPECT_EQ(ValueType::Boolean, target.Type());
+    EXPECT_FALSE(target.GetValue());
+    std::basic_istringstream<OSAL::Char> stream(_(""));
+    EXPECT_FALSE(target.Deserialize(stream));
+    EXPECT_FALSE(target.GetValue());
+}
+
+TEST_FIXTURE(BooleanTest, SerializeFalse)
+{
+    Boolean target;
+
     std::basic_ostringstream<OSAL::Char> stream;
+    target.SetValue(false);
     target.Serialize(stream);
     EXPECT_EQ(_("false"), stream.str());
-    stream.str(_(""));
+}
+
+TEST_FIXTURE(BooleanTest, SerializeTrue)
+{
+    Boolean target;
+
+    std::basic_ostringstream<OSAL::Char> stream;
     target.SetValue(true);
     target.Serialize(stream);
     EXPECT_EQ(_("true"), stream.str());
