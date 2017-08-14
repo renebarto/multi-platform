@@ -1,17 +1,17 @@
-#include "network/AdapterList.h"
+#include "osal/NetworkAdapterList.h"
 
 #include <ifaddrs.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <linux/if_packet.h>
 #include <sys/un.h>
+#include <osal/NetworkAdapter.h>
 #include <core/Core.h>
 #include <core/DefaultLogger.h>
-#include <network/Address.h>
+#include <osal/linux/NetworkAddress.h>
 #include <network/IPV4Address.h>
 #include <network/IPV6Address.h>
 #include <network/DomainSocketAddress.h>
-#include <network/Adapter.h>
 #include <network/MACAddress.h>
 
 using namespace std;

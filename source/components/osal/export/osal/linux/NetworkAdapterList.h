@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <vector>
-#include "network/exports.h"
+#include "osal/exports.h"
 
 namespace Network
 {
@@ -10,10 +10,10 @@ namespace Network
 class Adapter;
 using AdapterPtr = std::shared_ptr<Adapter>;
 
-class AdapterList
+class NetworkAdapterList
 {
 public:
-    AdapterList();
+    NetworkAdapterList();
 
     bool ReScan();
     const std::vector<AdapterPtr> & GetAdapters() { return _adapters; }

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "network/Address.h"
+#include "osal/linux/NetworkAddress.h"
 
 namespace Network
 {
 
-class IPV6Address : public Address
+class IPV6Address : public OSAL::Network::Address
 {
 public:
     static IPV6Address Any;
@@ -49,7 +49,7 @@ public:
     Core::ByteArray GetData() const;
     void SetData(const Core::ByteArray & value);
 
-    virtual SocketFamily Family() const { return SocketFamily::InternetV6; }
+    virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const override { return AddressSize; }
     virtual Core::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;

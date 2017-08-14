@@ -1,12 +1,12 @@
 #pragma once
 
 #include "core/ByteArray.h"
-#include "network/Address.h"
+#include "osal/linux/NetworkAddress.h"
 
 namespace Network
 {
 
-class MACAddress : public Address
+class MACAddress : public OSAL::Network::Address
 {
 public:
     static const size_t AddressSize = 6;
@@ -38,7 +38,7 @@ public:
     uint8_t & operator[] (size_t offset);
     const uint8_t & operator[] (size_t offset) const;
 
-    virtual SocketFamily Family() const { return SocketFamily::Packet; }
+    virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Packet; }
     virtual size_t Size() const override { return AddressSize; }
     virtual Core::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;

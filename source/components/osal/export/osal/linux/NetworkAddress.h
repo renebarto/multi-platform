@@ -3,11 +3,11 @@
 #include <sys/socket.h>
 #include <memory>
 #include "osal/OSAL.h"
+#include "osal/exports.h"
 #include "core/ByteArray.h"
-#include "network/exports.h"
 
-namespace Network
-{
+namespace OSAL {
+namespace Network {
 
 enum class SocketFamily
 {
@@ -34,7 +34,7 @@ public:
     virtual Core::ByteArray GetBytes() const = 0;
     virtual OSAL::String ToString() const = 0;
 };
-using AddressPtr = std::shared_ptr<Address>;
+using NetworkAddressPtr = std::shared_ptr<Address>;
 
 inline void PrintTo(const Address & value, std::ostream & stream)
 {
@@ -42,4 +42,5 @@ inline void PrintTo(const Address & value, std::ostream & stream)
 }
 
 } // namespace Network
+} // namespace OSAL
 

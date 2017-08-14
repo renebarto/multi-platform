@@ -1,5 +1,6 @@
-#include "network/Adapter.h"
+#include "osal/NetworkAdapter.h"
 
+using namespace OSAL;
 using namespace Network;
 
 Adapter::Adapter(const std::string & name, AddressPtr localAddress, AddressPtr netmask,

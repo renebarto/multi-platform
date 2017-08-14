@@ -1,11 +1,11 @@
 #pragma once
 
-#include "network/Address.h"
+#include "osal/linux/NetworkAddress.h"
 
 namespace Network
 {
 
-class DomainSocketAddress : public Address
+class DomainSocketAddress : public OSAL::Network::Address
 {
 public:
     static DomainSocketAddress Any;
@@ -49,7 +49,7 @@ public:
     OSAL::String GetData() const;
     void SetData(const OSAL::String & value);
 
-    virtual SocketFamily Family() const { return SocketFamily::Unix; }
+    virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Unix; }
     virtual size_t Size() const override { return AddressSize; }
     virtual Core::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;
