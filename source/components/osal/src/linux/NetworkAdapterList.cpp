@@ -11,7 +11,7 @@
 #include <osal/NetworkAddress.h>
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
-#include <osal/DomainSocketAddress.h>
+#include <osal/linux/DomainSocketAddress.h>
 #include <osal/MACAddress.h>
 
 using namespace std;

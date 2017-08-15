@@ -4,7 +4,7 @@
 #include <sstream>
 #include <osal/Strings.h>
 #if !defined(WIN_MSVC)
-#include <osal/DomainSocketAddress.h>
+#include <osal/linux/DomainSocketAddress.h>
 #endif
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
