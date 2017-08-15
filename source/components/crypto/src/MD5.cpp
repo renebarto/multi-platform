@@ -95,7 +95,7 @@ void MD5::Process(const uint8_t *data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void MD5::Process(const Core::ByteArray & data)
+void MD5::Process(const OSAL::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
@@ -135,9 +135,9 @@ void MD5::Finalize()
     memset(finalCount, 0, sizeof(finalCount));
 }
 
-Core::ByteArray MD5::GetDigest() const
+OSAL::ByteArray MD5::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 

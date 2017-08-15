@@ -29,7 +29,7 @@ TEST_FIXTURE(SHA512Test, Construct)
 {
     SHA512 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000"
               "0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
@@ -39,7 +39,7 @@ TEST_FIXTURE(SHA512Test, ProcessNoFinalize_Case2)
 {
     SHA512 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000"
@@ -50,7 +50,7 @@ TEST_FIXTURE(SHA512Test, ProcessCase1)
 {
     SHA512 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xCF, 0x83, 0xE1, 0x35, 0x7E, 0xEF, 0xB8, 0xBD,
         0xF1, 0x54, 0x28, 0x50, 0xD6, 0x6D, 0x80, 0x07,
         0xD6, 0x20, 0xE4, 0x05, 0x0B, 0x57, 0x15, 0xDC,
@@ -72,7 +72,7 @@ TEST_FIXTURE(SHA512Test, ProcessCase2)
 {
     SHA512 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xDD, 0xAF, 0x35, 0xA1, 0x93, 0x61, 0x7A, 0xBA,
         0xCC, 0x41, 0x73, 0x49, 0xAE, 0x20, 0x41, 0x31,
         0x12, 0xE6, 0xFA, 0x4E, 0x89, 0xA9, 0x7E, 0xA2,
@@ -95,7 +95,7 @@ TEST_FIXTURE(SHA512Test, ProcessResetCase2)
 {
     SHA512 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     uint8_t input[3];
     memcpy(input, "abc", sizeof(input));
     target.Process(input, sizeof(input));
@@ -110,7 +110,7 @@ TEST_FIXTURE(SHA512Test, ProcessCase3)
 {
     SHA512 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x20, 0x4A, 0x8F, 0xC6, 0xDD, 0xA8, 0x2F, 0x0A,
         0x0C, 0xED, 0x7B, 0xEB, 0x8E, 0x08, 0xA4, 0x16,
         0x57, 0xC1, 0x6E, 0xF4, 0x68, 0xB2, 0x28, 0xA8,
@@ -133,7 +133,7 @@ TEST_FIXTURE(SHA512Test, ProcessCase4)
 {
     SHA512 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x8E, 0x95, 0x9B, 0x75, 0xDA, 0xE3, 0x13, 0xDA,
         0x8C, 0xF4, 0xF7, 0x28, 0x14, 0xFC, 0x14, 0x3F,
         0x8F, 0x77, 0x79, 0xC6, 0xEB, 0x9F, 0x7F, 0xA1,
@@ -156,7 +156,7 @@ TEST_FIXTURE(SHA512Test, ProcessCase5)
 {
     SHA512 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xE7, 0x18, 0x48, 0x3D, 0x0C, 0xE7, 0x69, 0x64,
         0x4E, 0x2E, 0x42, 0xC7, 0xBC, 0x15, 0xB4, 0x63,
         0x8E, 0x1F, 0x98, 0xB1, 0x3B, 0x20, 0x44, 0x28,

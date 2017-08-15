@@ -105,7 +105,7 @@ void SHA512Base::Process(const uint8_t * data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void SHA512Base::Process(const Core::ByteArray & data)
+void SHA512Base::Process(const OSAL::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
@@ -366,9 +366,9 @@ void SHA384::Finalize()
     _bitCountL = _bitCountH = 0;
 }
 
-Core::ByteArray SHA384::GetDigest() const
+OSAL::ByteArray SHA384::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 
@@ -420,9 +420,9 @@ void SHA512::Finalize()
     _bitCountL = _bitCountH = 0;
 }
 
-Core::ByteArray SHA512::GetDigest() const
+OSAL::ByteArray SHA512::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 
@@ -474,9 +474,9 @@ void SHA512_224::Finalize()
     _bitCountL = _bitCountH = 0;
 }
 
-Core::ByteArray SHA512_224::GetDigest() const
+OSAL::ByteArray SHA512_224::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 
@@ -528,9 +528,9 @@ void SHA512_256::Finalize()
     _bitCountL = _bitCountH = 0;
 }
 
-Core::ByteArray SHA512_256::GetDigest() const
+OSAL::ByteArray SHA512_256::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 

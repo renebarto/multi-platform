@@ -240,9 +240,36 @@ TEST_FIXTURE(StringTest, WStringToString)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_FIXTURE(StringTest, MoreTests)
+TEST_FIXTURE(StringTest, ToStringNarrow)
 {
-    FAIL();
+    std::string narrowString("Test");
+    OSAL::String expected = _("Test");
+    OSAL::String actual = ToString(narrowString);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(StringTest, ToStringWide)
+{
+    std::wstring wideString(L"Test");
+    OSAL::String expected = _("Test");
+    OSAL::String actual = ToString(wideString);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(StringTest, ToNarrowString)
+{
+    OSAL::String input(_("Test"));
+    std::string expected = "Test";
+    std::string actual = ToNarrowString(input);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(StringTest, ToWideString)
+{
+    OSAL::String input(_("Test"));
+    std::wstring expected = L"Test";
+    std::wstring actual = ToWideString(input);
+    EXPECT_EQ(expected, actual);
 }
 
 } // TEST_SUITE(osal)

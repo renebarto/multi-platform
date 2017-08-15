@@ -15,10 +15,10 @@ public:
     virtual void Initialize() override;
 
     virtual void Process(const uint8_t *data, size_t len) override;
-    virtual void Process(const Core::ByteArray & data) override;
+    virtual void Process(const OSAL::ByteArray & data) override;
     virtual void Finalize() override;
     virtual size_t GetDigestSize() const override { return DigestSize; }
-    virtual Core::ByteArray GetDigest() const override;
+    virtual OSAL::ByteArray GetDigest() const override;
 
     virtual OSAL::String ToString() const override;
 

@@ -3,8 +3,8 @@
 #include "osal/Strings.h"
 #include "osal/NetworkAddress.h"
 
-namespace OSAL
-{
+namespace OSAL {
+namespace Network {
 
 class DomainSocketAddress : public OSAL::Network::Address
 {
@@ -67,4 +67,5 @@ inline void PrintTo(const DomainSocketAddress & value, std::basic_ostream<OSAL::
     stream << value.ToString();
 }
 
+} // namespace Network
 } // namespace OSAL

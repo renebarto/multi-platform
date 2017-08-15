@@ -2,8 +2,8 @@
 
 #include "osal/NetworkAddress.h"
 
-namespace OSAL
-{
+namespace OSAL {
+namespace Network {
 
 class IPV6Address : public OSAL::Network::Address
 {
@@ -66,4 +66,5 @@ inline void PrintTo(const IPV6Address & value, std::ostream & stream)
     stream << value.ToString();
 }
 
+} // namespace Network
 } // namespace OSAL

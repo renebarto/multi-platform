@@ -77,7 +77,7 @@ void SHA1::Process(const uint8_t * data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void SHA1::Process(const Core::ByteArray & data)
+void SHA1::Process(const OSAL::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
@@ -117,9 +117,9 @@ void SHA1::Finalize()
     memset(finalCount, 0, sizeof(finalCount));
 }
 
-Core::ByteArray SHA1::GetDigest() const
+OSAL::ByteArray SHA1::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 

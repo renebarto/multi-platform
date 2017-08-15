@@ -2,6 +2,11 @@
 
 #include <chrono>
 #include <sstream>
+#include <osal/Strings.h>
+#include <osal/DomainSocketAddress.h>
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
+#include <osal/MACAddress.h>
 #include <core/exports.h>
 //#include <byteswap.h>
 
@@ -244,7 +249,26 @@ bool Compare(T const * expected, T const * actual, int numSamples)
 //std::streambuf & serialize_out(std::streambuf & sb, void * p, int size);
 //std::streambuf & serialize_in(std::streambuf & sb, void * p, int size);
 
-} // namespace Util
+inline bool TryParse(const OSAL::String & text, OSAL::Network::DomainSocketAddress & ipAddress)
+{
+    return OSAL::Network::DomainSocketAddress::TryParse(text, ipAddress);
+}
 
+inline bool TryParse(const OSAL::String & text, OSAL::Network::IPV4Address & ipAddress)
+{
+    return OSAL::Network::IPV4Address::TryParse(text, ipAddress);
+}
+
+inline bool TryParse(const OSAL::String & text, OSAL::Network::IPV6Address & ipAddress)
+{
+    return OSAL::Network::IPV6Address::TryParse(text, ipAddress);
+}
+
+inline bool TryParse(const OSAL::String & text, OSAL::Network::MACAddress & ipAddress)
+{
+    return OSAL::Network::MACAddress::TryParse(text, ipAddress);
+}
+
+} // namespace Util
 } // namespace Core
 

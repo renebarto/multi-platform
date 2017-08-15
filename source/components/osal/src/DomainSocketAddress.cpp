@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <sstream>
-#include "core/Core.h"
+#include "osal/OSAL.h"
 
 using namespace std;
 using namespace OSAL;
@@ -108,17 +108,3 @@ void DomainSocketAddress::SetData(const OSAL::ByteArray & data, size_t offset)
     assert(offset + AddressSize <= data.Size());
     _address.Set(0, data.Data() + offset, AddressSize);
 }
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const OSAL::String & text, Network::DomainSocketAddress & address)
-{
-    return Network::DomainSocketAddress::TryParse(text, address);
-}
-
-} // namespace Util
-} // namespace Core

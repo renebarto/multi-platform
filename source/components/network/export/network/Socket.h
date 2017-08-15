@@ -12,8 +12,8 @@ WARNING_PUSH
 WARNING_DISABLE(4265)
 #include <mutex>
 WARNING_POP
-#include "core/ByteArray.h"
-#include "osal/Network-Darwin.h"
+#include "osal/ByteArray.h"
+#include "osal/Network.h"
 #include "osal/NetworkAddress.h"
 
 namespace Network
@@ -73,7 +73,7 @@ public:
     OSAL::Network::SocketHandle GetHandle() const;
     void            SetHandle(OSAL::Network::SocketHandle handle);
 
-    void            Open(SocketFamily socketFamily, SocketType socketType);
+    void            Open(OSAL::Network::SocketFamily socketFamily, SocketType socketType);
     void            Close();
     bool            IsClosed();
 
@@ -107,9 +107,9 @@ public:
     void            GetLocalAddress(sockaddr * address, socklen_t * addressLength);
     void            GetRemoteAddress(sockaddr * address, socklen_t * addressLength);
 
-    Core::ByteArray Receive(int flags);
+    OSAL::ByteArray Receive(int flags);
     size_t          Receive(uint8_t * data, size_t bufferSize, int flags);
-    bool            Send(Core::ByteArray & data, size_t bytesToSend, int flags);
+    bool            Send(OSAL::ByteArray & data, size_t bytesToSend, int flags);
     bool            Send(const uint8_t * data, size_t bytesToSend, int flags);
     void            SendTo(sockaddr * address, socklen_t addressLength, const uint8_t * data, size_t bytesToSend);
     size_t          ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_t * data, size_t bufferSize);

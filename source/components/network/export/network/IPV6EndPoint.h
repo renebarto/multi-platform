@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <streambuf>
-#include "network/IPV6Address.h"
+#include <osal/IPV6Address.h>
 
 namespace Network
 {
@@ -22,12 +22,12 @@ public:
         _port(other._port)
     {
     }
-    IPV6EndPoint(const IPV6Address & ipAddress) :
+    IPV6EndPoint(const OSAL::Network::IPV6Address & ipAddress) :
         _ipAddress(ipAddress),
         _port(AnyPort)
     {
     }
-    IPV6EndPoint(const IPV6Address & ipAddress, uint16_t port) :
+    IPV6EndPoint(const OSAL::Network::IPV6Address & ipAddress, uint16_t port) :
         _ipAddress(ipAddress),
         _port(port)
     {
@@ -38,7 +38,7 @@ public:
     {
     }
     IPV6EndPoint(uint16_t port) :
-        _ipAddress(IPV6Address::None),
+        _ipAddress(OSAL::Network::IPV6Address::None),
         _port(port)
     {
     }
@@ -50,12 +50,12 @@ public:
     bool operator == (const IPV6EndPoint & other) const;
     bool operator != (const IPV6EndPoint & other) const;
 
-    const IPV6Address & GetIPAddress() const { return _ipAddress; }
+    const OSAL::Network::IPV6Address & GetIPAddress() const { return _ipAddress; }
     uint16_t GetPort() const { return _port; }
     OSAL::String ToString() const;
 
 private:
-    IPV6Address _ipAddress;
+    OSAL::Network::IPV6Address _ipAddress;
     uint16_t _port;
 };
 

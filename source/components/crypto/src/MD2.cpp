@@ -85,7 +85,7 @@ void MD2::Process(const uint8_t *data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void MD2::Process(const Core::ByteArray & data)
+void MD2::Process(const OSAL::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
@@ -112,9 +112,9 @@ void MD2::Finalize()
     _byteCount = 0;
 }
 
-Core::ByteArray MD2::GetDigest() const
+OSAL::ByteArray MD2::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 

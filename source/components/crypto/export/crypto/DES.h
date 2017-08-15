@@ -19,7 +19,7 @@ public:
 
     virtual void Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len) override;
 
-    virtual void Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut) override;
+    virtual void Process(const OSAL::ByteArray & dataIn, OSAL::ByteArray & dataOut) override;
 
     virtual void Finalize() override;
 
@@ -54,7 +54,7 @@ public:
 
     virtual void Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len) override;
 
-    virtual void Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut) override;
+    virtual void Process(const OSAL::ByteArray & dataIn, OSAL::ByteArray & dataOut) override;
 
     virtual void Finalize() override;
 

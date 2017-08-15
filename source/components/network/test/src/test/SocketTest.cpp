@@ -115,16 +115,16 @@ TEST_FIXTURE(SocketTest, GetSetHandle)
 
 TEST_FIXTURE(SocketTest, Open)
 {
-    target.Open(SocketFamily::Internet, SocketType::Stream);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Stream);
     EXPECT_NE(OSAL::Network::InvalidHandleValue, target.GetHandle());
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_NE(OSAL::Network::InvalidHandleValue, target.GetHandle());
     EXPECT_FALSE(target.IsClosed());
 }
 
 TEST_FIXTURE(SocketTest, Close)
 {
-    target.Open(SocketFamily::Internet, SocketType::Stream);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Stream);
     EXPECT_NE(OSAL::Network::InvalidHandleValue, target.GetHandle());
     EXPECT_FALSE(target.IsClosed());
     target.Close();
@@ -134,7 +134,7 @@ TEST_FIXTURE(SocketTest, Close)
 
 TEST_FIXTURE(SocketTest, GetOptionWithLevel)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     unsigned int size = sizeof(int);
     int value;
     target.GetSocketOption(SocketOptionLevel::Socket, SocketOption::Broadcast, &value, &size);
@@ -143,7 +143,7 @@ TEST_FIXTURE(SocketTest, GetOptionWithLevel)
 
 TEST_FIXTURE(SocketTest, SetOptionWithLevel)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetSocketOptionBool(SocketOption::Broadcast));
     unsigned int size = sizeof(int);
     int value = 1;
@@ -155,7 +155,7 @@ TEST_FIXTURE(SocketTest, SetOptionWithLevel)
 
 TEST_FIXTURE(SocketTest, GetOption)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     unsigned int size = sizeof(int);
     int value;
     target.GetSocketOption(SocketOption::Broadcast, &value, &size);
@@ -164,7 +164,7 @@ TEST_FIXTURE(SocketTest, GetOption)
 
 TEST_FIXTURE(SocketTest, SetOption)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetSocketOptionBool(SocketOption::Broadcast));
     unsigned int size = sizeof(int);
     int value = 1;
@@ -176,13 +176,13 @@ TEST_FIXTURE(SocketTest, SetOption)
 
 TEST_FIXTURE(SocketTest, GetSocketOptionBool)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetSocketOptionBool(SocketOption::Broadcast));
 }
 
 TEST_FIXTURE(SocketTest, SetSocketOptionBool)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetSocketOptionBool(SocketOption::Broadcast));
     target.SetSocketOptionBool(SocketOption::Broadcast, true);
     EXPECT_TRUE(target.GetSocketOptionBool(SocketOption::Broadcast));
@@ -190,14 +190,14 @@ TEST_FIXTURE(SocketTest, SetSocketOptionBool)
 
 TEST_FIXTURE(SocketTest, GetSocketOptionInt)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_EQ(0, target.GetSocketOptionInt(SocketOption::Broadcast));
 }
 
 TEST_FIXTURE(SocketTest, SetSocketOptionInt)
 {
     int enableBroadcast = 1;
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetSocketOptionInt(SocketOption::Broadcast));
     target.SetSocketOptionInt(SocketOption::Broadcast, enableBroadcast);
     EXPECT_EQ(enableBroadcast, target.GetSocketOptionInt(SocketOption::Broadcast));
@@ -205,13 +205,13 @@ TEST_FIXTURE(SocketTest, SetSocketOptionInt)
 
 TEST_FIXTURE(SocketTest, GetBroadcastOption)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetBroadcastOption());
 }
 
 TEST_FIXTURE(SocketTest, SetBroadcastOption)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetBroadcastOption());
     target.SetBroadcastOption(true);
     EXPECT_TRUE(target.GetBroadcastOption());
@@ -219,13 +219,13 @@ TEST_FIXTURE(SocketTest, SetBroadcastOption)
 
 TEST_FIXTURE(SocketTest, GetBlockingMode)
 {
-    target.Open(SocketFamily::Internet, SocketType::Stream);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Stream);
     EXPECT_TRUE(target.GetBlockingMode());
 }
 
 TEST_FIXTURE(SocketTest, SetBlockingMode)
 {
-    target.Open(SocketFamily::Internet, SocketType::Stream);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Stream);
     EXPECT_TRUE(target.GetBlockingMode());
     target.SetBlockingMode(false);
     EXPECT_FALSE(target.GetBlockingMode());
@@ -235,13 +235,13 @@ TEST_FIXTURE(SocketTest, SetBlockingMode)
 
 TEST_FIXTURE(SocketTest, GetReuseAddress)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetReuseAddress());
 }
 
 TEST_FIXTURE(SocketTest, SetReuseAddress)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_FALSE(target.GetReuseAddress());
     target.SetReuseAddress(true);
     EXPECT_TRUE(target.GetReuseAddress());
@@ -251,7 +251,7 @@ TEST_FIXTURE(SocketTest, SetReuseAddress)
 
 TEST_FIXTURE(SocketTest, GetReceiveTimeout)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     int timeout = 0;
     EXPECT_EQ(timeout, target.GetReceiveTimeout());
 }
@@ -260,7 +260,7 @@ TEST_FIXTURE(SocketTest, SetReceiveTimeout)
 {
     int timeout = 0;
     int timeoutNew = 1000;
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_EQ(timeout, target.GetReceiveTimeout());
     target.SetReceiveTimeout(timeoutNew);
     EXPECT_EQ(timeoutNew, target.GetReceiveTimeout());
@@ -270,7 +270,7 @@ TEST_FIXTURE(SocketTest, SetReceiveTimeout)
 
 TEST_FIXTURE(SocketTest, GetSendTimeout)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     int timeout = 0;
     EXPECT_EQ(timeout, target.GetSendTimeout());
 }
@@ -279,7 +279,7 @@ TEST_FIXTURE(SocketTest, SetSendTimeout)
 {
     int timeout = 0;
     int timeoutNew = 1000;
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     EXPECT_EQ(timeout, target.GetSendTimeout());
     target.SetSendTimeout(timeoutNew);
     EXPECT_EQ(timeoutNew, target.GetSendTimeout());
@@ -289,7 +289,7 @@ TEST_FIXTURE(SocketTest, SetSendTimeout)
 
 TEST_FIXTURE(SocketTest, ToString)
 {
-    target.Open(SocketFamily::Internet, SocketType::Datagram);
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
     ostringstream stream;
     stream << "Network::Socket handle = " << target.GetHandle();
     EXPECT_EQ(stream.str(), target.ToString());

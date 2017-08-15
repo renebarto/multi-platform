@@ -30,7 +30,7 @@ void IPV6EndPointTest::TearDown()
 TEST_FIXTURE(IPV6EndPointTest, Constructor)
 {
     IPV6EndPoint target;
-    IPV6Address referenceAddress;
+    OSAL::Network::IPV6Address referenceAddress;
     uint16_t referencePort = IPV6EndPoint::AnyPort;
     const string expected = "::";
     EXPECT_TRUE(referenceAddress == target.GetIPAddress());
@@ -40,7 +40,7 @@ TEST_FIXTURE(IPV6EndPointTest, Constructor)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorCopy)
 {
-    IPV6EndPoint ipEndPoint(IPV6Address({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), 1234);
+    IPV6EndPoint ipEndPoint(OSAL::Network::IPV6Address({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), 1234);
     IPV6EndPoint target(ipEndPoint);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
     EXPECT_TRUE(ipEndPoint.GetIPAddress() == target.GetIPAddress());
@@ -50,7 +50,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorCopy)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddress)
 {
-    IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     IPV6EndPoint target(ipAddress);
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
@@ -60,7 +60,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddress)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressPort)
 {
-    IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
@@ -75,7 +75,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8Array)
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
-    EXPECT_TRUE(Core::ByteArray(ipAddress, sizeof(ipAddress)) == target.GetIPAddress().GetData());
+    EXPECT_TRUE(OSAL::ByteArray(ipAddress, sizeof(ipAddress)) == target.GetIPAddress().GetData());
     EXPECT_TRUE(port == target.GetPort());
     EXPECT_EQ(expected, target.ToString());
 }
@@ -85,7 +85,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
     uint16_t port = 1234;
     IPV6EndPoint target(port);
     const string expected = "[::]:1234";
-    EXPECT_TRUE(IPV6Address::None == target.GetIPAddress());
+    EXPECT_TRUE(OSAL::Network::IPV6Address::None == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
     EXPECT_EQ(expected, target.ToString());
 }
@@ -93,7 +93,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
 TEST_FIXTURE(IPV6EndPointTest, ParseIPAddressOnly)
 {
     const string text = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0";
-    IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
+    OSAL::Network::IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
     IPV6EndPoint expected(ipAddress);
     const IPV6EndPoint & actual = IPV6EndPoint::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -102,7 +102,7 @@ TEST_FIXTURE(IPV6EndPointTest, ParseIPAddressOnly)
 TEST_FIXTURE(IPV6EndPointTest, Parse)
 {
     const string text = "[fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0]:12345";
-    IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
+    OSAL::Network::IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
     uint16_t port = 12345;
     IPV6EndPoint expected(ipAddress, port);
     const IPV6EndPoint & actual = IPV6EndPoint::Parse(text);
@@ -123,7 +123,7 @@ TEST_FIXTURE(IPV6EndPointTest, ParseInvalid)
 TEST_FIXTURE(IPV6EndPointTest, TryParseIPAddressOnly)
 {
     const string text = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0";
-    IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
+    OSAL::Network::IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
     IPV6EndPoint expected(ipAddress);
     IPV6EndPoint actual;
     EXPECT_TRUE(IPV6EndPoint::TryParse(text, actual));
@@ -133,7 +133,7 @@ TEST_FIXTURE(IPV6EndPointTest, TryParseIPAddressOnly)
 TEST_FIXTURE(IPV6EndPointTest, TryParse)
 {
     const string text = "[fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0]:8080";
-    IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
+    OSAL::Network::IPV6Address ipAddress({ 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240 });
     uint16_t port = 8080;
     IPV6EndPoint actual;
     IPV6EndPoint expected(ipAddress, port);
@@ -154,7 +154,7 @@ TEST_FIXTURE(IPV6EndPointTest, TryParseInvalid)
 
 TEST_FIXTURE(IPV6EndPointTest, OperatorNotEqual)
 {
-    IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     IPV6EndPoint ref1;
@@ -173,7 +173,7 @@ TEST_FIXTURE(IPV6EndPointTest, OperatorNotEqual)
 
 TEST_FIXTURE(IPV6EndPointTest, OperatorEqual)
 {
-    IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     IPV6EndPoint ref1;

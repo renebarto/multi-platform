@@ -1,11 +1,12 @@
-#include "network/IPV4Address.h"
+#include "osal/IPV4Address.h"
 #include <netdb.h>
 #include <sstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include "core/Core.h"
+#include "osal/OSAL.h"
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 IPV4Address IPV4Address::None = IPV4Address({0, 0, 0, 0});
@@ -87,7 +88,7 @@ void IPV4Address::SetUInt32(uint32_t value)
     _ipAddress.SetUInt32(0, value);
 }
 
-Core::ByteArray IPV4Address::GetBytes() const
+OSAL::ByteArray IPV4Address::GetBytes() const
 {
     return _ipAddress;
 }
@@ -102,22 +103,8 @@ string IPV4Address::ToString() const
     return stream.str();
 }
 
-void IPV4Address::SetData(const Core::ByteArray & data, size_t offset)
+void IPV4Address::SetData(const OSAL::ByteArray & data, size_t offset)
 {
     assert(offset + AddressSize <= data.Size());
     _ipAddress.Set(0, data.Data() + offset, AddressSize);
 }
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const string & text, Network::IPV4Address & ipAddress)
-{
-    return Network::IPV4Address::TryParse(text, ipAddress);
-}
-
-} // namespace Util
-} // namespace Core

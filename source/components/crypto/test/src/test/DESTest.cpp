@@ -197,8 +197,8 @@ TEST_FIXTURE(DESTest, InitializeEncryption3)
 struct TestDataDES
 {
     DESKey key;
-    Core::ByteArray dataDecrypted;
-    Core::ByteArray dataEncrypted;
+    OSAL::ByteArray dataDecrypted;
+    OSAL::ByteArray dataEncrypted;
 };
 
 const vector<TestDataDES> TestVectors1 =
@@ -532,11 +532,11 @@ TEST_FIXTURE(DESTest, Process1)
     {
         DESKey key;
         memcpy(key, testVector.key, DESKeySize);
-        Core::ByteArray dataIn = testVector.dataDecrypted;
-        Core::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
-        Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
-        Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
-        Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
+        OSAL::ByteArray dataIn = testVector.dataDecrypted;
+        OSAL::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
+        OSAL::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
+        OSAL::ByteArray referenceEncrypted = testVector.dataEncrypted;
+        OSAL::ByteArray referenceDecrypted = testVector.dataDecrypted;
         target.Initialize(key, Direction::Encrypt);
         target.Process(dataIn, dataEncrypted);
         EXPECT_EQ(referenceEncrypted, dataEncrypted);
@@ -716,11 +716,11 @@ TEST_FIXTURE(DESTest, Process2)
     {
         DESKey key;
         memcpy(key, testVector.key, DESKeySize);
-        Core::ByteArray dataIn = testVector.dataDecrypted;
-        Core::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
-        Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
-        Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
-        Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
+        OSAL::ByteArray dataIn = testVector.dataDecrypted;
+        OSAL::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
+        OSAL::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
+        OSAL::ByteArray referenceEncrypted = testVector.dataEncrypted;
+        OSAL::ByteArray referenceDecrypted = testVector.dataDecrypted;
         target.Initialize(key, Direction::Encrypt);
         target.Process(dataIn, dataEncrypted);
         EXPECT_EQ(referenceEncrypted, dataEncrypted);
@@ -1152,8 +1152,8 @@ TEST_FIXTURE(TripleDESTest, InitializeEncryption3)
 struct TestDataTripleDES
 {
     TripleDESKey key;
-    Core::ByteArray dataDecrypted;
-    Core::ByteArray dataEncrypted;
+    OSAL::ByteArray dataDecrypted;
+    OSAL::ByteArray dataEncrypted;
 };
 
 const vector<TestDataTripleDES> TestVectorsTripleDES =
@@ -1193,11 +1193,11 @@ TEST_FIXTURE(TripleDESTest, Process)
     {
         TripleDESKey key;
         memcpy(key, testVector.key, TripleDESKeySize);
-        Core::ByteArray dataIn = testVector.dataDecrypted;
-        Core::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
-        Core::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
-        Core::ByteArray referenceEncrypted = testVector.dataEncrypted;
-        Core::ByteArray referenceDecrypted = testVector.dataDecrypted;
+        OSAL::ByteArray dataIn = testVector.dataDecrypted;
+        OSAL::ByteArray dataEncrypted(testVector.dataEncrypted.Size());
+        OSAL::ByteArray dataDecrypted(testVector.dataDecrypted.Size());
+        OSAL::ByteArray referenceEncrypted = testVector.dataEncrypted;
+        OSAL::ByteArray referenceDecrypted = testVector.dataDecrypted;
         target.Initialize(key, Direction::Encrypt);
         target.Process(dataIn, dataEncrypted);
         EXPECT_EQ(referenceEncrypted, dataEncrypted);

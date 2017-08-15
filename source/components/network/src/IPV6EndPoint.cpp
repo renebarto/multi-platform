@@ -23,7 +23,7 @@ IPV6EndPoint IPV6EndPoint::Parse(const string & text)
 
 bool IPV6EndPoint::TryParse(const string & text, IPV6EndPoint & ipEndPoint)
 {
-    IPV6Address address = IPV6Address::None;
+    OSAL::Network::IPV6Address address = OSAL::Network::IPV6Address::None;
     long port = AnyPort;
     size_t bracketPos = text.find('[');
     if (bracketPos == 0)
@@ -32,7 +32,7 @@ bool IPV6EndPoint::TryParse(const string & text, IPV6EndPoint & ipEndPoint)
         bracketPos = text.find(']');
         if (bracketPos == string::npos)
             return false;
-        if (!IPV6Address::TryParse(text.substr(1, bracketPos - 1), address))
+        if (!OSAL::Network::IPV6Address::TryParse(text.substr(1, bracketPos - 1), address))
             return false;
         size_t pos = text.find(':', bracketPos + 1);
         if (pos != string::npos)
@@ -45,7 +45,7 @@ bool IPV6EndPoint::TryParse(const string & text, IPV6EndPoint & ipEndPoint)
     else
     {
         // We have a plain IPV6 address
-        if (!IPV6Address::TryParse(text, address))
+        if (!OSAL::Network::IPV6Address::TryParse(text, address))
             return false;
     }
     ipEndPoint = IPV6EndPoint(address, static_cast<uint16_t>(port));

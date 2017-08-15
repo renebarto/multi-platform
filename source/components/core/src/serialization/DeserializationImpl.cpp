@@ -178,9 +178,9 @@ bool Core::Deserialize(const OSAL::String & text, int64_t & value, int base /*= 
     unsigned long long result_ull = OSAL::Strings::strtoull(text.c_str(), nullptr, base);
     if (result < LLONG_MIN)
         return false;
-    if ((result >= 0) && (result_ull > LLONG_MAX))
+    if ((base == 10) && (result >= 0) && (result_ull > LLONG_MAX))
         return false;
-    if ((base == 16) && (result_ull > LLONG_MAX))
+    if ((base != 10) && (result_ull > LLONG_MAX))
         value = static_cast<long long>(result_ull);
     else
         value = result;

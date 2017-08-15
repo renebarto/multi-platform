@@ -1,11 +1,12 @@
-#include "network/IPV6Address.h"
+#include "osal/IPV6Address.h"
 #include <netdb.h>
 #include <sstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include "core/Core.h"
+#include "osal/OSAL.h"
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 IPV6Address IPV6Address::None = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
@@ -92,17 +93,17 @@ const uint8_t & IPV6Address::operator[] (size_t offset) const
     return _ipAddress[offset];
 }
 
-Core::ByteArray IPV6Address::GetData() const
+OSAL::ByteArray IPV6Address::GetData() const
 {
     return _ipAddress;
 }
 
-void IPV6Address::SetData(const Core::ByteArray & value)
+void IPV6Address::SetData(const OSAL::ByteArray & value)
 {
     _ipAddress.Set(0, value);
 }
 
-Core::ByteArray IPV6Address::GetBytes() const
+OSAL::ByteArray IPV6Address::GetBytes() const
 {
     return _ipAddress;
 }
@@ -172,22 +173,8 @@ string IPV6Address::ToString() const
     return stream.str();
 }
 
-void IPV6Address::SetData(const Core::ByteArray & data, size_t offset)
+void IPV6Address::SetData(const OSAL::ByteArray & data, size_t offset)
 {
     assert(offset + AddressSize <= data.Size());
     _ipAddress.Set(0, data.Data() + offset, AddressSize);
 }
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const string & text, Network::IPV6Address & ipAddress)
-{
-    return Network::IPV6Address::TryParse(text, ipAddress);
-}
-
-} // namespace Util
-} // namespace Core

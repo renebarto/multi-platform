@@ -1,8 +1,9 @@
-#include "network/MACAddress.h"
+#include "osal/MACAddress.h"
 #include <sstream>
-#include "core/Core.h"
+#include "osal/OSAL.h"
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 MACAddress::~MACAddress()
@@ -88,7 +89,7 @@ const uint8_t & MACAddress::operator[] (size_t offset) const
     return macAddress[offset];
 }
 
-Core::ByteArray MACAddress::GetBytes() const
+OSAL::ByteArray MACAddress::GetBytes() const
 {
     return macAddress;
 }
@@ -106,22 +107,8 @@ string MACAddress::ToString() const
     return stream.str();
 }
 
-void MACAddress::SetData(const Core::ByteArray & data, size_t offset)
+void MACAddress::SetData(const OSAL::ByteArray & data, size_t offset)
 {
     assert(offset + AddressSize <= data.Size());
     macAddress.Set(0, data.Data() + offset, AddressSize);
 }
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const string & text, Network::MACAddress & ipAddress)
-{
-    return Network::MACAddress::TryParse(text, ipAddress);
-}
-
-} // namespace Util
-} // namespace Core

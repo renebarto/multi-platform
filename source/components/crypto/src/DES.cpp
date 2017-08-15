@@ -101,7 +101,7 @@ void DES::Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len)
     }
 }
 
-void DES::Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut)
+void DES::Process(const OSAL::ByteArray & dataIn, OSAL::ByteArray & dataOut)
 {
     dataOut.Size(dataIn.Size());
     Process(dataIn.Data(), dataOut.Data(), dataIn.Size());
@@ -383,7 +383,7 @@ void TripleDES::Process(const uint8_t * dataIn, uint8_t * dataOut, size_t len)
     }
 }
 
-void TripleDES::Process(const Core::ByteArray & dataIn, Core::ByteArray & dataOut)
+void TripleDES::Process(const OSAL::ByteArray & dataIn, OSAL::ByteArray & dataOut)
 {
     dataOut.Size(dataIn.Size());
     Process(dataIn.Data(), dataOut.Data(), dataIn.Size());

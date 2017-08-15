@@ -76,7 +76,7 @@ void SHA256Base::Process(const uint8_t * data, size_t len)
     memcpy(&_buffer[filledBlock], &data[offset], len - offset);
 }
 
-void SHA256Base::Process(const Core::ByteArray & data)
+void SHA256Base::Process(const OSAL::ByteArray & data)
 {
     Process(data.Data(), data.Size());
 }
@@ -331,9 +331,9 @@ void SHA224::Finalize()
     _bitCount = 0;
 }
 
-Core::ByteArray SHA224::GetDigest() const
+OSAL::ByteArray SHA224::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
     return digest;
 }
 
@@ -385,9 +385,9 @@ void SHA256::Finalize()
     _bitCount = 0;
 }
 
-Core::ByteArray SHA256::GetDigest() const
+OSAL::ByteArray SHA256::GetDigest() const
 {
-    Core::ByteArray digest(_digest, sizeof(_digest));
+    OSAL::ByteArray digest(_digest, sizeof(_digest));
 
     return digest;
 }

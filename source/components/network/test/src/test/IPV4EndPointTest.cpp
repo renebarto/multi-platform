@@ -30,7 +30,7 @@ void IPV4EndPointTest::TearDown()
 TEST_FIXTURE(IPV4EndPointTest, Constructor)
 {
     IPV4EndPoint target;
-    IPV4Address referenceAddress;
+    OSAL::Network::IPV4Address referenceAddress;
     uint16_t referencePort = IPV4EndPoint::AnyPort;
     const string expected = "0.0.0.0:0";
     EXPECT_TRUE(referenceAddress == target.GetIPAddress());
@@ -40,7 +40,7 @@ TEST_FIXTURE(IPV4EndPointTest, Constructor)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorCopy)
 {
-    IPV4EndPoint ipEndPoint(IPV4Address({ 1, 2, 3, 4 }), 1234);
+    IPV4EndPoint ipEndPoint(OSAL::Network::IPV4Address({ 1, 2, 3, 4 }), 1234);
     IPV4EndPoint target(ipEndPoint);
     const string expected = "1.2.3.4:1234";
     EXPECT_TRUE(ipEndPoint.GetIPAddress() == target.GetIPAddress());
@@ -50,7 +50,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorCopy)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddress)
 {
-    IPV4Address ipAddress({ 1, 2, 3, 4 });
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
     IPV4EndPoint target(ipAddress);
     const string expected = "1.2.3.4:0";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
@@ -60,7 +60,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddress)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressPort)
 {
-    IPV4Address ipAddress({ 1, 2, 3, 4 });
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
     uint16_t port = 1234;
     IPV4EndPoint target(ipAddress, port);
     const string expected = "1.2.3.4:1234";
@@ -85,7 +85,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
     uint16_t port = 1234;
     IPV4EndPoint target(port);
     const string expected = "0.0.0.0:1234";
-    EXPECT_TRUE(IPV4Address::None == target.GetIPAddress());
+    EXPECT_TRUE(OSAL::Network::IPV4Address::None == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
     EXPECT_EQ(expected, target.ToString());
 }
@@ -93,7 +93,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
 TEST_FIXTURE(IPV4EndPointTest, ParseIPAddressOnly)
 {
     const string text = "255.254.253.252";
-    IPV4Address ipAddress({ 255, 254, 253, 252 });
+    OSAL::Network::IPV4Address ipAddress({ 255, 254, 253, 252 });
     IPV4EndPoint expected(ipAddress);
     const IPV4EndPoint & actual = IPV4EndPoint::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -102,7 +102,7 @@ TEST_FIXTURE(IPV4EndPointTest, ParseIPAddressOnly)
 TEST_FIXTURE(IPV4EndPointTest, Parse)
 {
     const string text = "255.254.253.252:12345";
-    IPV4Address ipAddress({ 255, 254, 253, 252 });
+    OSAL::Network::IPV4Address ipAddress({ 255, 254, 253, 252 });
     uint16_t port = 12345;
     IPV4EndPoint expected(ipAddress, port);
     const IPV4EndPoint & actual = IPV4EndPoint::Parse(text);
@@ -123,7 +123,7 @@ TEST_FIXTURE(IPV4EndPointTest, ParseInvalid)
 TEST_FIXTURE(IPV4EndPointTest, TryParseIPAddressOnly)
 {
     const string text = "255.254.253.252";
-    IPV4Address ipAddress({ 255, 254, 253, 252 });
+    OSAL::Network::IPV4Address ipAddress({ 255, 254, 253, 252 });
     IPV4EndPoint expected(ipAddress);
     IPV4EndPoint actual;
     EXPECT_TRUE(IPV4EndPoint::TryParse(text, actual));
@@ -133,7 +133,7 @@ TEST_FIXTURE(IPV4EndPointTest, TryParseIPAddressOnly)
 TEST_FIXTURE(IPV4EndPointTest, TryParse)
 {
     const string text = "255.254.253.252:8080";
-    Core::ByteArray ipAddress({ 255, 254, 253, 252 });
+    OSAL::ByteArray ipAddress({ 255, 254, 253, 252 });
     uint16_t port = 8080;
     IPV4EndPoint actual;
     IPV4EndPoint expected(ipAddress, port);
@@ -154,7 +154,7 @@ TEST_FIXTURE(IPV4EndPointTest, TryParseInvalid)
 
 TEST_FIXTURE(IPV4EndPointTest, OperatorNotEqual)
 {
-    IPV4Address ipAddress({ 1, 2, 3, 4 });
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
     uint16_t port = 1234;
     IPV4EndPoint target(ipAddress, port);
     IPV4EndPoint ref1;
@@ -173,7 +173,7 @@ TEST_FIXTURE(IPV4EndPointTest, OperatorNotEqual)
 
 TEST_FIXTURE(IPV4EndPointTest, OperatorEqual)
 {
-    IPV4Address ipAddress({ 1, 2, 3, 4 });
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
     uint16_t port = 1234;
     IPV4EndPoint target(ipAddress, port);
     IPV4EndPoint ref1;

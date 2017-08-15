@@ -1,6 +1,8 @@
+#include <iomanip>
 #include <iostream>
 
-#include "osal/Network.h"
+#include "osal/NetworkAdapterList.h"
+#include "osal/NetworkAdapter.h"
 
 using namespace std;
 
@@ -10,7 +12,7 @@ int wmain(int argc, const wchar_t * argv[])
 int main(int argc, const char * argv[])
 #endif
 {
-    Network::AdapterList adapterList;
+    OSAL::Network::AdapterList adapterList;
 
     for (auto adapter : adapterList.GetAdapters())
     {

@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cstring>
-#include "core/ByteArray.h"
-#include "core/Core.h"
+#include "osal/ByteArray.h"
+#include "osal/OSAL.h"
 #include "osal/Strings.h"
 
 using namespace std;
 
-namespace Core
+namespace OSAL
 {
 
 static const size_t BytesPerRow = 16;
@@ -174,4 +174,4 @@ OSAL::String ByteArray::ToString() const
     return stream.str();
 }
 
-} // namespace Core
+} // namespace OSAL

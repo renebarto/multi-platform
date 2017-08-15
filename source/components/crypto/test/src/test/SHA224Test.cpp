@@ -29,7 +29,7 @@ TEST_FIXTURE(SHA224Test, Construct)
 {
     SHA224 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", target.ToString());
 }
@@ -38,7 +38,7 @@ TEST_FIXTURE(SHA224Test, ProcessNoFinalize_Case2)
 {
     SHA224 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", target.ToString());
@@ -48,7 +48,7 @@ TEST_FIXTURE(SHA224Test, ProcessCase1)
 {
     SHA224 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xD1, 0x4A, 0x02, 0x8C, 0x2A, 0x3A, 0x2B, 0xC9,
         0x47, 0x61, 0x02, 0xBB, 0x28, 0x82, 0x34, 0xC4,
         0x15, 0xA2, 0xB0, 0x1F, 0x82, 0x8E, 0xA6, 0x2A,
@@ -65,7 +65,7 @@ TEST_FIXTURE(SHA224Test, ProcessCase2)
 {
     SHA224 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x23, 0x09, 0x7D, 0x22, 0x34, 0x05, 0xD8, 0x22,
         0x86, 0x42, 0xA4, 0x77, 0xBD, 0xA2, 0x55, 0xB3,
         0x2A, 0xAD, 0xBC, 0xE4, 0xBD, 0xA0, 0xB3, 0xF7,
@@ -83,7 +83,7 @@ TEST_FIXTURE(SHA224Test, ProcessResetCase2)
 {
     SHA224 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     uint8_t input[3];
     memcpy(input, "abc", sizeof(input));
     target.Process(input, sizeof(input));
@@ -97,7 +97,7 @@ TEST_FIXTURE(SHA224Test, ProcessCase3)
 {
     SHA224 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x75, 0x38, 0x8B, 0x16, 0x51, 0x27, 0x76, 0xCC,
         0x5D, 0xBA, 0x5D, 0xA1, 0xFD, 0x89, 0x01, 0x50,
         0xB0, 0xC6, 0x45, 0x5C, 0xB4, 0xF5, 0x8B, 0x19,
@@ -115,7 +115,7 @@ TEST_FIXTURE(SHA224Test, ProcessCase4)
 {
     SHA224 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xC9, 0x7C, 0xA9, 0xA5, 0x59, 0x85, 0x0C, 0xE9,
         0x7A, 0x04, 0xA9, 0x6D, 0xEF, 0x6D, 0x99, 0xA9,
         0xE0, 0xE0, 0xE2, 0xAB, 0x14, 0xE6, 0xB8, 0xDF,
@@ -133,7 +133,7 @@ TEST_FIXTURE(SHA224Test, ProcessCase5)
 {
     SHA224 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x20, 0x79, 0x46, 0x55, 0x98, 0x0C, 0x91, 0xD8,
         0xBB, 0xB4, 0xC1, 0xEA, 0x97, 0x61, 0x8A, 0x4B,
         0xF0, 0x3F, 0x42, 0x58, 0x19, 0x48, 0xB2, 0xEE,

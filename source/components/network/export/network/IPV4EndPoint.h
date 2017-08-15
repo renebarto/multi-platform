@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <streambuf>
-#include "network/IPV4Address.h"
+#include <osal/IPV4Address.h>
 
 namespace Network
 {
@@ -22,12 +22,12 @@ public:
         _port(other._port)
     {
     }
-    IPV4EndPoint(const IPV4Address & ipAddress) :
+    IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress) :
         _ipAddress(ipAddress),
         _port(AnyPort)
     {
     }
-    IPV4EndPoint(const IPV4Address & ipAddress, uint16_t port) :
+    IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress, uint16_t port) :
         _ipAddress(ipAddress),
         _port(port)
     {
@@ -38,7 +38,7 @@ public:
     {
     }
     IPV4EndPoint(uint16_t port) :
-        _ipAddress(IPV4Address::None),
+        _ipAddress(OSAL::Network::IPV4Address::None),
         _port(port)
     {
     }
@@ -50,12 +50,12 @@ public:
     bool operator == (const IPV4EndPoint & other) const;
     bool operator != (const IPV4EndPoint & other) const;
 
-    const IPV4Address & GetIPAddress() const { return _ipAddress; }
+    const OSAL::Network::IPV4Address & GetIPAddress() const { return _ipAddress; }
     uint16_t GetPort() const { return _port; }
     OSAL::String ToString() const;
 
 private:
-    IPV4Address _ipAddress;
+    OSAL::Network::IPV4Address _ipAddress;
     uint16_t _port;
 };
 

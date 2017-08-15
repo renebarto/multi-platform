@@ -1,6 +1,6 @@
 #include "unit-test-c++/UnitTestC++.h"
 
-#include "core/ByteArray.h"
+#include "osal/ByteArray.h"
 #include "osal/Path.h"
 #include "osal/TestData.h"
 

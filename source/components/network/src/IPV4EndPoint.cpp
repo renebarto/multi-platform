@@ -24,16 +24,16 @@ IPV4EndPoint IPV4EndPoint::Parse(const string & text)
 bool IPV4EndPoint::TryParse(const string & text, IPV4EndPoint & ipEndPoint)
 {
     size_t pos = text.find(':');
-    IPV4Address address = IPV4Address::None;
+    OSAL::Network::IPV4Address address = OSAL::Network::IPV4Address::None;
     long port = AnyPort;
     if (pos == string::npos)
     {
-        if (!IPV4Address::TryParse(text, address))
+        if (!OSAL::Network::IPV4Address::TryParse(text, address))
             return false;
     }
     else
     {
-        if (!IPV4Address::TryParse(text.substr(0, pos), address))
+        if (!OSAL::Network::IPV4Address::TryParse(text.substr(0, pos), address))
             return false;
         port = strtol(text.substr(pos + 1).c_str(), 0, 10);
         if ((port < 0) || (port > 65535))

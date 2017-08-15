@@ -6,8 +6,8 @@
 #include <core/Core.h>
 #include <core/Util.h>
 #include <core/serialization/DeserializationImpl.h>
-#include <network/IPV4Address.h>
-#include <network/IPV6Address.h>
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
 #include "xml/XMLBase.h"
 
 namespace XMLParser
@@ -117,11 +117,11 @@ inline std::string XMLAttribute::Value<std::string>() const
 }
 
 template <>
-inline Network::IPV4Address XMLAttribute::Value<Network::IPV4Address>() const
+inline OSAL::Network::IPV4Address XMLAttribute::Value<OSAL::Network::IPV4Address>() const
 {
-    Network::IPV4Address result;
+    OSAL::Network::IPV4Address result;
 
-    if (!Network::IPV4Address::TryParse(Value(), result))
+    if (!OSAL::Network::IPV4Address::TryParse(Value(), result))
     {
         std::ostringstream stream;
         stream << "Error parsing IP address: " << Value();

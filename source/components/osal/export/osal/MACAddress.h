@@ -3,8 +3,8 @@
 #include "osal/ByteArray.h"
 #include "osal/NetworkAddress.h"
 
-namespace OSAL
-{
+namespace OSAL {
+namespace Network {
 
 class MACAddress : public OSAL::Network::Address
 {
@@ -55,4 +55,5 @@ inline void PrintTo(const MACAddress & value, std::ostream & stream)
     stream << value.ToString();
 }
 
+} // namespace Network
 } // namespace OSAL

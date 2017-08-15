@@ -69,7 +69,7 @@ void Socket::SetHandle(OSAL::Network::SocketHandle handle)
     socketHandle = handle;
 }
 
-void Socket::Open(SocketFamily socketFamily, SocketType socketType)
+void Socket::Open(OSAL::Network::SocketFamily socketFamily, SocketType socketType)
 {
     Close();
     Lock lock(mutex);
@@ -451,10 +451,10 @@ void Socket::GetRemoteAddress(sockaddr * address, socklen_t * addressLength)
     }
 }
 
-Core::ByteArray Socket::Receive(int flags)
+OSAL::ByteArray Socket::Receive(int flags)
 {
     uint8_t buffer[BufferSize];
-    Core::ByteArray result;
+    OSAL::ByteArray result;
 
     size_t numBytes = 0;
     size_t offset = 0;
@@ -509,7 +509,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
     return numBytes;
 }
 
-bool Socket::Send(Core::ByteArray & data, size_t bytesToSend, int flags)
+bool Socket::Send(OSAL::ByteArray & data, size_t bytesToSend, int flags)
 {
     assert(bytesToSend <= data.Size());
     return Send(data.Data(), bytesToSend, flags);

@@ -29,7 +29,7 @@ TEST_FIXTURE(SHA384Test, Construct)
 {
     SHA384 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", target.ToString());
 }
@@ -38,7 +38,7 @@ TEST_FIXTURE(SHA384Test, ProcessNoFinalize_Case2)
 {
     SHA384 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", target.ToString());
@@ -48,7 +48,7 @@ TEST_FIXTURE(SHA384Test, ProcessCase1)
 {
     SHA384 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x38, 0xB0, 0x60, 0xA7, 0x51, 0xAC, 0x96, 0x38,
         0x4C, 0xD9, 0x32, 0x7E, 0xB1, 0xB1, 0xE3, 0x6A,
         0x21, 0xFD, 0xB7, 0x11, 0x14, 0xBE, 0x07, 0x43,
@@ -67,7 +67,7 @@ TEST_FIXTURE(SHA384Test, ProcessCase2)
 {
     SHA384 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0xCB, 0x00, 0x75, 0x3F, 0x45, 0xA3, 0x5E, 0x8B,
         0xB5, 0xA0, 0x3D, 0x69, 0x9A, 0xC6, 0x50, 0x07,
         0x27, 0x2C, 0x32, 0xAB, 0x0E, 0xDE, 0xD1, 0x63,
@@ -87,7 +87,7 @@ TEST_FIXTURE(SHA384Test, ProcessResetCase2)
 {
     SHA384 target;
 
-    Core::ByteArray expected(target.GetDigestSize());
+    OSAL::ByteArray expected(target.GetDigestSize());
     uint8_t input[3];
     memcpy(input, "abc", sizeof(input));
     target.Process(input, sizeof(input));
@@ -101,7 +101,7 @@ TEST_FIXTURE(SHA384Test, ProcessCase3)
 {
     SHA384 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x33, 0x91, 0xFD, 0xDD, 0xFC, 0x8D, 0xC7, 0x39,
         0x37, 0x07, 0xA6, 0x5B, 0x1B, 0x47, 0x09, 0x39,
         0x7C, 0xF8, 0xB1, 0xD1, 0x62, 0xAF, 0x05, 0xAB,
@@ -121,7 +121,7 @@ TEST_FIXTURE(SHA384Test, ProcessCase4)
 {
     SHA384 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x09, 0x33, 0x0C, 0x33, 0xF7, 0x11, 0x47, 0xE8,
         0x3D, 0x19, 0x2F, 0xC7, 0x82, 0xCD, 0x1B, 0x47,
         0x53, 0x11, 0x1B, 0x17, 0x3B, 0x3B, 0x05, 0xD2,
@@ -141,7 +141,7 @@ TEST_FIXTURE(SHA384Test, ProcessCase5)
 {
     SHA384 target;
 
-    Core::ByteArray expected = {
+    OSAL::ByteArray expected = {
         0x9D, 0x0E, 0x18, 0x09, 0x71, 0x64, 0x74, 0xCB,
         0x08, 0x6E, 0x83, 0x4E, 0x31, 0x0A, 0x4A, 0x1C,
         0xED, 0x14, 0x9E, 0x9C, 0x00, 0xF2, 0x48, 0x52,
