@@ -1,8 +1,9 @@
 #pragma once
 
-#include "osal/linux/NetworkAddress.h"
+#include "osal/Strings.h"
+#include "osal/NetworkAddress.h"
 
-namespace Network
+namespace OSAL
 {
 
 class DomainSocketAddress : public OSAL::Network::Address
@@ -21,7 +22,7 @@ public:
         _address(other._address)
     {
     }
-    DomainSocketAddress(const Core::ByteArray & address) :
+    DomainSocketAddress(const OSAL::ByteArray & address) :
         _address(AddressSize)
     {
         SetData(address, 0);
@@ -31,15 +32,15 @@ public:
     {
         SetData(address);
     }
-    DomainSocketAddress(const Core::ByteArray & address, size_t offset) :
+    DomainSocketAddress(const OSAL::ByteArray & address, size_t offset) :
         _address(AddressSize)
     {
         SetData(address, offset);
     }
 
     virtual ~DomainSocketAddress();
-    static DomainSocketAddress Parse(const std::string & text);
-    static bool TryParse(const std::string & text, DomainSocketAddress & address);
+    static DomainSocketAddress Parse(const OSAL::String & text);
+    static bool TryParse(const OSAL::String & text, DomainSocketAddress & address);
     DomainSocketAddress & operator = (const DomainSocketAddress & other);
     bool operator == (const DomainSocketAddress & other) const;
     bool operator != (const DomainSocketAddress & other) const;
@@ -51,32 +52,19 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Unix; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual Core::ByteArray GetBytes() const override;
+    virtual OSAL::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;
 
 private:
-    Core::ByteArray _address;
+    OSAL::ByteArray _address;
     static const size_t AddressSize = 108;
 
-    void SetData(const Core::ByteArray & data, size_t offset);
+    void SetData(const OSAL::ByteArray & data, size_t offset);
 };
 
-inline void PrintTo(const DomainSocketAddress & value, std::ostream & stream)
+inline void PrintTo(const DomainSocketAddress & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }
 
-} // namespace Network
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const OSAL::String & text, Network::DomainSocketAddress & address);
-
-}
-
-} // namespace Core
-
+} // namespace OSAL

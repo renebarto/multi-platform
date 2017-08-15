@@ -1,4 +1,4 @@
-#include "network/DomainSocketAddress.h"
+#include "osal/DomainSocketAddress.h"
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -7,6 +7,7 @@
 #include "core/Core.h"
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 DomainSocketAddress DomainSocketAddress::None = DomainSocketAddress("");
@@ -18,19 +19,19 @@ DomainSocketAddress::~DomainSocketAddress()
 {
 }
 
-DomainSocketAddress DomainSocketAddress::Parse(const string & text)
+DomainSocketAddress DomainSocketAddress::Parse(const OSAL::String & text)
 {
     DomainSocketAddress address;
     if (!TryParse(text, address))
     {
-        ostringstream stream;
-        stream << "DomainSocketAddress string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("DomainSocketAddress string representation must be formatted as ddd.ddd.ddd.ddd, string is ") << text;
         throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
     return address;
 }
 
-bool DomainSocketAddress::TryParse(const string & text, DomainSocketAddress & address)
+bool DomainSocketAddress::TryParse(const OSAL::String & text, DomainSocketAddress & address)
 {
     in_addr inAddress;
     const char * path = "";
@@ -90,19 +91,19 @@ void DomainSocketAddress::SetData(const OSAL::String & value)
     _address.Set(0, reinterpret_cast<const uint8_t *>(value.c_str()), value.length());
 }
 
-Core::ByteArray DomainSocketAddress::GetBytes() const
+OSAL::ByteArray DomainSocketAddress::GetBytes() const
 {
     return _address;
 }
 
 OSAL::String DomainSocketAddress::ToString() const
 {
-    ostringstream stream;
+    basic_ostringstream<OSAL::Char> stream;
     stream << reinterpret_cast<char*>(_address.Data(), _address.Size());
     return stream.str();
 }
 
-void DomainSocketAddress::SetData(const Core::ByteArray & data, size_t offset)
+void DomainSocketAddress::SetData(const OSAL::ByteArray & data, size_t offset)
 {
     assert(offset + AddressSize <= data.Size());
     _address.Set(0, data.Data() + offset, AddressSize);
@@ -114,7 +115,7 @@ namespace Core
 namespace Util
 {
 
-bool TryParse(const string & text, Network::DomainSocketAddress & address)
+bool TryParse(const OSAL::String & text, Network::DomainSocketAddress & address)
 {
     return Network::DomainSocketAddress::TryParse(text, address);
 }

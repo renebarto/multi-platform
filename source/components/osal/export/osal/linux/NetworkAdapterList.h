@@ -4,22 +4,26 @@
 #include <vector>
 #include "osal/exports.h"
 
-namespace Network
-{
+namespace OSAL {
+namespace Network {
 
 class Adapter;
+
 using AdapterPtr = std::shared_ptr<Adapter>;
 
-class NetworkAdapterList
+class AdapterList
 {
 public:
-    NetworkAdapterList();
+    AdapterList();
 
     bool ReScan();
-    const std::vector<AdapterPtr> & GetAdapters() { return _adapters; }
+
+    const std::vector<AdapterPtr> & GetAdapters()
+    { return _adapters; }
 
 private:
     std::vector<AdapterPtr> _adapters;
 };
 
 } // namespace Network
+} // namespace OSAL

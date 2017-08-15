@@ -20,6 +20,8 @@
 
 namespace OSAL {
 
+OSAL_EXPORT size_t NextPowerOfTwo(size_t value);
+
 class BaseException : public std::exception
 {
 protected:

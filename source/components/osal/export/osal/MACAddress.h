@@ -1,9 +1,9 @@
 #pragma once
 
-#include "core/ByteArray.h"
-#include "osal/linux/NetworkAddress.h"
+#include "osal/ByteArray.h"
+#include "osal/NetworkAddress.h"
 
-namespace Network
+namespace OSAL
 {
 
 class MACAddress : public OSAL::Network::Address
@@ -19,12 +19,12 @@ public:
         macAddress(other.macAddress)
     {
     }
-    MACAddress(const Core::ByteArray & macAddress) :
+    MACAddress(const OSAL::ByteArray & macAddress) :
         macAddress(AddressSize)
     {
         SetData(macAddress, 0);
     }
-    MACAddress(const Core::ByteArray & macAddress, size_t offset) :
+    MACAddress(const OSAL::ByteArray & macAddress, size_t offset) :
         macAddress(AddressSize)
     {
         SetData(macAddress, offset);
@@ -40,14 +40,14 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Packet; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual Core::ByteArray GetBytes() const override;
+    virtual OSAL::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;
 
 private:
-    void SetData(const Core::ByteArray & data, size_t offset);
+    void SetData(const OSAL::ByteArray & data, size_t offset);
     static bool TryParse(const OSAL::String & text, uint8_t & value);
 
-    Core::ByteArray macAddress;
+    OSAL::ByteArray macAddress;
 };
 
 inline void PrintTo(const MACAddress & value, std::ostream & stream)
@@ -55,17 +55,4 @@ inline void PrintTo(const MACAddress & value, std::ostream & stream)
     stream << value.ToString();
 }
 
-} // namespace Network
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const OSAL::String & text, Network::MACAddress & ipAddress);
-
-} // namespace Util
-
-} // namespace Core
-
+} // namespace OSAL

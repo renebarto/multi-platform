@@ -1,8 +1,8 @@
 #pragma once
 
-#include "osal/linux/NetworkAddress.h"
+#include "osal/NetworkAddress.h"
 
-namespace Network
+namespace OSAL
 {
 
 class IPV4Address : public OSAL::Network::Address
@@ -21,7 +21,7 @@ public:
         _ipAddress(other._ipAddress)
     {
     }
-    IPV4Address(const Core::ByteArray & ipAddress) :
+    IPV4Address(const OSAL::ByteArray & ipAddress) :
         _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
@@ -31,7 +31,7 @@ public:
     {
         SetUInt32(ipAddress);
     }
-    IPV4Address(const Core::ByteArray & ipAddress, size_t offset) :
+    IPV4Address(const OSAL::ByteArray & ipAddress, size_t offset) :
         _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
@@ -51,14 +51,14 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV4; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual Core::ByteArray GetBytes() const override;
+    virtual OSAL::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;
 
 private:
-    Core::ByteArray _ipAddress;
+    OSAL::ByteArray _ipAddress;
     static const size_t AddressSize = 4;
 
-    void SetData(const Core::ByteArray & data, size_t offset);
+    void SetData(const OSAL::ByteArray & data, size_t offset);
 };
 
 inline void PrintTo(const IPV4Address & value, std::ostream & stream)
@@ -66,17 +66,5 @@ inline void PrintTo(const IPV4Address & value, std::ostream & stream)
     stream << value.ToString();
 }
 
-} // namespace Network
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const OSAL::String & text, Network::IPV4Address & ipAddress);
-
-} // namespace Util
-
-} // namespace Core
+} // namespace OSAL
 

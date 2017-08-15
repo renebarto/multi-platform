@@ -6,15 +6,16 @@
 #include <linux/if_packet.h>
 #include <sys/un.h>
 #include <osal/NetworkAdapter.h>
-#include <core/Core.h>
-#include <core/DefaultLogger.h>
-#include <osal/linux/NetworkAddress.h>
-#include <network/IPV4Address.h>
-#include <network/IPV6Address.h>
-#include <network/DomainSocketAddress.h>
-#include <network/MACAddress.h>
+//#include <core/Core.h>
+//#include <core/DefaultLogger.h>
+#include <osal/NetworkAddress.h>
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
+#include <osal/DomainSocketAddress.h>
+#include <osal/MACAddress.h>
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 AdapterList::AdapterList()
@@ -46,7 +47,6 @@ bool AdapterList::ReScan()
                                              nullptr, 0, NI_NUMERICHOST);
                     if (result != 0)
                     {
-                        Core::TheLogger().Error("Network", gai_strerror(result));
                         return false;
                     }
                     localAddress = make_shared<IPV4Address>(reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_addr)->sin_addr.s_addr);
@@ -65,7 +65,6 @@ bool AdapterList::ReScan()
                                              nullptr, 0, NI_NUMERICHOST);
                     if (result != 0)
                     {
-                        Core::TheLogger().Error("Network", gai_strerror(result));
                         return false;
                     }
                     localAddress = make_shared<IPV6Address>(reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_addr)->sin6_addr.__in6_u.__u6_addr8);
@@ -81,7 +80,7 @@ bool AdapterList::ReScan()
                 break;
             case AF_PACKET:
                 sockaddr_ll * address = reinterpret_cast<sockaddr_ll *>(currentAdapter->ifa_addr);
-                localAddress = make_shared<MACAddress>(Core::ByteArray(address->sll_addr, address->sll_halen));
+                localAddress = make_shared<MACAddress>(OSAL::ByteArray(address->sll_addr, address->sll_halen));
                 break;
         }
         _adapters.push_back(make_shared<Adapter>(currentAdapter->ifa_name, localAddress, netmaskaddress, broadcastAddress, destAddress, static_cast<AdapterFlags>(currentAdapter->ifa_flags)));

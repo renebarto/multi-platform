@@ -1,8 +1,8 @@
 #pragma once
 
-#include "osal/linux/NetworkAddress.h"
+#include "osal/NetworkAddress.h"
 
-namespace Network
+namespace OSAL
 {
 
 class IPV6Address : public OSAL::Network::Address
@@ -21,7 +21,7 @@ public:
         _ipAddress(other._ipAddress)
     {
     }
-    IPV6Address(const Core::ByteArray & ipAddress) :
+    IPV6Address(const OSAL::ByteArray & ipAddress) :
         _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
@@ -29,9 +29,9 @@ public:
     IPV6Address(uint8_t ipAddress[16]) :
         _ipAddress(AddressSize)
     {
-        SetData(Core::ByteArray(ipAddress, 16), 0);
+        SetData(OSAL::ByteArray(ipAddress, 16), 0);
     }
-    IPV6Address(const Core::ByteArray & ipAddress, size_t offset) :
+    IPV6Address(const OSAL::ByteArray & ipAddress, size_t offset) :
         _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
@@ -46,19 +46,19 @@ public:
     uint8_t & operator[] (size_t offset);
     const uint8_t & operator[] (size_t offset) const;
 
-    Core::ByteArray GetData() const;
-    void SetData(const Core::ByteArray & value);
+    OSAL::ByteArray GetData() const;
+    void SetData(const OSAL::ByteArray & value);
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual Core::ByteArray GetBytes() const override;
+    virtual OSAL::ByteArray GetBytes() const override;
     virtual OSAL::String ToString() const override;
 
 private:
-    Core::ByteArray _ipAddress;
+    OSAL::ByteArray _ipAddress;
     static const size_t AddressSize = 16;
 
-    void SetData(const Core::ByteArray & data, size_t offset);
+    void SetData(const OSAL::ByteArray & data, size_t offset);
 };
 
 inline void PrintTo(const IPV6Address & value, std::ostream & stream)
@@ -66,18 +66,4 @@ inline void PrintTo(const IPV6Address & value, std::ostream & stream)
     stream << value.ToString();
 }
 
-} // namespace Network
-
-namespace Core
-{
-
-namespace Util
-{
-
-bool TryParse(const OSAL::String & text, Network::IPV6Address & ipAddress);
-
-} // namespace Util
-
-} // namespace Core
-
-
+} // namespace OSAL
