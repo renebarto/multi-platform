@@ -30,8 +30,8 @@ public:
         SetData(macAddress, offset);
     }
     virtual ~MACAddress();
-    static MACAddress Parse(const std::string & text);
-    static bool TryParse(const std::string & text, MACAddress & macAddress);
+    static MACAddress Parse(const OSAL::String & text);
+    static bool TryParse(const OSAL::String & text, MACAddress & macAddress);
     MACAddress & operator = (const MACAddress & other);
     bool operator == (const MACAddress & other) const;
     bool operator != (const MACAddress & other) const;
@@ -50,7 +50,7 @@ private:
     OSAL::ByteArray macAddress;
 };
 
-inline void PrintTo(const MACAddress & value, std::ostream & stream)
+inline void PrintTo(const MACAddress & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }

@@ -35,14 +35,14 @@ public:
     Element * operator ->()
     {
         if ((_current < _begin) || (_current >= _end))
-            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
+            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, _("Iterator outside scope"));
 
         return _current;
     }
     Element & operator *()
     {
         if ((_current < _begin) || (_current >= _end))
-            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
+            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, _("Iterator outside scope"));
 
         return *_current;
     }
@@ -84,14 +84,14 @@ public:
     const Element * operator ->()
     {
         if ((_current < _begin) || (_current >= _end))
-            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
+            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, _("Iterator outside scope"));
 
         return _current;
     }
     const Element & operator *() const
     {
         if ((_current < _begin) || (_current >= _end))
-            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, "Iterator outside scope");
+            throw OSAL::RuntimeError(__FUNCTION__, __FILE__, __LINE__, _("Iterator outside scope"));
 
         return *_current;
     }

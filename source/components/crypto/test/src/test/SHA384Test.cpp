@@ -56,8 +56,8 @@ TEST_FIXTURE(SHA384Test, ProcessCase1)
         0x27, 0x4E, 0xDE, 0xBF, 0xE7, 0x6F, 0x65, 0xFB,
         0xD5, 0x1A, 0xD2, 0xF1, 0x48, 0x98, 0xB9, 0x5B,
     };
-    uint8_t input[0];
-    target.Process(input, sizeof(input));
+    uint8_t input[1];
+    target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("38B060A751AC96384CD9327EB1B1E36A21FDB71114BE07434C0CC7BF63F6E1DA274EDEBFE76F65FBD51AD2F14898B95B", target.ToString());

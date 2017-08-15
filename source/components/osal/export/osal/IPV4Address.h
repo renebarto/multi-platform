@@ -38,8 +38,8 @@ public:
     }
 
     virtual ~IPV4Address();
-    static IPV4Address Parse(const std::string & text);
-    static bool TryParse(const std::string & text, IPV4Address & ipAddress);
+    static IPV4Address Parse(const OSAL::String & text);
+    static bool TryParse(const OSAL::String & text, IPV4Address & ipAddress);
     IPV4Address & operator = (const IPV4Address & other);
     bool operator == (const IPV4Address & other) const;
     bool operator != (const IPV4Address & other) const;
@@ -61,7 +61,7 @@ private:
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };
 
-inline void PrintTo(const IPV4Address & value, std::ostream & stream)
+inline void PrintTo(const IPV4Address & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }

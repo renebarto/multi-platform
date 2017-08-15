@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tgmath.h>
+#include <ctgmath>
 #include <sstream>
 #include <string>
 #include <osal/Unused.h>

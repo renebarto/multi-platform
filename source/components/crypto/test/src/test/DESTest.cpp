@@ -32,22 +32,22 @@ TEST_FIXTURE(DESTest, Construct)
 {
     DES target;
 
-    EXPECT_EQ("000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n", target.ToString());
+    EXPECT_EQ(_("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption1)
@@ -56,22 +56,22 @@ TEST_FIXTURE(DESTest, InitializeDecryption1)
     DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n", target.ToString());
+    EXPECT_EQ(_("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption2)
@@ -80,22 +80,22 @@ TEST_FIXTURE(DESTest, InitializeDecryption2)
     DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n", target.ToString());
+    EXPECT_EQ(_("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption3)
@@ -104,22 +104,22 @@ TEST_FIXTURE(DESTest, InitializeDecryption3)
     DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("000000000100\n"
-              "000000000002\n"
-              "000000200000\n"
-              "000000002000\n"
-              "000000000000\n"
-              "000000100000\n"
-              "000000000200\n"
-              "000000800000\n"
-              "000000000010\n"
-              "000000000800\n"
-              "000000000020\n"
-              "000000001000\n"
-              "000000000008\n"
-              "000000400000\n"
-              "000000000000\n"
-              "000000040000\n", target.ToString());
+    EXPECT_EQ(_("000000000100\n")
+              _("000000000002\n")
+              _("000000200000\n")
+              _("000000002000\n")
+              _("000000000000\n")
+              _("000000100000\n")
+              _("000000000200\n")
+              _("000000800000\n")
+              _("000000000010\n")
+              _("000000000800\n")
+              _("000000000020\n")
+              _("000000001000\n")
+              _("000000000008\n")
+              _("000000400000\n")
+              _("000000000000\n")
+              _("000000040000\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption1)
@@ -128,22 +128,22 @@ TEST_FIXTURE(DESTest, InitializeEncryption1)
     DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n"
-              "000000000000\n", target.ToString());
+    EXPECT_EQ(_("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n")
+              _("000000000000\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption2)
@@ -152,22 +152,22 @@ TEST_FIXTURE(DESTest, InitializeEncryption2)
     DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n"
-              "FFFFFFFFFFFF\n", target.ToString());
+    EXPECT_EQ(_("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n")
+              _("FFFFFFFFFFFF\n"), target.ToString());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption3)
@@ -176,22 +176,22 @@ TEST_FIXTURE(DESTest, InitializeEncryption3)
     DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("000000040000\n"
-              "000000000000\n"
-              "000000400000\n"
-              "000000000008\n"
-              "000000001000\n"
-              "000000000020\n"
-              "000000000800\n"
-              "000000000010\n"
-              "000000800000\n"
-              "000000000200\n"
-              "000000100000\n"
-              "000000000000\n"
-              "000000002000\n"
-              "000000200000\n"
-              "000000000002\n"
-              "000000000100\n", target.ToString());
+    EXPECT_EQ(_("000000040000\n")
+              _("000000000000\n")
+              _("000000400000\n")
+              _("000000000008\n")
+              _("000000001000\n")
+              _("000000000020\n")
+              _("000000000800\n")
+              _("000000000010\n")
+              _("000000800000\n")
+              _("000000000200\n")
+              _("000000100000\n")
+              _("000000000000\n")
+              _("000000002000\n")
+              _("000000200000\n")
+              _("000000000002\n")
+              _("000000000100\n"), target.ToString());
 }
 
 struct TestDataDES

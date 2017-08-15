@@ -343,7 +343,7 @@ OSAL::String SHA224::ToString() const
 
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
-        stream << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(_digest[i]);
+        stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
     return stream.str();
 }
@@ -398,7 +398,7 @@ OSAL::String SHA256::ToString() const
 
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
-        stream << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(_digest[i]);
+        stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
     return stream.str();
 }

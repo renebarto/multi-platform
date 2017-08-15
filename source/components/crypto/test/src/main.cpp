@@ -7,7 +7,7 @@
 #include "osal/OSAL.h"
 #include "osal/Console.h"
 
-static const std::string moduleName = "osal";
+static const OSAL::String moduleName = _("crypto");
 
 #if defined(UNICODE) || defined(_UNICODE)
 int wmain(int argc, const wchar_t * argv[])
@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
     OSAL::Console console;
 
     console << fgcolor(OSAL::ConsoleColor::Magenta | OSAL::ConsoleColor::Intensity);
-    console << "Running tests for: " << moduleName << std::endl;
+    console << _("Running tests for: ") << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
     Core::ConsoleLogger logger(Core::TheLogger(), console);
 
@@ -30,10 +30,10 @@ int main(int argc, const char * argv[])
         exit(1);
     }
 
-    console << "XML output : " << parser.xmlOutput << std::endl;
-    console << "Suite      : " << parser.testSuiteName << std::endl;
-    console << "Fixture    : " << parser.testFixtureName << std::endl;
-    console << "Test       : " << parser.testName << std::endl;
+    console << _("XML output : ") << parser.xmlOutput << std::endl;
+    console << _("Suite      : ") << parser.testSuiteName << std::endl;
+    console << _("Fixture    : ") << parser.testFixtureName << std::endl;
+    console << _("Test       : ") << parser.testName << std::endl;
 
     int result = 0;
 

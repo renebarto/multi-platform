@@ -38,7 +38,8 @@ set(COMPONENTS_OSAL_DEPENDENCIES
 
 if (WIN_MSVC OR MINGW)
     list(APPEND COMPONENTS_OSAL_DEPENDENCIES
-        Dbghelp.lib)
+        Dbghelp.lib
+        Ws2_32.lib)
 elseif (LINUX OR APPLE)
     list(APPEND COMPONENTS_OSAL_DEPENDENCIES
         )

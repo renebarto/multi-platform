@@ -115,6 +115,16 @@ inline long strtol(const wchar_t * nptr, wchar_t ** endptr, int base)
     return ::wcstol(nptr, endptr, base);
 }
 
+inline unsigned long strtoul(const char * nptr, char ** endptr, int base)
+{
+    return ::strtoul(nptr, endptr, base);
+}
+
+inline unsigned long strtoul(const wchar_t * nptr, wchar_t ** endptr, int base)
+{
+    return ::wcstoul(nptr, endptr, base);
+}
+
 inline long long strtoll(const char * nptr, char ** endptr, int base)
 {
     return ::strtoll(nptr, endptr, base);

@@ -124,7 +124,7 @@ OSAL::String MD2::ToString() const
 
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
-        stream << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(_digest[i]);
+        stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
     return stream.str();
 }
@@ -154,7 +154,7 @@ void MD2::Transform(const uint8_t buffer[BlockSize])
     for (size_t i = 0; i < BlockSize; ++i)
     {
         _state[i + 16] = buffer[i];
-        _state[i + 32] = (_state[i + 16] ^ _state[i]);
+        _state[i + 32] = static_cast<uint8_t>(_state[i + 16] ^ _state[i]);
     }
     uint8_t t = 0;
 

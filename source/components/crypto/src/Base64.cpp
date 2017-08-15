@@ -87,7 +87,7 @@ uint8_t CharToByte(char ch)
     else if (ch >= 'a' && ch <='z')
         data -= ('a' - 26);
     else if (ch >= '0' && ch <='9')
-        data -= ('0' - 52);
+        data -= static_cast<uint8_t>('0' - 52);
     else if (ch == '+')
         data = 62;
     else if (ch == '/')
@@ -124,9 +124,9 @@ size_t Base64::Decode(const char * dataIn, size_t dataLengthIn, char * dataOut)
     size_t offsetOut = 0;
     for (size_t group = 0; group < charGroups; ++group)
     {
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn + 1]) << 4) | (CharToByte(dataIn[offsetIn + 2]) >> 2));
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn + 2]) << 6) | (CharToByte(dataIn[offsetIn + 3]) >> 0));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn + 1]) << 4) | (CharToByte(dataIn[offsetIn + 2]) >> 2));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn + 2]) << 6) | (CharToByte(dataIn[offsetIn + 3]) >> 0));
         offsetIn += GroupSizeChars;
         if (dataIn[offsetIn] == '\n')
         {
@@ -136,12 +136,12 @@ size_t Base64::Decode(const char * dataIn, size_t dataLengthIn, char * dataOut)
 
     if (charsLeftOver == 2)
     {
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
     }
     else if (charsLeftOver == 3)
     {
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
-        dataOut[offsetOut++] = static_cast<uint8_t>((CharToByte(dataIn[offsetIn + 1]) << 4) | (CharToByte(dataIn[offsetIn + 2]) >> 2));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn]) << 2) | (CharToByte(dataIn[offsetIn + 1]) >> 4));
+        dataOut[offsetOut++] = static_cast<char>((CharToByte(dataIn[offsetIn + 1]) << 4) | (CharToByte(dataIn[offsetIn + 2]) >> 2));
     }
 
     return offsetOut;

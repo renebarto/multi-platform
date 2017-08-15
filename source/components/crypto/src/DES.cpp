@@ -57,15 +57,15 @@ void DES::Initialize(const DESKey & key, Direction direction)
     // Permuted Choice #1 (copy the key in, ignoring parity bits).
     // Create C and D key in bits 31..4
     for (int i = 0, j = 31; i < 28; ++i, --j)
-        C |= PermuteBit(key,key_perm_c[i],j);
+        C |= PermuteBit(key, static_cast<int>(key_perm_c[i]), j);
     for (int i = 0, j = 31; i < 28; ++i, --j)
-        D |= PermuteBit(key,key_perm_d[i],j);
+        D |= PermuteBit(key, static_cast<int>(key_perm_d[i]), j);
 
     // Generate the 16 subkeys.
     for (size_t i = 0; i < NumSubKeys; ++i)
     {
-        C = RotateLeft28(C, key_rnd_shift[i]);
-        D = RotateLeft28(D, key_rnd_shift[i]);
+        C = RotateLeft28(C, static_cast<int>(key_rnd_shift[i]));
+        D = RotateLeft28(D, static_cast<int>(key_rnd_shift[i]));
 
         // Decryption subkeys are reverse order of encryption subkeys so
         // generate them in reverse if the key schedule is for decryption useage.
@@ -78,9 +78,9 @@ void DES::Initialize(const DESKey & key, Direction direction)
         for (size_t j = 0; j < SubKeySize; ++j)
             _keyset[keyIndex][j] = 0;
         for (int j = 0; j < 24; ++j)
-            _keyset[keyIndex][j/8] |= ShiftBitR(C, key_compression[j], 7 - (j % 8));
+            _keyset[keyIndex][j/8] |= ShiftBitR(C, static_cast<int>(key_compression[j]), 7 - (j % 8));
         for (int j = 24; j < 48; ++j)
-            _keyset[keyIndex][j/8] |= ShiftBitR(D, key_compression[j] - 28, 7 - (j % 8));
+            _keyset[keyIndex][j/8] |= ShiftBitR(D, static_cast<int>(key_compression[j] - 28), 7 - (j % 8));
     }
 }
 
@@ -120,7 +120,7 @@ OSAL::String DES::ToString() const
     {
         for (size_t j = 0; j < SubKeySize; ++j)
         {
-            stream << setw(2) << setfill('0') << int(_keyset[i][j]);
+            stream << setw(2) << setfill(_('0')) << int(_keyset[i][j]);
         }
         stream << endl;
     }
@@ -171,29 +171,29 @@ void DES::IPInv(const uint32_t state[], uint8_t out[])
     // 34,  2, 42, 10, 50, 18, 58, 26,
     // 33,  1, 41,  9, 49, 17, 57, 25};
 
-    out[0] = ShiftBitR(state[1], 7,7) | ShiftBitR(state[0], 7,6) | ShiftBitR(state[1],15,5) | ShiftBitR(state[0],15,4) |
-             ShiftBitR(state[1],23,3) | ShiftBitR(state[0],23,2) | ShiftBitR(state[1],31,1) | ShiftBitR(state[0],31,0);
+    out[0] = static_cast<uint8_t>(ShiftBitR(state[1], 7,7) | ShiftBitR(state[0], 7,6) | ShiftBitR(state[1],15,5) | ShiftBitR(state[0],15,4) |
+                                  ShiftBitR(state[1],23,3) | ShiftBitR(state[0],23,2) | ShiftBitR(state[1],31,1) | ShiftBitR(state[0],31,0));
 
-    out[1] = ShiftBitR(state[1], 6,7) | ShiftBitR(state[0], 6,6) | ShiftBitR(state[1],14,5) | ShiftBitR(state[0],14,4) |
-             ShiftBitR(state[1],22,3) | ShiftBitR(state[0],22,2) | ShiftBitR(state[1],30,1) | ShiftBitR(state[0],30,0);
+    out[1] = static_cast<uint8_t>(ShiftBitR(state[1], 6,7) | ShiftBitR(state[0], 6,6) | ShiftBitR(state[1],14,5) | ShiftBitR(state[0],14,4) |
+                                  ShiftBitR(state[1],22,3) | ShiftBitR(state[0],22,2) | ShiftBitR(state[1],30,1) | ShiftBitR(state[0],30,0));
 
-    out[2] = ShiftBitR(state[1], 5,7) | ShiftBitR(state[0], 5,6) | ShiftBitR(state[1],13,5) | ShiftBitR(state[0],13,4) |
-             ShiftBitR(state[1],21,3) | ShiftBitR(state[0],21,2) | ShiftBitR(state[1],29,1) | ShiftBitR(state[0],29,0);
+    out[2] = static_cast<uint8_t>(ShiftBitR(state[1], 5,7) | ShiftBitR(state[0], 5,6) | ShiftBitR(state[1],13,5) | ShiftBitR(state[0],13,4) |
+                                  ShiftBitR(state[1],21,3) | ShiftBitR(state[0],21,2) | ShiftBitR(state[1],29,1) | ShiftBitR(state[0],29,0));
 
-    out[3] = ShiftBitR(state[1], 4,7) | ShiftBitR(state[0], 4,6) | ShiftBitR(state[1],12,5) | ShiftBitR(state[0],12,4) |
-             ShiftBitR(state[1],20,3) | ShiftBitR(state[0],20,2) | ShiftBitR(state[1],28,1) | ShiftBitR(state[0],28,0);
+    out[3] = static_cast<uint8_t>(ShiftBitR(state[1], 4,7) | ShiftBitR(state[0], 4,6) | ShiftBitR(state[1],12,5) | ShiftBitR(state[0],12,4) |
+                                  ShiftBitR(state[1],20,3) | ShiftBitR(state[0],20,2) | ShiftBitR(state[1],28,1) | ShiftBitR(state[0],28,0));
 
-    out[4] = ShiftBitR(state[1], 3,7) | ShiftBitR(state[0], 3,6) | ShiftBitR(state[1],11,5) | ShiftBitR(state[0],11,4) |
-             ShiftBitR(state[1],19,3) | ShiftBitR(state[0],19,2) | ShiftBitR(state[1],27,1) | ShiftBitR(state[0],27,0);
+    out[4] = static_cast<uint8_t>(ShiftBitR(state[1], 3,7) | ShiftBitR(state[0], 3,6) | ShiftBitR(state[1],11,5) | ShiftBitR(state[0],11,4) |
+                                  ShiftBitR(state[1],19,3) | ShiftBitR(state[0],19,2) | ShiftBitR(state[1],27,1) | ShiftBitR(state[0],27,0));
 
-    out[5] = ShiftBitR(state[1], 2,7) | ShiftBitR(state[0], 2,6) | ShiftBitR(state[1],10,5) | ShiftBitR(state[0],10,4) |
-             ShiftBitR(state[1],18,3) | ShiftBitR(state[0],18,2) | ShiftBitR(state[1],26,1) | ShiftBitR(state[0],26,0);
+    out[5] = static_cast<uint8_t>(ShiftBitR(state[1], 2,7) | ShiftBitR(state[0], 2,6) | ShiftBitR(state[1],10,5) | ShiftBitR(state[0],10,4) |
+                                  ShiftBitR(state[1],18,3) | ShiftBitR(state[0],18,2) | ShiftBitR(state[1],26,1) | ShiftBitR(state[0],26,0));
 
-    out[6] = ShiftBitR(state[1], 1,7) | ShiftBitR(state[0], 1,6) | ShiftBitR(state[1], 9,5) | ShiftBitR(state[0],9,4) |
-             ShiftBitR(state[1],17,3) | ShiftBitR(state[0],17,2) | ShiftBitR(state[1],25,1) | ShiftBitR(state[0],25,0);
+    out[6] = static_cast<uint8_t>(ShiftBitR(state[1], 1,7) | ShiftBitR(state[0], 1,6) | ShiftBitR(state[1], 9,5) | ShiftBitR(state[0],9,4) |
+                                  ShiftBitR(state[1],17,3) | ShiftBitR(state[0],17,2) | ShiftBitR(state[1],25,1) | ShiftBitR(state[0],25,0));
 
-    out[7] = ShiftBitR(state[1], 0,7) | ShiftBitR(state[0], 0,6) | ShiftBitR(state[1], 8,5) | ShiftBitR(state[0], 8,4) |
-             ShiftBitR(state[1],16,3) | ShiftBitR(state[0],16,2) | ShiftBitR(state[1],24,1) | ShiftBitR(state[0],24,0);
+    out[7] = static_cast<uint8_t>(ShiftBitR(state[1], 0,7) | ShiftBitR(state[0], 0,6) | ShiftBitR(state[1], 8,5) | ShiftBitR(state[0], 8,4) |
+                                  ShiftBitR(state[1],16,3) | ShiftBitR(state[0],16,2) | ShiftBitR(state[1],24,1) | ShiftBitR(state[0],24,0));
 }
 
 // This macro converts a 6 bit block with the S-Box row defined as the first and last
@@ -289,14 +289,14 @@ uint32_t DES::F(uint32_t state, const SubKey & key)
     lrgstate[5] ^= key[5];
 
     // S-Box Permutation
-    state = (sbox1[SBOXBIT(lrgstate[0] >> 2)] << 28) |
-            (sbox2[SBOXBIT(((lrgstate[0] & 0x03) << 4) | (lrgstate[1] >> 4))] << 24) |
-            (sbox3[SBOXBIT(((lrgstate[1] & 0x0f) << 2) | (lrgstate[2] >> 6))] << 20) |
-            (sbox4[SBOXBIT(lrgstate[2] & 0x3f)] << 16) |
-            (sbox5[SBOXBIT(lrgstate[3] >> 2)] << 12) |
-            (sbox6[SBOXBIT(((lrgstate[3] & 0x03) << 4) | (lrgstate[4] >> 4))] << 8) |
-            (sbox7[SBOXBIT(((lrgstate[4] & 0x0f) << 2) | (lrgstate[5] >> 6))] << 4) |
-            sbox8[SBOXBIT(lrgstate[5] & 0x3f)];
+    state = static_cast<uint32_t>((sbox1[SBOXBIT(lrgstate[0] >> 2)] << 28) |
+                                  (sbox2[SBOXBIT(((lrgstate[0] & 0x03) << 4) | (lrgstate[1] >> 4))] << 24) |
+                                  (sbox3[SBOXBIT(((lrgstate[1] & 0x0f) << 2) | (lrgstate[2] >> 6))] << 20) |
+                                  (sbox4[SBOXBIT(lrgstate[2] & 0x3f)] << 16) |
+                                  (sbox5[SBOXBIT(lrgstate[3] >> 2)] << 12) |
+                                  (sbox6[SBOXBIT(((lrgstate[3] & 0x03) << 4) | (lrgstate[4] >> 4))] << 8) |
+                                  (sbox7[SBOXBIT(((lrgstate[4] & 0x0f) << 2) | (lrgstate[5] >> 6))] << 4) |
+                                   sbox8[SBOXBIT(lrgstate[5] & 0x3f)]);
 
     // P-Box Permutation
     state = ShiftBitL(state,15,0) | ShiftBitL(state,6,1) | ShiftBitL(state,19,2) |

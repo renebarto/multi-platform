@@ -38,8 +38,8 @@ public:
     }
 
     virtual ~IPV6Address();
-    static IPV6Address Parse(const std::string & text);
-    static bool TryParse(const std::string & text, IPV6Address & ipAddress);
+    static IPV6Address Parse(const OSAL::String & text);
+    static bool TryParse(const OSAL::String & text, IPV6Address & ipAddress);
     IPV6Address & operator = (const IPV6Address & other);
     bool operator == (const IPV6Address & other) const;
     bool operator != (const IPV6Address & other) const;
@@ -61,7 +61,7 @@ private:
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };
 
-inline void PrintTo(const IPV6Address & value, std::ostream & stream)
+inline void PrintTo(const IPV6Address & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }

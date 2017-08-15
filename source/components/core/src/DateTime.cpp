@@ -443,7 +443,16 @@ OSAL::String DateTime::ToString() const
 OSAL::String DateTime::ToString(const OSAL::String & formatString) const
 {
     OSAL::Char buffer[1000];
-    assert(0 != OSAL::Time::strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime._tm));
+    OSAL::String formatStringTemp = formatString;
+    if (_dateTime.tm_tzOffset == 0)
+    {
+        size_t timezoneIndex = formatStringTemp.find(_("%z"), 0);
+        if (timezoneIndex == OSAL::String::npos)
+            timezoneIndex = formatStringTemp.find(_("%Z"), 0);
+        if (timezoneIndex != OSAL::String::npos)
+            formatStringTemp.replace(timezoneIndex, timezoneIndex + 2, _("GMT"));
+    }
+    assert(0 != OSAL::Time::strftime(buffer, sizeof(buffer) / sizeof(OSAL::Char), formatStringTemp.c_str(), &_dateTime._tm));
     return OSAL::String(buffer);
 }
 

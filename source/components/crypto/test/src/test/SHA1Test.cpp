@@ -53,8 +53,8 @@ TEST_FIXTURE(SHA1Test, ProcessCase1)
         0x32, 0x55, 0xBF, 0xEF, 0x95, 0x60, 0x18, 0x90,
         0xAF, 0xD8, 0x07, 0x09,
     };
-    uint8_t input[0];
-    target.Process(input, sizeof(input));
+    uint8_t input[1];
+    target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("DA39A3EE5E6B4B0D3255BFEF95601890AFD80709", target.ToString());

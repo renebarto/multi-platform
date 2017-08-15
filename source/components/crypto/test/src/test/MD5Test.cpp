@@ -52,8 +52,8 @@ TEST_FIXTURE(MD5Test, ProcessCase1)
         0xD4, 0x1D, 0x8C, 0xD9, 0x8F, 0x00, 0xB2, 0x04,
         0xE9, 0x80, 0x09, 0x98, 0xEC, 0xF8, 0x42, 0x7E,
     };
-    uint8_t input[0];
-    target.Process(input, sizeof(input));
+    uint8_t input[1];
+    target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("D41D8CD98F00B204E9800998ECF8427E", target.ToString());

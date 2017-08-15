@@ -54,8 +54,8 @@ TEST_FIXTURE(SHA512_224Test, ProcessCase1)
         0xCA, 0xBB, 0x87, 0xD6, 0xA0, 0xDD, 0xD0, 0x5C,
         0x33, 0x3B, 0x84, 0xF4,
     };
-    uint8_t input[0];
-    target.Process(input, sizeof(input));
+    uint8_t input[1];
+    target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
     EXPECT_EQ("6ED0DD02806FA89E25DE060C19D3AC86CABB87D6A0DDD05C333B84F4", target.ToString());

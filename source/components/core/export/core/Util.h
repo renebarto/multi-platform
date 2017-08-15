@@ -3,7 +3,9 @@
 #include <chrono>
 #include <sstream>
 #include <osal/Strings.h>
+#if !defined(WIN_MSVC)
 #include <osal/DomainSocketAddress.h>
+#endif
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
 #include <osal/MACAddress.h>
@@ -249,10 +251,12 @@ bool Compare(T const * expected, T const * actual, int numSamples)
 //std::streambuf & serialize_out(std::streambuf & sb, void * p, int size);
 //std::streambuf & serialize_in(std::streambuf & sb, void * p, int size);
 
+#if !defined(WIN_MSVC)
 inline bool TryParse(const OSAL::String & text, OSAL::Network::DomainSocketAddress & ipAddress)
 {
     return OSAL::Network::DomainSocketAddress::TryParse(text, ipAddress);
 }
+#endif
 
 inline bool TryParse(const OSAL::String & text, OSAL::Network::IPV4Address & ipAddress)
 {

@@ -2,7 +2,7 @@
 
 #include <climits>
 #include <cfloat>
-#include <tgmath.h>
+#include <ctgmath>
 
 static bool HasValidCharactersForBase(const OSAL::String & text, int base, bool maybeSigned)
 {
@@ -92,7 +92,7 @@ bool Core::Deserialize(const OSAL::String & text, int8_t & value, int base)
     long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
     if ((base == 10) && ((result < CHAR_MIN) || (result > CHAR_MAX)))
         return false;
-    value = (int8_t)result;
+    value = static_cast<int8_t>(result);
 
     return true;
 }
@@ -106,7 +106,7 @@ bool Core::Deserialize(const OSAL::String & text, uint8_t & value, int base /*= 
     long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
     if ((base == 10) && ((result < 0) || (result > UCHAR_MAX)))
         return false;
-    value = (uint8_t)result;
+    value = static_cast<uint8_t>(result);
 
     return true;
 }
@@ -120,7 +120,7 @@ bool Core::Deserialize(const OSAL::String & text, int16_t & value, int base /*= 
     long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
     if ((base == 10) && ((result < SHRT_MIN) || (result > SHRT_MAX)))
         return false;
-    value = (int16_t)result;
+    value = static_cast<int16_t>(result);
 
     return true;
 }
@@ -134,7 +134,7 @@ bool Core::Deserialize(const OSAL::String & text, uint16_t & value, int base /*=
     long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
     if ((base == 10) && ((result < 0) || (result > USHRT_MAX)))
         return false;
-    value = (uint16_t)result;
+    value = static_cast<uint16_t>(result);
 
     return true;
 }
@@ -146,9 +146,15 @@ bool Core::Deserialize(const OSAL::String & text, int32_t & value, int base /*= 
         return false;
 
     long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
-    if ((base == 10) && ((result < INT_MIN) || (result > INT_MAX)))
+    unsigned long result_ul = OSAL::Strings::strtoul(text.c_str(), nullptr, base);
+    if (result < INT_MIN)
         return false;
-    value = (int32_t)result;
+    if ((base == 10) && (result >= 0) && (result_ul > INT_MAX))
+        return false;
+    if ((base != 10) && (result_ul > INT_MAX))
+        value = static_cast<int32_t>(result_ul);
+    else
+        value = static_cast<int32_t>(result);
 
     return true;
 }
@@ -159,10 +165,10 @@ bool Core::Deserialize(const OSAL::String & text, uint32_t & value, int base /*=
     if (!HasValidCharactersForBase(text, base, false))
         return false;
 
-    long result = OSAL::Strings::strtol(text.c_str(), nullptr, base);
-    if ((base == 10) && ((result < 0) || (result > (long)UINT_MAX)))
+    unsigned long result = OSAL::Strings::strtoul(text.c_str(), nullptr, base);
+    if ((base == 10) && (result > UINT_MAX))
         return false;
-    value = (uint32_t)result;
+    value = static_cast<uint32_t>(result);
 
     return true;
 }
@@ -181,7 +187,7 @@ bool Core::Deserialize(const OSAL::String & text, int64_t & value, int base /*= 
     if ((base == 10) && (result >= 0) && (result_ull > LLONG_MAX))
         return false;
     if ((base != 10) && (result_ull > LLONG_MAX))
-        value = static_cast<long long>(result_ull);
+        value = static_cast<int64_t>(result_ull);
     else
         value = result;
 
@@ -195,7 +201,7 @@ bool Core::Deserialize(const OSAL::String & text, uint64_t & value, int base /*=
         return false;
 
     unsigned long long result = OSAL::Strings::strtoull(text.c_str(), nullptr, base);
-    value = (uint64_t)result;
+    value = static_cast<uint64_t>(result);
 
     return true;
 }
