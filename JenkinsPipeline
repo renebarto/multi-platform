@@ -4,22 +4,23 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                mkdir -p build
-                cd build
-                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install
-                make clean
-                make
+                echo 'Build'
+                bash 'mkdir -p build'
+#                cd build
+#                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install
+#                make clean
+#                make
             }
         }
         stage('Test'){
             steps {
-                output/debug/bin/osal.test --xmloutput
-                junit 'reports/**/*.xml'
+ #               output/debug/bin/osal.test --xmloutput
+ #               junit 'reports/**/*.xml'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'publish'
+  #              sh 'make publish'
             }
         }
     }
