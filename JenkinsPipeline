@@ -19,7 +19,7 @@ pipeline {
                 step([$class: 'XUnitBuilder',
                     thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
                     tools: [[$class: 'JUnitType', pattern: 'reports/**'],
-                           [$class: 'CppUnitTestJunitHudsonTestType', pattern: 'reports/**/*.xml']]])
+                           [$class: 'CppTestJunitHudsonTestType', pattern: 'reports/**/*.xml']]])
             }
         }
         stage('Deploy') {
