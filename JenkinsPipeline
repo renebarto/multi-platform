@@ -6,11 +6,17 @@ pipeline {
             steps {
                 echo 'Build'
                 sh 'mkdir -p build'
+                sh 'cd build'
+                sh 'cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install'
+                sh 'make clean'
+                sh 'make'
             }
         }
         stage('Test'){
             steps {
                 echo 'Test'
+                sh 'output/debug/bin/osal.test --xmloutput'
+                echo 'junit reports/**/*.xml'
             }
         }
         stage('Deploy') {
