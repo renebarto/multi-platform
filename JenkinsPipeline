@@ -25,7 +25,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploy'
-                archiveArtifacts 'output/debug/**/*'
+                sh 'cd output/debug'
+                sh 'tar czf $BUILD_ID.tar.gz *'
+                sh 'cd ../..'
+                archiveArtifacts 'output/debug/$BUILD_ID.tar.gz'
             }
         }
     }
