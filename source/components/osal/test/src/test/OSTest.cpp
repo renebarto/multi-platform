@@ -30,9 +30,6 @@ public:
     A() {}
 };
 
-TEST_SUITE(osal)
-{
-
 #if defined(LINUX)
 TEST_FIXTURE(OSTest, PlatformLinux)
 {

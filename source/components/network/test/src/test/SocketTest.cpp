@@ -29,6 +29,9 @@ void SocketTest::TearDown()
 {
 }
 
+TEST_SUITE(network)
+{
+
 TEST_FIXTURE(SocketTest, Construct)
 {
     EXPECT_EQ(OSAL::Network::InvalidHandleValue, target.GetHandle());
@@ -295,6 +298,7 @@ TEST_FIXTURE(SocketTest, ToString)
     EXPECT_EQ(stream.str(), target.ToString());
 }
 
-} // namespace Test
+} // TEST_SUITE(network)
 
+} // namespace Test
 } // namespace Network

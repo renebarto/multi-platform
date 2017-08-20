@@ -82,7 +82,7 @@ void XMLTestReporter::BeginResults(int totalTestCount, int failedTestCount,
        << _(" tests=\"") << totalTestCount << _("\"")
        << _(" failedtests=\"") << failedTestCount << _("\"")
        << _(" failures=\"") << failureCount << _("\"")
-       << _(" time=\"") << static_cast<double>(milliSecondsElapsed) / 1000 << _("\"")
+       << _(" time=\"") << static_cast<double>(milliSecondsElapsed) / 1000.0 << _("\"")
        << _(">") << endl;
 }
 
@@ -97,7 +97,7 @@ void XMLTestReporter::BeginTest(const TestDetailedResult & result)
         << _(" suite=\"") << result.suiteName << _("\"")
         << _(" fixture=\"") << result.fixtureName << _("\"")
         << _(" name=\"") << result.testName << _("\"")
-        << _(" time=\"") << static_cast<double>(result.MilliSecondsElapsed()) / 1000 << _("\"");
+        << _(" time=\"") << static_cast<double>(result.MilliSecondsElapsed()) / 1000.0 << _("\"");
 }
 
 void XMLTestReporter::EndTest(const TestDetailedResult & result)

@@ -27,6 +27,9 @@ void IPV6EndPointTest::TearDown()
 
 }
 
+TEST_SUITE(network)
+{
+
 TEST_FIXTURE(IPV6EndPointTest, Constructor)
 {
     IPV6EndPoint target;
@@ -190,6 +193,7 @@ TEST_FIXTURE(IPV6EndPointTest, OperatorEqual)
     EXPECT_FALSE(ref4 == target);
 }
 
-} // namespace Test
+} // TEST_SUITE(network)
 
+} // namespace Test
 } // namespace Network
