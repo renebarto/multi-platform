@@ -25,7 +25,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploy'
-                sh 'mkdir -p /home/rene/jenkins-deploy/multi-platform'
                 archiveArtifacts 'output/debug'
             }
         }
