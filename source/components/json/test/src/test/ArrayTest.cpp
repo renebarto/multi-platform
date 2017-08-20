@@ -28,6 +28,9 @@ void ArrayTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(ArrayTest, Construct)
 {
     Array target;
@@ -293,6 +296,8 @@ TEST_FIXTURE(ArrayTest, Serialize)
               _("    ]\n")
               _("]"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

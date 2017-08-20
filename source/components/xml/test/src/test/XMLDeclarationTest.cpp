@@ -36,6 +36,9 @@ void XMLDeclarationTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLDeclarationTest, Construct)
 {
     XMLDeclaration target;
@@ -84,8 +87,8 @@ TEST_FIXTURE(XMLDeclarationTest, ParseString)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<?xml version=\"" + Version + "\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\" ?>";
+        " encoding=\"" + Encoding + "\""
+                                " standalone=\"" + Standalone + "\" ?>";
     target.ParseString(xmlString);
     EXPECT_EQ(Version, target.Version());
     EXPECT_EQ(Encoding, target.Encoding());
@@ -118,8 +121,8 @@ TEST_FIXTURE(XMLDeclarationTest, ParseStringUnknownAttribute)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<?xml someversion=\"" + Version + "\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\" ?>";
+        " encoding=\"" + Encoding + "\""
+                                " standalone=\"" + Standalone + "\" ?>";
     target.ParseString(xmlString);
     EXPECT_EQ("", target.Version());
     EXPECT_EQ(Encoding, target.Encoding());
@@ -130,7 +133,7 @@ TEST_FIXTURE(XMLDeclarationTest, ParseStringMissingAttribute)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<?xml encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\" ?>";
+        " standalone=\"" + Standalone + "\" ?>";
     target.ParseString(xmlString);
     EXPECT_EQ("", target.Version());
     EXPECT_EQ(Encoding, target.Encoding());
@@ -141,8 +144,8 @@ TEST_FIXTURE(XMLDeclarationTest, ParseStringIncorrectTag)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<xml version=\"" + Version + "\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\"";
+        " encoding=\"" + Encoding + "\""
+                                " standalone=\"" + Standalone + "\"";
     bool hadException = false;
     try
     {
@@ -165,8 +168,8 @@ TEST_FIXTURE(XMLDeclarationTest, ParseStringNoTagEnd)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<?xml version=\"" + Version + "\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\"";
+        " encoding=\"" + Encoding + "\""
+                                " standalone=\"" + Standalone + "\"";
     bool hadException = false;
     try
     {
@@ -189,8 +192,8 @@ TEST_FIXTURE(XMLDeclarationTest, ParseStringWithSpacesValue)
 {
     XMLDeclaration target(NoVersion, NoEncoding, NoStandalone);
     std::string xmlString = "<?xml version=\" " + Version + "\t\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\" ?>";
+        " encoding=\"" + Encoding + "\""
+                                " standalone=\"" + Standalone + "\" ?>";
     target.ParseString(xmlString);
     EXPECT_EQ(" " + Version + "\t", target.Version());
     EXPECT_EQ(Encoding, target.Encoding());
@@ -202,8 +205,8 @@ TEST_FIXTURE(XMLDeclarationTest, GenerateString)
     XMLDeclaration target(Version, Encoding, Standalone);
 
     std::string expected = "<?xml version=\"" + Version + "\""
-                              " encoding=\"" + Encoding + "\""
-                              " standalone=\"" + Standalone + "\" ?>";
+        " encoding=\"" + Encoding + "\""
+                               " standalone=\"" + Standalone + "\" ?>";
     std::string actual = target.GenerateString();
     EXPECT_EQ(expected, actual);
 
@@ -237,5 +240,6 @@ TEST_FIXTURE(XMLDeclarationTest, Accept)
     EXPECT_FALSE(visitor.visitedByUnknown);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

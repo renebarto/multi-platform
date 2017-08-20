@@ -65,6 +65,9 @@ void XMLNodeTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLNodeTest, ConstructDefault)
 {
     XMLNodeImpl target;
@@ -242,5 +245,6 @@ TEST_FIXTURE(XMLNodeTest, GetText)
     EXPECT_EQ(ValueChild, target.GetText());
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

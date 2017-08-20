@@ -24,6 +24,9 @@ void PathTest::TearDown()
 {
 }
 
+TEST_SUITE(osal)
+{
+
 TEST_FIXTURE(PathTest, FileExists)
 {
     EXPECT_TRUE(Path::FileExists(Test::Data::RegularFilePath()));
@@ -199,6 +202,8 @@ TEST_FIXTURE(PathTest, CurrentDir)
     EXPECT_EQ(0, OSAL::System::chdir(currentDirectory.c_str()));
     EXPECT_EQ(newPath, newCurrentDirectory);
 }
+
+} // TEST_SUITE(osal)
 
 } // namespace Test
 } // namespace OSAL

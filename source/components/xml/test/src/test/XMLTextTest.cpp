@@ -33,6 +33,9 @@ void XMLTextTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLTextTest, Construct)
 {
     XMLText target;
@@ -248,5 +251,6 @@ TEST_FIXTURE(XMLTextTest, Accept)
     EXPECT_FALSE(visitor.visitedByUnknown);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

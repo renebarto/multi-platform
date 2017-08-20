@@ -24,6 +24,9 @@ void NullTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(NullTest, Construct)
 {
     Null target;
@@ -53,6 +56,8 @@ TEST_FIXTURE(NullTest, Serialize)
     target.Serialize(stream);
     EXPECT_EQ(_("null"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

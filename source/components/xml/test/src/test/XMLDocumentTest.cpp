@@ -167,6 +167,9 @@ bool CompareTextFiles(const string & pathA, const string & pathB)
     return CompareTextFiles(pathA.c_str(), pathB.c_str());
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLDocumentTest, Construct)
 {
     XMLDocument document;
@@ -754,5 +757,6 @@ TEST_FIXTURE(XMLDocumentTest, ParseSimpleString)
     EXPECT_TRUE(document.Root()->Elements()[2] == nullptr);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

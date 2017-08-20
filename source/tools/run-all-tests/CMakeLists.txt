@@ -37,6 +37,7 @@ set(TOOLS_RUNALLTESTS_DEPENDENCIES
     crypto
     network
     xml
+    json
     )
 
 set(TOOLS_RUNALLTESTS_LIBS
@@ -66,6 +67,9 @@ file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_NETWORK ${CMAKE_SOURCE_DIR}/source/
 file(GLOB TOOLS_RUNALLTESTS_SOURCES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/src/test/*.cpp)
 file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/include/xml/*.h)
 
+file(GLOB TOOLS_RUNALLTESTS_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
+file(GLOB_RECURSE TOOLS_RUNALLTESTS_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/xml/*.h)
+
 list(APPEND TOOLS_RUNALLTESTS_SOURCES
     ${TOOLS_RUNALLTESTS_SOURCES_OSAL}
     ${TOOLS_RUNALLTESTS_SOURCES_CORE}
@@ -73,24 +77,25 @@ list(APPEND TOOLS_RUNALLTESTS_SOURCES
     ${TOOLS_RUNALLTESTS_SOURCES_CRYPTO}
     ${TOOLS_RUNALLTESTS_SOURCES_NETWORK}
     ${TOOLS_RUNALLTESTS_SOURCES_XML}
+    ${TOOLS_RUNALLTESTS_SOURCES_JSON}
     )
 list(APPEND TOOLS_RUNALLTESTS_INCLUDES
     ${TOOLS_RUNALLTESTS_INCLUDES_OSAL}
     ${TOOLS_RUNALLTESTS_INCLUDES_CORE}
     ${TOOLS_RUNALLTESTS_INCLUDES_UNITTESTCPP}
-    ${TOOLS_RUNALLTESTS_INCLUDES_JSON}
     ${TOOLS_RUNALLTESTS_INCLUDES_CRYPTO}
     ${TOOLS_RUNALLTESTS_INCLUDES_NETWORK}
     ${TOOLS_RUNALLTESTS_INCLUDES_XML}
+    ${TOOLS_RUNALLTESTS_INCLUDES_JSON}
     )
 list(APPEND TOOLS_RUNALLTESTS_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
     ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
-    ${CMAKE_SOURCE_DIR}/source/components/json/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/json/test/include
     )
 
 display_list("Defines                     : " ${TOOLS_RUNALLTESTS_DEFINITIONS} )

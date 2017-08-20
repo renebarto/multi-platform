@@ -24,6 +24,9 @@ void BooleanTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(BooleanTest, Construct)
 {
     Boolean target;
@@ -104,6 +107,8 @@ TEST_FIXTURE(BooleanTest, SerializeTrue)
     target.Serialize(stream);
     EXPECT_EQ(_("true"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

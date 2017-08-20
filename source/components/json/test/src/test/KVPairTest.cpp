@@ -28,6 +28,9 @@ void KVPairTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(KVPairTest, Construct)
 {
     KVPair target;
@@ -250,6 +253,8 @@ TEST_FIXTURE(KVPairTest, SerializeArray)
     target.Serialize(stream);
     EXPECT_EQ(_("\"") + key + _("\" : [\n    true\n") + _("]"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

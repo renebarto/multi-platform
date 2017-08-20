@@ -33,6 +33,9 @@ void XMLUnknownTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLUnknownTest, Construct)
 {
     XMLUnknown target;
@@ -196,5 +199,6 @@ TEST_FIXTURE(XMLUnknownTest, Accept)
     EXPECT_TRUE(visitor.visitedByUnknown);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

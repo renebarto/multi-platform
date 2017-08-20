@@ -24,6 +24,9 @@ void StringTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(StringTest, Construct)
 {
     String target;
@@ -106,6 +109,8 @@ TEST_FIXTURE(StringTest, SerializeString)
     target.Serialize(stream);
     EXPECT_EQ(_("\"Some text\""), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

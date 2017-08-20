@@ -37,6 +37,9 @@ void XMLAttributeTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLAttributeTest, Construct)
 {
     XMLAttribute target;
@@ -267,6 +270,7 @@ TEST_FIXTURE(XMLAttributeTest, GenerateString)
     EXPECT_EQ(expected, actual);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser
 

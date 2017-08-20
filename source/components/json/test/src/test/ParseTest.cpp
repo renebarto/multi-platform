@@ -30,6 +30,9 @@ void ParseTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(ParseTest, ParseKeywords)
 {
     std::basic_istringstream<OSAL::Char> stream(_("false true null garbage"));
@@ -123,6 +126,8 @@ TEST_FIXTURE(ParseTest, ParseArray)
     EXPECT_EQ(ValueType::Number, (*iterator)->Type());
     EXPECT_EQ(_("1234"), dynamic_pointer_cast<Number>(*iterator)->GetValue());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

@@ -24,6 +24,9 @@ void NumberTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(NumberTest, Construct)
 {
     Number target;
@@ -971,6 +974,8 @@ TEST_FIXTURE(NumberTest, SerializeLongDouble)
     target.Serialize(stream);
     EXPECT_EQ(_("1.23456789e+125"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

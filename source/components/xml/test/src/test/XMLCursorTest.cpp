@@ -26,6 +26,9 @@ void XMLCursorTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLCursorTest, ConstructDefault)
 {
     XMLCursor target;
@@ -61,5 +64,6 @@ TEST_FIXTURE(XMLCursorTest, Clear)
     EXPECT_EQ(-1, target.Col());
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

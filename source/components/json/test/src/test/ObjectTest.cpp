@@ -28,6 +28,9 @@ void ObjectTest::TearDown()
 {
 }
 
+TEST_SUITE(json)
+{
+
 TEST_FIXTURE(ObjectTest, Construct)
 {
     Object target;
@@ -407,6 +410,8 @@ TEST_FIXTURE(ObjectTest, Serialize)
               _("    ]\n")
               _("}"), stream.str());
 }
+
+} // TEST_SUITE(json)
 
 } // namespace Test
 } // namespace JSON

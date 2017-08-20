@@ -29,6 +29,9 @@ void XMLParsingDataTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLParsingDataTest, Construct)
 {
     const char * xml = "Some string";
@@ -323,5 +326,6 @@ TEST_FIXTURE(XMLParsingDataTest, UpdateComplexWithLinesAndTabs)
     EXPECT_EQ(14, target.Cursor().Col());
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

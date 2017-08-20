@@ -46,6 +46,9 @@ void XMLElementTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLElementTest, ConstructDefault)
 {
     XMLElement target;
@@ -676,5 +679,6 @@ TEST_FIXTURE(XMLElementTest, AcceptWithElements)
     EXPECT_FALSE(visitor.visitedByUnknown);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

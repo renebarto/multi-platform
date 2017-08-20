@@ -35,6 +35,9 @@ void XMLCommentTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLCommentTest, Construct)
 {
     XMLComment target;
@@ -182,5 +185,6 @@ TEST_FIXTURE(XMLCommentTest, Accept)
     EXPECT_FALSE(visitor.visitedByUnknown);
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser

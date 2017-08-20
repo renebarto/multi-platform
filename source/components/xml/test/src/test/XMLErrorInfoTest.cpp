@@ -28,6 +28,9 @@ void XMLErrorInfoTest::TearDown()
 {
 }
 
+TEST_SUITE(xml)
+{
+
 TEST_FIXTURE(XMLErrorInfoTest, Construct)
 {
     XMLErrorInfo target(ErrorCode, XMLCursor(Row, Col));
@@ -50,5 +53,6 @@ TEST_FIXTURE(XMLErrorInfoTest, Clear)
     EXPECT_EQ(0, target.ErrorCol());
 }
 
+} // TEST_SUITE(xml)
 } // namespace Test
 } // namespace XMLParser
