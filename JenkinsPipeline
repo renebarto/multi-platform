@@ -25,11 +25,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploy'
-                sh 'cd $WORKSPACE/output/debug'
-                pwd()
-                sh 'tar czf $BUILD_ID.tar.gz *'
-                sh 'cd $WORKSPACE'
-                archiveArtifacts 'output/debug/$BUILD_ID.tar.gz'
+                sh 'tar czf $BUILD_ID.tar.gz -C output/debug bin lib'
+                archiveArtifacts '$BUILD_ID.tar.gz'
             }
         }
     }
