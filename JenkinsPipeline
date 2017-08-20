@@ -26,7 +26,7 @@ pipeline {
             steps {
                 echo 'Deploy'
                 sh 'cd $WORKSPACE/output/debug'
-                pwd
+                pwd()
                 sh 'tar czf $BUILD_ID.tar.gz *'
                 sh 'cd $WORKSPACE'
                 archiveArtifacts 'output/debug/$BUILD_ID.tar.gz'
