@@ -1,0 +1,8 @@
+{
+    stdc++-so-dl_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_dl_init
+}
