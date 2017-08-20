@@ -15,8 +15,9 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'Test'
-                sh 'output/debug/bin/osal.test --xmloutput'
-                echo 'junit reports/**/*.xml'
+                sh 'mkdir -p reports'
+                sh 'output/debug/bin/osal.test --xmloutput reports/osal.test.xml'
+                junit 'reports/**/*.xml'
             }
         }
         stage('Deploy') {
