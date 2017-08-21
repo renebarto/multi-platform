@@ -137,48 +137,50 @@ TEST_FIXTURE(CommandLineOptionTest, ConstructionOptionTextVariableArgType)
 
 TEST_FIXTURE(CommandLineOptionTest, GetSet)
 {
-//    CommandLineOption option(LongName, ShortName, Description, ArgType);
-//
-//    option.LongName(LongName2);
-//    option.ShortName(ShortName2);
-//    option.Description(Description2);
-//    option.OptionFoundFlag(&optionFound);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(ShortName2, option.ShortName());
-//    EXPECT_EQ(LongName2, option.LongName());
-//    EXPECT_EQ(Description2, option.Description());
-//    EXPECT_EQ(&optionFound, option.OptionFoundFlag());
-//    EXPECT_FALSE(option.FoundOption());
+    CommandLineOptionAccessor option(LongName, ShortName, Description, ArgType);
+
+    option.SetLongName(LongName2);
+    option.SetShortName(ShortName2);
+    option.SetDescription(Description2);
+    option.SetOptionFound();
+
+    EXPECT_EQ(ArgType, option.ArgType());
+    EXPECT_EQ(ShortName2, option.ShortName());
+    EXPECT_EQ(LongName2, option.LongName());
+    EXPECT_EQ(Description2, option.Description());
+    EXPECT_TRUE(option.FoundOption());
 }
 
-TEST_FIXTURE(CommandLineOptionTest, FoundOption)
+TEST_FIXTURE(CommandLineOptionTest, GetSetTextValue)
 {
-//    CommandLineOption option(LongName, ShortName, Description, ArgType);
-//
-//    option.LongName(LongName2);
-//    option.ShortName(ShortName2);
-//    option.Description(Description2);
-//    option.OptionFoundFlag(&optionFound);
-//    option.FoundOption(true);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(ShortName2, option.ShortName());
-//    EXPECT_EQ(LongName2, option.LongName());
-//    EXPECT_EQ(Description2, option.Description());
-//    EXPECT_EQ(&optionFound, option.OptionFoundFlag());
-//    EXPECT_TRUE(optionFound);
-//    EXPECT_TRUE(option.FoundOption());
+    OSAL::String textValue(_("Text"));
+    OSAL::String newTextValue(_("1234"));
+    CommandLineOption option(LongName, ShortName, Description, textValue, ArgType);
+
+    EXPECT_EQ(textValue, option.TextValue());
+    EXPECT_EQ(_(""), option.Argument());
+
+    option.TextValue(newTextValue);
+
+    EXPECT_EQ(newTextValue, option.TextValue());
+    EXPECT_EQ(newTextValue, textValue);
+    EXPECT_EQ(_(""), option.Argument());
 }
 
-TEST_FIXTURE(CommandLineOptionTest, Value)
+TEST_FIXTURE(CommandLineOptionTest, GetSetArgument)
 {
-//    CommandLineOption option(LongName, ShortName, Description, ArgType);
-//
-//    const string expected = "100";
-//    option.Value(expected);
-//
-//    EXPECT_EQ(expected, option.Value());
+    OSAL::String textValue;
+    OSAL::String argument(_("Text"));
+    CommandLineOption option(LongName, ShortName, Description, textValue, ArgType);
+
+    EXPECT_EQ(textValue, option.TextValue());
+    EXPECT_EQ(_(""), option.Argument());
+
+    option.Argument(argument);
+
+    EXPECT_EQ(argument, option.TextValue());
+    EXPECT_EQ(argument, textValue);
+    EXPECT_EQ(argument, option.Argument());
 }
 
 } // TEST_SUITE(core)
