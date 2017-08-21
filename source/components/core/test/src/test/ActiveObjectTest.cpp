@@ -85,5 +85,4 @@ TEST_FIXTURE(ActiveObjectTest, Loop)
 } // TEST_SUITE(core)
 
 } // namespace Test
-
 } // namespace Core

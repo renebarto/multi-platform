@@ -7,7 +7,7 @@
 #include "osal/OSAL.h"
 #include "osal/Console.h"
 
-static const std::string moduleName = "json";
+static const OSAL::String moduleName = _("json");
 
 #if defined(UNICODE) || defined(_UNICODE)
 int wmain(int argc, const wchar_t * argv[])

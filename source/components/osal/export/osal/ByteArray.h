@@ -57,7 +57,7 @@ public:
     OSAL::String ToString() const;
 };
 
-inline void PrintTo(std::basic_ostream<OSAL::Char> & stream, const ByteArray & value)
+inline void PrintTo(const ByteArray & value, std::basic_ostream<OSAL::Char> & stream)
 {
     stream << value.ToString();
 }
