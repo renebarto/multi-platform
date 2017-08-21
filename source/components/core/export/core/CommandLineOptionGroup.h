@@ -68,6 +68,22 @@ public:
                                                       CommandLineArgumentType::OptionalArgument));
     }
 
+    template<class T>
+    void AddOptionOptionalArgumentWithVariable(const OSAL::String & longName, OSAL::Char shortName,
+                                               const OSAL::String & description, T & variable)
+    {
+        AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, shortName, description, variable,
+                                                                  CommandLineArgumentType::OptionalArgument));
+    }
+
+    template<class T>
+    void AddOptionOptionalArgumentWithVariable(const OSAL::String & longName,
+                                               const OSAL::String & description, T & variable)
+    {
+        AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, _('\0'), description, variable,
+                                                                  CommandLineArgumentType::OptionalArgument));
+    }
+
     void AddOptionRequiredArgument(OSAL::String longName, OSAL::Char shortName,
                                    const OSAL::String & description, OSAL::String & textVariable)
     {
@@ -80,6 +96,22 @@ public:
     {
         AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
                                                       CommandLineArgumentType::RequiredArgument));
+    }
+
+    template<class T>
+    void AddOptionRequiredArgumentWithVariable(const OSAL::String & longName, OSAL::Char shortName,
+                                               const OSAL::String & description, T & variable)
+    {
+        AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, shortName, description, variable,
+                                                                  CommandLineArgumentType::RequiredArgument));
+    }
+
+    template<class T>
+    void AddOptionRequiredArgumentWithVariable(const OSAL::String & longName,
+                                               const OSAL::String & description, T & variable)
+    {
+        AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, _('\0'), description, variable,
+                                                                  CommandLineArgumentType::RequiredArgument));
     }
 
     const CommandLineOptionsList & Options() const

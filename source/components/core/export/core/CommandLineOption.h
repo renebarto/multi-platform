@@ -46,6 +46,7 @@ public:
     CommandLineArgumentType ArgType() const { return _argType; }
     virtual bool IsSwitchNoVariable() const { return false; }
     virtual bool IsSwitchWithVariable() const  { return false; }
+    virtual bool IsOptionWithVariable() const  { return false; }
     virtual bool IsEqual(Ptr other) const
     {
         return ArgType() == other->ArgType();
@@ -115,7 +116,7 @@ public:
     CommandLineSwitchWithVariable & operator = (const CommandLineSwitchWithVariable &) = delete;
 
     CommandLineSwitchWithVariable(const OSAL::String & longName, const OSAL::String & description,
-                                            T & variable, T value)
+                                  T & variable, T value)
         : CommandLineOption(longName, '\0', description, CommandLineArgumentType::NoArgument)
         , _variable(variable)
         , _value(value)
@@ -145,6 +146,45 @@ public:
 private:
     T & _variable;
     T _value;
+};
+
+template <class T, class Deserializer = StringDeserializer<T>>
+class CommandLineOptionWithVariable : public CommandLineOption
+{
+public:
+    CommandLineOptionWithVariable() = delete;
+    CommandLineOptionWithVariable(const CommandLineOptionWithVariable &) = delete;
+    CommandLineOptionWithVariable & operator = (const CommandLineOptionWithVariable &) = delete;
+
+    CommandLineOptionWithVariable(const OSAL::String & longName, OSAL::Char shortName, const OSAL::String & description,
+                                  T & variable,
+                                  CommandLineArgumentType argType = CommandLineArgumentType::RequiredArgument)
+        : CommandLineOption(longName, shortName, description, argType)
+        , _variable(variable)
+    {
+    }
+
+    virtual void SetOptionFound() override
+    {
+        StringDeserializer<T> deserializer;
+        deserializer.Deserialize(TextValue(), _variable);
+        CommandLineOption::SetOptionFound();
+    }
+    virtual bool IsOptionWithVariable() const override { return true; }
+
+    T & Variable() { return _variable; }
+    virtual bool IsEqual(Ptr other) const override
+    {
+        if (ArgType() != other->ArgType())
+            return false;
+        auto otherSwitchWithVariable = std::dynamic_pointer_cast<CommandLineOptionWithVariable>(other);
+        if (nullptr == otherSwitchWithVariable)
+            return false;
+        return (&_variable == &(otherSwitchWithVariable->_variable));
+    }
+
+private:
+    T & _variable;
 };
 
 } // namespace Core
