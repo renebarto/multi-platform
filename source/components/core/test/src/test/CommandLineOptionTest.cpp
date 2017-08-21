@@ -37,13 +37,20 @@ TEST_SUITE(core) {
 class CommandLineOptionAccessor : public CommandLineOption
 {
 public:
+    CommandLineOptionAccessor(const OSAL::String & longName, OSAL::Char shortName, const OSAL::String & description)
+        : CommandLineOption(longName, shortName, description)
+    {}
     CommandLineOptionAccessor(const OSAL::String & longName, OSAL::Char shortName, const OSAL::String & description,
-                      CommandLineArgumentType argType = CommandLineArgumentType::NoArgument)
+                              CommandLineArgumentType argType)
         : CommandLineOption(longName, shortName, description, argType)
     {}
     CommandLineOptionAccessor(const OSAL::String & longName, OSAL::Char shortName, const OSAL::String & description,
-                      OSAL::String & textVariable,
-                      CommandLineArgumentType argType = CommandLineArgumentType::RequiredArgument)
+                              OSAL::String & textVariable)
+        : CommandLineOption(longName, shortName, description, textVariable)
+    {}
+    CommandLineOptionAccessor(const OSAL::String & longName, OSAL::Char shortName, const OSAL::String & description,
+                              OSAL::String & textVariable,
+                              CommandLineArgumentType argType)
         : CommandLineOption(longName, shortName, description, textVariable, argType)
     {}
     void SetLongName(const OSAL::String & name) { LongName(name); }
@@ -51,11 +58,26 @@ public:
     void SetDescription(const OSAL::String & description) { Description(description); }
 };
 
+TEST_FIXTURE(CommandLineOptionTest, PrintArgType)
+{
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << CommandLineArgumentType::NoArgument;
+    EXPECT_EQ(_("None"), stream.str());
+
+    stream.str(_(""));
+    stream << CommandLineArgumentType::OptionalArgument;
+    EXPECT_EQ(_("Optional"), stream.str());
+
+    stream.str(_(""));
+    stream << CommandLineArgumentType::RequiredArgument;
+    EXPECT_EQ(_("Required"), stream.str());
+}
+
 TEST_FIXTURE(CommandLineOptionTest, Construction)
 {
     CommandLineOption option(LongName, ShortName, Description);
 
-    EXPECT_EQ(ArgTypeDefault, option.ArgType());
+    EXPECT_EQ(CommandLineArgumentType::NoArgument, option.ArgType());
     EXPECT_EQ(LongName, option.LongName());
     EXPECT_EQ(ShortName, option.ShortName());
     EXPECT_EQ(Description, option.Description());
@@ -71,7 +93,7 @@ TEST_FIXTURE(CommandLineOptionTest, ConstructionOptionTextVariable)
     OSAL::String textValue(_("Text"));
     CommandLineOption option(LongName, ShortName, Description, textValue);
 
-    EXPECT_EQ(ArgTypeDefault, option.ArgType());
+    EXPECT_EQ(CommandLineArgumentType::RequiredArgument, option.ArgType());
     EXPECT_EQ(LongName, option.LongName());
     EXPECT_EQ(ShortName, option.ShortName());
     EXPECT_EQ(Description, option.Description());
