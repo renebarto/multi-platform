@@ -22,12 +22,10 @@ void CommandLineOptionTest::TearDown()
 {
 }
 
-static const CommandLineArgumentType ArgTypeDefault = CommandLineArgumentType::NoArgument;
 static const CommandLineArgumentType ArgType = CommandLineArgumentType::OptionalArgument;
 static const char ShortName = _('s');
 static const string LongName = _("longname");
 static const string Description = _("Some description");
-static const CommandLineArgumentType ArgType2 = CommandLineArgumentType::RequiredArgument;
 static const char ShortName2 = _('t');
 static const string LongName2 = _("othername");
 static const string Description2 = _("Some other description");
