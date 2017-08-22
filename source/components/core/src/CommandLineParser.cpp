@@ -112,8 +112,7 @@ bool CommandLineParser::InternalParse(int argc, const OSAL::Char * argv[])
     OSAL::String optionString;
     for (auto opt : _options)
     {
-        auto optionWithVariable = dynamic_pointer_cast<CommandLineSwitchWithVariable<int>>(opt);
-        if (!optionWithVariable)
+        if (!opt->IsSwitchWithVariable())
         {
             if (opt->ShortName())
             {

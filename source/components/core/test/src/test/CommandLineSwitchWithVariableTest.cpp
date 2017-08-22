@@ -22,7 +22,6 @@ void CommandLineSwitchWithVariableTest::TearDown()
 {
 }
 
-static const char ShortName = _('s');
 static const string LongName = _("longname");
 static const string Description = _("Some description");
 static const char ShortName2 = _('t');
@@ -30,6 +29,18 @@ static const string LongName2 = _("othername");
 static const string Description2 = _("Some other description");
 
 TEST_SUITE(core) {
+
+template<class T>
+class CommandLineSwitchWithVariableAccessor : public CommandLineSwitchWithVariable<T>
+{
+public:
+    CommandLineSwitchWithVariableAccessor(const OSAL::String & longName, const OSAL::String & description, T & variable, T value)
+        : CommandLineSwitchWithVariable<T>(longName, description, variable, value)
+    {}
+    void SetLongName(const OSAL::String & name) { this->LongName(name); }
+    void SetShortName(OSAL::Char name) { this->ShortName(name); }
+    void SetDescription(const OSAL::String & description) { this->Description(description); }
+};
 
 TEST_FIXTURE(CommandLineSwitchWithVariableTest, Construction)
 {
@@ -48,88 +59,47 @@ TEST_FIXTURE(CommandLineSwitchWithVariableTest, Construction)
     EXPECT_FALSE(option.FoundOption());
 }
 
-TEST_FIXTURE(CommandLineSwitchWithVariableTest, ConstructionOptionFoundFlag)
-{
-//    OSAL::String textValue(_("Text"));
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, textValue);
-//
-//    EXPECT_EQ(CommandLineArgumentType::NoArgument, option.ArgType());
-//    EXPECT_EQ(LongName, option.LongName());
-//    EXPECT_EQ(_('\0'), option.ShortName());
-//    EXPECT_EQ(Description, option.Description());
-//    EXPECT_EQ(textValue, option.TextValue());
-//    EXPECT_FALSE(option.FoundOption());
-}
-
-TEST_FIXTURE(CommandLineSwitchWithVariableTest, ConstructionArgType)
-{
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, ArgType);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(LongName, option.LongName());
-//    EXPECT_EQ(_('\0'), option.ShortName());
-//    EXPECT_EQ(Description, option.Description());
-//    EXPECT_EQ(_(""), option.TextValue());
-//    EXPECT_FALSE(option.FoundOption());
-}
-
-TEST_FIXTURE(CommandLineSwitchWithVariableTest, ConstructionOptionFoundFlagArgType)
-{
-//    OSAL::String textValue(_("Text"));
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, textValue, ArgType);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(LongName, option.LongName());
-//    EXPECT_EQ(_('\0'), option.ShortName());
-//    EXPECT_EQ(Description, option.Description());
-//    EXPECT_EQ(textValue, option.TextValue());
-//    EXPECT_FALSE(option.FoundOption());
-}
-
 TEST_FIXTURE(CommandLineSwitchWithVariableTest, GetSet)
 {
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, ArgType);
-//
-//    option.LongName(LongName2);
-//    option.ShortName(ShortName2);
-//    option.Description(Description2);
-//    option.OptionFoundFlag(&optionFound);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(ShortName2, option.ShortName());
-//    EXPECT_EQ(LongName2, option.LongName());
-//    EXPECT_EQ(Description2, option.Description());
-//    EXPECT_EQ(&optionFound, option.OptionFoundFlag());
-//    EXPECT_FALSE(option.FoundOption());
+    int variable {};
+    int value = 1234;
+    CommandLineSwitchWithVariableAccessor<int> option(LongName, Description, variable, value);
+
+    option.SetLongName(LongName2);
+    option.SetShortName(ShortName2);
+    option.SetDescription(Description2);
+
+    EXPECT_EQ(CommandLineArgumentType::NoArgument, option.ArgType());
+    EXPECT_EQ(ShortName2, option.ShortName());
+    EXPECT_EQ(LongName2, option.LongName());
+    EXPECT_EQ(Description2, option.Description());
+    EXPECT_EQ(_(""), option.TextValue());
+    EXPECT_EQ(variable, option.Variable());
+    EXPECT_EQ(value, option.Value());
+    EXPECT_NE(value, variable);
+    EXPECT_FALSE(option.FoundOption());
 }
 
 TEST_FIXTURE(CommandLineSwitchWithVariableTest, FoundOption)
 {
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, ArgType);
-//
-//    option.LongName(LongName2);
-//    option.ShortName(ShortName2);
-//    option.Description(Description2);
-//    option.OptionFoundFlag(&optionFound);
-//    option.FoundOption(true);
-//
-//    EXPECT_EQ(ArgType, option.ArgType());
-//    EXPECT_EQ(ShortName2, option.ShortName());
-//    EXPECT_EQ(LongName2, option.LongName());
-//    EXPECT_EQ(Description2, option.Description());
-//    EXPECT_EQ(&optionFound, option.OptionFoundFlag());
-//    EXPECT_TRUE(optionFound);
-//    EXPECT_TRUE(option.FoundOption());
-}
+    int variable {};
+    int value = 1234;
+    CommandLineSwitchWithVariableAccessor<int> option(LongName, Description, variable, value);
 
-TEST_FIXTURE(CommandLineSwitchWithVariableTest, Value)
-{
-//    CommandLineSwitchWithVariable option(LongName, _('\0'), Description, ArgType);
-//
-//    const string expected = "100";
-//    option.Value(expected);
-//
-//    EXPECT_EQ(expected, option.Value());
+    option.SetLongName(LongName2);
+    option.SetShortName(ShortName2);
+    option.SetDescription(Description2);
+    option.SetOptionFound();
+
+    EXPECT_EQ(CommandLineArgumentType::NoArgument, option.ArgType());
+    EXPECT_EQ(ShortName2, option.ShortName());
+    EXPECT_EQ(LongName2, option.LongName());
+    EXPECT_EQ(Description2, option.Description());
+    EXPECT_EQ(_(""), option.TextValue());
+    EXPECT_EQ(variable, option.Variable());
+    EXPECT_EQ(value, option.Value());
+    EXPECT_EQ(value, variable);
+    EXPECT_TRUE(option.FoundOption());
 }
 
 } // TEST_SUITE(core)

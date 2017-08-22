@@ -52,6 +52,16 @@ public:
         EXPECT_TRUE(parser.HaveOption(_('f')));
         EXPECT_TRUE(parser.HaveOption(_("file")));
     }
+    void CheckDefinedX(const CommandLineParser &parser) const
+    {
+        EXPECT_TRUE(parser.HaveOption(_('x')));
+        EXPECT_TRUE(parser.HaveOption(_("x")));
+    }
+    void CheckDefinedY(const CommandLineParser &parser) const
+    {
+        EXPECT_TRUE(parser.HaveOption(_('y')));
+        EXPECT_TRUE(parser.HaveOption(_("y")));
+    }
     void CheckDefinedOptions(const CommandLineParser &parser) const
     {
         CheckDefinedVerboseBrief(parser);
@@ -144,6 +154,38 @@ public:
         CheckFoundFile(parser);
         EXPECT_EQ(value, parser.GetOption(_('f')));
         EXPECT_EQ(value, parser.GetOption(_("file")));
+    }
+    void CheckFoundX(const CommandLineParser &parser) const
+    {
+        EXPECT_TRUE(parser.FoundOption(_('x')));
+        EXPECT_TRUE(parser.FoundOption(_("x")));
+    }
+    void CheckNotFoundX(const CommandLineParser &parser) const
+    {
+        EXPECT_FALSE(parser.FoundOption(_('x')));
+        EXPECT_FALSE(parser.FoundOption(_("x")));
+    }
+    void CheckFoundX(const CommandLineParser &parser, const OSAL::String & value) const
+    {
+        CheckFoundX(parser);
+        EXPECT_EQ(value, parser.GetOption(_('x')));
+        EXPECT_EQ(value, parser.GetOption(_("x")));
+    }
+    void CheckNotFoundY(const CommandLineParser &parser) const
+    {
+        EXPECT_FALSE(parser.FoundOption(_('y')));
+        EXPECT_FALSE(parser.FoundOption(_("y")));
+    }
+    void CheckFoundY(const CommandLineParser &parser) const
+    {
+        EXPECT_TRUE(parser.FoundOption(_('y')));
+        EXPECT_TRUE(parser.FoundOption(_("y")));
+    }
+    void CheckFoundY(const CommandLineParser &parser, const OSAL::String & value) const
+    {
+        CheckFoundY(parser);
+        EXPECT_EQ(value, parser.GetOption(_('y')));
+        EXPECT_EQ(value, parser.GetOption(_("y")));
     }
     void CheckNotFoundOptions(const CommandLineParser &parser) const
     {
@@ -253,12 +295,32 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentNoValue)
               "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
 }
 
-TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentWithValue)
+TEST_FIXTURE(CommandLineParserTest, SetupSingleSwitchNoVariable)
 {
     OSAL::Console console;
     CommandLineParser parser(console);
-    int variable;
-    parser.AddSwitchWithVariable(_("add"), variable, 1, _("Add me"));
+    parser.AddSwitch(_("add"), _('a'), _("Add me"));
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAdd(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  -a, --add                 Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleSwitchWithVariable)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int variable {};
+    int value = 1;
+    parser.AddSwitchWithVariable(_("add"), variable, value, _("Add me"));
 
     parser.Parse(0, nullptr);
 
@@ -273,7 +335,7 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoArgumentWithValue)
               "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
 }
 
-TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionOptionalArgument)
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoVariableOptionalArgument)
 {
     OSAL::Console console;
     CommandLineParser parser(console);
@@ -293,7 +355,27 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionOptionalArgument)
               "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
 }
 
-TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionRequiredArgument)
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoVariableOptionalArgumentNoShortName)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    OSAL::String argument;
+    parser.AddOptionOptionalArgument(_("add"), _("Add me"), argument);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAddOnly(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  --add [argument]          Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoVariableRequiredArgument)
 {
     OSAL::Console console;
     CommandLineParser parser(console);
@@ -308,9 +390,109 @@ TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionRequiredArgument)
     EXPECT_TRUE(parser.AutoHandleHelp());
     EXPECT_FALSE(parser.ShouldShowHelp());
     EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  -a, --add <argument>      Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionNoVariableRequiredArgumentNoShortName)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    OSAL::String argument;
+    parser.AddOptionRequiredArgument(_("add"), _("Add me"), argument);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAddOnly(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
               "  CommandLineParserTest [OPTION...]\n\n"
-              "  -a, --add <argument>      Add me\n\n"
+              "  --add <argument>          Add me\n\n"
               "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionWithVariableOptionalArgument)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int variable {};
+    parser.AddOptionOptionalArgument<int>(_("add"), _('a'), _("Add me"), variable);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAdd(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  -a, --add [argument]      Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionWithVariableOptionalArgumentNoShortName)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int variable {};
+    parser.AddOptionOptionalArgument<int>(_("add"), _("Add me"), variable);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAddOnly(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  --add [argument]          Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionWithVariableRequiredArgument)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int variable {};
+    parser.AddOptionRequiredArgument<int>(_("add"), _('a'), _("Add me"), variable);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAdd(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  -a, --add <argument>      Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
+}
+
+TEST_FIXTURE(CommandLineParserTest, SetupSingleOptionWithVariableRequiredArgumentNoShortName)
+{
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int variable {};
+    parser.AddOptionRequiredArgument<int>(_("add"), _("Add me"), variable);
+
+    parser.Parse(0, nullptr);
+
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedAddOnly(parser);
+    CheckNotFoundAdd(parser);
+    EXPECT_TRUE(parser.AutoHandleHelp());
+    EXPECT_FALSE(parser.ShouldShowHelp());
+    EXPECT_EQ(_("Usage:\nMain: \n\n"
+                    "  CommandLineParserTest [OPTION...]\n\n"
+                    "  --add <argument>          Add me\n\n"
+                    "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
 }
 
 TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
@@ -321,6 +503,8 @@ TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -328,6 +512,8 @@ TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     parser.Parse(0, nullptr);
 
@@ -344,7 +530,9 @@ TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
               "  -b, --append              Append\n"
               "  -d, --delete [argument]   Delete\n"
               "  -c, --create [argument]   Create\n"
-              "  -f, --file <argument>     File\n\n"
+              "  -f, --file <argument>     File\n"
+              "  -x, --x [argument]        X\n"
+              "  -y, --y <argument>        Y\n\n"
               "  --help                    Show help options\n\n"), parser.GetHelp(ApplicationName));
 }
 
@@ -359,6 +547,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseNoArguments)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -366,6 +556,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseNoArguments)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -392,6 +584,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValue)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -399,6 +593,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValue)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -425,6 +621,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -432,6 +630,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -458,6 +658,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -465,6 +667,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -491,6 +695,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -498,6 +704,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -524,6 +732,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -531,6 +741,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -545,7 +757,7 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgument)
     delete [] argv;
 }
 
-TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
+TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentEqualsSign)
 {
     int argc = 2;
     const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
@@ -557,6 +769,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -564,6 +778,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -578,7 +794,7 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
     delete [] argv;
 }
 
-TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
+TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentEqualsSign)
 {
     int argc = 2;
     const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
@@ -590,6 +806,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -597,6 +815,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -607,6 +827,84 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
     EXPECT_EQ(size_t{0}, parser.NumNonOptions());
     CheckDefinedOptions(parser);
     CheckFoundDeleteOnly(parser, _("abc"));
+
+    delete [] argv;
+}
+
+TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
+{
+    int argc = 3;
+    const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = _("-d");
+    argv[2]= _("abc"); // Optional arguments require = sign
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int verboseFlag {};
+    OSAL::String deleteString {};
+    OSAL::String createString {};
+    OSAL::String fileString {};
+    int x {};
+    int y {};
+    parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
+    parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
+    parser.AddSwitch(_("add"), _('a'), _("Add"));
+    parser.AddSwitch(_("append"), _('b'), _("Append"));
+    parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
+    parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
+    parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_EQ(0, verboseFlag);
+    EXPECT_EQ(_(""), deleteString);
+    EXPECT_EQ(_(""), createString);
+    EXPECT_EQ(_(""), fileString);
+    EXPECT_EQ(size_t{1}, parser.NumNonOptions());
+    CheckDefinedOptions(parser);
+    CheckFoundDeleteOnly(parser, _(""));
+    EXPECT_EQ(_("abc"), parser.GetNonOption(0));
+
+    delete [] argv;
+}
+
+TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
+{
+    int argc = 3;
+    const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = _("--delete");
+    argv[2] = _("abc"); // Optional arguments require = sign
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int verboseFlag {};
+    OSAL::String deleteString {};
+    OSAL::String createString {};
+    OSAL::String fileString {};
+    int x {};
+    int y {};
+    parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
+    parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
+    parser.AddSwitch(_("add"), _('a'), _("Add"));
+    parser.AddSwitch(_("append"), _('b'), _("Append"));
+    parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
+    parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
+    parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_EQ(0, verboseFlag);
+    EXPECT_EQ(_(""), deleteString);
+    EXPECT_EQ(_(""), createString);
+    EXPECT_EQ(_(""), fileString);
+    EXPECT_EQ(size_t{1}, parser.NumNonOptions());
+    CheckDefinedOptions(parser);
+    CheckFoundDeleteOnly(parser, _(""));
+    EXPECT_EQ(_("abc"), parser.GetNonOption(0));
 
     delete [] argv;
 }
@@ -623,6 +921,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -630,6 +930,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_FALSE(parser.Parse(argc, argv));
 
@@ -656,6 +958,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredNoArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -663,6 +967,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredNoArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_FALSE(parser.Parse(argc, argv));
 
@@ -690,6 +996,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -697,6 +1005,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -724,6 +1034,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgument)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -731,6 +1043,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgument)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -757,6 +1071,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -764,6 +1080,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -790,6 +1108,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -797,6 +1117,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -823,6 +1145,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseNonOption)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -830,6 +1154,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseNonOption)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -858,6 +1184,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValueExtraNonOpti
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -865,6 +1193,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValueExtraNonOpti
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -893,6 +1223,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentExtraNonOption)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -900,6 +1232,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentExtraNonOption)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -928,6 +1262,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgumentExtraNonOption
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -935,6 +1271,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgumentExtraNonOption
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -963,6 +1301,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgumentExtraNonO
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -970,6 +1310,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgumentExtraNonO
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -998,6 +1340,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgumentExtra
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1005,6 +1349,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgumentExtra
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1033,6 +1379,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentExtraNo
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1040,6 +1388,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentExtraNo
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1068,6 +1418,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentExt
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1075,6 +1427,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentExt
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1104,6 +1458,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentExtraNo
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1111,6 +1467,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentExtraNo
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1140,6 +1498,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentExt
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1147,6 +1507,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentExt
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1175,6 +1537,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1182,6 +1546,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1210,6 +1576,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1217,6 +1585,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1250,6 +1620,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMoreComplexArguments)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1257,6 +1629,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseMoreComplexArguments)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1293,6 +1667,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseQuotedString)
     OSAL::String deleteString {};
     OSAL::String createString {};
     OSAL::String fileString {};
+    int x {};
+    int y {};
     parser.AddSwitchWithVariable(_("verbose"), verboseFlag, 1, _("Verbose output"));
     parser.AddSwitchWithVariable(_("brief"), verboseFlag, 0, _("Brief output"));
     parser.AddSwitch(_("add"), _('a'), _("Add"));
@@ -1300,6 +1676,8 @@ TEST_FIXTURE(CommandLineParserTest, ParseQuotedString)
     parser.AddOptionOptionalArgument(_("delete"), _('d'), _("Delete"), deleteString);
     parser.AddOptionOptionalArgument(_("create"), _('c'), _("Create"), createString);
     parser.AddOptionRequiredArgument(_("file"), _('f'), _("File"), fileString);
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
 
     EXPECT_TRUE(parser.Parse(argc, argv));
 
@@ -1363,6 +1741,60 @@ TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableVerbose)
     CheckDefinedVerboseBrief(parser);
     CheckFoundVerbose(parser);
     CheckNotFoundBrief(parser);
+
+    delete [] argv;
+}
+
+TEST_FIXTURE(CommandLineParserTest, ParseOptionWithIntVariableEqualsSign)
+{
+    int argc = 3;
+    const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = _("--x=1234");
+    argv[2] = _("-y=5678");
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int x {};
+    int y {};
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_EQ(1234, x);
+    EXPECT_EQ(5678, y);
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedX(parser);
+    CheckFoundX(parser, _("1234"));
+    CheckDefinedY(parser);
+    CheckFoundY(parser, _("5678"));
+
+    delete [] argv;
+}
+
+TEST_FIXTURE(CommandLineParserTest, ParseOptionWithIntVariable)
+{
+    int argc = 3;
+    const OSAL::Char * * argv = new const OSAL::Char *[static_cast<size_t>(argc)];
+    argv[0] = ApplicationName.c_str();
+    argv[1] = _("--y");
+    argv[2] = _("5678");
+    OSAL::Console console;
+    CommandLineParser parser(console);
+    int x {};
+    int y {};
+    parser.AddOptionOptionalArgument<int>(_("x"), _('x'), _("X"), x);
+    parser.AddOptionRequiredArgument<int>(_("y"), _('y'), _("Y"), y);
+
+    EXPECT_TRUE(parser.Parse(argc, argv));
+
+    EXPECT_EQ(0, x);
+    EXPECT_EQ(5678, y);
+    EXPECT_EQ(size_t{0}, parser.NumNonOptions());
+    CheckDefinedX(parser);
+    CheckNotFoundX(parser);
+    CheckDefinedY(parser);
+    CheckFoundY(parser, _("5678"));
 
     delete [] argv;
 }

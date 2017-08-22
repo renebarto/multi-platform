@@ -164,11 +164,11 @@ public:
     {
     }
 
-    virtual void SetOptionFound() override
+    virtual void Argument(const OSAL::String & value)
     {
         StringDeserializer<T> deserializer;
-        deserializer.Deserialize(TextValue(), _variable);
-        CommandLineOption::SetOptionFound();
+        deserializer.Deserialize(value, _variable);
+        CommandLineOption::Argument(value);
     }
     virtual bool IsOptionWithVariable() const override { return true; }
 

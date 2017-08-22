@@ -14,16 +14,24 @@ public:
     Pipe(int fdRead, int fdWrite);
     ~Pipe();
 
-    Pipe & operator = (const Pipe &) = delete;
+    Pipe & operator=(const Pipe &) = delete;
 
     void Create();
     void Close();
     void CloseRead();
     void CloseWrite();
-	ssize_t Read(void * data, size_t numBytes);
-	ssize_t Write(void * data, size_t numBytes);
-    int ReadFD() { return _fd[PipeRead]; }
-    int WriteFD() { return _fd[PipeWrite]; }
+    ssize_t Read(void * data, size_t numBytes);
+    ssize_t Write(void * data, size_t numBytes);
+
+    int ReadFD()
+    {
+        return _fd[PipeRead];
+    }
+
+    int WriteFD()
+    {
+        return _fd[PipeWrite];
+    }
 
 protected:
     static const int PipeRead = 0;

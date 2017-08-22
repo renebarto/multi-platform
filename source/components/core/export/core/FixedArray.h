@@ -176,7 +176,7 @@ void FixedArray<T>::Set(size_t offset, T value)
 template<class T>
 void FixedArray<T>::Set(size_t offset, const T * data, size_t length)
 {
-    assert((offset >= 0) && (length >= 0) && (offset + length < _size));
+    assert((offset >= 0) && (length >= 0) && (offset + length <= _size));
     memcpy(this->_data + offset, data, length * sizeof(T));
 }
 
@@ -184,7 +184,7 @@ template<class T>
 void FixedArray<T>::Set(size_t offset, const FixedArray<T> & data)
 {
     size_t dataSize = data.Size();
-    assert((offset >= 0) && (offset + dataSize < _size));
+    assert((offset >= 0) && (offset + dataSize <= _size));
     memcpy(this->_data + offset, data.Data(), dataSize * sizeof(T));
 }
 
@@ -286,4 +286,5 @@ inline void PrintTo(const FixedArray<T> & value, std::ostream & stream)
 {
     stream << value.ToString();
 }
+
 } // namespace Core

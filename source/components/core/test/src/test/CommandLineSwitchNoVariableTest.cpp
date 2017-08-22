@@ -88,16 +88,6 @@ TEST_FIXTURE(CommandLineSwitchNoVariableTest, FoundOption)
     EXPECT_TRUE(option.FoundOption());
 }
 
-TEST_FIXTURE(CommandLineSwitchNoVariableTest, Value)
-{
-//    CommandLineSwitchNoVariable option(LongName, ShortName, Description, ArgType);
-//
-//    const string expected = "100";
-//    option.Value(expected);
-//
-//    EXPECT_EQ(expected, option.Value());
-}
-
 } // TEST_SUITE(core)
 
 } // namespace Test

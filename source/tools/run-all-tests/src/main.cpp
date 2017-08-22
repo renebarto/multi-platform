@@ -1,8 +1,8 @@
 #include <unit-test-c++/UnitTestC++.h>
 
 #include <fstream>
-//#include <core/ConsoleLogger.h>
-//#include <core/DefaultLogger.h>
+#include <core/ConsoleLogger.h>
+#include <core/DefaultLogger.h>
 #include "CommandLineOptionsParser.h"
 #include "osal/OSAL.h"
 #include "osal/Console.h"
@@ -20,7 +20,7 @@ int main(int argc, const char * argv[])
     console << fgcolor(OSAL::ConsoleColor::Magenta | OSAL::ConsoleColor::Intensity);
     console << "Running tests for: " << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
-//    Core::ConsoleLogger logger(Core::TheLogger(), console);
+    Core::ConsoleLogger logger(Core::TheLogger(), console);
 
     CommandLineOptionsParser parser(console);
     OSAL::String applicationName = argv[0];

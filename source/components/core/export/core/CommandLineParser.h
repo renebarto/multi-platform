@@ -38,7 +38,6 @@ namespace Core {
             AddOption(std::make_shared<CommandLineSwitchWithVariable<T>>(longName, description, variable, value));
         }
 
-
         void AddOptionOptionalArgument(const OSAL::String & longName, OSAL::Char shortName,
                                        const OSAL::String & description, OSAL::String & textVariable)
         {
@@ -53,6 +52,24 @@ namespace Core {
                                                           CommandLineArgumentType::OptionalArgument));
         }
 
+        template<class T>
+        void AddOptionOptionalArgument(const OSAL::String & longName, OSAL::Char shortName,
+                                       const OSAL::String & description, T & variable)
+        {
+            AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, shortName, description, 
+                                                                         variable,
+                                                                         CommandLineArgumentType::OptionalArgument));
+        }
+
+        template<class T>
+        void AddOptionOptionalArgument(const OSAL::String & longName,
+                                       const OSAL::String & description, T & variable)
+        {
+            AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, _('\0'), description, 
+                                                                         variable,
+                                                                         CommandLineArgumentType::OptionalArgument));
+        }
+
         void AddOptionRequiredArgument(OSAL::String longName, OSAL::Char shortName,
                                        const OSAL::String & description, OSAL::String & textVariable)
         {
@@ -65,6 +82,24 @@ namespace Core {
         {
             AddOption(std::make_shared<CommandLineOption>(longName, _('\0'), description, textVariable,
                                                           CommandLineArgumentType::RequiredArgument));
+        }
+
+        template<class T>
+        void AddOptionRequiredArgument(const OSAL::String & longName, OSAL::Char shortName,
+                                       const OSAL::String & description, T & variable)
+        {
+            AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, shortName, description,
+                                                                         variable,
+                                                                         CommandLineArgumentType::RequiredArgument));
+        }
+
+        template<class T>
+        void AddOptionRequiredArgument(const OSAL::String & longName,
+                                       const OSAL::String & description, T & variable)
+        {
+            AddOption(std::make_shared<CommandLineOptionWithVariable<T>>(longName, _('\0'), description,
+                                                                         variable,
+                                                                         CommandLineArgumentType::RequiredArgument));
         }
 
         size_t NumNonOptions() const
