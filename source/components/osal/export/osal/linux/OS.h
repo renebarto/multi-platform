@@ -64,6 +64,7 @@ inline bool SetSemaphore(SemaphoreHandle semaphore)
 inline bool WaitSemaphore(SemaphoreHandle semaphore)
 {
     int errorCode = 0;
+    errno = 0;
     do
     {
         if (sem_wait(semaphore) != 0)
@@ -82,7 +83,7 @@ inline bool WaitSemaphore(SemaphoreHandle semaphore, timespec timeout, bool & ti
     int errorCode = 0;
     do
     {
-        if (sem_timedwait((sem_t *)semaphore, &time) != 0)
+        if (sem_timedwait(semaphore, &time) != 0)
         {
             errorCode = errno;
         }

@@ -21,6 +21,7 @@ int main(int argc, const char * argv[])
     console << _("Running tests for: ") << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
     Core::ConsoleLogger logger(Core::TheLogger(), console);
+//    Core::TheLogger().SetLogLevelFilter(Core::TheLogger().GetLogLevelFilter() | Core::LogLevel::Debug);
 
     CommandLineOptionsParser parser(console);
     OSAL::String applicationName = argv[0];

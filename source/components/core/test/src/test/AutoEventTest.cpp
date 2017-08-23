@@ -36,14 +36,15 @@ public:
 
         ostringstream stream;
         stream << "Event 1: " << event1.GetValue() << endl;
-        stream << "Event 2: " << event2.GetValue();
+        stream << "Event 2: " << event2.GetValue() << endl;
         Core::TheLogger().Debug("TestThread", stream.str());
 
         eventPassed = event1.Wait(TIMEOUT);
 
         stream.str("");
         stream << "Event 1: " << event1.GetValue() << endl;
-        stream << "Event 2: " << event2.GetValue();
+        stream << "Event 2: " << event2.GetValue() << endl;
+        stream << "Event Passed: " << eventPassed << endl;
         Core::TheLogger().Debug("TestThread", stream.str());
 
         if (eventPassed)
@@ -53,7 +54,7 @@ public:
 
         stream.str("");
         stream << "Event 1: " << event1.GetValue() << endl;
-        stream << "Event 2: " << event2.GetValue();
+        stream << "Event 2: " << event2.GetValue() << endl;
         Core::TheLogger().Debug("TestThread", stream.str());
         Core::TheLogger().Debug("TestThread", "Ended");
     }
@@ -116,7 +117,7 @@ TEST_FIXTURE(AutoEventTest, AssignmentHandle)
 
 TEST_FIXTURE(AutoEventTest, SetEvent)
 {
-    Core::TheLogger().Debug("AutoEventTest", "SetEvent start");
+    Core::TheLogger().Debug("SetEvent", "SetEvent start");
 
     AutoEvent event1;
     AutoEvent event2;
@@ -128,76 +129,86 @@ TEST_FIXTURE(AutoEventTest, SetEvent)
     ostringstream stream;
     stream << "Event 1: " << event1.GetValue() << endl;
     stream << "Event 2: " << event2.GetValue();
-    Core::TheLogger().Debug("TestThread", stream.str());
+    Core::TheLogger().Debug("SetEvent", stream.str());
 
     event1.Set();
 
     stream.str("");
     stream << "Event 1: " << event1.GetValue() << endl;
     stream << "Event 2: " << event2.GetValue();
-    Core::TheLogger().Debug("TestThread", stream.str());
+    Core::TheLogger().Debug("SetEvent", stream.str());
 
     Core::Util::Sleep(SLEEP);
     EXPECT_TRUE(event2.Wait(TIMEOUT));
     EXPECT_TRUE(eventPassed);
 
-        stream.str("");
-        stream << "Event 1: " << event1.GetValue() << endl;
-        stream << "Event 2: " << event2.GetValue();
-        Core::TheLogger().Debug("TestThread", stream.str());
+    stream.str("");
+    stream << "Event 1: " << event1.GetValue() << endl;
+    stream << "Event 2: " << event2.GetValue();
+    Core::TheLogger().Debug("SetEvent", stream.str());
 
     thread.join();
 
-    Core::TheLogger().Debug("AutoEventTest", "SetEvent end");
+    Core::TheLogger().Debug("SetEvent", "SetEvent end");
 }
 
 TEST_FIXTURE(AutoEventTest, WaitEventTimeout)
 {
-//    Core::TheLogger().Debug("AutoEventTest", "WaitEventTimeout start");
-//
-//    AutoEvent event1;
-//    AutoEvent event2;
-//    eventHandle1 = (AutoEventHandle)event1;
-//    eventHandle2 = (AutoEventHandle)event2;
-//
-//    std::thread thread(TestThread);
-//
-//    ostringstream stream;
-//    stream << "Event 1: " << event1.GetValue() << endl;
-//    stream << "Event 2: " << event2.GetValue();
-//    Core::TheLogger().Debug("TestThread", stream.str());
-//
-//    EXPECT_FALSE(event2.Wait(TIMEOUT));
-//    EXPECT_FALSE(eventPassed);
-//
-//    stream.str("");
-//    stream << "Event 1: " << event1.GetValue() << endl;
-//    stream << "Event 2: " << event2.GetValue();
-//    Core::TheLogger().Debug("TestThread", stream.str());
-//
-//    thread.join();
-//
-//    Core::TheLogger().Debug("AutoEventTest", "WaitEventTimeout end");
+    Core::TheLogger().Debug("WaitEventTimeout", "WaitEventTimeout start");
+
+    AutoEvent event1;
+    AutoEvent event2;
+    eventHandle1 = (AutoEventHandle)event1;
+    eventHandle2 = (AutoEventHandle)event2;
+
+    std::thread thread(TestThread);
+
+    ostringstream stream;
+    stream << "Event 1: " << event1.GetValue() << endl;
+    stream << "Event 2: " << event2.GetValue();
+    Core::TheLogger().Debug("WaitEventTimeout", stream.str());
+
+    EXPECT_FALSE(event2.Wait(TIMEOUT));
+    EXPECT_FALSE(eventPassed);
+
+    stream.str("");
+    stream << "Event 1: " << event1.GetValue() << endl;
+    stream << "Event 2: " << event2.GetValue();
+    Core::TheLogger().Debug("WaitEventTimeout", stream.str());
+
+    thread.join();
+
+    Core::TheLogger().Debug("WaitEventTimeout", "WaitEventTimeout end");
 }
 
 TEST_FIXTURE(AutoEventTest, WaitEvent)
 {
-//    Core::TheLogger().Debug("AutoEventTest", "WaitEvent start");
-//
-//    AutoEvent event1;
-//    AutoEvent event2;
-//    eventHandle1 = (AutoEventHandle)event1;
-//    eventHandle2 = (AutoEventHandle)event2;
-//
-//    std::thread thread(TestThread);
-//
-//    event1.Set();
-//    event2.Wait();
-//    EXPECT_TRUE(eventPassed);
-//
-//    thread.join();
-//
-//    Core::TheLogger().Debug("AutoEventTest", "WaitEvent start");
+    Core::TheLogger().Debug("WaitEvent", "WaitEvent start");
+
+    AutoEvent event1;
+    AutoEvent event2;
+    eventHandle1 = (AutoEventHandle)event1;
+    eventHandle2 = (AutoEventHandle)event2;
+
+    std::thread thread(TestThread);
+
+    ostringstream stream;
+    stream << "Event 1: " << event1.GetValue() << endl;
+    stream << "Event 2: " << event2.GetValue();
+    Core::TheLogger().Debug("WaitEvent", stream.str());
+
+    event1.Set();
+    event2.Wait();
+    EXPECT_TRUE(eventPassed);
+
+    stream.str("");
+    stream << "Event 1: " << event1.GetValue() << endl;
+    stream << "Event 2: " << event2.GetValue();
+    Core::TheLogger().Debug("WaitEvent", stream.str());
+
+    thread.join();
+
+    Core::TheLogger().Debug("WaitEvent", "WaitEvent end");
 }
 
 } // TEST_SUITE(core)
