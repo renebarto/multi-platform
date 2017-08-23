@@ -23,7 +23,9 @@ public:
     Nullable(Nullable && other)
         : _hasValue(other._hasValue)
         , _value(std::move(other._value))
-    {}
+    {
+        other._hasValue = false;
+    }
     Nullable(const T & _value)
         : _hasValue(true)
         , _value(_value)
@@ -70,6 +72,11 @@ protected:
     T _value;
 
     T & GetValue()
+    {
+        assert(_hasValue);
+        return _value;
+    }
+    const T & GetValue() const
     {
         assert(_hasValue);
         return _value;
