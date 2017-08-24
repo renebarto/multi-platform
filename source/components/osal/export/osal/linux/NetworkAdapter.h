@@ -31,10 +31,10 @@ enum class AdapterFlags : unsigned int
 class Adapter
 {
 public:
-    Adapter(const std::string & name, AddressPtr localAddress, AddressPtr netmask,
-                   AddressPtr broadcastAddress, AddressPtr destAddress, AdapterFlags flags);
+    Adapter(const OSAL::String & name, AddressPtr localAddress, AddressPtr netmask,
+            AddressPtr broadcastAddress, AddressPtr destAddress, AdapterFlags flags);
 
-    const std::string & Name()
+    const OSAL::String & Name()
     { return _name; }
 
     const AddressPtr LocalAddress()
@@ -52,11 +52,11 @@ public:
     SocketFamily Family()
     { return LocalAddress()->Family(); }
 
-    AdapterFlags flags()
+    AdapterFlags Flags()
     { return _flags; }
 
 private:
-    std::string _name;
+    OSAL::String _name;
     AddressPtr _localAddress;
     AddressPtr _netmask;
     AddressPtr _broadcastAddress;
