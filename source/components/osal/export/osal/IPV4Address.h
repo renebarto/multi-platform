@@ -41,6 +41,8 @@ public:
     static IPV4Address Parse(const OSAL::String & text);
     static bool TryParse(const OSAL::String & text, IPV4Address & ipAddress);
     IPV4Address & operator = (const IPV4Address & other);
+    bool operator == (const Address & other) const;
+    bool operator != (const Address & other) const;
     bool operator == (const IPV4Address & other) const;
     bool operator != (const IPV4Address & other) const;
     uint8_t & operator[] (size_t offset);

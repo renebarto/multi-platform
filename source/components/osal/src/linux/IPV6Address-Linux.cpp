@@ -22,28 +22,29 @@ IPV6Address::~IPV6Address()
 {
 }
 
-IPV6Address IPV6Address::Parse(const string & text)
+IPV6Address IPV6Address::Parse(const OSAL::String & text)
 {
     IPV6Address ipAddress;
     if (!TryParse(text, ipAddress))
     {
-        ostringstream stream;
-        stream << "IPV6Address string representation must be formatted as xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx " << endl
-               << "(or a shortened format), string is " << text;
-        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("IPV6Address string representation must be formatted as xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx ") << endl
+               << _("(or a shortened format), string is ") << text;
+        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, _("text"), stream.str());
     }
     return ipAddress;
 }
 
-bool IPV6Address::TryParse(const string & text, IPV6Address & ipAddress)
+bool IPV6Address::TryParse(const OSAL::String & text, IPV6Address & ipAddress)
 {
     in6_addr address;
-    int errorCode = inet_pton(AF_INET6, text.c_str(), &address);
+    string narrowText = ToNarrowString(text);
+    int errorCode = inet_pton(AF_INET6, narrowText.c_str(), &address);
     if (errorCode == 0)
     {
         // Weird, when specifying "localhost", the hostname does not (always) resolve
         // So create a hack to return the local address in this case.
-        if (strncasecmp(text.c_str(), "localhost", text.length()) == 0)
+        if (strncasecmp(narrowText.c_str(), "localhost", text.length()) == 0)
         {
             uint8_t localAddress[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
             memcpy(address.__in6_u.__u6_addr8, localAddress, sizeof(localAddress));
@@ -67,6 +68,21 @@ IPV6Address & IPV6Address::operator = (const IPV6Address & other)
 {
     _ipAddress = other._ipAddress;
     return *this;
+}
+
+bool IPV6Address::operator == (const Address & other) const
+{
+    if (&other == this)
+        return true;
+    if (other.Family() != SocketFamily::InternetV6)
+        return false;
+    const IPV6Address * otherAsIPV6Address = dynamic_cast<const IPV6Address *>(&other);
+    return (otherAsIPV6Address->_ipAddress == _ipAddress);
+}
+
+bool IPV6Address::operator != (const Address & other) const
+{
+    return ! this->operator ==(other);
 }
 
 bool IPV6Address::operator == (const IPV6Address & other) const
@@ -108,7 +124,7 @@ OSAL::ByteArray IPV6Address::GetBytes() const
     return _ipAddress;
 }
 
-string IPV6Address::ToString() const
+OSAL::String IPV6Address::ToString() const
 {
     ostringstream stream;
     static const size_t NumWords = AddressSize / 2;
@@ -160,13 +176,13 @@ string IPV6Address::ToString() const
     {
         if ((i == zeroSequenceStartMax) && (zeroSequenceLengthMax > 1))
         {
-            stream << "::";
+            stream << _("::");
         }
         else if ((i < zeroSequenceStartMax) || (i >= zeroSequenceStartMax + zeroSequenceLengthMax))
         {
             stream << words[i];
             if (((i + 1) < NumWords) && ((i + 1) != zeroSequenceStartMax))
-                stream << ":";
+                stream << _(":");
         }
     }
     stream << dec;

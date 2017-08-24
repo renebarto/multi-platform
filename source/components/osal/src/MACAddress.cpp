@@ -65,6 +65,21 @@ MACAddress & MACAddress::operator = (const MACAddress & other)
     return *this;
 }
 
+bool MACAddress::operator == (const Address & other) const
+{
+    if (&other == this)
+        return true;
+    if (other.Family() != SocketFamily::Packet)
+        return false;
+    const MACAddress * otherAsMACAddress = dynamic_cast<const MACAddress *>(&other);
+    return (otherAsMACAddress->macAddress == macAddress);
+}
+
+bool MACAddress::operator != (const Address & other) const
+{
+    return ! this->operator ==(other);
+}
+
 bool MACAddress::operator == (const MACAddress & other) const
 {
     if (&other == this)

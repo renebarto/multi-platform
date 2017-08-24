@@ -9,6 +9,7 @@ namespace Network {
 class DomainSocketAddress : public OSAL::Network::Address
 {
 public:
+    static const size_t AddressSize = 108;
     static DomainSocketAddress Any;
     static DomainSocketAddress None;
     static DomainSocketAddress Broadcast;
@@ -42,6 +43,8 @@ public:
     static DomainSocketAddress Parse(const OSAL::String & text);
     static bool TryParse(const OSAL::String & text, DomainSocketAddress & address);
     DomainSocketAddress & operator = (const DomainSocketAddress & other);
+    bool operator == (const Address & other) const;
+    bool operator != (const Address & other) const;
     bool operator == (const DomainSocketAddress & other) const;
     bool operator != (const DomainSocketAddress & other) const;
     uint8_t & operator[] (size_t offset);
@@ -57,7 +60,6 @@ public:
 
 private:
     OSAL::ByteArray _address;
-    static const size_t AddressSize = 108;
 
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };

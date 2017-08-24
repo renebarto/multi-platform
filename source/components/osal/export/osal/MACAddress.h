@@ -33,6 +33,8 @@ public:
     static MACAddress Parse(const OSAL::String & text);
     static bool TryParse(const OSAL::String & text, MACAddress & macAddress);
     MACAddress & operator = (const MACAddress & other);
+    bool operator == (const Address & other) const;
+    bool operator != (const Address & other) const;
     bool operator == (const MACAddress & other) const;
     bool operator != (const MACAddress & other) const;
     uint8_t & operator[] (size_t offset);

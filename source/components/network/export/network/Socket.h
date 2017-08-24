@@ -14,7 +14,7 @@ WARNING_DISABLE(4265)
 WARNING_POP
 #include "osal/ByteArray.h"
 #include "osal/Network.h"
-#include "osal/NetworkAddress-Linux.h"
+#include "osal/NetworkAddress.h"
 
 namespace Network
 {

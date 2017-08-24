@@ -1,8 +1,8 @@
 #include <iomanip>
 #include <iostream>
 
-#include "osal/NetworkAdapterList-Linux.h"
-#include "osal/NetworkAdapter-Linux.h"
+#include "osal/NetworkAdapterList.h"
+#include "osal/NetworkAdapter.h"
 
 using namespace std;
 

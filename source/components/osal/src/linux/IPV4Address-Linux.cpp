@@ -18,22 +18,23 @@ IPV4Address::~IPV4Address()
 {
 }
 
-IPV4Address IPV4Address::Parse(const string & text)
+IPV4Address IPV4Address::Parse(const OSAL::String & text)
 {
     IPV4Address ipAddress;
     if (!TryParse(text, ipAddress))
     {
-        ostringstream stream;
-        stream << "IPV4Address string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
-        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("IPV4Address string representation must be formatted as ddd.ddd.ddd.ddd, string is ") << text;
+        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, _("text"), stream.str());
     }
     return ipAddress;
 }
 
-bool IPV4Address::TryParse(const string & text, IPV4Address & ipAddress)
+bool IPV4Address::TryParse(const OSAL::String & text, IPV4Address & ipAddress)
 {
     in_addr address;
-    int errorCode = inet_pton(AF_INET, text.c_str(), &address);
+    string narrowText = ToNarrowString(text);
+    int errorCode = inet_pton(AF_INET, narrowText.c_str(), &address);
     if (errorCode == 0)
     {
         addrinfo * addressInfo;
@@ -52,6 +53,21 @@ IPV4Address & IPV4Address::operator = (const IPV4Address & other)
 {
     _ipAddress = other._ipAddress;
     return *this;
+}
+
+bool IPV4Address::operator == (const Address & other) const
+{
+    if (&other == this)
+        return true;
+    if (other.Family() != SocketFamily::InternetV4)
+        return false;
+    const IPV4Address * otherAsIPV4Address = dynamic_cast<const IPV4Address *>(&other);
+    return (otherAsIPV4Address->_ipAddress == _ipAddress);
+}
+
+bool IPV4Address::operator != (const Address & other) const
+{
+    return ! this->operator ==(other);
 }
 
 bool IPV4Address::operator == (const IPV4Address & other) const
@@ -93,12 +109,12 @@ OSAL::ByteArray IPV4Address::GetBytes() const
     return _ipAddress;
 }
 
-string IPV4Address::ToString() const
+OSAL::String IPV4Address::ToString() const
 {
     ostringstream stream;
-    stream << (int)_ipAddress[0] << ".";
-    stream << (int)_ipAddress[1] << ".";
-    stream << (int)_ipAddress[2] << ".";
+    stream << (int)_ipAddress[0] << _(".");
+    stream << (int)_ipAddress[1] << _(".");
+    stream << (int)_ipAddress[2] << _(".");
     stream << (int)_ipAddress[3];
     return stream.str();
 }

@@ -1,7 +1,6 @@
 #include "osal/linux/DomainSocketAddress.h"
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
 #include <sys/un.h>
 #include <sstream>
 #include "osal/OSAL.h"
@@ -10,10 +9,10 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
-DomainSocketAddress DomainSocketAddress::None = DomainSocketAddress("");
-DomainSocketAddress DomainSocketAddress::Any = DomainSocketAddress("");
-DomainSocketAddress DomainSocketAddress::Broadcast = DomainSocketAddress("");
-DomainSocketAddress DomainSocketAddress::LocalHost = DomainSocketAddress("");
+DomainSocketAddress DomainSocketAddress::None = DomainSocketAddress(_(""));
+DomainSocketAddress DomainSocketAddress::Any = DomainSocketAddress(_(""));
+DomainSocketAddress DomainSocketAddress::Broadcast = DomainSocketAddress(_(""));
+DomainSocketAddress DomainSocketAddress::LocalHost = DomainSocketAddress(_(""));
 
 DomainSocketAddress::~DomainSocketAddress()
 {
@@ -25,28 +24,22 @@ DomainSocketAddress DomainSocketAddress::Parse(const OSAL::String & text)
     if (!TryParse(text, address))
     {
         basic_ostringstream<OSAL::Char> stream;
-        stream << _("DomainSocketAddress string representation must be formatted as ddd.ddd.ddd.ddd, string is ") << text;
-        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
+        stream << _("DomainSocketAddress string representation must be a UNIX path of no more than ")
+               << AddressSize << _("bytes, string is ") << text;
+        throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, _("text"), stream.str());
     }
+    address._address.Set(0, reinterpret_cast<const uint8_t *>(text.c_str()), text.size());
     return address;
 }
 
 bool DomainSocketAddress::TryParse(const OSAL::String & text, DomainSocketAddress & address)
 {
-    in_addr inAddress;
-    const char * path = "";
-    int errorCode = inet_pton(AF_UNIX, text.c_str(), &inAddress);
-    if (errorCode == 0)
+    if (text.length() > AddressSize)
     {
-        addrinfo * addressInfo;
-        addrinfo hints = { 0, AF_UNIX, 0, 0, 0, nullptr, nullptr, nullptr };
-        errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);
-        if (errorCode != 0)
-            return false;
-        path = ((sockaddr_un *)(addressInfo[0].ai_addr))->sun_path;
-        freeaddrinfo(addressInfo);
+        address = DomainSocketAddress();
+        return false;
     }
-    address = DomainSocketAddress(path);
+    address = DomainSocketAddress(text);
     return true;
 }
 
@@ -54,6 +47,21 @@ DomainSocketAddress & DomainSocketAddress::operator = (const DomainSocketAddress
 {
     _address = other._address;
     return *this;
+}
+
+bool DomainSocketAddress::operator == (const Address & other) const
+{
+    if (&other == this)
+        return true;
+    if (other.Family() != SocketFamily::Unix)
+        return false;
+    const DomainSocketAddress * otherAsDomainSocketAddress = dynamic_cast<const DomainSocketAddress *>(&other);
+    return (otherAsDomainSocketAddress->_address == _address);
+}
+
+bool DomainSocketAddress::operator != (const Address & other) const
+{
+    return ! this->operator ==(other);
 }
 
 bool DomainSocketAddress::operator == (const DomainSocketAddress & other) const
@@ -99,12 +107,12 @@ OSAL::ByteArray DomainSocketAddress::GetBytes() const
 OSAL::String DomainSocketAddress::ToString() const
 {
     basic_ostringstream<OSAL::Char> stream;
-    stream << reinterpret_cast<char*>(_address.Data(), _address.Size());
+    stream << reinterpret_cast<const char *>(_address.Data());
     return stream.str();
 }
 
 void DomainSocketAddress::SetData(const OSAL::ByteArray & data, size_t offset)
 {
-    assert(offset + AddressSize <= data.Size());
-    _address.Set(0, data.Data() + offset, AddressSize);
+    assert(data.Size() - offset <= AddressSize);
+    _address.Set(0, data.Data() + offset, data.Size() - offset);
 }
