@@ -80,8 +80,8 @@ void Socket::Open(OSAL::Network::SocketFamily socketFamily, SocketType socketTyp
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "socket() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("socket() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -101,8 +101,8 @@ void Socket::Close()
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "close() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("close() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -121,8 +121,8 @@ void Socket::SetSocketOption(SocketOptionLevel level, SocketOption socketOption,
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "setsockopt() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("setsockopt() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -136,8 +136,8 @@ void Socket::GetSocketOption(SocketOptionLevel level, SocketOption socketOption,
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "getsockopt() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("getsockopt() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -244,8 +244,8 @@ bool Socket::GetBlockingMode()
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -260,8 +260,8 @@ void Socket::SetBlockingMode(bool value)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -271,8 +271,8 @@ void Socket::SetBlockingMode(bool value)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "fcntl() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -287,8 +287,8 @@ void Socket::Bind(const sockaddr * address, socklen_t addressLength)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "bind() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("bind() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -311,8 +311,8 @@ bool Socket::Connect(sockaddr const * serverAddress, socklen_t serverAddressLeng
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "connect() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("connect() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 
         if ((errorCode == EINPROGRESS) || (errorCode == EALREADY))
@@ -326,8 +326,8 @@ bool Socket::Connect(sockaddr const * serverAddress, socklen_t serverAddressLeng
             {
                 errorCode = errno;
 
-                ostringstream stream;
-                stream << "poll() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+                basic_ostringstream<OSAL::Char> stream;
+                stream << _("poll() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
                 Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
             }
             else if (pollResult == 0)
@@ -356,8 +356,8 @@ void Socket::Listen(int numListeners)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "listen() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("listen() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -390,8 +390,8 @@ bool Socket::Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen
         {
             int errorCode = errno;
 
-            ostringstream stream;
-            stream << "accept() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+            basic_ostringstream<OSAL::Char> stream;
+            stream << _("accept() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
             Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 
             if (((errorCode == EWOULDBLOCK) || (errorCode == EAGAIN)) && (waitTime > 0))
@@ -428,8 +428,8 @@ void Socket::GetLocalAddress(sockaddr * address, socklen_t * addressLength)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "getsockname() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("getsockname() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -443,8 +443,8 @@ void Socket::GetRemoteAddress(sockaddr * address, socklen_t * addressLength)
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "getpeername() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("getpeername() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -483,8 +483,8 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
             int errorCode = errno;
 
 #ifdef TRACE
-            ostringstream stream;
-            stream << "recv() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+            basic_ostringstream<OSAL::Char> stream;
+            stream << _("recv() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
             Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 #endif
             if ((errorCode != EINTR) && (errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
@@ -527,8 +527,8 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
         {
             int errorCode = errno;
 
-            ostringstream stream;
-            stream << "send() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+            basic_ostringstream<OSAL::Char> stream;
+            stream << _("send() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
             Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
             if ((errorCode == EPIPE) || (errorCode == ECONNRESET))
@@ -553,8 +553,9 @@ void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t *
     {
         int errorCode = errno;
 
-        ostringstream stream;
-        stream << "sendto() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("sendto() failed, errorcode ") << dec << errorCode 
+               << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
@@ -569,8 +570,9 @@ size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_
         int errorCode = errno;
 
 #ifdef TRACE
-        ostringstream stream;
-        stream << "recvfrom() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+        basic_ostringstream<OSAL::Char> stream;
+        stream << _("recvfrom() failed, errorcode ") << dec << errorCode 
+               << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
         Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 #endif
 
@@ -582,9 +584,9 @@ size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_
     return numBytes;
 }
 
-string Socket::ToString() const
+OSAL::String Socket::ToString() const
 {
-    ostringstream stream;
-    stream << OSAL::OS::TypeName(*this) << " handle = " << socketHandle;
+    basic_ostringstream<OSAL::Char> stream;
+    stream << OSAL::OS::TypeName(*this) << _(" handle = ") << socketHandle;
     return stream.str();
 }

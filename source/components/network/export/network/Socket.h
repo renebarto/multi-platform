@@ -114,7 +114,7 @@ public:
     void            SendTo(sockaddr * address, socklen_t addressLength, const uint8_t * data, size_t bytesToSend);
     size_t          ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_t * data, size_t bufferSize);
 
-    virtual std::string ToString() const;
+    virtual OSAL::String ToString() const;
 
 protected:
     OSAL::Network::SocketHandle socketHandle;
@@ -123,5 +123,10 @@ protected:
     typedef std::lock_guard<Mutex> Lock;
     Mutex mutex;
 };
+
+inline void PrintTo(Socket const & socket, std::basic_ostream<OSAL::Char> & stream)
+{
+    stream << socket.ToString();
+}
 
 } // namespace Network

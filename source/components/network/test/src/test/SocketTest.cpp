@@ -36,7 +36,7 @@ TEST_FIXTURE(SocketTest, Construct)
 {
     EXPECT_EQ(OSAL::Network::InvalidHandleValue, target.GetHandle());
     EXPECT_TRUE(target.IsClosed());
-    string expected = "Network::Socket handle = -1";
+    OSAL::String expected = _("Network::Socket handle = -1");
     EXPECT_EQ(expected, target.ToString());
 }
 
@@ -96,19 +96,19 @@ TEST_FIXTURE(SocketTest, GetSetHandle)
 {
     EXPECT_EQ(OSAL::Network::InvalidHandleValue, target.GetHandle());
 
-    ostringstream stream;
+    std::basic_ostringstream<OSAL::Char> stream;
     OSAL::Network::SocketHandle handle = 1234;
     target.SetHandle(handle);
     EXPECT_FALSE(target.IsClosed());
-    stream << "Network::Socket handle = " << handle;
-    string expected = stream.str();
-    string actual = target.ToString();
+    stream << _("Network::Socket handle = ") << handle;
+    OSAL::String expected = stream.str();
+    OSAL::String actual = target.ToString();
     EXPECT_EQ(handle, target.GetHandle());
     EXPECT_EQ(expected, actual);
 
     stream.clear();
-    stream.str("");
-    stream << "Network::Socket handle = " << OSAL::Network::InvalidHandleValue;
+    stream.str(_(""));
+    stream << _("Network::Socket handle = ") << OSAL::Network::InvalidHandleValue;
     target.SetHandle(OSAL::Network::InvalidHandleValue);
     expected = stream.str();
     actual = target.ToString();
@@ -293,9 +293,21 @@ TEST_FIXTURE(SocketTest, SetSendTimeout)
 TEST_FIXTURE(SocketTest, ToString)
 {
     target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
-    ostringstream stream;
-    stream << "Network::Socket handle = " << target.GetHandle();
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << _("Network::Socket handle = ") << target.GetHandle();
     EXPECT_EQ(stream.str(), target.ToString());
+}
+
+TEST_FIXTURE(SocketTest, PrintTo)
+{
+    target.Open(OSAL::Network::SocketFamily::Internet, SocketType::Datagram);
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << _("Network::Socket handle = ") << target.GetHandle();
+    OSAL::String expected = stream.str();
+    stream.str(_(""));
+    PrintTo(target, stream);
+    OSAL::String actual = stream.str();
+    EXPECT_EQ(expected, actual);
 }
 
 } // TEST_SUITE(network)
