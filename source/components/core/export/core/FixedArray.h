@@ -61,9 +61,9 @@ protected:
 };
 
 template<class T>
-FixedArray<T>::FixedArray(size_t size) :
-    _size(0),
-    _data(nullptr)
+FixedArray<T>::FixedArray(size_t size)
+    : _size(0)
+    , _data(nullptr)
 {
     AllocateSize(size);
     this->_size = size;
@@ -71,9 +71,9 @@ FixedArray<T>::FixedArray(size_t size) :
 }
 
 template<class T>
-FixedArray<T>::FixedArray(const T * data, size_t size) :
-    _size(0),
-    _data(nullptr)
+FixedArray<T>::FixedArray(const T * data, size_t size)
+    : _size(0)
+    , _data(nullptr)
 {
     if (size < 0)
         return;
@@ -82,27 +82,27 @@ FixedArray<T>::FixedArray(const T * data, size_t size) :
 }
 
 template<class T>
-FixedArray<T>::FixedArray(const FixedArray<T> & other) :
-    _size(),
-    _data(nullptr)
+FixedArray<T>::FixedArray(const FixedArray<T> & other)
+    : _size()
+    , _data(nullptr)
 {
     AllocateSize(other.Size());
     Set(0, other.Data(), other.Size());
 }
 
 template<class T>
-FixedArray<T>::FixedArray(FixedArray<T> && other) :
-    _size(other._size),
-    _data(other._data)
+FixedArray<T>::FixedArray(FixedArray<T> && other)
+    : _size(other._size)
+    , _data(other._data)
 {
     other._size = 0;
     other._data = nullptr;
 }
 
 template<class T>
-FixedArray<T>::FixedArray(std::initializer_list<T> data) :
-    _size(0),
-    _data(nullptr)
+FixedArray<T>::FixedArray(std::initializer_list<T> data)
+    : _size(0)
+    , _data(nullptr)
 {
     AllocateSize(data.size());
     size_t offset = 0;
@@ -205,6 +205,7 @@ FixedArray<T> & FixedArray<T>::operator = (FixedArray<T> && other)
 {
     if (this != &other)
     {
+        Free();
         _size = other._size;
         _data = other._data;
         other._size = 0;
