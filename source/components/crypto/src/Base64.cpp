@@ -107,17 +107,17 @@ size_t Base64::Decode(const char * dataIn, size_t dataLengthIn, char * dataOut)
     size_t charGroups = length / GroupSizeChars;
     size_t charsLeftOver = length % GroupSizeChars;
 
+    if (length >= LineSizeChars && dataIn[LineSizeChars] == '\n')   // Verify that newlines where used.
+        length -= length / (LineSizeChars + 1);
+    charGroups = length / GroupSizeChars;
+    charsLeftOver = length % GroupSizeChars;
+    size_t numBytes = charGroups * GroupSizeBytes;
+    if (charsLeftOver >= 2)
+        ++numBytes;
+    if (charsLeftOver >= 3)
+        ++numBytes;
     if (dataOut == nullptr)
     {
-        if (length >= LineSizeChars && dataIn[LineSizeChars] == '\n')   // Verify that newlines where used.
-            length -= length / (LineSizeChars + 1);
-        charGroups = length / GroupSizeChars;
-        charsLeftOver = length % GroupSizeChars;
-        size_t numBytes = charGroups * GroupSizeBytes;
-        if (charsLeftOver >= 2)
-            ++numBytes;
-        if (charsLeftOver >= 3)
-            ++numBytes;
         return numBytes;
     }
     size_t offsetIn = 0;
