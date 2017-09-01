@@ -1,10 +1,8 @@
 #include "core/AutoEvent.h"
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <osal/OSAL.h>
-#include <osal/Time.h>
 
 using namespace std;
 using namespace Core;
@@ -91,7 +89,7 @@ void AutoEvent::Create()
 {
     Destroy();
     isAssigned = false;
-    semaphore = reinterpret_cast<AutoEventHandle>(OSAL::OS::CreateSemaphore());
+    semaphore = OSAL::OS::CreateSemaphore();
     if (semaphore == nullptr)
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
 }
