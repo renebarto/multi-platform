@@ -11,20 +11,22 @@ include(${CMAKE_SOURCE_DIR}/cmake/display_list.cmake)
 # FLAGS_C_RELEASE           Compiler flags for release build, for langurage C
 # FLAGS_C_MINSIZEREL        Compiler flags for release min size build, for langurage C
 # FLAGS_C_RELWITHDEBINFO    Compiler flags for release with debug info build, for langurage C
-# COMPILER_DEFINITIONS                   Compiler definitions for all platforms, for langurage C and C++
-# COMPILER_DEFINITIONS_DEBUG             Compiler definitions for debug build, for langurage C and C++
-# COMPILER_DEFINITIONS_RELEASE           Compiler definitions for release build, for langurage C and C++
-# COMPILER_DEFINITIONS_MINSIZEREL        Compiler definitions for release min size build, for langurage C and C++
-# COMPILER_DEFINITIONS_RELWITHDEBINFO    Compiler definitions for release with debug info build, for langurage C and C++
+# DEFINES                   Compiler definitions for all platforms, for langurage C and C++
+# DEFINES_DEBUG             Compiler definitions for debug build, for langurage C and C++
+# DEFINES_RELEASE           Compiler definitions for release build, for langurage C and C++
+# DEFINES_MINSIZEREL        Compiler definitions for release min size build, for langurage C and C++
+# DEFINES_RELWITHDEBINFO    Compiler definitions for release with debug info build, for langurage C and C++
+# LINK_FLAGS                Linker specific options
+# LINK_LIBRARIES            Linker libraries to be linked to all targets
 #
 # The following standard variables are set and placed in the cache (by appending the contents of the mentioned
 # lists, and subsequently converting the lists to space separated string):
 #
-# COMPILER_DEFINITIONS                           COMPILER_DEFINITIONS
-# COMPILER_DEFINITIONS_DEBUG                     COMPILER_DEFINITIONS COMPILER_DEFINITIONS_DEBUG
-# COMPILER_DEFINITIONS_RELEASE                   COMPILER_DEFINITIONS COMPILER_DEFINITIONS_RELEASE
-# COMPILER_DEFINITIONS_MINSIZEREL                COMPILER_DEFINITIONS COMPILER_DEFINITIONS_MINSIZEREL
-# COMPILER_DEFINITIONS_RELWITHDEBINFO            COMPILER_DEFINITIONS COMPILER_DEFINITIONS_RELWITHDEBINFO
+# COMPILER_DEFINITIONS                       DEFINES
+# COMPILER_DEFINITIONS_DEBUG                 DEFINES DEFINES_DEBUG
+# COMPILER_DEFINITIONS_RELEASE               DEFINES DEFINES_RELEASE
+# COMPILER_DEFINITIONS_MINSIZEREL            DEFINES DEFINES_MINSIZEREL
+# COMPILER_DEFINITIONS_RELWITHDEBINFO        DEFINES DEFINES_RELWITHDEBINFO
 # COMPILER_OPTIONS_CXX_FLAGS                 FLAGS_CXX
 # COMPILER_OPTIONS_CXX_FLAGS_DEBUG           FLAGS_CXX FLAGS_CXX_DEBUG
 # COMPILER_OPTIONS_CXX_FLAGS_RELEASE         FLAGS_CXX FLAGS_CXX_RELEASE
@@ -35,6 +37,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/display_list.cmake)
 # COMPILER_OPTIONS_C_FLAGS_RELEASE           FLAGS_C FLAGS_C_RELEASE
 # COMPILER_OPTIONS_C_FLAGS_MINSIZEREL        FLAGS_C FLAGS_C_MINSIZEREL
 # COMPILER_OPTIONS_C_FLAGS_RELWITHDEBINFO    FLAGS_C FLAGS_C_RELWITHDEBINFO
+# LINKER_OPTIONS                             LINK_FLAGS
+# LINKER_LIBRARIES                           LINK_LIBRARIES
 
 macro(convert_default_options)
     set(COMPILER_DEFINITIONS_DEBUG ${DEFINES} ${DEFINES_DEBUG})
@@ -51,6 +55,9 @@ macro(convert_default_options)
     set(COMPILER_OPTIONS_C_RELEASE ${FLAGS_C} ${FLAGS_C_RELEASE})
     set(COMPILER_OPTIONS_C_MINSIZEREL ${FLAGS_C} ${FLAGS_C_MINSIZEREL})
     set(COMPILER_OPTIONS_C_RELWITHDEBINFO ${FLAGS_C} ${FLAGS_C_RELWITHDEBINFO})
+
+    set(LINKER_OPTIONS ${LINK_FLAGS})
+    set(LINKER_LIBRARIES ${LINK_LIBRARIES})
 
     if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         set(COMPILER_DEFINITIONS ${COMPILER_DEFINITIONS_DEBUG})
@@ -91,5 +98,8 @@ macro(convert_default_options)
         display_list("Active COMPILER_DEFINITIONS           : " ${COMPILER_DEFINITIONS})
         display_list("Active COMPILER_OPTIONS_CXX           : " ${COMPILER_OPTIONS_CXX})
         display_list("Active COMPILER_OPTIONS_C             : " ${COMPILER_OPTIONS_C})
+
+        display_list("Active LINKER_OPTIONS                 : " ${LINKER_OPTIONS})
+        display_list("Active LINKER_LIBRARIES               : " ${LINKER_LIBRARIES})
     endif()
 endmacro()

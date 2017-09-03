@@ -51,6 +51,9 @@ function(show_target_properties target)
     get_target_property(RUNTIME_LOCATION ${target} RUNTIME_OUTPUT_DIRECTORY)
     display_list("Target binary location            : " ${RUNTIME_LOCATION})
 
+    get_target_property(TARGET_LINK_FLAGS ${target} LINK_FLAGS)
+    display_list("Target link flags                 : " ${TARGET_LINK_FLAGS})
+
     get_target_property(TARGET_VERSION ${target} VERSION)
     display_list("Target version                    : " ${TARGET_VERSION})
 

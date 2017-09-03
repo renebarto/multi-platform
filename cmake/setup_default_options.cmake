@@ -18,6 +18,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/convert_default_options.cmake)
 # DEFINES_RELEASE           Compiler definitions for release build, for langurage C and C++
 # DEFINES_MINSIZEREL        Compiler definitions for release min size build, for langurage C and C++
 # DEFINES_RELWITHDEBINFO    Compiler definitions for release with debug info build, for langurage C and C++
+# LINK_FLAGS                Linker specific options
+# LINK_LIBRARIES            Generic libraries to be linked
 #
 macro(setup_default_options)
     if(WIN_MSVC)
@@ -45,6 +47,9 @@ macro(setup_default_options)
         set(DEFINES_MINSIZEREL NDEBUG)
         set(DEFINES_RELWITHDEBINFO NDEBUG)
 
+        set(LINK_FLAGS )
+        set(LINK_LIBRARIES )
+
     elseif(MINGW)
         set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
         set(FLAGS_CXX_DEBUG -O0 -g)
@@ -63,6 +68,9 @@ macro(setup_default_options)
         set(DEFINES_RELEASE NDEBUG)
         set(DEFINES_MINSIZEREL NDEBUG)
         set(DEFINES_RELWITHDEBINFO NDEBUG)
+
+        set(LINK_FLAGS )
+        set(LINK_LIBRARIES )
 
     elseif(LINUX)
         set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
@@ -83,6 +91,16 @@ macro(setup_default_options)
         set(DEFINES_MINSIZEREL NDEBUG)
         set(DEFINES_RELWITHDEBINFO NDEBUG)
 
+        set(LINK_FLAGS )
+        set(LINK_LIBRARIES )
+
+        if (MEASURE_COVERAGE)
+            list(APPEND FLAGS_C -fprofile-arcs -ftest-coverage)
+            list(APPEND FLAGS_CXX -fprofile-arcs -ftest-coverage)
+            list(APPEND LINK_FLAGS --coverage)
+            list(APPEND LINK_LIBRARIES gcov)
+        endif()
+
     elseif(APPLE)
         set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
         set(FLAGS_CXX_DEBUG -O0 -g)
@@ -101,6 +119,16 @@ macro(setup_default_options)
         set(DEFINES_RELEASE NDEBUG)
         set(DEFINES_MINSIZEREL NDEBUG)
         set(DEFINES_RELWITHDEBINFO NDEBUG)
+
+        set(LINK_FLAGS )
+        set(LINK_LIBRARIES )
+
+        if (MEASURE_COVERAGE)
+            list(APPEND FLAGS_C -fprofile-arcs -ftest-coverage)
+            list(APPEND FLAGS_CXX -fprofile-arcs -ftest-coverage)
+            list(APPEND LINK_FLAGS --coverage)
+            list(APPEND LINK_LIBRARIES gcov)
+        endif()
 
     else()
         display_list("Unsupported platform " ${CMAKE_HOST_SYSTEM})
@@ -141,6 +169,9 @@ macro(setup_default_options)
         display_list("C Flags - release:                  " ${FLAGS_C_RELEASE})
         display_list("C Flags - release min size:         " ${FLAGS_C_MINSIZEREL})
         display_list("C Flags - release debug info:       " ${FLAGS_C_RELWITHDEBINFO})
+
+        display_list("Link Flags:                         " ${LINK_FLAGS})
+        display_list("Link Libraries:                     " ${LINK_LIBRARIES})
     endif()
     convert_default_options()
 endmacro()
