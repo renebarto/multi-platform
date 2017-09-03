@@ -98,14 +98,14 @@ public:
     int             GetSendTimeout();
     void            SetSendTimeout(int timeoutMS);
 
-    void            Bind(sockaddr const * address, socklen_t addressLength);
+    void            Bind(OSAL::Network::AddressPtr address);
 
-    bool            Connect(sockaddr const * serverAddress, socklen_t serverAddressLength, OSAL::Network::SocketTimeout timeout);
+    bool            Connect(OSAL::Network::AddressPtr serverAddress, OSAL::Network::SocketTimeout timeout);
     void            Listen(int numListeners);
-    bool            Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen_t * clientAddressLength, OSAL::Network::SocketTimeout timeout);
+    bool            Accept(Socket & connectionSocket, OSAL::Network::AddressPtr & clientAddress, OSAL::Network::SocketTimeout timeout);
 
-    void            GetLocalAddress(sockaddr * address, socklen_t * addressLength);
-    void            GetRemoteAddress(sockaddr * address, socklen_t * addressLength);
+    void            GetLocalAddress(OSAL::Network::AddressPtr & address);
+    void            GetRemoteAddress(OSAL::Network::AddressPtr & address);
 
     OSAL::ByteArray Receive(int flags);
     size_t          Receive(uint8_t * data, size_t bufferSize, int flags);
@@ -117,11 +117,12 @@ public:
     virtual OSAL::String ToString() const;
 
 protected:
-    OSAL::Network::SocketHandle socketHandle;
+    OSAL::Network::SocketFamily _socketFamily;
+    OSAL::Network::SocketHandle _socketHandle;
 
     typedef std::recursive_mutex Mutex;
     typedef std::lock_guard<Mutex> Lock;
-    Mutex mutex;
+    Mutex _mutex;
 };
 
 inline void PrintTo(Socket const & socket, std::basic_ostream<OSAL::Char> & stream)

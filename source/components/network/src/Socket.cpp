@@ -20,19 +20,19 @@ const uint32_t Socket::TimeWait = 10;
 static size_t BufferSize = 4096;
 
 Socket::Socket()
-    : socketHandle(OSAL::Network::InvalidHandleValue)
+    : _socketHandle(OSAL::Network::InvalidHandleValue)
 {
 }
 
 Socket::Socket(Socket const & other)
-    : socketHandle(other.socketHandle)
+    : _socketHandle(other._socketHandle)
 {
 }
 
 Socket::Socket(Socket && other)
-    : socketHandle(other.socketHandle)
+    : _socketHandle(other._socketHandle)
 {
-    other.socketHandle = OSAL::Network::InvalidHandleValue;
+    other._socketHandle = OSAL::Network::InvalidHandleValue;
 }
 
 Socket::~Socket()
@@ -44,7 +44,7 @@ Socket & Socket::operator = (Socket const & other)
 {
     if (this != & other)
     {
-        socketHandle = other.socketHandle;
+        _socketHandle = other._socketHandle;
     }
     return *this;
 }
@@ -53,29 +53,29 @@ Socket & Socket::operator = (Socket && other)
 {
     if (this != & other)
     {
-        socketHandle = other.socketHandle;
-        other.socketHandle = OSAL::Network::InvalidHandleValue;
+        _socketHandle = other._socketHandle;
+        other._socketHandle = OSAL::Network::InvalidHandleValue;
     }
     return *this;
 }
 
 OSAL::Network::SocketHandle Socket::GetHandle() const
 {
-    return socketHandle;
+    return _socketHandle;
 }
 
 void Socket::SetHandle(OSAL::Network::SocketHandle handle)
 {
-    socketHandle = handle;
+    _socketHandle = handle;
 }
 
 void Socket::Open(OSAL::Network::SocketFamily socketFamily, SocketType socketType)
 {
     Close();
-    Lock lock(mutex);
+    Lock lock(_mutex);
     int result = socket((int)socketFamily, (int)socketType, 0);
     if (result != -1)
-        socketHandle = result;
+        SetHandle(result);
     if (result == -1)
     {
         int errorCode = errno;
@@ -90,12 +90,12 @@ void Socket::Open(OSAL::Network::SocketFamily socketFamily, SocketType socketTyp
 
 void Socket::Close()
 {
-    Lock lock(mutex);
+    Lock lock(_mutex);
     int result = 0;
-    if (socketHandle != OSAL::Network::InvalidHandleValue)
+    if (GetHandle() != OSAL::Network::InvalidHandleValue)
     {
-        result = close(socketHandle);
-        socketHandle = OSAL::Network::InvalidHandleValue;
+        result = close(GetHandle());
+        SetHandle(OSAL::Network::InvalidHandleValue);
     }
     if (result == -1)
     {
@@ -111,7 +111,7 @@ void Socket::Close()
 
 bool Socket::IsClosed()
 {
-    return (socketHandle == OSAL::Network::InvalidHandleValue);
+    return (GetHandle() == OSAL::Network::InvalidHandleValue);
 }
 
 void Socket::SetSocketOption(SocketOptionLevel level, SocketOption socketOption, void * optionValue, int optionLength)
@@ -279,10 +279,10 @@ void Socket::SetBlockingMode(bool value)
     }
 }
 
-void Socket::Bind(const sockaddr * address, socklen_t addressLength)
+void Socket::Bind(OSAL::Network::AddressPtr address)
 {
 
-    int errorCode = ::bind(this->GetHandle(), address, addressLength);
+    int errorCode = OSAL::Network::Bind(this->GetHandle(), address);
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -295,7 +295,7 @@ void Socket::Bind(const sockaddr * address, socklen_t addressLength)
     }
 }
 
-bool Socket::Connect(sockaddr const * serverAddress, socklen_t serverAddressLength, OSAL::Network::SocketTimeout timeout)
+bool Socket::Connect(OSAL::Network::AddressPtr serverAddress, OSAL::Network::SocketTimeout timeout)
 {
     if (timeout != OSAL::Network::InfiniteTimeout)
     {
@@ -306,7 +306,7 @@ bool Socket::Connect(sockaddr const * serverAddress, socklen_t serverAddressLeng
         SetBlockingMode(true);
     }
 
-    int result = ::connect(GetHandle(), serverAddress, serverAddressLength);
+    int result = OSAL::Network::Connect(GetHandle(), serverAddress);
     if (result == -1)
     {
         int errorCode = errno;
@@ -364,9 +364,9 @@ void Socket::Listen(int numListeners)
     }
 }
 
-bool Socket::Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen_t * clientAddressLength, OSAL::Network::SocketTimeout timeout)
+bool Socket::Accept(Socket & connectionSocket, OSAL::Network::AddressPtr & clientAddress, OSAL::Network::SocketTimeout timeout)
 {
-    Lock lock(mutex);
+    Lock lock(_mutex);
     if (timeout != OSAL::Network::InfiniteTimeout)
     {
         SetBlockingMode(false);
@@ -385,7 +385,7 @@ bool Socket::Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen
     int result = 0;
     do
     {
-        result = ::accept(GetHandle(), clientAddress, clientAddressLength);
+        result = OSAL::Network::Accept(GetHandle(), _socketFamily, clientAddress);
         if (result == -1)
         {
             int errorCode = errno;
@@ -421,9 +421,9 @@ bool Socket::Accept(Socket & connectionSocket, sockaddr * clientAddress, socklen
     return (result != -1);
 }
 
-void Socket::GetLocalAddress(sockaddr * address, socklen_t * addressLength)
+void Socket::GetLocalAddress(OSAL::Network::AddressPtr & address)
 {
-    int errorCode = ::getsockname(this->GetHandle(), (sockaddr *)address, addressLength);
+    int errorCode = OSAL::Network::GetSockName(GetHandle(), _socketFamily, address);
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -436,9 +436,9 @@ void Socket::GetLocalAddress(sockaddr * address, socklen_t * addressLength)
     }
 }
 
-void Socket::GetRemoteAddress(sockaddr * address, socklen_t * addressLength)
+void Socket::GetRemoteAddress(OSAL::Network::AddressPtr & address)
 {
-    int errorCode = ::getpeername(this->GetHandle(), address, addressLength);
+    int errorCode = OSAL::Network::GetPeerName(GetHandle(), _socketFamily, address);
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -477,7 +477,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
     {
         ssize_t result = 0;
 
-        result = ::recv(socketHandle, data, bufferSize, flags);
+        result = ::recv(GetHandle(), data, bufferSize, flags);
         if (result == -1)
         {
             int errorCode = errno;
@@ -522,7 +522,7 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
 
     while (numBytesLeftToSend > 0)
     {
-        ssize_t numBytes = ::send(socketHandle, data + offset, numBytesLeftToSend, flags);
+        ssize_t numBytes = ::send(GetHandle(), data + offset, numBytesLeftToSend, flags);
         if (numBytes == -1)
         {
             int errorCode = errno;
@@ -548,7 +548,7 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
 
 void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t * data, size_t bytesToSend)
 {
-    int errorCode = ::sendto(socketHandle, data, bytesToSend, 0, address, addressLength);
+    int errorCode = ::sendto(GetHandle(), data, bytesToSend, 0, address, addressLength);
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -564,7 +564,7 @@ void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t *
 
 size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_t * data, size_t bufferSize)
 {
-    ssize_t numBytes = ::recvfrom(socketHandle, data, bufferSize, 0, address, addressLength);
+    ssize_t numBytes = ::recvfrom(GetHandle(), data, bufferSize, 0, address, addressLength);
     if (numBytes == -1)
     {
         int errorCode = errno;
@@ -587,6 +587,6 @@ size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_
 OSAL::String Socket::ToString() const
 {
     basic_ostringstream<OSAL::Char> stream;
-    stream << OSAL::OS::TypeName(*this) << _(" handle = ") << socketHandle;
+    stream << OSAL::OS::TypeName(*this) << _(" handle = ") << GetHandle();
     return stream.str();
 }
