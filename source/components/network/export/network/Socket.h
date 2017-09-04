@@ -19,43 +19,6 @@ WARNING_POP
 namespace Network
 {
 
-enum class SocketType
-{
-    Stream = SOCK_STREAM,
-    Datagram = SOCK_DGRAM,
-    Raw = SOCK_RAW,
-    SeqPacket = SOCK_SEQPACKET,
-};
-
-enum class SocketOptionLevel
-{
-    Socket = SOL_SOCKET,
-};
-
-enum class SocketOption
-{
-    Debug = SO_DEBUG,
-    ReuseAddress = SO_REUSEADDR,
-    Type = SO_TYPE,
-    Error = SO_ERROR,
-    DontRoute = SO_DONTROUTE,
-    Broadcast = SO_BROADCAST,
-    SendBuffer = SO_SNDBUF,
-    ReceiveBuffer = SO_RCVBUF,
-    SendBufferForce = SO_SNDBUFFORCE,
-    ReceiveBufferForce = SO_RCVBUFFORCE,
-    KeepAlive = SO_KEEPALIVE,
-    OutOfBandInline = SO_OOBINLINE,
-    NoCheck = SO_NO_CHECK,
-    Priority = SO_PRIORITY,
-    Linger = SO_LINGER,
-    BSDCompatibility = SO_BSDCOMPAT,
-    ReceiveTimeout = SO_RCVTIMEO,
-    SendTimeout = SO_SNDTIMEO,
-    BindToDevice = SO_BINDTODEVICE,
-    Timestamping = SO_TIMESTAMPING
-};
-
 class Socket
 {
 protected:
@@ -73,19 +36,19 @@ public:
     OSAL::Network::SocketHandle GetHandle() const;
     void            SetHandle(OSAL::Network::SocketHandle handle);
 
-    void            Open(OSAL::Network::SocketFamily socketFamily, SocketType socketType);
+    void            Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::SocketType socketType);
     void            Close();
     bool            IsClosed();
 
-    void            SetSocketOption(SocketOptionLevel level, SocketOption socketOption, void * optionValue, int optionLength);
-    void            GetSocketOption(SocketOptionLevel level, SocketOption socketOption, void * optionValue, unsigned int * optionLength);
-    void            SetSocketOption(SocketOption socketOption, void * optionValue, unsigned int optionLength);
-    void            GetSocketOption(SocketOption socketOption, void * optionValue, unsigned int * optionLength);
+    void            SetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength);
+    void            GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength);
+    void            SetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength);
+    void            GetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength);
 
-    bool            GetSocketOptionBool(SocketOption socketOption);
-    void            SetSocketOptionBool(SocketOption socketOption, bool value);
-    int             GetSocketOptionInt(SocketOption socketOption);
-    void            SetSocketOptionInt(SocketOption socketOption, int value);
+    bool            GetSocketOptionBool(OSAL::Network::SocketOption socketOption);
+    void            SetSocketOptionBool(OSAL::Network::SocketOption socketOption, bool value);
+    int             GetSocketOptionInt(OSAL::Network::SocketOption socketOption);
+    void            SetSocketOptionInt(OSAL::Network::SocketOption, int value);
 
     bool            GetBroadcastOption();
     void            SetBroadcastOption(bool value);
@@ -111,8 +74,8 @@ public:
     size_t          Receive(uint8_t * data, size_t bufferSize, int flags);
     bool            Send(OSAL::ByteArray & data, size_t bytesToSend, int flags);
     bool            Send(const uint8_t * data, size_t bytesToSend, int flags);
-    void            SendTo(sockaddr * address, socklen_t addressLength, const uint8_t * data, size_t bytesToSend);
-    size_t          ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_t * data, size_t bufferSize);
+    void            SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * data, size_t bytesToSend);
+    size_t          ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, size_t bufferSize);
 
     virtual OSAL::String ToString() const;
 

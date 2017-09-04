@@ -1,13 +1,6 @@
 #include "network/Socket.h"
 
-#include <fcntl.h>
 #include <poll.h>
-#include <ifaddrs.h>
-#include <cstring>
-#include <unistd.h>
-#include <net/if.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
 #include "core/DefaultLogger.h"
 #include "core/Core.h"
 #include "core/Util.h"
@@ -69,11 +62,11 @@ void Socket::SetHandle(OSAL::Network::SocketHandle handle)
     _socketHandle = handle;
 }
 
-void Socket::Open(OSAL::Network::SocketFamily socketFamily, SocketType socketType)
+void Socket::Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::SocketType socketType)
 {
     Close();
     Lock lock(_mutex);
-    int result = socket((int)socketFamily, (int)socketType, 0);
+    int result = OSAL::Network::CreateSocket(socketFamily, socketType);
     if (result != -1)
         SetHandle(result);
     if (result == -1)
@@ -94,7 +87,7 @@ void Socket::Close()
     int result = 0;
     if (GetHandle() != OSAL::Network::InvalidHandleValue)
     {
-        result = close(GetHandle());
+        result = OSAL::Network::CloseSocket(GetHandle());
         SetHandle(OSAL::Network::InvalidHandleValue);
     }
     if (result == -1)
@@ -114,9 +107,11 @@ bool Socket::IsClosed()
     return (GetHandle() == OSAL::Network::InvalidHandleValue);
 }
 
-void Socket::SetSocketOption(SocketOptionLevel level, SocketOption socketOption, void * optionValue, int optionLength)
+void Socket::SetSocketOption(OSAL::Network::SocketOptionLevel level,
+                             OSAL::Network::SocketOption socketOption,
+                             void * optionValue, unsigned int optionLength)
 {
-    int result = setsockopt(this->GetHandle(), (int)level, (int)socketOption, optionValue, optionLength);
+    int result = OSAL::Network::SetSocketOption(this->GetHandle(), level, socketOption, optionValue, optionLength);
     if (result == -1)
     {
         int errorCode = errno;
@@ -129,9 +124,9 @@ void Socket::SetSocketOption(SocketOptionLevel level, SocketOption socketOption,
     }
 }
 
-void Socket::GetSocketOption(SocketOptionLevel level, SocketOption socketOption, void * optionValue, unsigned int * optionLength)
+void Socket::GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength)
 {
-    int result = getsockopt(this->GetHandle(), (int)level, (int)socketOption, optionValue, optionLength);
+    int result = OSAL::Network::GetSocketOption(this->GetHandle(), level, socketOption, optionValue, optionLength);
     if (result == -1)
     {
         int errorCode = errno;
@@ -144,61 +139,61 @@ void Socket::GetSocketOption(SocketOptionLevel level, SocketOption socketOption,
     }
 }
 
-void Socket::SetSocketOption(SocketOption socketOption, void * optionValue, unsigned int optionLength)
+void Socket::SetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength)
 {
-    SetSocketOption(SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
+    SetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
 }
 
-void Socket::GetSocketOption(SocketOption socketOption, void * optionValue, unsigned int * optionLength)
+void Socket::GetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength)
 {
-    GetSocketOption(SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
+    GetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
 }
 
-void Socket::SetSocketOptionBool(SocketOption socketOption, bool value)
+void Socket::SetSocketOptionBool(OSAL::Network::SocketOption socketOption, bool value)
 {
     int optionValue = value ? 1 : 0;
     SetSocketOption(socketOption, &optionValue, sizeof(optionValue));
 }
 
-bool Socket::GetSocketOptionBool(SocketOption socketOption)
+bool Socket::GetSocketOptionBool(OSAL::Network::SocketOption socketOption)
 {
     int optionValue;
     socklen_t optionLength = sizeof(optionValue);
-    GetSocketOption(socketOption, &optionValue, &optionLength);
+    GetSocketOption(socketOption, &optionValue, optionLength);
     return optionValue != 0;
 }
 
-void Socket::SetSocketOptionInt(SocketOption socketOption, int optionValue)
+void Socket::SetSocketOptionInt(OSAL::Network::SocketOption socketOption, int optionValue)
 {
-    SetSocketOption(SocketOptionLevel::Socket, socketOption, &optionValue, sizeof(optionValue));
+    SetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, &optionValue, sizeof(optionValue));
 }
 
-int Socket::GetSocketOptionInt(SocketOption socketOption)
+int Socket::GetSocketOptionInt(OSAL::Network::SocketOption socketOption)
 {
     int optionValue;
     socklen_t optionLength = sizeof(optionValue);
-    GetSocketOption(SocketOptionLevel::Socket, socketOption, &optionValue, &optionLength);
+    GetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, &optionValue, optionLength);
     return optionValue;
 }
 
 bool Socket::GetBroadcastOption()
 {
-    return GetSocketOptionBool(SocketOption::Broadcast);
+    return GetSocketOptionBool(OSAL::Network::SocketOption::Broadcast);
 }
 
 void Socket::SetBroadcastOption(bool value)
 {
-    SetSocketOptionBool(SocketOption::Broadcast, value);
+    SetSocketOptionBool(OSAL::Network::SocketOption::Broadcast, value);
 }
 
 bool Socket::GetReuseAddress()
 {
-    return GetSocketOptionBool(SocketOption::ReuseAddress);
+    return GetSocketOptionBool(OSAL::Network::SocketOption::ReuseAddress);
 }
 
 void Socket::SetReuseAddress(bool value)
 {
-    SetSocketOptionBool(SocketOption::ReuseAddress, value);
+    SetSocketOptionBool(OSAL::Network::SocketOption::ReuseAddress, value);
 }
 
 int Socket::GetReceiveTimeout()
@@ -206,7 +201,7 @@ int Socket::GetReceiveTimeout()
     timeval tv;
     bzero(&tv, sizeof(tv));
     socklen_t optionLength = sizeof(tv);
-    GetSocketOption(SocketOption::ReceiveTimeout, &tv, &optionLength);
+    GetSocketOption(OSAL::Network::SocketOption::ReceiveTimeout, &tv, optionLength);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
@@ -216,7 +211,7 @@ void Socket::SetReceiveTimeout(int timeoutMS)
     bzero(&tv, sizeof(tv));
     tv.tv_sec = timeoutMS / 1000;
     tv.tv_usec = (timeoutMS % 1000) * 1000;
-    SetSocketOption(SocketOption::ReceiveTimeout, &tv, sizeof(tv));
+    SetSocketOption(OSAL::Network::SocketOption::ReceiveTimeout, &tv, sizeof(tv));
 }
 
 int Socket::GetSendTimeout()
@@ -224,7 +219,7 @@ int Socket::GetSendTimeout()
     timeval tv;
     bzero(&tv, sizeof(tv));
     socklen_t optionLength = sizeof(tv);
-    GetSocketOption(SocketOption::SendTimeout, &tv, &optionLength);
+    GetSocketOption(OSAL::Network::SocketOption::SendTimeout, &tv, optionLength);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
@@ -234,12 +229,12 @@ void Socket::SetSendTimeout(int timeoutMS)
     bzero(&tv, sizeof(tv));
     tv.tv_sec = timeoutMS / 1000;
     tv.tv_usec = (timeoutMS % 1000) * 1000;
-    SetSocketOption(SocketOption::SendTimeout, &tv, sizeof(tv));
+    SetSocketOption(OSAL::Network::SocketOption::SendTimeout, &tv, sizeof(tv));
 }
 
 bool Socket::GetBlockingMode()
 {
-    int flags = fcntl(this->GetHandle(), F_GETFL);
+    int flags = OSAL::Network::Fcntl(this->GetHandle(), F_GETFL);
     if (flags == -1)
     {
         int errorCode = errno;
@@ -255,7 +250,7 @@ bool Socket::GetBlockingMode()
 
 void Socket::SetBlockingMode(bool value)
 {
-    int flags = fcntl(this->GetHandle(), F_GETFL);
+    int flags = OSAL::Network::Fcntl(this->GetHandle(), F_GETFL);
     if (flags == -1)
     {
         int errorCode = errno;
@@ -266,7 +261,7 @@ void Socket::SetBlockingMode(bool value)
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
-    int errorCode = fcntl(this->GetHandle(), F_SETFL, value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
+    int errorCode = OSAL::Network::Fcntl(this->GetHandle(), F_SETFL, value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -477,7 +472,7 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
     {
         ssize_t result = 0;
 
-        result = ::recv(GetHandle(), data, bufferSize, flags);
+        result = OSAL::Network::Receive(GetHandle(), data, bufferSize, flags);
         if (result == -1)
         {
             int errorCode = errno;
@@ -522,7 +517,7 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
 
     while (numBytesLeftToSend > 0)
     {
-        ssize_t numBytes = ::send(GetHandle(), data + offset, numBytesLeftToSend, flags);
+        ssize_t numBytes = OSAL::Network::Send(GetHandle(), data + offset, numBytesLeftToSend, flags);
         if (numBytes == -1)
         {
             int errorCode = errno;
@@ -546,9 +541,9 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
     return true;
 }
 
-void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t * data, size_t bytesToSend)
+void Socket::SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * data, size_t bytesToSend)
 {
-    int errorCode = ::sendto(GetHandle(), data, bytesToSend, 0, address, addressLength);
+    int errorCode = OSAL::Network::SendTo(GetHandle(), data, bytesToSend, 0, address);
     if (errorCode == -1)
     {
         int errorCode = errno;
@@ -562,9 +557,9 @@ void Socket::SendTo(sockaddr * address, socklen_t addressLength, const uint8_t *
     }
 }
 
-size_t Socket::ReceiveFrom(sockaddr * address, socklen_t * addressLength, uint8_t * data, size_t bufferSize)
+size_t Socket::ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, size_t bufferSize)
 {
-    ssize_t numBytes = ::recvfrom(GetHandle(), data, bufferSize, 0, address, addressLength);
+    ssize_t numBytes = OSAL::Network::ReceiveFrom(GetHandle(), data, bufferSize, 0, _socketFamily, address);
     if (numBytes == -1)
     {
         int errorCode = errno;
