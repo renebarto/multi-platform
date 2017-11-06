@@ -28,7 +28,8 @@ class Value
 {
 public:
     Value() : _value() {}
-    explicit Value(int value) : _value(value) {}
+    // cppcheck-suppress noExplicitConstructor
+    Value(int value) : _value(value) {}
     Value(const Value & other) : _value(other._value) {}
     Value(Value && other) : _value(other._value) { other._value = 0; }
     Value & operator = (int value)
