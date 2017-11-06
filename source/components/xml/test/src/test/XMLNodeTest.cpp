@@ -13,8 +13,10 @@
 
 using namespace std;
 
-namespace XMLParser {
-namespace Test {
+namespace XMLParser
+{
+namespace Test
+{
 
 const int Tab = 4;
 const string Document = "doc";
@@ -32,24 +34,59 @@ const string AttributeName2 = "AttrName";
 const string AttributeValue = "attrvalue";
 const string AttributeValue2 = "attrvalue2";
 
-class XMLNodeImpl: public XMLNode
+class XMLNodeImpl
+    : public XMLNode
 {
 public:
-    XMLNodeImpl() : XMLNode() {}
-	XMLNodeImpl(const std::string & value) : XMLNode(value) {}
-    XMLNodeImpl(const XMLNodeImpl & other): XMLNode(other) {}
-    XMLNodeImpl & operator = (const XMLNodeImpl & other) { XMLNode::operator = (other); return *this; }
+    XMLNodeImpl()
+        : XMLNode()
+    {
+    }
+
+    explicit XMLNodeImpl(const std::string & value)
+        : XMLNode(value)
+    {
+    }
+
+    XMLNodeImpl(const XMLNodeImpl & other)
+        : XMLNode(other)
+    {
+    }
+
+    XMLNodeImpl & operator=(const XMLNodeImpl & other)
+    {
+        XMLNode::operator=(other);
+        return *this;
+    }
 
     virtual void ParseString(const std::string & /*xml*/,
-                             XMLEncoding /*encoding*/) {}
-    virtual std::string GenerateString(int /*depth*/) const { return ""; }
-    virtual const char * Parse(const char * /*xml*/, XMLEncoding /*encoding*/) { return nullptr; }
-	virtual XMLNode::Ptr Clone() const { return XMLNode::Ptr(); }
+                             XMLEncoding /*encoding*/)
+    {
+    }
 
-	virtual bool Accept(XMLVisitor * /*content*/) const { return false; }
+    virtual std::string GenerateString(int /*depth*/) const
+    {
+        return "";
+    }
+
+    virtual const char * Parse(const char * /*xml*/, XMLEncoding /*encoding*/)
+    {
+        return nullptr;
+    }
+
+    virtual XMLNode::Ptr Clone() const
+    {
+        return XMLNode::Ptr();
+    }
+
+    virtual bool Accept(XMLVisitor * /*content*/) const
+    {
+        return false;
+    }
 };
 
-class XMLNodeTest: public UnitTestCpp::TestFixture
+class XMLNodeTest
+    : public UnitTestCpp::TestFixture
 {
 public:
     virtual void SetUp();

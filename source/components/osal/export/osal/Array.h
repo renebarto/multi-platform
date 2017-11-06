@@ -18,10 +18,10 @@ class Array
 public:
     Array();
     Array(size_t size);
-    Array(const T * _data, size_t length);
+    Array(const T * data, size_t length);
     Array(const Array<T> & other);
     Array(Array<T> && other);
-    Array(std::initializer_list<T> _data);
+    Array(std::initializer_list<T> data);
     virtual ~Array();
     size_t Size() const
     {
@@ -49,12 +49,12 @@ public:
     void Clear();
 
     T Get(size_t offset) const;
-    size_t Get(size_t offset, T * _data, size_t length) const;
-    size_t Get(size_t offset, Array<T> & _data, size_t length) const;
+    size_t Get(size_t offset, T * data, size_t length) const;
+    size_t Get(size_t offset, Array<T> & data, size_t length) const;
     Array<T> Get(size_t offset, size_t length) const;
-    void Set(size_t offset, T _data);
-    void Set(size_t offset, const T * _data, size_t length);
-    void Set(size_t offset, const Array<T> & _data);
+    void Set(size_t offset, T data);
+    void Set(size_t offset, const T * data, size_t length);
+    void Set(size_t offset, const Array<T> & data);
     void Append(const Array<T> & data)
     {
         Set(this->Size(), data);
@@ -100,12 +100,12 @@ Array<T>::Array(size_t size)
 }
 
 template<class T>
-Array<T>::Array(const T * _data, size_t size)
+Array<T>::Array(const T * data, size_t size)
     : _size(0)
     , _allocatedSize(0)
     , _data(nullptr)
 {
-    Set(0, _data, size);
+    Set(0, data, size);
 }
 
 template<class T>
@@ -127,13 +127,13 @@ Array<T>::Array(Array<T> && other)
 }
 
 template<class T>
-Array<T>::Array(std::initializer_list<T> _data)
+Array<T>::Array(std::initializer_list<T> data)
     : _size(0)
     , _allocatedSize(0)
     , _data(nullptr)
 {
     size_t offset = 0;
-    for (auto const & value : _data)
+    for (auto const & value : data)
     {
         Set(offset++, value);
     }

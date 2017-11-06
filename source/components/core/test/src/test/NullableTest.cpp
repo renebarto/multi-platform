@@ -28,7 +28,7 @@ class Value
 {
 public:
     Value() : _value() {}
-    Value(int value) : _value(value) {}
+    explicit Value(int value) : _value(value) {}
     Value(const Value & other) : _value(other._value) {}
     Value(Value && other) : _value(other._value) { other._value = 0; }
     Value & operator = (int value)

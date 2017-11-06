@@ -91,18 +91,17 @@ OSAL::String OSAL::Path::RelativePath(const String & path)
         index++;
     String relativePath = {};
 #if defined(WIN_MSVC)
-    bool isAbsolutePath = false;
 #if defined(UNICODE) || defined(_UNICODE)
     wchar_t drive[_MAX_DRIVE];
     wchar_t dir[_MAX_DIR];
     _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
-    isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) || 
-                     ((wcslen(dir) != 0) && (dir[0] == PathSeparator()) && (index <= wcslen(drive) + 1));
+    bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
+                           ((wcslen(dir) != 0) && (dir[0] == PathSeparator()) && (index <= wcslen(drive) + 1));
 #else
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
     _splitpath(fullPath.c_str, drive, dir, nullptr, nullptr);
-    isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
+    bool isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
 #endif
 #else
     bool isAbsolutePath = (index == 1); // All paths start with /

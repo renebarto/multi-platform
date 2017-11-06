@@ -136,7 +136,7 @@ TEST_FIXTURE(PrintValueTest, PrintToStringEnumPtr)
 class MyClass
 {
 public:
-    MyClass(int i) : value(i)
+    explicit MyClass(int i) : value(i)
     {}
 
     int value;
@@ -145,7 +145,7 @@ public:
 class MyClassWithStreamOperator
 {
 public:
-    MyClassWithStreamOperator(int i) : value(i)
+    explicit MyClassWithStreamOperator(int i) : value(i)
     {}
 
     int value;

@@ -154,7 +154,7 @@ struct FixtureDtorThrows : public TestFixture
 #if defined(WIN_MSVC)
 #pragma warning (disable: 4297)
 #endif
-		// cppcheck-suppress exceptThrowInDestructor
+        // cppcheck-suppress exceptThrowInDestructor
         throw "exception";
     }
 #if defined(WIN_MSVC)

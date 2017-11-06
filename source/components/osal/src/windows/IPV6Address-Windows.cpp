@@ -22,7 +22,6 @@ IPV6Address::~IPV6Address()
 IPV6Address IPV6Address::Parse(const OSAL::String & text)
 {
     IPV6Address ipAddress;
-    std::string narrowText = ToNarrowString(text);
     if (!TryParse(text, ipAddress))
     {
         basic_ostringstream<OSAL::Char> stream;

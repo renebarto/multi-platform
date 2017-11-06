@@ -83,7 +83,7 @@ class Buffer
 public:
     Buffer() = delete;
     Buffer(const Buffer &) = delete;
-    Buffer(size_t size) :
+    explicit Buffer(size_t size) :
         _size(size),
         _contents(nullptr)
     {
