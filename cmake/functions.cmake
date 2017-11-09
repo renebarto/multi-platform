@@ -1,0 +1,82 @@
+function(get_git_commit out)
+    execute_process(COMMAND git rev-parse HEAD
+        RESULT_VARIABLE RESULT
+        OUTPUT_VARIABLE OUTPUT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (${RESULT} EQUAL 0)
+        set(${out} "${OUTPUT}" PARENT_SCOPE)
+    else()
+        set(${out} "" PARENT_SCOPE)
+    endif()
+endfunction()
+
+macro(setup_version)
+    if (BUILD_MAJOR)
+        set(VERSION_MAJOR ${BUILD_MAJOR})
+    else()
+        set(VERSION_MAJOR )
+    endif()
+
+    if (BUILD_MINOR)
+        set(VERSION_MINOR ${BUILD_MINOR})
+    else()
+        set(VERSION_MINOR )
+    endif()
+
+    if (BUILD_REVISION)
+        set(VERSION_REVISION ${BUILD_REVISION})
+    else()
+        set(VERSION_REVISION )
+    endif()
+
+    if (BUILD_NUMBER)
+        set(VERSION_BUILD ${BUILD_NUMBER})
+    else()
+        set(VERSION_BUILD )
+    endif()
+
+    if (("${VERSION_MAJOR}" STREQUAL "") OR
+        ("${VERSION_MINOR}" STREQUAL "") OR
+        ("${VERSION_REVISION}" STREQUAL "") OR
+        ("${VERSION_BUILD}" STREQUAL ""))
+        get_git_commit(VERSION)
+    else()
+        set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}.${VERSION_BUILD})
+    endif()
+endmacro()
+
+macro(set_build_type)
+    if(CMAKE_BUILD_TYPE)
+        message(STATUS "Current build type: ${CMAKE_BUILD_TYPE}")
+    else()
+        message(STATUS "Setting build to Debug")
+        set(CMAKE_BUILD_TYPE "Debug")
+    endif()
+endmacro()
+
+macro(set_config_dir)
+    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        set(CONFIG_DIR "debug")
+    elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+        set(CONFIG_DIR "release")
+    elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+        set(CONFIG_DIR "releaseMinSize")
+    elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+        set(CONFIG_DIR "releaseMinSize")
+    else()
+        message(FATAL_ERROR "Invalid build type: " ${CMAKE_BUILD_TYPE})
+    endif()
+endmacro()
+
+macro(setup_library_definitions)
+    if (NOT WIN_MSVC AND NOT APPLE)
+        set(LINK_WHOLE_LIB -Wl,--whole-archive)
+        set(LINK_NO_WHOLE_LIB -Wl,--no-whole-archive)
+        set(LINK_RPATH -Wl,-rpath,'\$ORIGIN/../lib/')
+        set(CMAKE_SKIP_BUILD_RPATH TRUE)
+    endif()
+    if (APPLE)
+        set(CMAKE_MACOSX_RPATH ../lib)
+    endif()
+endmacro()

@@ -20,7 +20,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/convert_default_options.cmake)
 # DEFINES_RELWITHDEBINFO    Compiler definitions for release with debug info build, for langurage C and C++
 # LINK_FLAGS                Linker specific options
 # LINK_LIBRARIES            Generic libraries to be linked
-#
+
 macro(setup_default_options)
     if(WIN_MSVC)
         # Important! do not keep warning 4251 4275 ignored!
@@ -50,6 +50,10 @@ macro(setup_default_options)
         set(LINK_FLAGS )
         set(LINK_LIBRARIES )
 
+        if (MEASURE_COVERAGE)
+            message(STATUS "Adding options for coverage")
+        endif()
+
     elseif(MINGW)
         set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
         set(FLAGS_CXX_DEBUG -O0 -g)
@@ -71,6 +75,10 @@ macro(setup_default_options)
 
         set(LINK_FLAGS )
         set(LINK_LIBRARIES )
+
+        if (MEASURE_COVERAGE)
+            message(STATUS "Adding options for coverage")
+        endif()
 
     elseif(LINUX)
         set(FLAGS_CXX -std=c++11 -Wall -Wextra -fPIC -fexceptions -fmessage-length=0)
@@ -95,6 +103,7 @@ macro(setup_default_options)
         set(LINK_LIBRARIES )
 
         if (MEASURE_COVERAGE)
+            message(STATUS "Adding options for coverage")
             list(APPEND FLAGS_C -fprofile-arcs -ftest-coverage)
             list(APPEND FLAGS_CXX -fprofile-arcs -ftest-coverage)
             list(APPEND LINK_FLAGS --coverage)
@@ -124,6 +133,7 @@ macro(setup_default_options)
         set(LINK_LIBRARIES )
 
         if (MEASURE_COVERAGE)
+            message(STATUS "Adding options for coverage")
             list(APPEND FLAGS_C -fprofile-arcs -ftest-coverage)
             list(APPEND FLAGS_CXX -fprofile-arcs -ftest-coverage)
             list(APPEND LINK_FLAGS --coverage)
