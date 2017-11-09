@@ -6,6 +6,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <deque>
 #include "osal/OSAL.h"
 #include "osal/Path.h"
 #include "osal/Strings.h"
@@ -226,6 +227,8 @@ bool CommandLineParser::AtLongOption(size_t argCount, const OSAL::Char ** argv) 
            (('-' == argv[_getOptData.optionIndex][0]) && ('-' == argv[_getOptData.optionIndex][1]));
 }
 
+using OptionsList = std::deque<CommandLineOption::Ptr>;
+
 int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** argv, const OSAL::Char * optionString,
                                         size_t & optionIndex, bool printErrors)
 {
@@ -233,11 +236,7 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
     const OSAL::Char * nameEnd;
     size_t nameLength;
     CommandLineOption::Ptr optionFound = nullptr;
-    struct OptionList
-    {
-        CommandLineOption::Ptr option;
-        struct OptionList * next;
-    } * amiguousOptionsList = nullptr;
+    OptionsList ambiguousOptionsList;
 
     bool exact = false;
     size_t indexFound {};
@@ -264,29 +263,21 @@ int CommandLineParser::HandleLongOption(size_t argCount, const OSAL::Char ** arg
                 indexFound = currentOptionIndex;
             } else if (currentOption->IsNotEqual(optionFound))
             {
-                struct OptionList *newOption = new OptionList;
-                newOption->option = currentOption;
-                newOption->next = amiguousOptionsList;
-                amiguousOptionsList = newOption;
+                ambiguousOptionsList.push_front(currentOption);
             }
         }
         currentOptionIndex++;
     }
-    if ((nullptr != amiguousOptionsList) && !exact)
+    if (!ambiguousOptionsList.empty() && !exact)
     {
         if (printErrors)
         {
-            struct OptionList first;
-            first.option = optionFound;
-            first.next = amiguousOptionsList;
-            amiguousOptionsList = &first;
+            ambiguousOptionsList.push_front(optionFound);
             _console << fgcolor(OSAL::ConsoleColor::Red) << argv[0] << ": option '" << argv[_getOptData.optionIndex] << "' is ambiguous; possibilities:";
-            do
+            for (auto option : ambiguousOptionsList)
             {
-                _console << " '--" << amiguousOptionsList->option->LongName() << "'";
-                amiguousOptionsList = amiguousOptionsList->next;
+                _console << " '--" << option->LongName() << "'";
             }
-            while (nullptr != amiguousOptionsList);
             _console << fgcolor(OSAL::ConsoleColor::Default) << endl;
         }
         _getOptData.nextChar += OSAL::Strings::strlen(_getOptData.nextChar);
