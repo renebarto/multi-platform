@@ -12,12 +12,10 @@ class Data
 {
 public:
     static const String ProjectName() { return _("osal"); }
-    static const String TestDirName() { return _("testdata"); }
 
     static String TestDirectory()
     {
-        static String RootDir = ToString(TEST_DATA_ROOT);
-        return Path::CombinePath(Path::FullPath(RootDir),TestDirName());
+        return ToString(TEST_DATA_ROOT);
     }
 
     static String TestDirectoryOSAL() { return Path::CombinePath(TestDirectory(), ProjectName()); }

@@ -100,14 +100,15 @@ define_target_library_shared()
 
 show_target_properties(${PACKAGE_NAME})
 
-add_uninstall_target(uninstall-components)
-add_install_target(install-components)
+if (NOT LOCAL_BUILD)
+    add_install_target(${PACKAGE_NAME} install-components)
+    add_uninstall_target(${PACKAGE_NAME} uninstall-components)
+    install_pkgconfig_file(${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}.pc)
 
-install_pkgconfig_file(${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}.pc)
-
-install(TARGETS ${PACKAGE_NAME}
-    ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    COMPONENT ${PACKAGE_NAME})
+    install(TARGETS ${PACKAGE_NAME}
+        ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        COMPONENT ${PACKAGE_NAME})
+endif()
 
 

@@ -3,7 +3,7 @@ project(core CXX)
 include(define_targets)
 include(show_target_properties)
 
-message("\n** core **\n")
+message("\n** Setting up core **\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
@@ -42,8 +42,8 @@ set(PACKAGE_LIBS
     ${PACKAGE_DEPENDENCIES})
 
 file(GLOB_RECURSE PACKAGE_SOURCES src/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC_BASE export/*.h)
-file(GLOB_RECURSE PACKAGE_INCLUDES_PRIVATE_BASE include/*.h)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC export/*.h)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PRIVATE include/*.h)
 
 set(PACKAGE_BUILD_REFERENCE ${VERSION})
 
@@ -51,12 +51,14 @@ define_target_library_shared()
 
 show_target_properties(${PACKAGE_NAME})
 
-add_uninstall_target(uninstall-components)
-add_install_target(install-components)
+if (NOT LOCAL_BUILD)
+    add_uninstall_target(${PACKAGE_NAME} uninstall-components)
+    add_install_target(${PACKAGE_NAME} install-components)
 
-install_pkgconfig_file(${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}.pc)
+    install_pkgconfig_file(${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}.pc)
 
-install(TARGETS ${PACKAGE_NAME}
-    ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    COMPONENT ${PACKAGE_NAME})
+    install(TARGETS ${PACKAGE_NAME}
+        ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        COMPONENT ${PACKAGE_NAME})
+endif()

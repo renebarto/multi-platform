@@ -21,12 +21,9 @@ message(STATUS "Version: ${VERSION}")
 set_build_type()
 set_config_dir()
 
-option(MEASURE_COVERAGE "Determine coverage" OFF)
-option(BUILD_TESTS "Build unit tests" ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
 
-set(TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}")
 set(OUTPUT_BASE_DIR ${CMAKE_SOURCE_DIR}/output)
 set(CMAKE_PROGRAM_PATH ${CMAKE_INSTALL_PREFIX}/bin)
 set(CMAKE_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
@@ -42,11 +39,35 @@ message(STATUS "Output base directory   : ${OUTPUT_BASE_DIR}")
 
 setup_library_definitions()
 
-add_custom_target(install-components)
-add_custom_target(uninstall-components)
+if (NOT LOCAL_BUILD)
+    add_custom_target(install-components)
+    add_custom_target(uninstall-components)
+endif()
 
 setup_pkgconfig_file_vars()
 
 setup_default_options()
 
+option(MEASURE_COVERAGE "Determine coverage" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" ON)
+option(LOCAL_BUILD "Only perform local build, no install" OFF)
+
+if ("${TEST_DATA_ROOT}" STREQUAL "")
+    if (LOCAL_BUILD)
+        set(TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}/testdata")
+    else()
+        set(TEST_DATA_ROOT "/usr/share/testdata")
+    endif()
+endif()
+
 add_subdirectory(source)
+if (BUILD_UNIT_TESTS)
+    if (NOT LOCAL_BUILD)
+        add_install_target(testdata install-components)
+        add_uninstall_target(testdata uninstall-components)
+        message(STATUS "Install test data to " ${TEST_DATA_ROOT})
+        install(DIRECTORY testdata
+            DESTINATION ${TEST_DATA_ROOT}/..
+            COMPONENT testdata)
+    endif()
+endif()

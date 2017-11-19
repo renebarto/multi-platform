@@ -65,21 +65,23 @@ setup_target_properties_executable(${PROJECT_NAME})
 
 show_target_properties(${PROJECT_NAME})
 
-add_custom_target(uninstall_${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake
-    DEPENDS ${PROJECT_NAME}
-    COMMENT "Uninstalling ${PROJECT_NAME}")
+if (NOT LOCAL_BUILD)
+    add_custom_target(uninstall_${PROJECT_NAME}
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake
+        DEPENDS ${PROJECT_NAME}
+        COMMENT "Uninstalling ${PROJECT_NAME}")
 
-add_custom_target(install_${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
-    DEPENDS ${PROJECT_NAME}
-    COMMENT "Installing ${PROJECT_NAME}")
+    add_custom_target(install_${PROJECT_NAME}
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
+        DEPENDS ${PROJECT_NAME}
+        COMMENT "Installing ${PROJECT_NAME}")
 
-add_dependencies(install-components install_${PROJECT_NAME})
+    add_dependencies(install-components install_${PROJECT_NAME})
 
-add_dependencies(uninstall-components uninstall_${PROJECT_NAME})
+    add_dependencies(uninstall-components uninstall_${PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-    COMPONENT network)
+    install(TARGETS ${PROJECT_NAME}
+        RUNTIME
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        COMPONENT network)
+endif()

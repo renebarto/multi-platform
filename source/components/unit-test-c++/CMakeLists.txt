@@ -1,10 +1,9 @@
 project(unit-test-c++ CXX)
 
-include(setup_target_properties_library)
+include(define_targets)
 include(show_target_properties)
-include(display_list)
 
-message("\nunit-test-c++\n")
+message("\n** Setting up unit-test-c++ **\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
@@ -14,95 +13,53 @@ set(PACKAGE_VERSION_MINOR 0)
 set(PACKAGE_VERSION_MICRO 0)
 set(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO})
 
-set(COMPONENTS_UNITTESTCPP_DEFINITIONS
+set(PACKAGE_COMPILER_DEFINITIONS_PRIVATE
+    UNIT_TEST_CPP_BUILD)
+
+set(PACKAGE_COMPILER_DEFINITIONS
     ${COMPILER_DEFINITIONS}
     UNIT_TEST_CPP_DYNAMIC)
 
-set(COMPONENTS_UNITTESTCPP_OPTIONS
+set(PACKAGE_COMPILER_OPTIONS
     ${COMPILER_OPTIONS_CXX}
     )
 
-set(COMPONENTS_UNITTESTCPP_INCLUDE_DIRS
+set(PACKAGE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/export
     )
 
-set(COMPONENTS_UNITTESTCPP_LINK_OPTIONS
+set(PACKAGE_LINK_OPTIONS
     ${LINKER_OPTIONS}
     ${LINK_RPATH})
-list_to_string(COMPONENTS_UNITTESTCPP_LINK_OPTIONS COMPONENTS_UNITTESTCPP_LINK_OPTIONS_STRING)
 
-set(COMPONENTS_UNITTESTCPP_DEPENDENCIES
+set(PACKAGE_DEPENDENCIES
     osal
     )
 
-set(COMPONENTS_UNITTESTCPP_LIBS
+set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${LINKER_LIBRARIES}
-    ${COMPONENTS_UNITTESTCPP_DEPENDENCIES})
+    ${PACKAGE_DEPENDENCIES})
 
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_SOURCES src/*.cpp)
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_INCLUDES_EXPORT export/*.h)
-file(GLOB_RECURSE COMPONENTS_UNITTESTCPP_INCLUDES include/*.h)
+file(GLOB_RECURSE PACKAGE_SOURCES src/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC export/*.h)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PRIVATE include/*.h)
 
-set(COMPONENTS_UNITTESTCPP_INCLUDES
-    ${COMPONENTS_UNITTESTCPP_INCLUDES_EXPORT}
-    ${COMPONENTS_UNITTESTCPP_INCLUDES})
+set(PACKAGE_BUILD_REFERENCE ${VERSION})
 
-display_list("Defines                     : " ${COMPONENTS_UNITTESTCPP_DEFINITIONS} )
-display_list("Compiler options            : " ${COMPONENTS_UNITTESTCPP_OPTIONS} )
-display_list("Source files                : " ${COMPONENTS_UNITTESTCPP_SOURCES} )
-display_list("Include files               : " ${COMPONENTS_UNITTESTCPP_INCLUDES} )
-display_list("Include dirs                : " ${COMPONENTS_UNITTESTCPP_INCLUDE_DIRS} )
-display_list("Link libs                   : " ${COMPONENTS_UNITTESTCPP_LIBS} )
-display_list("Linker options              : " ${COMPONENTS_UNITTESTCPP_LINK_OPTIONS} )
-display_list("Dependencies                : " ${COMPONENTS_UNITTESTCPP_DEPENDENCIES} )
+define_target_library_shared()
 
-# add the library
-add_library(${PROJECT_NAME} SHARED ${COMPONENTS_UNITTESTCPP_SOURCES} ${COMPONENTS_UNITTESTCPP_INCLUDES})
-target_link_libraries(${PROJECT_NAME} ${COMPONENTS_UNITTESTCPP_LIBS})
-target_include_directories(${PROJECT_NAME} PUBLIC ${COMPONENTS_UNITTESTCPP_INCLUDE_DIRS})
-target_compile_definitions(${PROJECT_NAME} PRIVATE UNIT_TEST_CPP_BUILD)
-target_compile_definitions(${PROJECT_NAME} PUBLIC ${COMPONENTS_UNITTESTCPP_DEFINITIONS})
-target_compile_options(${PROJECT_NAME} PRIVATE ${COMPONENTS_UNITTESTCPP_OPTIONS})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${COMPONENTS_UNITTESTCPP_LINK_OPTIONS_STRING}")
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO})
-set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PACKAGE_VERSION_MAJOR})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME unit-test-c++)
-setup_target_properties_library(${PROJECT_NAME})
+show_target_properties(${PACKAGE_NAME})
 
-show_target_properties(${PROJECT_NAME})
+if (NOT LOCAL_BUILD)
+    add_uninstall_target(${PACKAGE_NAME} uninstall-components)
+    add_install_target(${PACKAGE_NAME} install-components)
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit-test-c++.pc.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/unit-test-c++.pc
-    @ONLY)
+    install_pkgconfig_file(${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_NAME}.pc)
 
-# uninstall target
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/uninstall.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake
-    IMMEDIATE @ONLY)
-
-add_custom_target(uninstall_${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_CURRENT_BINARY_DIR}/uninstall.cmake
-    DEPENDS ${PROJECT_NAME}
-    COMMENT "Uninstalling ${PROJECT_NAME}")
-
-add_custom_target(install_${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${PROJECT_NAME} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake
-    DEPENDS ${PROJECT_NAME}
-    COMMENT "Installing ${PROJECT_NAME}")
-
-add_dependencies(install-components install_${PROJECT_NAME})
-
-add_dependencies(uninstall-components uninstall_${PROJECT_NAME})
-
-install(TARGETS ${PROJECT_NAME}
-    ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
-    COMPONENT ${PROJECT_NAME})
-
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/unit-test-c++.pc
-    DESTINATION ${PKGCONFIG_FILE_PKG_CONFIG_DIR}
-    COMPONENT ${PROJECT_NAME})
+    install(TARGETS ${PACKAGE_NAME}
+        ARCHIVE DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        LIBRARY DESTINATION ${PKGCONFIG_FILE_LIB_DIR}
+        COMPONENT ${PACKAGE_NAME})
+endif()

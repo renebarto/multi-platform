@@ -13,12 +13,10 @@ class XMLParserTestData
 {
 public:
     static const OSAL::String ProjectName() { return "xml"; }
-    static const OSAL::String TestDirName() { return "testdata"; }
 
     static OSAL::String TestDirectory()
     {
-        static OSAL::String RootDir = TEST_DATA_ROOT;
-        return OSAL::Path::CombinePath(OSAL::Path::FullPath(RootDir),TestDirName());
+        return OSAL::ToString(TEST_DATA_ROOT);
     }
 
     static std::string TestDirectoryXMLParser() { return OSAL::Path::CombinePath(TestDirectory(), ProjectName()); }

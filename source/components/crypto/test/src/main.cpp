@@ -30,10 +30,12 @@ int main(int argc, const char * argv[])
         exit(1);
     }
 
+    console << _("Application: ") << applicationName << std::endl;
     console << _("XML output : ") << parser.xmlOutput << std::endl;
     console << _("Suite      : ") << parser.testSuiteName << std::endl;
     console << _("Fixture    : ") << parser.testFixtureName << std::endl;
     console << _("Test       : ") << parser.testName << std::endl;
+    console << _("Test data  : ") << TEST_DATA_ROOT << std::endl;
 
     int result = 0;
 
