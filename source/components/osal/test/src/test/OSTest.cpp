@@ -61,7 +61,7 @@ TEST_FIXTURE(OSTest, PlatformLinux)
     }
     {
         std::string actual = OS::Platform();
-        std::string expected = "x86_64";
+        std::string expected = PlatformName;
         EXPECT_EQ(expected, actual);
     }
     {
