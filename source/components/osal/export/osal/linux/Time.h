@@ -43,6 +43,7 @@ struct OSAL_EXPORT tm
 
     tm & operator=(const ::tm & other);
 
+    static long LocalTimeOffsetSeconds() { return tm_tzOffset; }
     struct ::tm _tm;
     // tm_tzOffset is defined as the number of seconds to add to result in UTC. For Western European time, this is -3600
     static long tm_tzOffset;

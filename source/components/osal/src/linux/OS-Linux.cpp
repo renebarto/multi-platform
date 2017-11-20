@@ -42,35 +42,53 @@ std::string const & OS::TemporaryFile::GetPath() const
     return _path;
 }
 
+static utsname NameInfo;
+static bool NameInfoInitialized = false;
+
 String OS::Name()
 {
-    utsname nameInfo;
-    uname(&nameInfo);
-    return ToString(nameInfo.sysname);
+    if (!NameInfoInitialized)
+    {
+        uname(&NameInfo);
+        NameInfoInitialized = true;
+    }
+    return ToString(NameInfo.sysname);
 }
 String OS::Variant()
 {
-    utsname nameInfo;
-    uname(&nameInfo);
-    return ToString(nameInfo.nodename);
+    if (!NameInfoInitialized)
+    {
+        uname(&NameInfo);
+        NameInfoInitialized = true;
+    }
+    return ToString(NameInfo.nodename);
 }
 String OS::Release()
 {
-    utsname nameInfo;
-    uname(&nameInfo);
-    return ToString(nameInfo.release);
+    if (!NameInfoInitialized)
+    {
+        uname(&NameInfo);
+        NameInfoInitialized = true;
+    }
+    return ToString(NameInfo.release);
 }
 String OS::Version()
 {
-    utsname nameInfo;
-    uname(&nameInfo);
-    return ToString(nameInfo.version);
+    if (!NameInfoInitialized)
+    {
+        uname(&NameInfo);
+        NameInfoInitialized = true;
+    }
+    return ToString(NameInfo.version);
 }
 String OS::Platform()
 {
-    utsname nameInfo;
-    uname(&nameInfo);
-    return ToString(nameInfo.machine);
+    if (!NameInfoInitialized)
+    {
+        uname(&NameInfo);
+        NameInfoInitialized = true;
+    }
+    return ToString(NameInfo.machine);
 }
 
 String OS::DemangleName(const String & mangledName)

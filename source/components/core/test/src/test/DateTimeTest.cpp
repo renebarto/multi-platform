@@ -15,6 +15,11 @@ class DateTimeTest : public UnitTestCpp::TestFixture
 public:
     virtual void SetUp();
     virtual void TearDown();
+
+    int HoursUTC = 0;
+    int MinutesUTC = 2;
+    int HoursLocal = HoursUTC + static_cast<int>(-OSAL::Time::tm::LocalTimeOffsetSeconds() / 3600);
+    int MinutesLocal = MinutesUTC + static_cast<int>((-OSAL::Time::tm::LocalTimeOffsetSeconds() % 3600) / 60);
 };
 
 void DateTimeTest::SetUp()
@@ -51,8 +56,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionCopy)
     int day = 26;
     int yearDay = 57;
     MonthType monthName = MonthType::February;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     int weekNumberingYear = 2014;
@@ -81,8 +86,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecond)
     int yearDay = 57;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     int weekNumberingYear = 2014;
@@ -110,8 +115,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecondEn
     int yearDay = 365;
     MonthType monthName = MonthType::December;
     WeekDayType weekDay = WeekDayType::Tuesday;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     int weekNumberingYear = 2014;
@@ -139,8 +144,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecond)
     int yearDay = 57;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime(year, month, day, hour, minute, second);
@@ -164,8 +169,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecondMicroSeco
     int yearDay = 57;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, monthName, day, hour, minute, second, microSeconds);
@@ -189,8 +194,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecond)
     int yearDay = 57;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime(year, monthName, day, hour, minute, second);
@@ -212,8 +217,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionEpoch)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 0;
     MonthType monthName = MonthType::February;
@@ -238,8 +243,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeSpec)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
@@ -264,8 +269,8 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeVal)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
@@ -289,8 +294,8 @@ TEST_FIXTURE(DateTimeTest, Assignment)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
@@ -310,8 +315,8 @@ TEST_FIXTURE(DateTimeTest, AssignmentEpoch)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
-    int minuteExpected = 2;
+    int hourExpected = HoursUTC;
+    int minuteExpected = MinutesUTC;
     int secondExpected = 3;
     int microSecondsExpected = 0;
     time_t epochTime = Epoch20140226_000203UTC;
@@ -331,8 +336,8 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeSpec)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
-    int minuteExpected = 2;
+    int hourExpected = HoursUTC;
+    int minuteExpected = MinutesUTC;
     int secondExpected = 3;
     int microSecondsExpected = 4;
     timespec timeSpec = { Epoch20140226_000203UTC, 4000 };
@@ -352,8 +357,8 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeVal)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
-    int minuteExpected = 2;
+    int hourExpected = HoursUTC;
+    int minuteExpected = MinutesUTC;
     int secondExpected = 3;
     int microSecondsExpected = 4;
     timeval timeVal = { Epoch20140226_000203UTC, 4 };
@@ -373,8 +378,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromLocalTime)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
@@ -387,8 +392,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromUTCTime)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 0;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateUTC(year, month, day, hour, minute, second, microSeconds);
@@ -401,8 +406,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeSpec)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
@@ -417,8 +422,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeVal)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
@@ -443,7 +448,12 @@ TEST_FIXTURE(DateTimeTest, AddAssignment)
     int yearExpected = 2014;
     int monthExpected = 4;
     int dayExpected = 13;
-    int hourExpected = 9;
+    int hourExpected {};
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        hourExpected = 9; // One hour higher due to DST
+    else
+        // UTC does not have DST
+        hourExpected = 8;
     int minuteExpected = 8;
     int secondExpected = 43;
     int microSecondsExpected = 123454;
@@ -597,8 +607,8 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecond)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime = DateTime::CreateUTC(year, month, day, hour, minute, second);
@@ -616,8 +626,8 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecondMicroSecond)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateUTC(year, month, day, hour, minute, second, microSeconds);
@@ -636,8 +646,8 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecond)
     int month = 2;
     MonthType monthName = MonthType::February;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime = DateTime::CreateUTC(year, monthName, day, hour, minute, second);
@@ -656,8 +666,8 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecondMicroSecond)
     int month = 2;
     MonthType monthName = MonthType::February;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateUTC(year, monthName, day, hour, minute, second, microSeconds);
@@ -675,8 +685,8 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecond)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime = DateTime::CreateLocal(year, month, day, hour, minute, second);
@@ -694,8 +704,8 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecondMicroSecond)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateLocal(year, month, day, hour, minute, second, microSeconds);
@@ -714,8 +724,8 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecond)
     int month = 2;
     MonthType monthName = MonthType::February;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 0;
     DateTime dateTime = DateTime::CreateLocal(year, monthName, day, hour, minute, second);
@@ -734,8 +744,8 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecondMicroSecon
     int month = 2;
     MonthType monthName = MonthType::February;
     int day = 26;
-    int hour = 1;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateLocal(year, monthName, day, hour, minute, second, microSeconds);
@@ -750,27 +760,32 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecondMicroSecon
 
 TEST_FIXTURE(DateTimeTest, OffsetFromUTC)
 {
-    DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
-    int64_t expected = -localTime.tm_tzOffset * MicroSecondsPerSecond;
+    int64_t expected = -localTime.LocalTimeOffsetSeconds() * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DateTimeTest, OffsetFromUTC_SummerTime)
 {
-    DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
+    DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, HoursLocal + 1, MinutesLocal, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
-    int64_t expected = -(localTime.tm_tzOffset + localTime.tm_dstOffset) * MicroSecondsPerSecond;
+    int64_t expected {};
+    if (localTime.LocalTimeOffsetSeconds() != 0)
+        expected= -(localTime.LocalTimeOffsetSeconds() + localTime.tm_dstOffset) * MicroSecondsPerSecond;
+    else
+        // UTC does not have DST
+        expected= -(localTime.LocalTimeOffsetSeconds()) * MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameLocal)
 {
-    DateTime dateTime(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTime(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
     OSAL::String nameExpected = localTime.tm_tzName;
@@ -780,7 +795,7 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameLocal)
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameLocalSummerTime)
 {
-    DateTime dateTime(2014, 06, 26, 1, 2, 3, 567891);
+    DateTime dateTime(2014, 06, 26, HoursLocal, MinutesLocal, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
     OSAL::String nameExpected = localTime.tm_tzName;
@@ -790,7 +805,7 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameLocalSummerTime)
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameUTC)
 {
-    DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, HoursUTC, MinutesUTC, 3, 567891);
     time_t time = dateTime;
     OSAL::Time::tm localTime = *OSAL::Time::gmtime(&time);
     OSAL::String nameExpected = localTime.tm_tzName;
@@ -800,21 +815,25 @@ TEST_FIXTURE(DateTimeTest, TimeZoneNameUTC)
 
 TEST_FIXTURE(DateTimeTest, IsDayLightSavings)
 {
-    DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_FALSE(dateTime.IsDaylightSavings());
-    dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
-    EXPECT_TRUE(dateTime.IsDaylightSavings());
+    dateTime = DateTime::CreateLocal(2014, 06, 26, HoursLocal, MinutesLocal, 3, 567891);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        EXPECT_TRUE(dateTime.IsDaylightSavings());
+    else
+        // UTC does not have DST
+        EXPECT_FALSE(dateTime.IsDaylightSavings());
 }
 
 TEST_FIXTURE(DateTimeTest, ConvertToLocalTime)
 {
-    DateTime dateTimeUTC = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTimeUTC = DateTime::CreateUTC(2014, 02, 26, HoursUTC, MinutesUTC, 3, 567891);
     DateTime dateTimeLocal = dateTimeUTC.ConvertToLocalTime();
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 2;
-    int minute = 2;
+    int hour = HoursLocal;
+    int minute = MinutesLocal;
     int second = 3;
     int microSeconds = 567891;
     EXPECT_EQ(year, dateTimeLocal.Year());
@@ -828,13 +847,13 @@ TEST_FIXTURE(DateTimeTest, ConvertToLocalTime)
 
 TEST_FIXTURE(DateTimeTest, ConvertToUTCTime)
 {
-    DateTime dateTimeLocal = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTimeLocal = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
     DateTime dateTimeUTC = dateTimeLocal.ConvertToUTCTime();
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 0;
-    int minute = 2;
+    int hour = HoursUTC;
+    int minute = MinutesUTC;
     int second = 3;
     int microSeconds = 567891;
     EXPECT_EQ(year, dateTimeUTC.Year());
@@ -861,7 +880,7 @@ TEST_FIXTURE(DateTimeTest, ToStringFormat)
 
 TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
 {
-    DateTime dateTime(2014, 2, 26, 1, 2, 3, 567891);
+    DateTime dateTime(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
 
     TimeSpan timeSpan;
     DateTime actual;
@@ -869,50 +888,59 @@ TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
 
     timeSpan = 1000; // One microsecond
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 567892);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567892);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 1000000000; // One second
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 4, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 4, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 60000000000ll; // One minute
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 3, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal + 1, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 3600000000000ll; // One hour
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 2, 26, 2, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal + 1, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 86400000000000ll; // One day
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 2, 27, 1, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 2, 27, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = (28 + 31 + 30) * 86400000000000ll; // Three months (28 + 31 + 30 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2014, 5, 26, 2, 2, 3, 567891);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2014, 05, 26, HoursLocal + 1, MinutesLocal, 3, 567891);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2014, 05, 26, HoursLocal, MinutesLocal, 3, 567891);
+
     EXPECT_EQ(expected, actual);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2015, 2, 26, 1, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2015, 2, 26, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 40000000500000000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = timeSpan + dateTime;
-    expected = DateTime::CreateLocal(2015, 6, 4, 1, 8, 44, 67891);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2015, 6, 4, 1, 8, 44, 67891);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2015, 6, 3, 23, 8, 44, 67891);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorAddDateTimeTimeSpan)
 {
-    DateTime dateTime(2014, 2, 26, 1, 2, 3, 567891);
+    DateTime dateTime(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
 
     TimeSpan timeSpan;
     DateTime actual;
@@ -920,50 +948,58 @@ TEST_FIXTURE(DateTimeTest, OperatorAddDateTimeTimeSpan)
 
     timeSpan = 1000; // One microsecond
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 567892);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 567892);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 1000000000; // One second
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 4, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 4, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 60000000000ll; // One minute
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 3, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal + 1, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 3600000000000ll; // One hour
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 2, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal + 1, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 86400000000000ll; // One day
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 27, 1, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2014, 02, 27, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = (28 + 31 + 30) * 86400000000000ll; // Three months (28 + 31 + 30 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2014, 5, 26, 2, 2, 3, 567891);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2014, 05, 26, HoursLocal + 1, MinutesLocal, 3, 567891);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2014, 05, 26, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2015, 2, 26, 1, 2, 3, 567891);
+    expected = DateTime::CreateLocal(2015, 02, 26, HoursLocal, MinutesLocal, 3, 567891);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 40000000500000000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime + timeSpan;
-    expected = DateTime::CreateLocal(2015, 6, 4, 1, 8, 44, 67891);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2015, 06, 4, 1, 8, 44, 67891);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2015, 06, 3, 23, 8, 44, 67891);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeTimeSpan)
 {
-    DateTime dateTime(2014, 2, 26, 1, 2, 3, 100000);
+    DateTime dateTime(2014, 02, 26, HoursLocal, MinutesLocal, 3, 100000);
 
     TimeSpan timeSpan;
     DateTime actual;
@@ -971,87 +1007,99 @@ TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeTimeSpan)
 
     timeSpan = 1000; // One microsecond
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 99999);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 99999);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 1000000000; // One second
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 2, 100000);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 2, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 60000000000ll; // One minute
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 1, 1, 3, 100000);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal - 1, 3, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 3600000000000ll; // One hour
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 26, 0, 2, 3, 100000);
+    expected = DateTime::CreateLocal(2014, 02, 26, HoursLocal - 1, MinutesLocal, 3, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 86400000000000ll; // One day
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2014, 2, 25, 1, 2, 3, 100000);
+    expected = DateTime::CreateLocal(2014, 02, 25, HoursLocal, MinutesLocal, 3, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = (31 + 31 + 30 + 31 + 30 + 31) * 86400000000000ll; // Six months (31 + 31 + 30 + 31 + 30 + 31 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2013, 8, 26, 2, 2, 3, 100000);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2013, 8, 26, HoursLocal + 1, MinutesLocal, 3, 100000);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2013, 8, 26, HoursLocal, MinutesLocal, 3, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2013, 2, 26, 1, 2, 3, 100000);
+    expected = DateTime::CreateLocal(2013, 2, 26, HoursLocal, MinutesLocal, 3, 100000);
     EXPECT_EQ(expected, actual);
 
     timeSpan = 40000000123450000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime - timeSpan;
-    expected = DateTime::CreateLocal(2012, 11, 20, 1, 55, 22, 976550);
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = DateTime::CreateLocal(2012, 11, 20, 1, 55, 22, 976550);
+    else
+        // UTC does not have DST
+        expected = DateTime::CreateLocal(2012, 11, 20, 0, 55, 22, 976550);
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeDateTime)
 {
-    DateTime dateTime1(2014, 2, 26, 1, 2, 3, 100000);
+    DateTime dateTime1(2014, 02, 26, HoursLocal, MinutesLocal, 3, 100000);
 
     DateTime dateTime2;
     TimeSpan actual;
     TimeSpan expected;
 
-    dateTime2 = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 99999);
+    dateTime2 = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 3, 99999);
     actual = dateTime1 - dateTime2;
     expected = 1000; // One microsecond
     EXPECT_EQ(expected, actual);
 
-    dateTime2 = DateTime::CreateLocal(2014, 2, 26, 1, 2, 2, 100000);
+    dateTime2 = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal, 2, 100000);
     actual = dateTime1 - dateTime2;
     expected = 1000000000; // One second
     EXPECT_EQ(expected, actual);
 
-    dateTime2 = DateTime::CreateLocal(2014, 2, 26, 1, 1, 3, 100000);
+    dateTime2 = DateTime::CreateLocal(2014, 02, 26, HoursLocal, MinutesLocal - 1, 3, 100000);
     actual = dateTime1 - dateTime2;
     expected = 60000000000ll; // One minute
     EXPECT_EQ(expected, actual);
 
-    dateTime2 = DateTime::CreateLocal(2014, 2, 26, 0, 2, 3, 100000);
+    dateTime2 = DateTime::CreateLocal(2014, 02, 26, HoursLocal - 1, MinutesLocal, 3, 100000);
     actual = dateTime1 - dateTime2;
     expected = 3600000000000ll; // One hour
     EXPECT_EQ(expected, actual);
 
-    dateTime2 = DateTime::CreateLocal(2014, 2, 25, 1, 2, 3, 100000);
+    dateTime2 = DateTime::CreateLocal(2014, 02, 25, HoursLocal, MinutesLocal, 3, 100000);
     actual = dateTime1 - dateTime2;
     expected = 86400000000000ll; // One day
     EXPECT_EQ(expected, actual);
 
     // Add one extra hour due to summer time (CET->CEST)
-    dateTime2 = DateTime::CreateLocal(2013, 8, 26, 2, 2, 3, 100000);
+    dateTime2 = DateTime::CreateLocal(2013, 8, 26, HoursLocal + 1, MinutesLocal, 3, 100000);
     actual = dateTime1 - dateTime2;
-    expected = (31 + 31 + 30 + 31 + 30 + 31) * 86400000000000ll; // Six months (31 + 31 + 30 + 31 + 30 + 31 days)
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = (31 + 31 + 30 + 31 + 30 + 31) * 86400000000000ll; // Six months (31 + 31 + 30 + 31 + 30 + 31 days)
+    else
+        // UTC does not have DST, so one hour less difference
+        expected = (31 + 31 + 30 + 31 + 30 + 31) * 86400000000000ll - 3600000000000ll; // Six months (31 + 31 + 30 + 31 + 30 + 31 days)
     EXPECT_EQ(expected, actual);
 
-    dateTime2 = DateTime::CreateLocal(2013, 2, 26, 1, 2, 3, 100000);
+    dateTime2 = DateTime::CreateLocal(2013, 2, 26, HoursLocal, MinutesLocal, 3, 100000);
     actual = dateTime1 - dateTime2;
     expected = 365 * 86400000000000ll; // One year (365 days)
     EXPECT_EQ(expected, actual);
@@ -1059,7 +1107,11 @@ TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeDateTime)
     // Add one extra hour due to summer time (CET->CEST)
     dateTime2 = DateTime::CreateLocal(2012, 11, 20, 1, 55, 22, 976550);
     actual = dateTime1 - dateTime2;
-    expected = 40000000123450000ll;
+    if (OSAL::Time::tm::LocalTimeOffsetSeconds() != 0)
+        expected = 40000000123450000ll;
+    else
+        // UTC does not have DST, so one hour less difference
+        expected = 40000000123450000ll - 3600000000000ll;
     EXPECT_EQ(expected, actual);
 }
 
@@ -1345,7 +1397,7 @@ TEST_FIXTURE(DateTimeTest, OperatorNotEqualsTimeValDateTime)
 
 TEST_FIXTURE(DateTimeTest, OperatorNotEqualsDateTimeTimeSpec)
 {
-     int year1 = 2014;
+    int year1 = 2014;
     int month1 = 3;
     int day1 = 26;
     int hour1 = 12;
@@ -1380,7 +1432,7 @@ TEST_FIXTURE(DateTimeTest, OperatorNotEqualsDateTimeTimeSpec)
 
 TEST_FIXTURE(DateTimeTest, OperatorNotEqualsDateTimeTimeVal)
 {
-     int year1 = 2014;
+    int year1 = 2014;
     int month1 = 3;
     int day1 = 26;
     int hour1 = 12;

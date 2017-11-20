@@ -10,10 +10,16 @@ class OSTest : public UnitTestCpp::TestFixture
 public:
     virtual void SetUp();
     virtual void TearDown();
+
+    string PlatformName = PLATFORM_NAME;
 };
 
 void OSTest::SetUp()
 {
+    if (PlatformName.empty())
+    {
+        std::cerr << "PlatformName undefined" << std::endl;
+    }
 }
 
 void OSTest::TearDown()
