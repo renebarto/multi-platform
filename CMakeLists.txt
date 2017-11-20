@@ -52,7 +52,7 @@ option(MEASURE_COVERAGE "Determine coverage" OFF)
 option(BUILD_UNIT_TESTS "Build unit tests" ON)
 option(LOCAL_BUILD "Only perform local build, no install" OFF)
 if ("${PLATFORM_NAME}" STREQUAL "")
-    set(PLATFORM_NAME "Linux")
+    set(PLATFORM_NAME "x86_64")
 endif()
 
 if ("${TEST_DATA_ROOT}" STREQUAL "")
