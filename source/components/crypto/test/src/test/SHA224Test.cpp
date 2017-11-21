@@ -31,7 +31,9 @@ TEST_FIXTURE(SHA224Test, Construct)
 
     OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessNoFinalize_Case2)
@@ -41,7 +43,9 @@ TEST_FIXTURE(SHA224Test, ProcessNoFinalize_Case2)
     OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessCase1)
@@ -58,7 +62,9 @@ TEST_FIXTURE(SHA224Test, ProcessCase1)
     target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("D14A028C2A3A2BC9476102BB288234C415A2B01F828EA62AC5B3E42F", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("D14A028C2A3A2BC9476102BB288234C415A2B01F828EA62AC5B3E42F", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessCase2)
@@ -76,7 +82,9 @@ TEST_FIXTURE(SHA224Test, ProcessCase2)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("23097D223405D8228642A477BDA255B32AADBCE4BDA0B3F7E36C9DA7", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("23097D223405D8228642A477BDA255B32AADBCE4BDA0B3F7E36C9DA7", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessResetCase2)
@@ -90,7 +98,9 @@ TEST_FIXTURE(SHA224Test, ProcessResetCase2)
     target.Finalize();
     target.Initialize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessCase3)
@@ -108,7 +118,9 @@ TEST_FIXTURE(SHA224Test, ProcessCase3)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("75388B16512776CC5DBA5DA1FD890150B0C6455CB4F58B1952522525", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("75388B16512776CC5DBA5DA1FD890150B0C6455CB4F58B1952522525", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessCase4)
@@ -126,7 +138,9 @@ TEST_FIXTURE(SHA224Test, ProcessCase4)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("C97CA9A559850CE97A04A96DEF6D99A9E0E0E2AB14E6B8DF265FC0B3", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("C97CA9A559850CE97A04A96DEF6D99A9E0E0E2AB14E6B8DF265FC0B3", stream.str());
 }
 
 TEST_FIXTURE(SHA224Test, ProcessCase5)
@@ -145,7 +159,9 @@ TEST_FIXTURE(SHA224Test, ProcessCase5)
         target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("20794655980C91D8BBB4C1EA97618A4BF03F42581948B2EE4EE7AD67", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("20794655980C91D8BBB4C1EA97618A4BF03F42581948B2EE4EE7AD67", stream.str());
 }
 
 } // TEST_SUITE(crypto)

@@ -337,15 +337,13 @@ OSAL::ByteArray SHA224::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA224::ToString() const
+std::ostream & SHA224::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }
 
 SHA256::SHA256()
@@ -392,13 +390,11 @@ OSAL::ByteArray SHA256::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA256::ToString() const
+std::ostream & SHA256::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }

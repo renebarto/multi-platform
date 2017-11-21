@@ -36,7 +36,9 @@ TEST_FIXTURE(MACAddressTest, Constructor)
     OSAL::ByteArray reference(OSAL::Network::MACAddress::AddressSize);
     const OSAL::String expected = _("00-00-00-00-00-00");
     EXPECT_TRUE(reference == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 
@@ -46,7 +48,9 @@ TEST_FIXTURE(MACAddressTest, ConstructorByteArray)
     OSAL::Network::MACAddress target({1, 2, 3, 4, 5, 6});
     const OSAL::String expected = _("01-02-03-04-05-06");
     EXPECT_TRUE(macAddress == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(MACAddressTest, ConstructorByteArrayOffset)
@@ -55,7 +59,9 @@ TEST_FIXTURE(MACAddressTest, ConstructorByteArrayOffset)
     OSAL::Network::MACAddress target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1);
     const OSAL::String expected = _("01-02-03-04-05-06");
     EXPECT_TRUE(reference == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(MACAddressTest, CreateByteArray)
@@ -64,7 +70,9 @@ TEST_FIXTURE(MACAddressTest, CreateByteArray)
     OSAL::Network::MACAddress target({1, 2, 3, 4, 5, 6});
     const OSAL::String expected = _("01-02-03-04-05-06");
     EXPECT_TRUE(macAddress == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(MACAddressTest, CreateByteArrayOffset)
@@ -73,7 +81,9 @@ TEST_FIXTURE(MACAddressTest, CreateByteArrayOffset)
     OSAL::Network::MACAddress target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1);
     const OSAL::String expected = _("01-02-03-04-05-06");
     EXPECT_TRUE(macAddress == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(MACAddressTest, OperatorIndex)
@@ -227,14 +237,16 @@ TEST_FIXTURE(MACAddressTest, OperatorNotEqual)
     EXPECT_TRUE(ref3 != ref2);
 }
 
-TEST_FIXTURE(MACAddressTest, ToString)
+TEST_FIXTURE(MACAddressTest, PrintTo)
 {
     OSAL::Network::MACAddress target({1, 2, 3, 4, 5, 6});
     const OSAL::String expected = _("01-02-03-04-05-06");
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
-TEST_FIXTURE(MACAddressTest, PrintTo)
+TEST_FIXTURE(MACAddressTest, PrintToNonMember)
 {
     OSAL::Network::MACAddress target({1, 2, 3, 4, 5, 6});
     const OSAL::String expected = _("01-02-03-04-05-06");

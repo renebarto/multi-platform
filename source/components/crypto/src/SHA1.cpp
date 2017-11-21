@@ -313,13 +313,11 @@ void SHA1::Transform(const uint8_t buffer[BlockSize])
     _state[4] += e;
 }
 
-OSAL::String SHA1::ToString() const
+std::ostream & SHA1::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }

@@ -62,10 +62,9 @@ bool IPV4EndPoint::operator != (const IPV4EndPoint & other) const
     return ! this->operator ==(other);
 }
 
-string IPV4EndPoint::ToString() const
+std::ostream & IPV4EndPoint::PrintTo(std::ostream & stream) const
 {
-    ostringstream stream;
-    stream << _ipAddress.ToString() << ":";
+    stream << _ipAddress << ":";
     stream << _port;
-    return stream.str();
+    return stream;
 }

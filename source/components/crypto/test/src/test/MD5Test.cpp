@@ -31,7 +31,9 @@ TEST_FIXTURE(MD5Test, Construct)
 
     OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessNoFinalize_Case2)
@@ -41,7 +43,9 @@ TEST_FIXTURE(MD5Test, ProcessNoFinalize_Case2)
     OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessCase1)
@@ -56,7 +60,9 @@ TEST_FIXTURE(MD5Test, ProcessCase1)
     target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("D41D8CD98F00B204E9800998ECF8427E", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("D41D8CD98F00B204E9800998ECF8427E", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessCase2)
@@ -72,7 +78,9 @@ TEST_FIXTURE(MD5Test, ProcessCase2)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("900150983CD24FB0D6963F7D28E17F72", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("900150983CD24FB0D6963F7D28E17F72", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessResetCase2)
@@ -86,7 +94,9 @@ TEST_FIXTURE(MD5Test, ProcessResetCase2)
     target.Finalize();
     target.Initialize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("00000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("00000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessCase3)
@@ -102,7 +112,9 @@ TEST_FIXTURE(MD5Test, ProcessCase3)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("C3FCD3D76192E4007DFB496CCA67E13B", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("C3FCD3D76192E4007DFB496CCA67E13B", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessCase4)
@@ -118,7 +130,9 @@ TEST_FIXTURE(MD5Test, ProcessCase4)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("D174AB98D277D9F5A5611C2C9F419D9F", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("D174AB98D277D9F5A5611C2C9F419D9F", stream.str());
 }
 
 TEST_FIXTURE(MD5Test, ProcessCase5)
@@ -134,7 +148,9 @@ TEST_FIXTURE(MD5Test, ProcessCase5)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("57EDF4A22BE3C955AC49DA2E2107B67A", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("57EDF4A22BE3C955AC49DA2E2107B67A", stream.str());
 }
 
 } // TEST_SUITE(crypto)

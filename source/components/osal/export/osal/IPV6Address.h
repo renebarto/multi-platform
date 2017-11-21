@@ -54,7 +54,7 @@ public:
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const override { return AddressSize; }
     virtual OSAL::ByteArray GetBytes() const override;
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
     OSAL::ByteArray _ipAddress;
@@ -62,11 +62,6 @@ private:
 
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };
-
-inline void PrintTo(const IPV6Address & value, std::basic_ostream<OSAL::Char> & stream)
-{
-    stream << value.ToString();
-}
 
 } // namespace Network
 } // namespace OSAL

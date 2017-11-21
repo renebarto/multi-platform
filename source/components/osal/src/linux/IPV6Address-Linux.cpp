@@ -124,9 +124,8 @@ OSAL::ByteArray IPV6Address::GetBytes() const
     return _ipAddress;
 }
 
-OSAL::String IPV6Address::ToString() const
+std::ostream & IPV6Address::PrintTo(std::ostream & stream) const
 {
-    ostringstream stream;
     static const size_t NumWords = AddressSize / 2;
     uint16_t words[NumWords];
     size_t zeroSequenceStartMax = 0;
@@ -186,7 +185,7 @@ OSAL::String IPV6Address::ToString() const
         }
     }
     stream << dec;
-    return stream.str();
+    return stream;
 }
 
 void IPV6Address::SetData(const OSAL::ByteArray & data, size_t offset)

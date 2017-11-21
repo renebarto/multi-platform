@@ -65,7 +65,7 @@ public:
     bool operator != (const Array<T> & other) const;
     T& operator[] (size_t offset);
     const T& operator[] (size_t offset) const;
-    OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
 protected:
     void AllocateSize(size_t size);
@@ -301,9 +301,8 @@ typename std::enable_if<std::is_integral<T>::value, void>::type PrintTo(std::ost
     stream << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
 }
 template<class T>
-OSAL::String Array<T>::ToString() const
+std::ostream & Array<T>::PrintTo(std::ostream & stream) const
 {
-    std::basic_ostringstream<OSAL::Char> stream;
     stream << OSAL::OS::TypeName(*this) << _(" Item size: ") << sizeof(T) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
     size_t maxValuesToDisplay = std::min(_size, MaxValuesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
@@ -313,13 +312,13 @@ OSAL::String Array<T>::ToString() const
             if (i + offset < maxValuesToDisplay)
             {
                 T value = _data[i + offset];
-                PrintTo(stream, value);
+                OSAL::PrintTo(stream, value);
             }
         }
         stream << std::endl;
     }
     stream << std::endl << std::flush;
-    return stream.str();
+    return stream;
 }
 
 template<class T>
@@ -378,7 +377,7 @@ void Array<T>::Move(Array<T> & other)
 template<class T>
 void PrintTo(const Array<T> & value, std::ostream & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace OSAL

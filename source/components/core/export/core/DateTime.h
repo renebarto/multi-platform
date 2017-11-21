@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <ctime>
 #include "osal/Strings.h"
 #include "osal/Time.h"
@@ -99,8 +100,8 @@ public:
     DateTime ConvertToLocalTime() const;
     DateTime ConvertToUTCTime() const;
 
-    virtual OSAL::String ToString() const;
-    OSAL::String ToString(const OSAL::String & formatString) const;
+    std::ostream & PrintTo(std::ostream & stream) const;
+    std::ostream & PrintTo(std::ostream & stream, const OSAL::String & formatString) const;
 
     friend CORE_EXPORT DateTime operator + (const TimeSpan & lhs, const DateTime & rhs);
     friend CORE_EXPORT DateTime operator + (const DateTime & lhs, const TimeSpan & rhs);
@@ -148,15 +149,16 @@ private:
     void Assign(const tm & value);
 };
 
-inline void PrintTo(const DateTime & value, std::basic_ostream<OSAL::Char> & stream)
+inline void PrintTo(const DateTime & value, std::ostream & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
+
 } // namespace Core
 
-inline std::basic_ostream<OSAL::Char> & operator << (std::basic_ostream<OSAL::Char> & stream, Core::DateTime value)
+inline std::ostream & operator << (std::ostream & stream, Core::DateTime value)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
     return stream;
 }
 

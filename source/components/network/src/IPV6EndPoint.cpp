@@ -71,17 +71,16 @@ bool IPV6EndPoint::operator != (const IPV6EndPoint & other) const
     return ! this->operator ==(other);
 }
 
-string IPV6EndPoint::ToString() const
+std::ostream & IPV6EndPoint::PrintTo(std::ostream & stream) const
 {
-    ostringstream stream;
     if (_port != 0)
     {
-        stream << "[" << _ipAddress.ToString() << "]:";
+        stream << "[" << _ipAddress << "]:";
         stream << _port;
     }
     else
     {
-        stream << _ipAddress.ToString();
+        stream << _ipAddress;
     }
-    return stream.str();
+    return stream;
 }

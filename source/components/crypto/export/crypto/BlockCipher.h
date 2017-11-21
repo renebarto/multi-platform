@@ -25,14 +25,14 @@ public:
     virtual void Process(const OSAL::ByteArray & dataIn, OSAL::ByteArray & dataOut) = 0;
     virtual void Finalize() = 0;
 
-    virtual OSAL::String ToString() const = 0;
+    virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 
 };
 
 template<class Key>
 inline void PrintTo(const BlockCipher<Key> & value, std::ostream & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace Crypto

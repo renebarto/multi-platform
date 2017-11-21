@@ -46,7 +46,7 @@ public:
     bool operator != (const FixedArray<T> & other) const;
     T& operator[] (size_t offset);
     const T& operator[] (size_t offset) const;
-    OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
 protected:
     FixedArray();
@@ -251,11 +251,10 @@ const T& FixedArray<T>::operator[] (size_t offset) const
 }
 
 template<class T>
-std::string FixedArray<T>::ToString() const
+std::ostream & FixedArray<T>::PrintTo(std::ostream & stream) const
 {
-    std::ostringstream stream;
     stream << OSAL::OS::TypeName(*this) << " Item size: " << sizeof(T) << " Size: " << _size;
-    return stream.str();
+    return stream;
 }
 
 template<class T>
@@ -283,9 +282,9 @@ void FixedArray<T>::Free()
 }
 
 template<class T>
-inline void PrintTo(const FixedArray<T> & value, std::ostream & stream)
+void PrintTo(const FixedArray<T> & value, std::ostream & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace Core

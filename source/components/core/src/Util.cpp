@@ -27,9 +27,9 @@ size_t Util::NextPowerOfTwo(size_t value)
     return static_cast<size_t>((numberOfOnes != 1) ? 1 << power : 1 << (power - 1));
 }
 
-timespec Util::MilliSecondsToTimespec(int ms)
+OSAL::Time::timespec Util::MilliSecondsToTimespec(int ms)
 {
-    timespec time;
+    OSAL::Time::timespec time;
     time.tv_sec = ms / MilliSecondsPerSecond;
     time.tv_nsec = (ms % MilliSecondsPerSecond) * NanoSecondsPerMilliSecond;
     return time;
@@ -72,7 +72,7 @@ timespec Util::MilliSecondsToTimespec(int ms)
 //
 void Util::Sleep(int sleepMS)
 {
-    timespec sleepTime = MilliSecondsToTimespec(sleepMS);
+    OSAL::Time::timespec sleepTime = MilliSecondsToTimespec(sleepMS);
     int errorCode;
     do
     {

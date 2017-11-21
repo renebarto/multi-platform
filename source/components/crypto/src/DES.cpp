@@ -112,9 +112,8 @@ void DES::Finalize()
 
 }
 
-OSAL::String DES::ToString() const
+std::ostream & DES::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
     stream << hex << uppercase;
     for (size_t i = 0; i < NumSubKeys; ++i)
     {
@@ -125,7 +124,7 @@ OSAL::String DES::ToString() const
         stream << endl;
     }
     stream << dec;
-    return stream.str();
+    return stream;
 }
 
 void DES::IP(uint32_t state[], const uint8_t dataIn[])
@@ -394,13 +393,12 @@ void TripleDES::Finalize()
 
 }
 
-OSAL::String TripleDES::ToString() const
+std::ostream & TripleDES::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-    stream << "BlockCipher 1: " << _des1.ToString() << endl;
-    stream << "BlockCipher 2: " << _des2.ToString() << endl;
-    stream << "BlockCipher 3: " << _des3.ToString() << endl;
-    return stream.str();
+    stream << "BlockCipher 1: " << _des1 << endl;
+    stream << "BlockCipher 2: " << _des2 << endl;
+    stream << "BlockCipher 3: " << _des3 << endl;
+    return stream;
 }
 
 void TripleDES::ProcessBlock(const DataBlock dataIn, DataBlock dataOut)

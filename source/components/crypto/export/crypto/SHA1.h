@@ -20,7 +20,7 @@ public:
     virtual size_t GetDigestSize() const override { return DigestSize; }
     virtual OSAL::ByteArray GetDigest() const override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 
 private:
@@ -52,5 +52,11 @@ private:
     void Round4(WorkspaceBlock * block, Word & v, Word & w, Word & x, Word & y, Word & z, size_t i);
     void Transform(const uint8_t buffer[BlockSize]);
 };
+
+inline std::ostream & operator << (std::ostream & stream, const SHA1 & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Crypto

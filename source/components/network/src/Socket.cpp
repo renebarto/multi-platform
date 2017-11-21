@@ -579,9 +579,8 @@ size_t Socket::ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, 
     return numBytes;
 }
 
-OSAL::String Socket::ToString() const
+std::ostream & Socket::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
     stream << OSAL::OS::TypeName(*this) << _(" handle = ") << GetHandle();
-    return stream.str();
+    return stream;
 }

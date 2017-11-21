@@ -31,7 +31,9 @@ TEST_FIXTURE(SHA512_256Test, Construct)
 
     OSAL::ByteArray expected(target.GetDigestSize());
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessNoFinalize_Case2)
@@ -41,7 +43,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessNoFinalize_Case2)
     OSAL::ByteArray expected(target.GetDigestSize());
     target.Process(reinterpret_cast<const uint8_t *>("abc"), 3);
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessCase1)
@@ -58,7 +62,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase1)
     target.Process(input, 0);
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("C672B8D1EF56ED28AB87C3622C5114069BDD3AD7B8F9737498D0C01ECEF0967A", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("C672B8D1EF56ED28AB87C3622C5114069BDD3AD7B8F9737498D0C01ECEF0967A", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessCase2)
@@ -76,7 +82,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase2)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("53048E2681941EF99B2E29B76B4C7DABE4C2D0C634FC6D46E0E2F13107E7AF23", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("53048E2681941EF99B2E29B76B4C7DABE4C2D0C634FC6D46E0E2F13107E7AF23", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessResetCase2)
@@ -90,7 +98,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessResetCase2)
     target.Finalize();
     target.Initialize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("0000000000000000000000000000000000000000000000000000000000000000", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessCase3)
@@ -108,7 +118,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase3)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("BDE8E1F9F19BB9FD3406C90EC6BC47BD36D8ADA9F11880DBC8A22A7078B6A461", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("BDE8E1F9F19BB9FD3406C90EC6BC47BD36D8ADA9F11880DBC8A22A7078B6A461", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessCase4)
@@ -126,7 +138,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase4)
     target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("3928E184FB8690F840DA3988121D31BE65CB9D3EF83EE6146FEAC861E19B563A", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("3928E184FB8690F840DA3988121D31BE65CB9D3EF83EE6146FEAC861E19B563A", stream.str());
 }
 
 TEST_FIXTURE(SHA512_256Test, ProcessCase5)
@@ -145,7 +159,9 @@ TEST_FIXTURE(SHA512_256Test, ProcessCase5)
         target.Process(input, sizeof(input));
     target.Finalize();
     EXPECT_EQ(expected, target.GetDigest());
-    EXPECT_EQ("9A59A052930187A97038CAE692F30708AA6491923EF5194394DC68D56C74FB21", target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ("9A59A052930187A97038CAE692F30708AA6491923EF5194394DC68D56C74FB21", stream.str());
 }
 
 } // TEST_SUITE(crypto)

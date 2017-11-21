@@ -38,7 +38,9 @@ TEST_FIXTURE(IPV6EndPointTest, Constructor)
     const string expected = "::";
     EXPECT_TRUE(referenceAddress == target.GetIPAddress());
     EXPECT_TRUE(referencePort == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorCopy)
@@ -48,7 +50,9 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorCopy)
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
     EXPECT_TRUE(ipEndPoint.GetIPAddress() == target.GetIPAddress());
     EXPECT_TRUE(ipEndPoint.GetPort() == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddress)
@@ -58,7 +62,9 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddress)
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
     EXPECT_TRUE(IPV6EndPoint::AnyPort == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressPort)
@@ -69,7 +75,9 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressPort)
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8Array)
@@ -80,7 +88,9 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8Array)
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
     EXPECT_TRUE(OSAL::ByteArray(ipAddress, sizeof(ipAddress)) == target.GetIPAddress().GetData());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
@@ -90,7 +100,9 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
     const string expected = "[::]:1234";
     EXPECT_TRUE(OSAL::Network::IPV6Address::None == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV6EndPointTest, ParseIPAddressOnly)

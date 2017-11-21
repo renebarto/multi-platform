@@ -172,7 +172,7 @@ TEST_FIXTURE(TimeSpanTest, OperatorNotEquals)
     EXPECT_FALSE(interval3 != timeSpan3);
 }
 
-TEST_FIXTURE(TimeSpanTest, ToString)
+TEST_FIXTURE(TimeSpanTest, PrintTo)
 {
     int64_t interval = 111234567890123;
     TimeSpan timeSpan(interval);
@@ -181,12 +181,14 @@ TEST_FIXTURE(TimeSpanTest, ToString)
     int minutes = timeSpan.Minutes() % 60;
     int seconds = (int)timeSpan.Seconds() % 60;
     int microSeconds = timeSpan.MicroSeconds() % 1000000;
-    basic_stringstream<OSAL::Char> stream;
-    stream << days << _(" days, ") << hours << _(" hours, ")
-           << minutes << _(" minutes, ")
-           << seconds << _(".") << setfill(_('0')) << setw(6) << microSeconds << _(" seconds");
-    OSAL::String expected = stream.str();
-    OSAL::String actual = timeSpan.ToString();
+    basic_stringstream<OSAL::Char> streamExpected;
+    streamExpected << days << _(" days, ") << hours << _(" hours, ")
+                   << minutes << _(" minutes, ")
+                   << seconds << _(".") << setfill(_('0')) << setw(6) << microSeconds << _(" seconds");
+    OSAL::String expected = streamExpected.str();
+    basic_stringstream<OSAL::Char> streamActual;
+    timeSpan.PrintTo(streamActual);
+    OSAL::String actual = streamActual.str();
     EXPECT_EQ(expected, actual);
 }
 

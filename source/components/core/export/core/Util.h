@@ -31,7 +31,7 @@ CORE_EXPORT size_t NextPowerOfTwo(size_t value);
 //{
 //    return std::min(max, std::max(min, value));
 //}
-timespec MilliSecondsToTimespec(int ms);
+OSAL::Time::timespec MilliSecondsToTimespec(int ms);
 //timespec ConvertTimeOffsetToTimeSpec(int offsetMS);
 //timespec ConvertDurationToTimeSpec(std::chrono::milliseconds duration);
 //timespec ConvertDurationToTimeSpec(std::chrono::microseconds duration);
@@ -54,42 +54,6 @@ CORE_EXPORT void Sleep(int sleepMS);
 //std::string Base64Encode(const ByteArray & data);
 //ByteArray Base64Decode(const std::string & dataBase64);
 //ByteArray Base64Decode(const char * dataBase64);
-//
-//bool TryParse(const std::string & text, bool & value);
-//bool TryParse(const std::string & text, int8_t & value, int base = 10);
-//bool TryParse(const std::string & text, uint8_t & value, int base = 10);
-//bool TryParse(const std::string & text, int16_t & value, int base = 10);
-//bool TryParse(const std::string & text, uint16_t & value, int base = 10);
-//bool TryParse(const std::string & text, int32_t & value, int base = 10);
-//bool TryParse(const std::string & text, uint32_t & value, int base = 10);
-//bool TryParse(const std::string & text, int64_t & value, int base = 10);
-//bool TryParse(const std::string & text, uint64_t & value, int base = 10);
-//bool TryParse(const std::string & text, float & value);
-//bool TryParse(const std::string & text, double & value);
-//inline bool TryParse(const std::string & text, std::string & value)
-//{
-//    value = text;
-//    return true;
-//}
-//std::string ToString(bool value);
-//std::string ToString(uint8_t value, int base = 10);
-//std::string ToString(int16_t value, int base = 10);
-//std::string ToString(uint16_t value, int base = 10);
-//std::string ToString(int32_t value, int base = 10);
-//std::string ToString(uint32_t value, int base = 10);
-//std::string ToString(int64_t value, int base = 10);
-//std::string ToString(uint64_t value, int base = 10);
-//std::string ToString(float value, int precision = 16);
-//std::string ToString(double value, int precision = 16);
-//std::string ToString(std::string value, bool quote = true);
-//template <class T> std::string ToString(T value)
-//{
-//    std::ostringstream stream;
-//
-//    stream << value;
-//
-//    return stream.str();
-//}
 //
 //bool CompareFiles(const char * pathA, const char * pathB);
 //bool CompareFiles(const std::string & pathA, const std::string & pathB);

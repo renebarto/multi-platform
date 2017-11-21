@@ -1,12 +1,10 @@
 #include "core/DateTime.h"
 
-#include <cassert>
 #include <cmath>
 #include <cstring>
 #include <iomanip>
 #include <sstream>
 #include <osal/Strings.h>
-//#include <sys/time.h>
 #include "core/Core.h"
 #include "core/TimeSpan.h"
 
@@ -188,15 +186,15 @@ bool DateTime::LessThan(const DateTime & other) const
 
 DateTime DateTime::NowUTC()
 {
-    timespec time;
+    OSAL::Time::timespec time;
     OSAL::Time::clock_gettime(CLOCK_REALTIME, &time);
     return DateTime(time);
 }
 
 DateTime DateTime::NowLocal()
 {
-    timespec time;
-	OSAL::Time::clock_gettime(CLOCK_REALTIME, &time);
+    OSAL::Time::timespec time;
+    OSAL::Time::clock_gettime(CLOCK_REALTIME, &time);
     return DateTime(time, true);
 }
 
@@ -432,30 +430,6 @@ DateTime DateTime::ConvertToUTCTime() const
     return utcTime;
 }
 
-OSAL::String DateTime::ToString() const
-{
-    basic_ostringstream<OSAL::Char> stream;
-
-    stream << ToString(_("%Y-%m-%d %H:%M:%S")) << _(".") << setfill(_('0')) << setw(6) << MicroSeconds();
-    return stream.str();
-}
-
-OSAL::String DateTime::ToString(const OSAL::String & formatString) const
-{
-    OSAL::Char buffer[1000];
-    OSAL::String formatStringTemp = formatString;
-    if (_dateTime.tm_tzOffset == 0)
-    {
-        size_t timezoneIndex = formatStringTemp.find(_("%z"), 0);
-        if (timezoneIndex == OSAL::String::npos)
-            timezoneIndex = formatStringTemp.find(_("%Z"), 0);
-        if (timezoneIndex != OSAL::String::npos)
-            formatStringTemp.replace(timezoneIndex, timezoneIndex + 2, _("GMT"));
-    }
-    assert(0 != OSAL::Time::strftime(buffer, sizeof(buffer) / sizeof(OSAL::Char), formatStringTemp.c_str(), &_dateTime._tm));
-    return OSAL::String(buffer);
-}
-
 void DateTime::Assign(timespec value, bool localTime)
 {
     _time = value;
@@ -513,6 +487,30 @@ void DateTime::Assign(const tm & value)
 {
     _dateTime = value;
     _time.tv_sec = mktime(&_dateTime);
+}
+
+std::ostream & DateTime::PrintTo(std::ostream & stream) const
+{
+    PrintTo(stream, _("%Y-%m-%d %H:%M:%S"));
+    stream << _(".") << std::setfill(_('0')) << std::setw(6) << MicroSeconds();
+    return stream;
+}
+
+std::ostream & DateTime::PrintTo(std::ostream & stream, const OSAL::String & formatString) const
+{
+    OSAL::Char buffer[1000];
+    OSAL::String formatStringTemp = formatString;
+    if (_dateTime.tm_tzOffset == 0)
+    {
+        size_t timezoneIndex = formatStringTemp.find(_("%z"), 0);
+        if (timezoneIndex == OSAL::String::npos)
+            timezoneIndex = formatStringTemp.find(_("%Z"), 0);
+        if (timezoneIndex != OSAL::String::npos)
+            formatStringTemp.replace(timezoneIndex, timezoneIndex + 2, _("GMT"));
+    }
+    assert(0 != OSAL::Time::strftime(buffer, sizeof(buffer) / sizeof(OSAL::Char), formatStringTemp.c_str(), &_dateTime._tm));
+    stream << buffer;
+    return stream;
 }
 
 DateTime operator + (const TimeSpan & lhs, const DateTime & rhs)

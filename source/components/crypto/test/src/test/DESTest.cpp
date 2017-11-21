@@ -32,22 +32,25 @@ TEST_FIXTURE(DESTest, Construct)
 {
     DES target;
 
-    EXPECT_EQ(_("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n"), target.ToString());
+    string expected = _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption1)
@@ -56,22 +59,25 @@ TEST_FIXTURE(DESTest, InitializeDecryption1)
     DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ(_("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n"), target.ToString());
+    string expected = _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption2)
@@ -80,22 +86,25 @@ TEST_FIXTURE(DESTest, InitializeDecryption2)
     DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ(_("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n"), target.ToString());
+    string expected = _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeDecryption3)
@@ -104,22 +113,25 @@ TEST_FIXTURE(DESTest, InitializeDecryption3)
     DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ(_("000000000100\n")
-              _("000000000002\n")
-              _("000000200000\n")
-              _("000000002000\n")
-              _("000000000000\n")
-              _("000000100000\n")
-              _("000000000200\n")
-              _("000000800000\n")
-              _("000000000010\n")
-              _("000000000800\n")
-              _("000000000020\n")
-              _("000000001000\n")
-              _("000000000008\n")
-              _("000000400000\n")
-              _("000000000000\n")
-              _("000000040000\n"), target.ToString());
+    string expected = _("000000000100\n")
+                      _("000000000002\n")
+                      _("000000200000\n")
+                      _("000000002000\n")
+                      _("000000000000\n")
+                      _("000000100000\n")
+                      _("000000000200\n")
+                      _("000000800000\n")
+                      _("000000000010\n")
+                      _("000000000800\n")
+                      _("000000000020\n")
+                      _("000000001000\n")
+                      _("000000000008\n")
+                      _("000000400000\n")
+                      _("000000000000\n")
+                      _("000000040000\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption1)
@@ -128,22 +140,25 @@ TEST_FIXTURE(DESTest, InitializeEncryption1)
     DESKey key = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ(_("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n")
-              _("000000000000\n"), target.ToString());
+    string expected = _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n")
+                      _("000000000000\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption2)
@@ -152,22 +167,25 @@ TEST_FIXTURE(DESTest, InitializeEncryption2)
     DESKey key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ(_("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n")
-              _("FFFFFFFFFFFF\n"), target.ToString());
+    string expected = _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n")
+                      _("FFFFFFFFFFFF\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DESTest, InitializeEncryption3)
@@ -176,22 +194,25 @@ TEST_FIXTURE(DESTest, InitializeEncryption3)
     DESKey key = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ(_("000000040000\n")
-              _("000000000000\n")
-              _("000000400000\n")
-              _("000000000008\n")
-              _("000000001000\n")
-              _("000000000020\n")
-              _("000000000800\n")
-              _("000000000010\n")
-              _("000000800000\n")
-              _("000000000200\n")
-              _("000000100000\n")
-              _("000000000000\n")
-              _("000000002000\n")
-              _("000000200000\n")
-              _("000000000002\n")
-              _("000000000100\n"), target.ToString());
+    string expected = _("000000040000\n")
+                      _("000000000000\n")
+                      _("000000400000\n")
+                      _("000000000008\n")
+                      _("000000001000\n")
+                      _("000000000020\n")
+                      _("000000000800\n")
+                      _("000000000010\n")
+                      _("000000800000\n")
+                      _("000000000200\n")
+                      _("000000100000\n")
+                      _("000000000000\n")
+                      _("000000002000\n")
+                      _("000000200000\n")
+                      _("000000000002\n")
+                      _("000000000100\n");
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 struct TestDataDES
@@ -751,54 +772,57 @@ TEST_FIXTURE(TripleDESTest, Construct)
 {
     TripleDES target;
 
-    EXPECT_EQ("BlockCipher 1: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 2: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 3: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n", target.ToString());
+    string expected = "BlockCipher 1: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 2: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 3: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeDecryption1)
@@ -809,54 +833,57 @@ TEST_FIXTURE(TripleDESTest, InitializeDecryption1)
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("BlockCipher 1: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 2: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 3: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n", target.ToString());
+    string expected = "BlockCipher 1: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 2: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 3: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeDecryption2)
@@ -867,54 +894,57 @@ TEST_FIXTURE(TripleDESTest, InitializeDecryption2)
                         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("BlockCipher 1: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n"
-              "BlockCipher 2: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n"
-              "BlockCipher 3: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n", target.ToString());
+    string expected = "BlockCipher 1: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n"
+                      "BlockCipher 2: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n"
+                      "BlockCipher 3: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeDecryption3)
@@ -925,54 +955,57 @@ TEST_FIXTURE(TripleDESTest, InitializeDecryption3)
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Decrypt);
 
-    EXPECT_EQ("BlockCipher 1: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 2: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 3: 000000000100\n"
-                             "000000000002\n"
-                             "000000200000\n"
-                             "000000002000\n"
-                             "000000000000\n"
-                             "000000100000\n"
-                             "000000000200\n"
-                             "000000800000\n"
-                             "000000000010\n"
-                             "000000000800\n"
-                             "000000000020\n"
-                             "000000001000\n"
-                             "000000000008\n"
-                             "000000400000\n"
-                             "000000000000\n"
-                             "000000040000\n\n", target.ToString());
+    string expected = "BlockCipher 1: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 2: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 3: 000000000100\n"
+                                     "000000000002\n"
+                                     "000000200000\n"
+                                     "000000002000\n"
+                                     "000000000000\n"
+                                     "000000100000\n"
+                                     "000000000200\n"
+                                     "000000800000\n"
+                                     "000000000010\n"
+                                     "000000000800\n"
+                                     "000000000020\n"
+                                     "000000001000\n"
+                                     "000000000008\n"
+                                     "000000400000\n"
+                                     "000000000000\n"
+                                     "000000040000\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeEncryption1)
@@ -983,54 +1016,57 @@ TEST_FIXTURE(TripleDESTest, InitializeEncryption1)
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("BlockCipher 1: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 2: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 3: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n", target.ToString());
+    string expected = "BlockCipher 1: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 2: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 3: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeEncryption2)
@@ -1041,54 +1077,57 @@ TEST_FIXTURE(TripleDESTest, InitializeEncryption2)
                         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("BlockCipher 1: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n"
-              "BlockCipher 2: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n"
-              "BlockCipher 3: FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n"
-                             "FFFFFFFFFFFF\n\n", target.ToString());
+    string expected = "BlockCipher 1: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n"
+                      "BlockCipher 2: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n"
+                      "BlockCipher 3: FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n"
+                                     "FFFFFFFFFFFF\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TripleDESTest, InitializeEncryption3)
@@ -1099,54 +1138,57 @@ TEST_FIXTURE(TripleDESTest, InitializeEncryption3)
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     target.Initialize(key, Direction::Encrypt);
 
-    EXPECT_EQ("BlockCipher 1: 000000040000\n"
-                             "000000000000\n"
-                             "000000400000\n"
-                             "000000000008\n"
-                             "000000001000\n"
-                             "000000000020\n"
-                             "000000000800\n"
-                             "000000000010\n"
-                             "000000800000\n"
-                             "000000000200\n"
-                             "000000100000\n"
-                             "000000000000\n"
-                             "000000002000\n"
-                             "000000200000\n"
-                             "000000000002\n"
-                             "000000000100\n\n"
-              "BlockCipher 2: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n"
-              "BlockCipher 3: 000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n"
-                             "000000000000\n\n", target.ToString());
+    string expected = "BlockCipher 1: 000000040000\n"
+                                     "000000000000\n"
+                                     "000000400000\n"
+                                     "000000000008\n"
+                                     "000000001000\n"
+                                     "000000000020\n"
+                                     "000000000800\n"
+                                     "000000000010\n"
+                                     "000000800000\n"
+                                     "000000000200\n"
+                                     "000000100000\n"
+                                     "000000000000\n"
+                                     "000000002000\n"
+                                     "000000200000\n"
+                                     "000000000002\n"
+                                     "000000000100\n\n"
+                      "BlockCipher 2: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n"
+                      "BlockCipher 3: 000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n"
+                                     "000000000000\n\n";
+    std::basic_ostringstream<OSAL::Char> stream;
+    stream << target;
+    EXPECT_EQ(expected, stream.str());
 }
 
 struct TestDataTripleDES

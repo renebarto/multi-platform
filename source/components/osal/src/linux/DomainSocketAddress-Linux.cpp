@@ -90,7 +90,9 @@ const uint8_t & DomainSocketAddress::operator[] (size_t offset) const
 
 OSAL::String DomainSocketAddress::GetData() const
 {
-    return ToString();
+    basic_ostringstream<OSAL::Char> stream;
+    PrintTo(stream);
+    return stream.str();
 }
 
 void DomainSocketAddress::SetData(const OSAL::String & value)
@@ -104,11 +106,10 @@ OSAL::ByteArray DomainSocketAddress::GetBytes() const
     return _address;
 }
 
-OSAL::String DomainSocketAddress::ToString() const
+std::ostream & DomainSocketAddress::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
     stream << reinterpret_cast<const char *>(_address.Data());
-    return stream.str();
+    return stream;
 }
 
 void DomainSocketAddress::SetData(const OSAL::ByteArray & data, size_t offset)

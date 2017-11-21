@@ -39,7 +39,9 @@ TEST_FIXTURE(DomainSocketAddressTest, Constructor)
     OSAL::ByteArray reference(OSAL::Network::DomainSocketAddress::AddressSize);
     const OSAL::String expected = "";
     EXPECT_TRUE(reference == target.GetBytes());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 
@@ -51,7 +53,9 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArray)
     OSAL::ByteArray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffset)
@@ -62,7 +66,9 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffset)
     OSAL::ByteArray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, reference.Size());
     EXPECT_EQ(reference, expectedAddress);
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, CreateByteArray)
@@ -73,7 +79,9 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateByteArray)
     OSAL::ByteArray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, CreateByteArrayOffset)
@@ -84,7 +92,9 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateByteArrayOffset)
     OSAL::ByteArray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorIndex)
@@ -235,14 +245,16 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqual)
     EXPECT_TRUE(ref3 != ref2);
 }
 
-TEST_FIXTURE(DomainSocketAddressTest, ToString)
+TEST_FIXTURE(DomainSocketAddressTest, PrintTo)
 {
     OSAL::Network::DomainSocketAddress target(_("/tmp/socket"));
     const OSAL::String expected = _("/tmp/socket");
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
-TEST_FIXTURE(DomainSocketAddressTest, PrintTo)
+TEST_FIXTURE(DomainSocketAddressTest, PrintToNonMember)
 {
     OSAL::Network::DomainSocketAddress target(_("/tmp/socket"));
     const OSAL::String expected = _("/tmp/socket");

@@ -20,7 +20,7 @@ public:
     virtual size_t GetDigestSize() const override { return DigestSize; }
     virtual OSAL::ByteArray GetDigest() const override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
     static constexpr size_t DigestSize = 16;
@@ -38,5 +38,11 @@ private:
     void DumpBlock(const uint8_t buffer[BlockSize]);
     void Transform(const uint8_t buffer[BlockSize]);
 };
+
+inline std::ostream & operator << (std::ostream & stream, const MD2 & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Crypto

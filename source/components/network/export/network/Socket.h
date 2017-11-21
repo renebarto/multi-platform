@@ -77,7 +77,7 @@ public:
     void            SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * data, size_t bytesToSend);
     size_t          ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, size_t bufferSize);
 
-    virtual OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
 protected:
     OSAL::Network::SocketFamily _socketFamily;
@@ -90,7 +90,7 @@ protected:
 
 inline void PrintTo(Socket const & socket, std::basic_ostream<OSAL::Char> & stream)
 {
-    stream << socket.ToString();
+    socket.PrintTo(stream);
 }
 
 } // namespace Network

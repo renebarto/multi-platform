@@ -141,9 +141,8 @@ void ByteArray::SetUInt64BE(size_t offset, uint64_t value)
     SetUInt32BE(offset + 4, static_cast<uint32_t>((value >> 0) & 0xFFFFFFFF));
 }
 
-OSAL::String ByteArray::ToString() const
+std::ostream & ByteArray::PrintTo(std::ostream & stream) const
 {
-    std::basic_ostringstream<OSAL::Char> stream;
     stream << OSAL::OS::TypeName(*this) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
     size_t maxValuesToDisplay = std::min<size_t>(_size, MaxBytesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += BytesPerRow)
@@ -171,7 +170,7 @@ OSAL::String ByteArray::ToString() const
         stream << std::endl;
     }
     stream << std::endl << std::flush;
-    return stream.str();
+    return stream;
 }
 
 } // namespace OSAL

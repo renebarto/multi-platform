@@ -865,17 +865,23 @@ TEST_FIXTURE(DateTimeTest, ConvertToUTCTime)
     EXPECT_EQ(microSeconds, dateTimeUTC.MicroSeconds());
 }
 
-TEST_FIXTURE(DateTimeTest, ToString)
+TEST_FIXTURE(DateTimeTest, PrintTo)
 {
     DateTime dateTime(2014, 02, 26, 1, 2, 3, 567891);
-    EXPECT_EQ(_("2014-02-26 01:02:03.567891"), dateTime.ToString());
+    std::basic_ostringstream<OSAL::Char> stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ(_("2014-02-26 01:02:03.567891"), stream.str());
 }
 
-TEST_FIXTURE(DateTimeTest, ToStringFormat)
+TEST_FIXTURE(DateTimeTest, PrintToFormat)
 {
     DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3);
-    EXPECT_EQ(_("2014-02-26 01:02:03"), dateTime.ToString(_("%F %T")));
-    EXPECT_EQ(_("2014-02-26 01:02:03 GMT"), dateTime.ToString(_("%F %T %Z")));
+    std::basic_ostringstream<OSAL::Char> stream;
+    dateTime.PrintTo(stream, _("%F %T"));
+    EXPECT_EQ(_("2014-02-26 01:02:03"), stream.str());
+    stream.str("");
+    dateTime.PrintTo(stream, _("%F %T %Z"));
+    EXPECT_EQ(_("2014-02-26 01:02:03 GMT"), stream.str());
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)

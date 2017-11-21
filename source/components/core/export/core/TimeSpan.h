@@ -34,7 +34,7 @@ public:
     int Hours() const;
     int Days() const;
 
-    virtual OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
     int64_t _interval;

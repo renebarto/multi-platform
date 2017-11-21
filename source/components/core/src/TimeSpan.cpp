@@ -110,17 +110,15 @@ int TimeSpan::Days() const
     return static_cast<int>(_interval / NanoSecondsPerDay);
 }
 
-
-OSAL::String TimeSpan::ToString() const
+std::ostream & TimeSpan::PrintTo(std::ostream & stream) const
 {
     int days = static_cast<int>(_interval / NanoSecondsPerDay);
-    int hours = (_interval / NanoSecondsPerHour) % HoursPerDay;
-    int minutes = (_interval / NanoSecondsPerMinute) % MinutesPerHour;
-    int seconds = (_interval / NanoSecondsPerSecond) % SecondsPerMinute;
-    int microSeconds = (_interval / NanoSecondsPerMicroSecond) % MicroSecondsPerSecond;
-    basic_stringstream<OSAL::Char> stream;
+    int hours = static_cast<int>((_interval / NanoSecondsPerHour) % HoursPerDay);
+    int minutes = static_cast<int>((_interval / NanoSecondsPerMinute) % MinutesPerHour);
+    int seconds = static_cast<int>((_interval / NanoSecondsPerSecond) % SecondsPerMinute);
+    int microSeconds = static_cast<int>((_interval / NanoSecondsPerMicroSecond) % MicroSecondsPerSecond);
     stream << days << _(" days, ") << hours << _(" hours, ")
            << minutes << _(" minutes, ")
-           << seconds << _(".") << setfill(_('0')) << setw(6) << microSeconds << _(" seconds");
-    return stream.str();
+           << seconds << _(".") << std::setfill(_('0')) << std::setw(6) << microSeconds << _(" seconds");
+    return stream;
 }

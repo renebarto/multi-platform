@@ -38,7 +38,9 @@ TEST_FIXTURE(IPV4EndPointTest, Constructor)
     const string expected = "0.0.0.0:0";
     EXPECT_TRUE(referenceAddress == target.GetIPAddress());
     EXPECT_TRUE(referencePort == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorCopy)
@@ -48,7 +50,9 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorCopy)
     const string expected = "1.2.3.4:1234";
     EXPECT_TRUE(ipEndPoint.GetIPAddress() == target.GetIPAddress());
     EXPECT_TRUE(ipEndPoint.GetPort() == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddress)
@@ -58,7 +62,9 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddress)
     const string expected = "1.2.3.4:0";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
     EXPECT_TRUE(IPV4EndPoint::AnyPort == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressPort)
@@ -69,7 +75,9 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressPort)
     const string expected = "1.2.3.4:1234";
     EXPECT_TRUE(ipAddress == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressUInt32Port)
@@ -80,7 +88,9 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressUInt32Port)
     const string expected = "1.2.3.4:1234";
     EXPECT_TRUE(ipAddress == target.GetIPAddress().GetUInt32());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
@@ -90,7 +100,9 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
     const string expected = "0.0.0.0:1234";
     EXPECT_TRUE(OSAL::Network::IPV4Address::None == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
-    EXPECT_EQ(expected, target.ToString());
+    basic_ostringstream<OSAL::Char> stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4EndPointTest, ParseIPAddressOnly)

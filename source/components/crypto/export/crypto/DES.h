@@ -23,7 +23,7 @@ public:
 
     virtual void Finalize() override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
     static constexpr size_t BlockSize = 8;
     using DataBlock = uint8_t[BlockSize];
@@ -58,7 +58,7 @@ public:
 
     virtual void Finalize() override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
     static constexpr size_t BlockSize = 8;
     using DataBlock = uint8_t[BlockSize];
@@ -69,5 +69,17 @@ private:
     DES _des2;
     DES _des3;
 };
+
+inline std::ostream & operator << (std::ostream & stream, const DES & des)
+{
+    des.PrintTo(stream);
+    return stream;
+}
+
+inline std::ostream & operator << (std::ostream & stream, const TripleDES & des)
+{
+    des.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Crypto

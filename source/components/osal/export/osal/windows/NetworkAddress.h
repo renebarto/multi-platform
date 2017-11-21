@@ -33,13 +33,13 @@ public:
     virtual SocketFamily Family() const = 0;
     virtual size_t Size() const = 0;
     virtual OSAL::ByteArray GetBytes() const = 0;
-    virtual OSAL::String ToString() const = 0;
+    virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 };
 using AddressPtr = std::shared_ptr<Address>;
 
 inline void PrintTo(const Address & value, std::basic_ostream<OSAL::Char> & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace Network

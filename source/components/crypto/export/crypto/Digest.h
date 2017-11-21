@@ -20,12 +20,12 @@ public:
     virtual size_t GetDigestSize() const = 0;
     virtual OSAL::ByteArray GetDigest() const = 0;
 
-    virtual OSAL::String ToString() const = 0;
+    virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 };
 
 inline void PrintTo(const Digest & value, std::basic_ostream<OSAL::Char> & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace Crypto

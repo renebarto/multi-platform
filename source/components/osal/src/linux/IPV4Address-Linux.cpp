@@ -109,14 +109,13 @@ OSAL::ByteArray IPV4Address::GetBytes() const
     return _ipAddress;
 }
 
-OSAL::String IPV4Address::ToString() const
+std::ostream & IPV4Address::PrintTo(std::ostream & stream) const
 {
-    ostringstream stream;
     stream << (int)_ipAddress[0] << _(".");
     stream << (int)_ipAddress[1] << _(".");
     stream << (int)_ipAddress[2] << _(".");
     stream << (int)_ipAddress[3];
-    return stream.str();
+    return stream;
 }
 
 void IPV4Address::SetData(const OSAL::ByteArray & data, size_t offset)

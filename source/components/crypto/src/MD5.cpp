@@ -141,15 +141,13 @@ OSAL::ByteArray MD5::GetDigest() const
     return digest;
 }
 
-OSAL::String MD5::ToString() const
+std::ostream & MD5::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }
 
 void MD5::DumpState()

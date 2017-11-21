@@ -61,11 +61,10 @@ bool AutoEvent::Wait(int timeout)
     return !timedOut;
 }
 
-OSAL::String AutoEvent::ToString() const
+std::ostream & AutoEvent::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
     stream << OSAL::OS::TypeName(*this) << _(" value = ") << GetValue();
-    return stream.str();
+    return stream;
 }
 
 AutoEvent & AutoEvent::operator = (const AutoEvent & other)

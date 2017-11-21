@@ -372,15 +372,13 @@ OSAL::ByteArray SHA384::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA384::ToString() const
+std::ostream & SHA384::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }
 
 SHA512::SHA512()
@@ -426,15 +424,13 @@ OSAL::ByteArray SHA512::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA512::ToString() const
+std::ostream & SHA512::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }
 
 SHA512_224::SHA512_224()
@@ -480,15 +476,13 @@ OSAL::ByteArray SHA512_224::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA512_224::ToString() const
+std::ostream & SHA512_224::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill(_('0')) << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }
 
 SHA512_256::SHA512_256()
@@ -534,13 +528,11 @@ OSAL::ByteArray SHA512_256::GetDigest() const
     return digest;
 }
 
-OSAL::String SHA512_256::ToString() const
+std::ostream & SHA512_256::PrintTo(std::ostream & stream) const
 {
-    basic_ostringstream<OSAL::Char> stream;
-
     for (size_t i = 0; i < sizeof(_digest); ++i)
     {
         stream << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(_digest[i]);
     }
-    return stream.str();
+    return stream;
 }

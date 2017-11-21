@@ -24,7 +24,7 @@ public:
 
     virtual OSAL::ByteArray GetDigest() const = 0;
 
-    virtual OSAL::String ToString() const = 0;
+    virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 
 
 
@@ -95,7 +95,7 @@ public:
 
     virtual OSAL::ByteArray GetDigest() const override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
     static constexpr size_t DigestSize = 28;
@@ -117,12 +117,18 @@ public:
 
     virtual OSAL::ByteArray GetDigest() const override;
 
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
     static constexpr size_t DigestSize = 32;
 
     uint8_t _digest[DigestSize];
 };
+
+inline std::ostream & operator << (std::ostream & stream, const SHA256Base & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Crypto

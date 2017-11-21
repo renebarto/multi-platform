@@ -52,7 +52,7 @@ public:
 
     const OSAL::Network::IPV6Address & GetIPAddress() const { return _ipAddress; }
     uint16_t GetPort() const { return _port; }
-    OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
     OSAL::Network::IPV6Address _ipAddress;

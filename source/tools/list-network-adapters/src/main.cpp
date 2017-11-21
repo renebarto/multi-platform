@@ -18,13 +18,13 @@ int main(int argc, const char * argv[])
     {
         cout << setw(15) << left << adapter->Name() << endl
              << "  Family             : " << adapter->Family() << endl;
-        cout << "  Local address      : " << adapter->LocalAddress()->ToString() << endl;
+        cout << "  Local address      : " << *adapter->LocalAddress() << endl;
         if (adapter->NetMask() != nullptr)
-            cout << "  Network mask       : " << adapter->NetMask()->ToString() << endl;
+            cout << "  Network mask       : " << *adapter->NetMask() << endl;
         if (adapter->BroadcastAddress() != nullptr)
-            cout << "  Broadcase address  : " << adapter->BroadcastAddress()->ToString() << endl;
+            cout << "  Broadcase address  : " << *adapter->BroadcastAddress() << endl;
         if (adapter->DestAddress() != nullptr)
-            cout << "  Destination address: " << adapter->DestAddress()->ToString() << endl;
+            cout << "  Destination address: " << *adapter->DestAddress() << endl;
     }
 
     return EXIT_SUCCESS;

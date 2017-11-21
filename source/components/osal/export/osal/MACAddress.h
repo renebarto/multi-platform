@@ -43,7 +43,7 @@ public:
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Packet; }
     virtual size_t Size() const override { return AddressSize; }
     virtual OSAL::ByteArray GetBytes() const override;
-    virtual OSAL::String ToString() const override;
+    virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
     void SetData(const OSAL::ByteArray & data, size_t offset);
@@ -51,11 +51,6 @@ private:
 
     OSAL::ByteArray macAddress;
 };
-
-inline void PrintTo(const MACAddress & value, std::basic_ostream<OSAL::Char> & stream)
-{
-    stream << value.ToString();
-}
 
 } // namespace Network
 } // namespace OSAL

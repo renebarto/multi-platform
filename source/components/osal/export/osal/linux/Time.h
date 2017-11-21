@@ -4,12 +4,59 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <cstdint>
+#include <iostream>
 #include "osal/Strings.h"
 
 namespace OSAL {
 namespace Time {
 
 constexpr size_t MAX_TIME_ZONE_NAME = 4;
+
+class timespec : public ::timespec
+{
+public:
+    timespec() = default;
+
+    inline bool operator == (const timespec & other) const
+    {
+        return (tv_sec == other.tv_sec) && (tv_nsec == other.tv_nsec);
+    }
+
+    inline bool operator != (const timespec & other) const
+    {
+        return !operator== (other);
+    }
+
+    inline bool operator > (const timespec & other) const
+    {
+        return (tv_sec > other.tv_sec) || ((tv_sec == other.tv_sec) && (tv_nsec > other.tv_nsec));
+    }
+
+    inline bool operator >= (const timespec & other) const
+    {
+        return !operator < (other);
+    }
+
+    inline bool operator < (const timespec & other) const
+    {
+        return (tv_sec < other.tv_sec) || ((tv_sec == other.tv_sec) && (tv_nsec < other.tv_nsec));
+    }
+
+    inline bool operator <= (const timespec & other) const
+    {
+        return !operator > (other);
+    }
+    void PrintTo(std::ostream & stream) const
+    {
+        stream << _("tv_sec=") << tv_sec << _(" tv_nsec=") << tv_nsec;
+    }
+};
+
+inline std::ostream & operator << (std::ostream & stream, const timespec & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 inline int gettimeofday(struct timeval * time, struct timezone * timeZone)
 {
@@ -83,12 +130,12 @@ inline size_t strftime(wchar_t * strDest, size_t maxSize, const wchar_t * format
     return ::wcsftime(strDest, maxSize, format, time);
 }
 
-inline int clock_getres(clockid_t clockID, struct timespec * res)
+inline int clock_getres(clockid_t clockID, OSAL::Time::timespec * res)
 {
     return ::clock_getres(clockID, res);
 }
 
-inline int clock_gettime(clockid_t clockID, struct timespec * tp)
+inline int clock_gettime(clockid_t clockID, OSAL::Time::timespec * tp)
 {
     return ::clock_gettime(clockID, tp);
 }

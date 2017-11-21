@@ -23,7 +23,7 @@ public:
     void Wait();
     bool Wait(int timeout);
 
-    virtual OSAL::String ToString() const;
+    std::ostream & PrintTo(std::ostream & stream) const;
 
     AutoEvent &operator = (const AutoEvent & other);
     AutoEvent &operator = (AutoEventHandle handle);
@@ -63,7 +63,7 @@ inline bool operator != (AutoEvent &event, AutoEventHandle handle)
 
 inline void PrintTo(const AutoEvent & value, std::ostream & stream)
 {
-    stream << value.ToString();
+    value.PrintTo(stream);
 }
 
 } // namespace Core
