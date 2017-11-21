@@ -101,12 +101,12 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorIndex)
 {
     OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(domainAddress);
-    EXPECT_EQ(domainAddress[0], target[0]);
-    EXPECT_EQ(domainAddress[1], target[1]);
-    EXPECT_EQ(domainAddress[2], target[2]);
-    EXPECT_EQ(domainAddress[3], target[3]);
-    EXPECT_EQ(domainAddress[4], target[4]);
-    EXPECT_EQ(domainAddress[5], target[5]);
+    EXPECT_EQ(domainAddress[size_t{0}], target[0]);
+    EXPECT_EQ(domainAddress[size_t{1}], target[1]);
+    EXPECT_EQ(domainAddress[size_t{2}], target[2]);
+    EXPECT_EQ(domainAddress[size_t{3}], target[3]);
+    EXPECT_EQ(domainAddress[size_t{4}], target[4]);
+    EXPECT_EQ(domainAddress[size_t{5}], target[5]);
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, Parse)

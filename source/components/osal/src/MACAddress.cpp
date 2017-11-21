@@ -61,7 +61,7 @@ bool MACAddress::TryParse(const OSAL::String & text, MACAddress & macAddress)
 
 MACAddress & MACAddress::operator = (const MACAddress & other)
 {
-    macAddress = other.macAddress;
+    _macAddress = other._macAddress;
     return *this;
 }
 
@@ -72,7 +72,7 @@ bool MACAddress::operator == (const Address & other) const
     if (other.Family() != SocketFamily::Packet)
         return false;
     const MACAddress * otherAsMACAddress = dynamic_cast<const MACAddress *>(&other);
-    return (otherAsMACAddress->macAddress == macAddress);
+    return (otherAsMACAddress->_macAddress == _macAddress);
 }
 
 bool MACAddress::operator != (const Address & other) const
@@ -84,7 +84,7 @@ bool MACAddress::operator == (const MACAddress & other) const
 {
     if (&other == this)
         return true;
-    return (other.macAddress == macAddress);
+    return (other._macAddress == _macAddress);
 }
 
 bool MACAddress::operator != (const MACAddress & other) const
@@ -95,34 +95,34 @@ bool MACAddress::operator != (const MACAddress & other) const
 uint8_t & MACAddress::operator[] (size_t offset)
 {
     assert(offset < AddressSize);
-    return macAddress[offset];
+    return _macAddress[offset];
 }
 
 const uint8_t & MACAddress::operator[] (size_t offset) const
 {
     assert(offset < AddressSize);
-    return macAddress[offset];
+    return _macAddress[offset];
 }
 
 OSAL::ByteArray MACAddress::GetBytes() const
 {
-    return macAddress;
+    return _macAddress;
 }
 
 std::ostream & MACAddress::PrintTo(std::ostream & stream) const
 {
     stream << hex << setfill(_('0'));
-    stream << uppercase << setw(2) << (int)macAddress[0] << _("-");
-    stream << uppercase << setw(2) << (int)macAddress[1] << _("-");
-    stream << uppercase << setw(2) << (int)macAddress[2] << _("-");
-    stream << uppercase << setw(2) << (int)macAddress[3] << _("-");
-    stream << uppercase << setw(2) << (int)macAddress[4] << _("-");
-    stream << uppercase << setw(2) << (int)macAddress[5];
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{0}] << _("-");
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{1}] << _("-");
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{2}] << _("-");
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{3}] << _("-");
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{4}] << _("-");
+    stream << uppercase << setw(2) << (int)_macAddress[size_t{5}];
     return stream;
 }
 
 void MACAddress::SetData(const OSAL::ByteArray & data, size_t offset)
 {
     assert(offset + AddressSize <= data.Size());
-    macAddress.Set(0, data.Data() + offset, AddressSize);
+    _macAddress.Set(0, data.Data() + offset, AddressSize);
 }

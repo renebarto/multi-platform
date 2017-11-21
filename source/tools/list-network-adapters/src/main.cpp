@@ -3,13 +3,14 @@
 
 #include "osal/NetworkAdapterList.h"
 #include "osal/NetworkAdapter.h"
+#include "osal/Unused.h"
 
 using namespace std;
 
 #if defined(UNICODE) || defined(_UNICODE)
 int wmain(int argc, const wchar_t * argv[])
 #else
-int main(int argc, const char * argv[])
+int main(int UNUSED(argc), const char * UNUSED(argv[]))
 #endif
 {
     OSAL::Network::AdapterList adapterList;

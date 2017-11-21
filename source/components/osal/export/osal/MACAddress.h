@@ -12,20 +12,20 @@ public:
     static const size_t AddressSize = 6;
 
     MACAddress() :
-        macAddress(AddressSize)
+        _macAddress(AddressSize)
     {
     }
     MACAddress(const MACAddress & other) :
-        macAddress(other.macAddress)
+        _macAddress(other._macAddress)
     {
     }
     MACAddress(const OSAL::ByteArray & macAddress) :
-        macAddress(AddressSize)
+        _macAddress(AddressSize)
     {
         SetData(macAddress, 0);
     }
     MACAddress(const OSAL::ByteArray & macAddress, size_t offset) :
-        macAddress(AddressSize)
+        _macAddress(AddressSize)
     {
         SetData(macAddress, offset);
     }
@@ -49,7 +49,7 @@ private:
     void SetData(const OSAL::ByteArray & data, size_t offset);
     static bool TryParse(const OSAL::String & text, uint8_t & value);
 
-    OSAL::ByteArray macAddress;
+    OSAL::ByteArray _macAddress;
 };
 
 } // namespace Network

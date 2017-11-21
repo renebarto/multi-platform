@@ -106,10 +106,10 @@ TEST_FIXTURE(IPV4AddressTest, OperatorIndex)
 {
     OSAL::ByteArray ipAddress({255, 254, 253, 252});
     OSAL::Network::IPV4Address target(ipAddress);
-    EXPECT_EQ(ipAddress[0], target[0]);
-    EXPECT_EQ(ipAddress[1], target[1]);
-    EXPECT_EQ(ipAddress[2], target[2]);
-    EXPECT_EQ(ipAddress[3], target[3]);
+    EXPECT_EQ(ipAddress[size_t{0}], target[0]);
+    EXPECT_EQ(ipAddress[size_t{1}], target[1]);
+    EXPECT_EQ(ipAddress[size_t{2}], target[2]);
+    EXPECT_EQ(ipAddress[size_t{3}], target[3]);
 }
 
 TEST_FIXTURE(IPV4AddressTest, GetUInt32)

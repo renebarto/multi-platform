@@ -637,46 +637,46 @@ TEST_FIXTURE(ByteArrayTest, OperatorNotEquals)
 TEST_FIXTURE(ByteArrayTest, OperatorIndex)
 {
     ByteArray target({ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 });
-    EXPECT_EQ(0x01, target[0]);
-    EXPECT_EQ(0x02, target[1]);
-    EXPECT_EQ(0x03, target[2]);
-    EXPECT_EQ(0x04, target[3]);
-    EXPECT_EQ(0x05, target[4]);
-    EXPECT_EQ(0x06, target[5]);
-    EXPECT_EQ(0x07, target[6]);
-    EXPECT_EQ(0x08, target[7]);
-    EXPECT_EQ(0x09, target[8]);
-    EXPECT_EQ(0x0A, target[9]);
-    EXPECT_EQ(0x0B, target[10]);
-    EXPECT_EQ(0x0C, target[11]);
-    EXPECT_EQ(0x0D, target[12]);
-    EXPECT_EQ(0x0E, target[13]);
-    EXPECT_EQ(0x0F, target[14]);
-    EXPECT_EQ(0x10, target[15]);
-    target[15] = 0xFF;
-    EXPECT_EQ(0xFF, target[15]);
+    EXPECT_EQ(0x01, target[size_t{0}]);
+    EXPECT_EQ(0x02, target[size_t{1}]);
+    EXPECT_EQ(0x03, target[size_t{2}]);
+    EXPECT_EQ(0x04, target[size_t{3}]);
+    EXPECT_EQ(0x05, target[size_t{4}]);
+    EXPECT_EQ(0x06, target[size_t{5}]);
+    EXPECT_EQ(0x07, target[size_t{6}]);
+    EXPECT_EQ(0x08, target[size_t{7}]);
+    EXPECT_EQ(0x09, target[size_t{8}]);
+    EXPECT_EQ(0x0A, target[size_t{9}]);
+    EXPECT_EQ(0x0B, target[size_t{10}]);
+    EXPECT_EQ(0x0C, target[size_t{11}]);
+    EXPECT_EQ(0x0D, target[size_t{12}]);
+    EXPECT_EQ(0x0E, target[size_t{13}]);
+    EXPECT_EQ(0x0F, target[size_t{14}]);
+    EXPECT_EQ(0x10, target[size_t{15}]);
+    target[size_t{15}] = 0xFF;
+    EXPECT_EQ(0xFF, target[size_t{15}]);
 }
 
 TEST_FIXTURE(ByteArrayTest, OperatorIndexConst)
 {
     ByteArray target({ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 });
     const ByteArray &targetConst = target;
-    EXPECT_EQ(0x01, targetConst[0]);
-    EXPECT_EQ(0x02, targetConst[1]);
-    EXPECT_EQ(0x03, targetConst[2]);
-    EXPECT_EQ(0x04, targetConst[3]);
-    EXPECT_EQ(0x05, targetConst[4]);
-    EXPECT_EQ(0x06, targetConst[5]);
-    EXPECT_EQ(0x07, targetConst[6]);
-    EXPECT_EQ(0x08, targetConst[7]);
-    EXPECT_EQ(0x09, targetConst[8]);
-    EXPECT_EQ(0x0A, targetConst[9]);
-    EXPECT_EQ(0x0B, targetConst[10]);
-    EXPECT_EQ(0x0C, targetConst[11]);
-    EXPECT_EQ(0x0D, targetConst[12]);
-    EXPECT_EQ(0x0E, targetConst[13]);
-    EXPECT_EQ(0x0F, targetConst[14]);
-    EXPECT_EQ(0x10, targetConst[15]);
+    EXPECT_EQ(0x01, targetConst[size_t{0}]);
+    EXPECT_EQ(0x02, targetConst[size_t{1}]);
+    EXPECT_EQ(0x03, targetConst[size_t{2}]);
+    EXPECT_EQ(0x04, targetConst[size_t{3}]);
+    EXPECT_EQ(0x05, targetConst[size_t{4}]);
+    EXPECT_EQ(0x06, targetConst[size_t{5}]);
+    EXPECT_EQ(0x07, targetConst[size_t{6}]);
+    EXPECT_EQ(0x08, targetConst[size_t{7}]);
+    EXPECT_EQ(0x09, targetConst[size_t{8}]);
+    EXPECT_EQ(0x0A, targetConst[size_t{9}]);
+    EXPECT_EQ(0x0B, targetConst[size_t{10}]);
+    EXPECT_EQ(0x0C, targetConst[size_t{11}]);
+    EXPECT_EQ(0x0D, targetConst[size_t{12}]);
+    EXPECT_EQ(0x0E, targetConst[size_t{13}]);
+    EXPECT_EQ(0x0F, targetConst[size_t{14}]);
+    EXPECT_EQ(0x10, targetConst[size_t{15}]);
 }
 
 TEST_FIXTURE(ByteArrayTest, Stability)

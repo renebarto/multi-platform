@@ -110,22 +110,22 @@ TEST_FIXTURE(IPV6AddressTest, OperatorIndex)
 {
     OSAL::ByteArray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     OSAL::Network::IPV6Address target(ipAddress);
-    EXPECT_EQ(ipAddress[0], target[0]);
-    EXPECT_EQ(ipAddress[1], target[1]);
-    EXPECT_EQ(ipAddress[2], target[2]);
-    EXPECT_EQ(ipAddress[3], target[3]);
-    EXPECT_EQ(ipAddress[4], target[4]);
-    EXPECT_EQ(ipAddress[5], target[5]);
-    EXPECT_EQ(ipAddress[6], target[6]);
-    EXPECT_EQ(ipAddress[7], target[7]);
-    EXPECT_EQ(ipAddress[8], target[8]);
-    EXPECT_EQ(ipAddress[9], target[9]);
-    EXPECT_EQ(ipAddress[10], target[10]);
-    EXPECT_EQ(ipAddress[11], target[11]);
-    EXPECT_EQ(ipAddress[12], target[12]);
-    EXPECT_EQ(ipAddress[13], target[13]);
-    EXPECT_EQ(ipAddress[14], target[14]);
-    EXPECT_EQ(ipAddress[15], target[15]);
+    EXPECT_EQ(ipAddress[size_t{0}], target[0]);
+    EXPECT_EQ(ipAddress[size_t{1}], target[1]);
+    EXPECT_EQ(ipAddress[size_t{2}], target[2]);
+    EXPECT_EQ(ipAddress[size_t{3}], target[3]);
+    EXPECT_EQ(ipAddress[size_t{4}], target[4]);
+    EXPECT_EQ(ipAddress[size_t{5}], target[5]);
+    EXPECT_EQ(ipAddress[size_t{6}], target[6]);
+    EXPECT_EQ(ipAddress[size_t{7}], target[7]);
+    EXPECT_EQ(ipAddress[size_t{8}], target[8]);
+    EXPECT_EQ(ipAddress[size_t{9}], target[9]);
+    EXPECT_EQ(ipAddress[size_t{10}], target[10]);
+    EXPECT_EQ(ipAddress[size_t{11}], target[11]);
+    EXPECT_EQ(ipAddress[size_t{12}], target[12]);
+    EXPECT_EQ(ipAddress[size_t{13}], target[13]);
+    EXPECT_EQ(ipAddress[size_t{14}], target[14]);
+    EXPECT_EQ(ipAddress[size_t{15}], target[15]);
 }
 
 TEST_FIXTURE(IPV6AddressTest, GetData)

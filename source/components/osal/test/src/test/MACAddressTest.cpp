@@ -90,12 +90,12 @@ TEST_FIXTURE(MACAddressTest, OperatorIndex)
 {
     OSAL::ByteArray macAddress({1, 2, 3, 4, 5, 6});
     OSAL::Network::MACAddress target(macAddress);
-    EXPECT_EQ(macAddress[0], target[0]);
-    EXPECT_EQ(macAddress[1], target[1]);
-    EXPECT_EQ(macAddress[2], target[2]);
-    EXPECT_EQ(macAddress[3], target[3]);
-    EXPECT_EQ(macAddress[4], target[4]);
-    EXPECT_EQ(macAddress[5], target[5]);
+    EXPECT_EQ(macAddress[size_t{0}], target[0]);
+    EXPECT_EQ(macAddress[size_t{1}], target[1]);
+    EXPECT_EQ(macAddress[size_t{2}], target[2]);
+    EXPECT_EQ(macAddress[size_t{3}], target[3]);
+    EXPECT_EQ(macAddress[size_t{4}], target[4]);
+    EXPECT_EQ(macAddress[size_t{5}], target[5]);
 }
 
 TEST_FIXTURE(MACAddressTest, Parse)
