@@ -3,14 +3,13 @@
 #include "osal/exports.h"
 #if defined(LINUX)
 #include <osal/linux/DomainSocketAddress.h>
-#include <osal/IPV4Address.h>
+#include <osal/IPV4EndPoint.h>
 
 using namespace std;
 
 namespace OSAL {
 namespace Network {
-namespace Test
-{
+namespace Test {
 
 class DomainSocketAddressTest
     : public UnitTestCpp::TestFixture
@@ -150,27 +149,18 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorEqualAddress)
     OSAL::Network::DomainSocketAddress ref1;
     OSAL::Network::DomainSocketAddress ref2(ByteArray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(ipAddress);
-    OSAL::Network::IPV4Address ref4({0x00, 0x01, 0x02, 0x03});
     EXPECT_FALSE(target == ref1);
     EXPECT_FALSE(target == ref2);
     EXPECT_TRUE(target == ref3);
-    EXPECT_FALSE(target == ref4);
     EXPECT_FALSE(ref1 == target);
     EXPECT_TRUE(ref1 == ref2);
     EXPECT_FALSE(ref1 == ref3);
-    EXPECT_FALSE(ref1 == ref4);
     EXPECT_FALSE(ref2 == target);
     EXPECT_TRUE(ref2 == ref1);
     EXPECT_FALSE(ref2 == ref3);
-    EXPECT_FALSE(ref2 == ref4);
     EXPECT_TRUE(ref3 == target);
     EXPECT_FALSE(ref3 == ref1);
     EXPECT_FALSE(ref3 == ref2);
-    EXPECT_FALSE(ref3 == ref4);
-    EXPECT_FALSE(ref4 == target);
-    EXPECT_FALSE(ref4 == ref1);
-    EXPECT_FALSE(ref4 == ref2);
-    EXPECT_FALSE(ref4 == ref3);
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqualAddress)
@@ -180,27 +170,18 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqualAddress)
     OSAL::Network::DomainSocketAddress ref1;
     OSAL::Network::DomainSocketAddress ref2(ByteArray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(ipAddress);
-    OSAL::Network::IPV4Address ref4({0x00, 0x01, 0x02, 0x03});
     EXPECT_TRUE(target != ref1);
     EXPECT_TRUE(target != ref2);
     EXPECT_FALSE(target != ref3);
-    EXPECT_TRUE(target != ref4);
     EXPECT_TRUE(ref1 != target);
     EXPECT_FALSE(ref1 != ref2);
     EXPECT_TRUE(ref1 != ref3);
-    EXPECT_TRUE(ref1 != ref4);
     EXPECT_TRUE(ref2 != target);
     EXPECT_FALSE(ref2 != ref1);
     EXPECT_TRUE(ref2 != ref3);
-    EXPECT_TRUE(ref2 != ref4);
     EXPECT_FALSE(ref3 != target);
     EXPECT_TRUE(ref3 != ref1);
     EXPECT_TRUE(ref3 != ref2);
-    EXPECT_TRUE(ref3 != ref4);
-    EXPECT_TRUE(ref4 != target);
-    EXPECT_TRUE(ref4 != ref1);
-    EXPECT_TRUE(ref4 != ref2);
-    EXPECT_TRUE(ref4 != ref3);
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorEqual)

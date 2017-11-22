@@ -274,7 +274,7 @@ void Socket::SetBlockingMode(bool value)
     }
 }
 
-void Socket::Bind(OSAL::Network::AddressPtr address)
+void Socket::Bind(OSAL::Network::EndPointPtr address)
 {
 
     int errorCode = OSAL::Network::Bind(this->GetHandle(), address);
@@ -290,7 +290,7 @@ void Socket::Bind(OSAL::Network::AddressPtr address)
     }
 }
 
-bool Socket::Connect(OSAL::Network::AddressPtr serverAddress, OSAL::Network::SocketTimeout timeout)
+bool Socket::Connect(OSAL::Network::EndPointPtr serverAddress, OSAL::Network::SocketTimeout timeout)
 {
     if (timeout != OSAL::Network::InfiniteTimeout)
     {
@@ -359,7 +359,7 @@ void Socket::Listen(int numListeners)
     }
 }
 
-bool Socket::Accept(Socket & connectionSocket, OSAL::Network::AddressPtr & clientAddress, OSAL::Network::SocketTimeout timeout)
+bool Socket::Accept(Socket & connectionSocket, OSAL::Network::EndPointPtr & clientAddress, OSAL::Network::SocketTimeout timeout)
 {
     Lock lock(_mutex);
     if (timeout != OSAL::Network::InfiniteTimeout)
@@ -416,7 +416,7 @@ bool Socket::Accept(Socket & connectionSocket, OSAL::Network::AddressPtr & clien
     return (result != -1);
 }
 
-void Socket::GetLocalAddress(OSAL::Network::AddressPtr & address)
+void Socket::GetLocalAddress(OSAL::Network::EndPointPtr & address)
 {
     int errorCode = OSAL::Network::GetSockName(GetHandle(), _socketFamily, address);
     if (errorCode == -1)
@@ -431,7 +431,7 @@ void Socket::GetLocalAddress(OSAL::Network::AddressPtr & address)
     }
 }
 
-void Socket::GetRemoteAddress(OSAL::Network::AddressPtr & address)
+void Socket::GetRemoteAddress(OSAL::Network::EndPointPtr & address)
 {
     int errorCode = OSAL::Network::GetPeerName(GetHandle(), _socketFamily, address);
     if (errorCode == -1)
@@ -446,11 +446,9 @@ void Socket::GetRemoteAddress(OSAL::Network::AddressPtr & address)
     }
 }
 
-OSAL::ByteArray Socket::Receive(int flags)
+size_t Socket::Receive(OSAL::ByteArray & data, int flags)
 {
     uint8_t buffer[BufferSize];
-    OSAL::ByteArray result;
-
     size_t numBytes = 0;
     size_t offset = 0;
 
@@ -458,11 +456,11 @@ OSAL::ByteArray Socket::Receive(int flags)
     {
         numBytes = Receive(buffer, BufferSize, flags);
 
-        result.Set(offset, buffer, numBytes);
+        data.Set(offset, buffer, numBytes);
         offset += numBytes;
     }
     while (numBytes > 0);
-    return result;
+    return offset;
 }
 
 size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
@@ -541,7 +539,7 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
     return true;
 }
 
-void Socket::SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * data, size_t bytesToSend)
+void Socket::SendTo(const OSAL::Network::EndPointPtr & address, const uint8_t * data, size_t bytesToSend)
 {
     int errorCode = OSAL::Network::SendTo(GetHandle(), data, bytesToSend, 0, address);
     if (errorCode == -1)
@@ -557,7 +555,7 @@ void Socket::SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * d
     }
 }
 
-size_t Socket::ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, size_t bufferSize)
+size_t Socket::ReceiveFrom(OSAL::Network::EndPointPtr & address, uint8_t * data, size_t bufferSize)
 {
     ssize_t numBytes = OSAL::Network::ReceiveFrom(GetHandle(), data, bufferSize, 0, _socketFamily, address);
     if (numBytes == -1)

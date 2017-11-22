@@ -3,8 +3,8 @@
 using namespace OSAL;
 using namespace Network;
 
-Adapter::Adapter(const std::string & name, AddressPtr localAddress, AddressPtr netmask,
-                 AddressPtr broadcastAddress, AddressPtr destAddress, AdapterFlags flags)
+Adapter::Adapter(const std::string & name, EndPointPtr localAddress, EndPointPtr netmask,
+                 EndPointPtr broadcastAddress, EndPointPtr destAddress, AdapterFlags flags)
     : _name(name)
     , _localAddress(localAddress)
     , _netmask(netmask)

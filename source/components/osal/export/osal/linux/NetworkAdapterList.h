@@ -11,7 +11,7 @@ class Adapter;
 
 using AdapterPtr = std::shared_ptr<Adapter>;
 
-class AdapterList
+class OSAL_EXPORT AdapterList
 {
 public:
     AdapterList();

@@ -14,12 +14,12 @@ WARNING_DISABLE(4265)
 WARNING_POP
 #include "osal/ByteArray.h"
 #include "osal/Network.h"
-#include "osal/NetworkAddress.h"
+#include "osal/NetworkEndPoint.h"
 
 namespace Network
 {
 
-class Socket
+class NETWORK_EXPORT Socket
 {
 protected:
     static const uint32_t TimeWait;
@@ -61,21 +61,21 @@ public:
     int             GetSendTimeout();
     void            SetSendTimeout(int timeoutMS);
 
-    void            Bind(OSAL::Network::AddressPtr address);
+    void            Bind(OSAL::Network::EndPointPtr address);
 
-    bool            Connect(OSAL::Network::AddressPtr serverAddress, OSAL::Network::SocketTimeout timeout);
+    bool            Connect(OSAL::Network::EndPointPtr serverAddress, OSAL::Network::SocketTimeout timeout);
     void            Listen(int numListeners);
-    bool            Accept(Socket & connectionSocket, OSAL::Network::AddressPtr & clientAddress, OSAL::Network::SocketTimeout timeout);
+    bool            Accept(Socket & connectionSocket, OSAL::Network::EndPointPtr & clientAddress, OSAL::Network::SocketTimeout timeout);
 
-    void            GetLocalAddress(OSAL::Network::AddressPtr & address);
-    void            GetRemoteAddress(OSAL::Network::AddressPtr & address);
+    void            GetLocalAddress(OSAL::Network::EndPointPtr & address);
+    void            GetRemoteAddress(OSAL::Network::EndPointPtr & address);
 
-    OSAL::ByteArray Receive(int flags);
+    size_t          Receive(OSAL::ByteArray & data, int flags);
     size_t          Receive(uint8_t * data, size_t bufferSize, int flags);
     bool            Send(OSAL::ByteArray & data, size_t bytesToSend, int flags);
     bool            Send(const uint8_t * data, size_t bytesToSend, int flags);
-    void            SendTo(const OSAL::Network::AddressPtr & address, const uint8_t * data, size_t bytesToSend);
-    size_t          ReceiveFrom(OSAL::Network::AddressPtr & address, uint8_t * data, size_t bufferSize);
+    void            SendTo(const OSAL::Network::EndPointPtr & address, const uint8_t * data, size_t bytesToSend);
+    size_t          ReceiveFrom(OSAL::Network::EndPointPtr & address, uint8_t * data, size_t bufferSize);
 
     std::ostream & PrintTo(std::ostream & stream) const;
 

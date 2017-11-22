@@ -1,13 +1,15 @@
 #pragma once
 
-#include <sys/socket.h>
 #include <memory>
 #include "osal/OSAL.h"
 #include "osal/exports.h"
+#include "osal/Strings.h"
 #include "osal/ByteArray.h"
 
 namespace OSAL {
 namespace Network {
+
+#define AF_PACKET   17
 
 enum class SocketFamily
 {
@@ -17,7 +19,6 @@ enum class SocketFamily
     InternetV4 = AF_INET,
     InternetV6 = AF_INET6,
     IPX = AF_IPX,
-    Netlink = AF_NETLINK,
     Packet = AF_PACKET,
 };
 
@@ -34,17 +35,11 @@ public:
     virtual OSAL::ByteArray GetBytes() const = 0;
     virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 };
-using AddressPtr = std::shared_ptr<Address>;
+using EndPointPtr = std::shared_ptr<Address>;
 
-inline void PrintTo(const Address & value, std::ostream & stream)
+inline void PrintTo(const Address & value, std::basic_ostream<OSAL::Char> & stream)
 {
     value.PrintTo(stream);
-}
-
-inline std::ostream & operator << (std::ostream & stream, const Address & value)
-{
-    value.PrintTo(stream);
-    return stream;
 }
 
 } // namespace Network

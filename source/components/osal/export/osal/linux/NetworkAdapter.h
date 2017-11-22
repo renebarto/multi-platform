@@ -3,7 +3,7 @@
 #include <net/if.h>
 #include <memory>
 #include "osal/exports.h"
-#include "osal/NetworkAddress.h"
+#include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
@@ -28,25 +28,25 @@ enum class AdapterFlags : unsigned int
     Dynamic = IFF_DYNAMIC,        // The addresses are lost when the interface goes down.
 };
 
-class Adapter
+class OSAL_EXPORT Adapter
 {
 public:
-    Adapter(const OSAL::String & name, AddressPtr localAddress, AddressPtr netmask,
-            AddressPtr broadcastAddress, AddressPtr destAddress, AdapterFlags flags);
+    Adapter(const OSAL::String & name, EndPointPtr localAddress, EndPointPtr netmask,
+            EndPointPtr broadcastAddress, EndPointPtr destAddress, AdapterFlags flags);
 
     const OSAL::String & Name()
     { return _name; }
 
-    const AddressPtr LocalAddress()
+    const EndPointPtr LocalAddress()
     { return _localAddress; }
 
-    const AddressPtr NetMask()
+    const EndPointPtr NetMask()
     { return _netmask; }
 
-    const AddressPtr BroadcastAddress()
+    const EndPointPtr BroadcastAddress()
     { return _broadcastAddress; }
 
-    const AddressPtr DestAddress()
+    const EndPointPtr DestAddress()
     { return _destAddress; }
 
     SocketFamily Family()
@@ -57,10 +57,10 @@ public:
 
 private:
     OSAL::String _name;
-    AddressPtr _localAddress;
-    AddressPtr _netmask;
-    AddressPtr _broadcastAddress;
-    AddressPtr _destAddress;
+    EndPointPtr _localAddress;
+    EndPointPtr _netmask;
+    EndPointPtr _broadcastAddress;
+    EndPointPtr _destAddress;
     AdapterFlags _flags;
 };
 

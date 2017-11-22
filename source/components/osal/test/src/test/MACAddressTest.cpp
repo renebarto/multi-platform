@@ -1,6 +1,7 @@
 #include "unit-test-c++/UnitTestC++.h"
+
 #include <osal/MACAddress.h>
-#include <osal/IPV4Address.h>
+#include <osal/IPV4EndPoint.h>
 
 using namespace std;
 
@@ -142,7 +143,7 @@ TEST_FIXTURE(MACAddressTest, OperatorEqualAddress)
     OSAL::Network::MACAddress ref1;
     OSAL::Network::MACAddress ref2({0, 0, 0, 0, 0, 0});
     OSAL::Network::MACAddress ref3(ipAddress);
-    OSAL::Network::IPV4Address ref4({0x00, 0x01, 0x02, 0x03});
+    OSAL::Network::IPV4EndPoint ref4(IPV4Address({0x00, 0x01, 0x02, 0x03}), 0xFFFF);
     EXPECT_FALSE(target == ref1);
     EXPECT_FALSE(target == ref2);
     EXPECT_TRUE(target == ref3);
@@ -172,7 +173,7 @@ TEST_FIXTURE(MACAddressTest, OperatorNotEqualAddress)
     OSAL::Network::MACAddress ref1;
     OSAL::Network::MACAddress ref2({0, 0, 0, 0, 0, 0});
     OSAL::Network::MACAddress ref3(ipAddress);
-    OSAL::Network::IPV4Address ref4({0x00, 0x01, 0x02, 0x03});
+    OSAL::Network::IPV4EndPoint ref4(IPV4Address({0x00, 0x01, 0x02, 0x03}), 0xFFFF);
     EXPECT_TRUE(target != ref1);
     EXPECT_TRUE(target != ref2);
     EXPECT_FALSE(target != ref3);

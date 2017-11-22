@@ -1,17 +1,18 @@
 #pragma once
 
-#include "osal/NetworkAddress.h"
+#include "osal/ByteArray.h"
+#include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
 
-class IPV4Address : public OSAL::Network::Address
+class OSAL_EXPORT IPV4Address
 {
 public:
-    static IPV4Address Any;
-    static IPV4Address None;
-    static IPV4Address Broadcast;
-    static IPV4Address LocalHost;
+    static const IPV4Address Any;
+    static const IPV4Address None;
+    static const IPV4Address Broadcast;
+    static const IPV4Address LocalHost;
 
     IPV4Address() :
         _ipAddress(None._ipAddress)
@@ -41,8 +42,6 @@ public:
     static IPV4Address Parse(const OSAL::String & text);
     static bool TryParse(const OSAL::String & text, IPV4Address & ipAddress);
     IPV4Address & operator = (const IPV4Address & other);
-    bool operator == (const Address & other) const;
-    bool operator != (const Address & other) const;
     bool operator == (const IPV4Address & other) const;
     bool operator != (const IPV4Address & other) const;
     uint8_t & operator[] (size_t offset);
@@ -52,9 +51,9 @@ public:
     void SetUInt32(uint32_t value);
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV4; }
-    virtual size_t Size() const override { return AddressSize; }
-    virtual OSAL::ByteArray GetBytes() const override;
-    virtual std::ostream & PrintTo(std::ostream & stream) const override;
+    virtual size_t Size() const { return AddressSize; }
+    virtual OSAL::ByteArray GetBytes() const;
+    virtual std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
     OSAL::ByteArray _ipAddress;
@@ -62,6 +61,17 @@ private:
 
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };
+
+inline void PrintTo(const IPV4Address & value, std::ostream & stream)
+{
+    value.PrintTo(stream);
+}
+
+inline std::ostream & operator << (std::ostream & stream, const IPV4Address & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Network
 } // namespace OSAL

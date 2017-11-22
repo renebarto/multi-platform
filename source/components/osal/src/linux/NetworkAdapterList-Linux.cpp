@@ -8,9 +8,9 @@
 #include <osal/NetworkAdapter.h>
 //#include <core/Core.h>
 //#include <core/DefaultLogger.h>
-#include <osal/NetworkAddress.h>
-#include <osal/IPV4Address.h>
-#include <osal/IPV6Address.h>
+#include <osal/NetworkEndPoint.h>
+#include <osal/IPV4EndPoint.h>
+#include <osal/IPV6EndPoint.h>
 #include <osal/linux/DomainSocketAddress.h>
 #include <osal/MACAddress.h>
 
@@ -32,10 +32,10 @@ bool AdapterList::ReScan()
 
     for (ifaddrs * currentAdapter = adapters; currentAdapter != nullptr; currentAdapter = currentAdapter->ifa_next)
     {
-        AddressPtr localAddress;
-        AddressPtr netmaskaddress;
-        AddressPtr broadcastAddress;
-        AddressPtr destAddress;
+        EndPointPtr localAddress;
+        EndPointPtr netmaskaddress;
+        EndPointPtr broadcastAddress;
+        EndPointPtr destAddress;
         char host[NI_MAXHOST];
         switch (currentAdapter->ifa_addr->sa_family)
         {
@@ -49,12 +49,20 @@ bool AdapterList::ReScan()
                     {
                         return false;
                     }
-                    localAddress = make_shared<IPV4Address>(reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_addr)->sin_addr.s_addr);
-                    netmaskaddress = make_shared<IPV4Address>(reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_netmask)->sin_addr.s_addr);
+                    sockaddr_in * address = reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_addr);
+                    localAddress = make_shared<IPV4EndPoint>(IPV4Address(address->sin_addr.s_addr), address->sin_port);
+                    address = reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_netmask);
+                    netmaskaddress = make_shared<IPV4EndPoint>(IPV4Address(address->sin_addr.s_addr), address->sin_port);
                     if ((currentAdapter->ifa_flags & IFF_BROADCAST) != 0)
-                        broadcastAddress = make_shared<IPV4Address>(reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_ifu.ifu_broadaddr)->sin_addr.s_addr);
+                    {
+                        address = reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_ifu.ifu_broadaddr);
+                        broadcastAddress = make_shared<IPV4EndPoint>(IPV4Address(address->sin_addr.s_addr), address->sin_port);
+                    }
                     if ((currentAdapter->ifa_flags & IFF_POINTOPOINT) != 0)
-                        destAddress = make_shared<IPV4Address>(reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_ifu.ifu_dstaddr)->sin_addr.s_addr);
+                    {
+                        address = reinterpret_cast<sockaddr_in *>(currentAdapter->ifa_ifu.ifu_dstaddr);
+                        destAddress = make_shared<IPV4EndPoint>(IPV4Address(address->sin_addr.s_addr), address->sin_port);
+                    }
                 }
                 break;
             case AF_INET6:
@@ -67,12 +75,24 @@ bool AdapterList::ReScan()
                     {
                         return false;
                     }
-                    localAddress = make_shared<IPV6Address>(reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_addr)->sin6_addr.__in6_u.__u6_addr8);
-                    netmaskaddress = make_shared<IPV6Address>(reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_netmask)->sin6_addr.__in6_u.__u6_addr8);
+                    sockaddr_in6 * address = reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_addr);
+                    localAddress = make_shared<IPV6EndPoint>(address->sin6_addr.__in6_u.__u6_addr8, address->sin6_port,
+                                                             address->sin6_flowinfo, address->sin6_scope_id);
+                    address = reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_netmask);
+                    netmaskaddress = make_shared<IPV6EndPoint>(address->sin6_addr.__in6_u.__u6_addr8, address->sin6_port,
+                                                               address->sin6_flowinfo, address->sin6_scope_id);
                     if (((currentAdapter->ifa_flags & IFF_BROADCAST) != 0) && (currentAdapter->ifa_ifu.ifu_broadaddr != nullptr))
-                        broadcastAddress = make_shared<IPV6Address>(reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_ifu.ifu_broadaddr)->sin6_addr.__in6_u.__u6_addr8);
+                    {
+                        address = reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_ifu.ifu_broadaddr);
+                        broadcastAddress = make_shared<IPV6EndPoint>(address->sin6_addr.__in6_u.__u6_addr8, address->sin6_port,
+                                                                     address->sin6_flowinfo, address->sin6_scope_id);
+                    }
                     if (((currentAdapter->ifa_flags & IFF_POINTOPOINT) != 0) && (currentAdapter->ifa_ifu.ifu_dstaddr != nullptr))
-                        destAddress = make_shared<IPV6Address>(reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_ifu.ifu_dstaddr)->sin6_addr.__in6_u.__u6_addr8);
+                    {
+                        address = reinterpret_cast<sockaddr_in6 *>(currentAdapter->ifa_ifu.ifu_dstaddr);
+                        destAddress = make_shared<IPV6EndPoint>(address->sin6_addr.__in6_u.__u6_addr8, address->sin6_port,
+                                                                address->sin6_flowinfo, address->sin6_scope_id);
+                    }
                 }
                 break;
             case AF_UNIX:

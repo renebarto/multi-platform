@@ -1,6 +1,6 @@
 #include "unit-test-c++/UnitTestC++.h"
+
 #include "osal/IPV4Address.h"
-#include "osal/MACAddress.h"
 
 using namespace std;
 
@@ -181,66 +181,6 @@ TEST_FIXTURE(IPV4AddressTest, TryParseInvalid)
     OSAL::Network::IPV4Address ipAddress;
     EXPECT_FALSE(OSAL::Network::IPV4Address::TryParse(text1, ipAddress));
     EXPECT_FALSE(OSAL::Network::IPV4Address::TryParse(text2, ipAddress));
-}
-
-TEST_FIXTURE(IPV4AddressTest, OperatorEqualAddress)
-{
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
-    OSAL::Network::IPV4Address target(ipAddress);
-    OSAL::Network::IPV4Address ref1;
-    OSAL::Network::IPV4Address ref2({0, 0, 0, 0});
-    OSAL::Network::IPV4Address ref3(ipAddress);
-    OSAL::Network::MACAddress ref4({0x00, 0x01, 0x02, 0x03, 0x04, 0x05});
-    EXPECT_FALSE(target == ref1);
-    EXPECT_FALSE(target == ref2);
-    EXPECT_TRUE(target == ref3);
-    EXPECT_FALSE(target == ref4);
-    EXPECT_FALSE(ref1 == target);
-    EXPECT_TRUE(ref1 == ref2);
-    EXPECT_FALSE(ref1 == ref3);
-    EXPECT_FALSE(ref1 == ref4);
-    EXPECT_FALSE(ref2 == target);
-    EXPECT_TRUE(ref2 == ref1);
-    EXPECT_FALSE(ref2 == ref3);
-    EXPECT_FALSE(ref2 == ref4);
-    EXPECT_TRUE(ref3 == target);
-    EXPECT_FALSE(ref3 == ref1);
-    EXPECT_FALSE(ref3 == ref2);
-    EXPECT_FALSE(ref3 == ref4);
-    EXPECT_FALSE(ref4 == target);
-    EXPECT_FALSE(ref4 == ref1);
-    EXPECT_FALSE(ref4 == ref2);
-    EXPECT_FALSE(ref4 == ref3);
-}
-
-TEST_FIXTURE(IPV4AddressTest, OperatorNotEqualAddress)
-{
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
-    OSAL::Network::IPV4Address target(ipAddress);
-    OSAL::Network::IPV4Address ref1;
-    OSAL::Network::IPV4Address ref2({0, 0, 0, 0});
-    OSAL::Network::IPV4Address ref3(ipAddress);
-    OSAL::Network::MACAddress ref4({0x00, 0x01, 0x02, 0x03, 0x04, 0x05});
-    EXPECT_TRUE(target != ref1);
-    EXPECT_TRUE(target != ref2);
-    EXPECT_FALSE(target != ref3);
-    EXPECT_TRUE(target != ref4);
-    EXPECT_TRUE(ref1 != target);
-    EXPECT_FALSE(ref1 != ref2);
-    EXPECT_TRUE(ref1 != ref3);
-    EXPECT_TRUE(ref1 != ref4);
-    EXPECT_TRUE(ref2 != target);
-    EXPECT_FALSE(ref2 != ref1);
-    EXPECT_TRUE(ref2 != ref3);
-    EXPECT_TRUE(ref2 != ref4);
-    EXPECT_FALSE(ref3 != target);
-    EXPECT_TRUE(ref3 != ref1);
-    EXPECT_TRUE(ref3 != ref2);
-    EXPECT_TRUE(ref3 != ref4);
-    EXPECT_TRUE(ref4 != target);
-    EXPECT_TRUE(ref4 != ref1);
-    EXPECT_TRUE(ref4 != ref2);
-    EXPECT_TRUE(ref4 != ref3);
 }
 
 TEST_FIXTURE(IPV4AddressTest, OperatorEqual)

@@ -9,10 +9,10 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
-IPV4Address IPV4Address::None = IPV4Address({0, 0, 0, 0});
-IPV4Address IPV4Address::Any = IPV4Address({0, 0, 0, 0});
-IPV4Address IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
-IPV4Address IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
+IPV4Address const IPV4Address::None = IPV4Address({0, 0, 0, 0});
+IPV4Address const IPV4Address::Any = IPV4Address({0, 0, 0, 0});
+IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
+IPV4Address const IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
 
 IPV4Address::~IPV4Address()
 {
@@ -53,21 +53,6 @@ IPV4Address & IPV4Address::operator = (const IPV4Address & other)
 {
     _ipAddress = other._ipAddress;
     return *this;
-}
-
-bool IPV4Address::operator == (const Address & other) const
-{
-    if (&other == this)
-        return true;
-    if (other.Family() != SocketFamily::InternetV4)
-        return false;
-    const IPV4Address * otherAsIPV4Address = dynamic_cast<const IPV4Address *>(&other);
-    return (otherAsIPV4Address->_ipAddress == _ipAddress);
-}
-
-bool IPV4Address::operator != (const Address & other) const
-{
-    return ! this->operator ==(other);
 }
 
 bool IPV4Address::operator == (const IPV4Address & other) const

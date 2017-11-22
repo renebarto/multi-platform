@@ -1,10 +1,12 @@
 #pragma once
 
 #include <fcntl.h>
-#include "osal/NetworkAddress.h"
+#include "osal/NetworkEndPoint.h"
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
 #include <osal/linux/DomainSocketAddress.h>
+#include <osal/IPV4EndPoint.h>
+#include <osal/IPV6EndPoint.h>
 
 namespace OSAL {
 namespace Network {
@@ -88,29 +90,29 @@ inline OSAL_EXPORT int Fcntl(SocketHandle socketHandle, int cmd, int flag)
     return fcntl(socketHandle, cmd, flag);
 }
 
-inline OSAL_EXPORT int Bind(SocketHandle socketHandle, AddressPtr address)
+inline OSAL_EXPORT int Bind(SocketHandle socketHandle, EndPointPtr address)
 {
     return ::bind(socketHandle,
                   reinterpret_cast<const sockaddr *>(address->GetBytes().Data()),
                   static_cast<socklen_t>(address->GetBytes().Size()));
 }
 
-inline OSAL_EXPORT int Connect(SocketHandle socketHandle, const AddressPtr & serverAddress)
+inline OSAL_EXPORT int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress)
 {
     return ::connect(socketHandle,
                      reinterpret_cast<const sockaddr *>(serverAddress->GetBytes().Data()),
                      static_cast<socklen_t>(serverAddress->GetBytes().Size()));
 }
 
-inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, AddressPtr & clientAddress)
+inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress)
 {
     switch (family)
     {
         case SocketFamily ::InternetV4:
-            clientAddress = std::make_shared<IPV4Address>();
+            clientAddress = std::make_shared<IPV4EndPoint>();
             break;
         case SocketFamily ::InternetV6:
-            clientAddress = std::make_shared<IPV6Address>();
+            clientAddress = std::make_shared<IPV6EndPoint>();
             break;
         case SocketFamily ::Unix:
             clientAddress = std::make_shared<DomainSocketAddress>();
@@ -125,15 +127,15 @@ inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily f
     return result;
 }
 
-inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily family, AddressPtr & address)
+inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
 {
     switch (family)
     {
         case SocketFamily ::InternetV4:
-            address = std::make_shared<IPV4Address>();
+            address = std::make_shared<IPV4EndPoint>();
             break;
         case SocketFamily ::InternetV6:
-            address = std::make_shared<IPV6Address>();
+            address = std::make_shared<IPV6EndPoint>();
             break;
         case SocketFamily ::Unix:
             address = std::make_shared<DomainSocketAddress>();
@@ -148,15 +150,15 @@ inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily famil
     return result;
 }
 
-inline OSAL_EXPORT int GetPeerName(SocketHandle socketHandle, SocketFamily family, AddressPtr & address)
+inline OSAL_EXPORT int GetPeerName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
 {
     switch (family)
     {
         case SocketFamily ::InternetV4:
-            address = std::make_shared<IPV4Address>();
+            address = std::make_shared<IPV4EndPoint>();
             break;
         case SocketFamily ::InternetV6:
-            address = std::make_shared<IPV6Address>();
+            address = std::make_shared<IPV6EndPoint>();
             break;
         case SocketFamily ::Unix:
             address = std::make_shared<DomainSocketAddress>();
@@ -181,17 +183,17 @@ inline OSAL_EXPORT ssize_t Send(SocketHandle socketHandle, const uint8_t * data,
     return ::send(socketHandle, data, bufferSize, flags);
 }
 
-inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags, SocketFamily family, AddressPtr &address)
+inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags, SocketFamily family, EndPointPtr &address)
 {
     switch (family)
     {
-        case SocketFamily ::InternetV4:
-            address = std::make_shared<IPV4Address>();
+        case SocketFamily::InternetV4:
+            address = std::make_shared<IPV4EndPoint>();
             break;
-        case SocketFamily ::InternetV6:
-            address = std::make_shared<IPV6Address>();
+        case SocketFamily::InternetV6:
+            address = std::make_shared<IPV6EndPoint>();
             break;
-        case SocketFamily ::Unix:
+        case SocketFamily::Unix:
             address = std::make_shared<DomainSocketAddress>();
             break;
         default:
@@ -204,7 +206,7 @@ inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data
     return result;
 }
 
-inline OSAL_EXPORT ssize_t SendTo(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags, const AddressPtr & address)
+inline OSAL_EXPORT ssize_t SendTo(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags, const EndPointPtr & address)
 {
     return ::sendto(socketHandle, data, bufferSize, flags,
                     reinterpret_cast<const sockaddr *>(address->GetBytes().Data()),

@@ -65,7 +65,7 @@ MACAddress & MACAddress::operator = (const MACAddress & other)
     return *this;
 }
 
-bool MACAddress::operator == (const Address & other) const
+bool MACAddress::operator == (const EndPoint & other) const
 {
     if (&other == this)
         return true;
@@ -75,7 +75,7 @@ bool MACAddress::operator == (const Address & other) const
     return (otherAsMACAddress->_macAddress == _macAddress);
 }
 
-bool MACAddress::operator != (const Address & other) const
+bool MACAddress::operator != (const EndPoint & other) const
 {
     return ! this->operator ==(other);
 }

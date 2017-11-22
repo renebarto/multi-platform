@@ -1,12 +1,12 @@
 #pragma once
 
 #include "osal/Strings.h"
-#include "osal/NetworkAddress.h"
+#include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
 
-class DomainSocketAddress : public OSAL::Network::Address
+class OSAL_EXPORT DomainSocketAddress : public OSAL::Network::EndPoint
 {
 public:
     static const size_t AddressSize = 108;
@@ -43,8 +43,8 @@ public:
     static DomainSocketAddress Parse(const OSAL::String & text);
     static bool TryParse(const OSAL::String & text, DomainSocketAddress & address);
     DomainSocketAddress & operator = (const DomainSocketAddress & other);
-    bool operator == (const Address & other) const;
-    bool operator != (const Address & other) const;
+    bool operator == (const EndPoint & other) const;
+    bool operator != (const EndPoint & other) const;
     bool operator == (const DomainSocketAddress & other) const;
     bool operator != (const DomainSocketAddress & other) const;
     uint8_t & operator[] (size_t offset);

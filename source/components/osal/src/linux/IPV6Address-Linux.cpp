@@ -9,14 +9,14 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
-IPV6Address IPV6Address::None = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
-                                             0, 0, 0, 0, 0, 0, 0, 0, });
-IPV6Address IPV6Address::Any = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
-                                            0, 0, 0, 0, 0, 0, 0, 0, });
-IPV6Address IPV6Address::Broadcast = IPV6Address({255, 255, 255, 255, 255, 255, 255, 255,
-                                                  255, 255, 255, 255, 255, 255, 255, 255, });
-IPV6Address IPV6Address::LocalHost = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
-                                                  0, 0, 0, 0, 0, 0, 0, 1});
+IPV6Address const IPV6Address::None = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
+                                                   0, 0, 0, 0, 0, 0, 0, 0, });
+IPV6Address const IPV6Address::Any = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
+                                                  0, 0, 0, 0, 0, 0, 0, 0, });
+IPV6Address const IPV6Address::Broadcast = IPV6Address({255, 255, 255, 255, 255, 255, 255, 255,
+                                                        255, 255, 255, 255, 255, 255, 255, 255, });
+IPV6Address const IPV6Address::LocalHost = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
+                                                        0, 0, 0, 0, 0, 0, 0, 1});
 
 IPV6Address::~IPV6Address()
 {
@@ -68,21 +68,6 @@ IPV6Address & IPV6Address::operator = (const IPV6Address & other)
 {
     _ipAddress = other._ipAddress;
     return *this;
-}
-
-bool IPV6Address::operator == (const Address & other) const
-{
-    if (&other == this)
-        return true;
-    if (other.Family() != SocketFamily::InternetV6)
-        return false;
-    const IPV6Address * otherAsIPV6Address = dynamic_cast<const IPV6Address *>(&other);
-    return (otherAsIPV6Address->_ipAddress == _ipAddress);
-}
-
-bool IPV6Address::operator != (const Address & other) const
-{
-    return ! this->operator ==(other);
 }
 
 bool IPV6Address::operator == (const IPV6Address & other) const

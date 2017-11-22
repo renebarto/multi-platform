@@ -1,14 +1,13 @@
 #include "unit-test-c++/UnitTestC++.h"
-#include "network/IPV4EndPoint.h"
+#include "osal/IPV4EndPoint.h"
+#include "osal/MACAddress.h"
 #include "core/Core.h"
 
 using namespace std;
 
-namespace Network
-{
-
-namespace Test
-{
+namespace OSAL {
+namespace Network {
+namespace Test {
 
 class IPV4EndPointTest : public UnitTestCpp::TestFixture
 {
@@ -167,23 +166,66 @@ TEST_FIXTURE(IPV4EndPointTest, TryParseInvalid)
     EXPECT_FALSE(IPV4EndPoint::TryParse(text3, ipAddress));
 }
 
-TEST_FIXTURE(IPV4EndPointTest, OperatorNotEqual)
+TEST_FIXTURE(IPV4EndPointTest, OperatorEqualEndPoint)
 {
     OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
     uint16_t port = 1234;
-    IPV4EndPoint target(ipAddress, port);
-    IPV4EndPoint ref1;
-    IPV4EndPoint ref2(ipAddress);
-    IPV4EndPoint ref3(ipAddress, port);
-    IPV4EndPoint ref4(port);
+    OSAL::Network::IPV4EndPoint target(ipAddress, port);
+    OSAL::Network::IPV4EndPoint ref1;
+    OSAL::Network::IPV4EndPoint ref2(IPV4Address({0, 0, 0, 0}), 0);
+    OSAL::Network::IPV4EndPoint ref3(ipAddress, port);
+    OSAL::Network::MACAddress ref4({0x00, 0x01, 0x02, 0x03, 0x04, 0x05});
+    EXPECT_FALSE(target == ref1);
+    EXPECT_FALSE(target == ref2);
+    EXPECT_TRUE(target == ref3);
+    EXPECT_FALSE(target == ref4);
+    EXPECT_FALSE(ref1 == target);
+    EXPECT_TRUE(ref1 == ref2);
+    EXPECT_FALSE(ref1 == ref3);
+    EXPECT_FALSE(ref1 == ref4);
+    EXPECT_FALSE(ref2 == target);
+    EXPECT_TRUE(ref2 == ref1);
+    EXPECT_FALSE(ref2 == ref3);
+    EXPECT_FALSE(ref2 == ref4);
+    EXPECT_TRUE(ref3 == target);
+    EXPECT_FALSE(ref3 == ref1);
+    EXPECT_FALSE(ref3 == ref2);
+    EXPECT_FALSE(ref3 == ref4);
+    EXPECT_FALSE(ref4 == target);
+    EXPECT_FALSE(ref4 == ref1);
+    EXPECT_FALSE(ref4 == ref2);
+    EXPECT_FALSE(ref4 == ref3);
+}
+
+TEST_FIXTURE(IPV4EndPointTest, OperatorNotEqualEndPoint)
+{
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
+    uint16_t port = 1234;
+    OSAL::Network::IPV4EndPoint target(ipAddress, port);
+    OSAL::Network::IPV4EndPoint ref1;
+    OSAL::Network::IPV4EndPoint ref2(IPV4Address({0, 0, 0, 0}), 0);
+    OSAL::Network::IPV4EndPoint ref3(ipAddress, port);
+    OSAL::Network::MACAddress ref4({0x00, 0x01, 0x02, 0x03, 0x04, 0x05});
     EXPECT_TRUE(target != ref1);
     EXPECT_TRUE(target != ref2);
     EXPECT_FALSE(target != ref3);
     EXPECT_TRUE(target != ref4);
     EXPECT_TRUE(ref1 != target);
+    EXPECT_FALSE(ref1 != ref2);
+    EXPECT_TRUE(ref1 != ref3);
+    EXPECT_TRUE(ref1 != ref4);
     EXPECT_TRUE(ref2 != target);
+    EXPECT_FALSE(ref2 != ref1);
+    EXPECT_TRUE(ref2 != ref3);
+    EXPECT_TRUE(ref2 != ref4);
     EXPECT_FALSE(ref3 != target);
+    EXPECT_TRUE(ref3 != ref1);
+    EXPECT_TRUE(ref3 != ref2);
+    EXPECT_TRUE(ref3 != ref4);
     EXPECT_TRUE(ref4 != target);
+    EXPECT_TRUE(ref4 != ref1);
+    EXPECT_TRUE(ref4 != ref2);
+    EXPECT_TRUE(ref4 != ref3);
 }
 
 TEST_FIXTURE(IPV4EndPointTest, OperatorEqual)
@@ -205,7 +247,46 @@ TEST_FIXTURE(IPV4EndPointTest, OperatorEqual)
     EXPECT_FALSE(ref4 == target);
 }
 
+TEST_FIXTURE(IPV4EndPointTest, OperatorNotEqual)
+{
+    OSAL::Network::IPV4Address ipAddress({ 1, 2, 3, 4 });
+    uint16_t port = 1234;
+    IPV4EndPoint target(ipAddress, port);
+    IPV4EndPoint ref1;
+    IPV4EndPoint ref2(ipAddress);
+    IPV4EndPoint ref3(ipAddress, port);
+    IPV4EndPoint ref4(port);
+    EXPECT_TRUE(target != ref1);
+    EXPECT_TRUE(target != ref2);
+    EXPECT_FALSE(target != ref3);
+    EXPECT_TRUE(target != ref4);
+    EXPECT_TRUE(ref1 != target);
+    EXPECT_TRUE(ref2 != target);
+    EXPECT_FALSE(ref3 != target);
+    EXPECT_TRUE(ref4 != target);
+}
+
+TEST_FIXTURE(IPV4EndPointTest, PrintTo)
+{
+    OSAL::Network::IPV4Address ipAddress({1, 2, 3, 4});
+    OSAL::Network::IPV4EndPoint endPoint(ipAddress, 1234);
+    string expected = _("1.2.3.4:1234");
+    basic_ostringstream<OSAL::Char> stream;
+    endPoint.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV4EndPointTest, PrintToNonMember)
+{
+    OSAL::Network::IPV4Address ipAddress({1, 2, 3, 4});
+    OSAL::Network::IPV4EndPoint endPoint(ipAddress, 1234);
+    basic_ostringstream<OSAL::Char> stream;
+    PrintTo(endPoint, stream);
+    EXPECT_EQ(_("1.2.3.4:1234"), stream.str());
+}
+
 } // TEST_SUITE(network)
 
 } // namespace Test
 } // namespace Network
+} // namespace OSAL

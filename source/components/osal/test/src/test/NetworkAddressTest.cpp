@@ -1,6 +1,6 @@
 #include "unit-test-c++/UnitTestC++.h"
 
-#include "osal/NetworkAddress.h"
+#include "osal/NetworkEndPoint.h"
 
 using namespace std;
 

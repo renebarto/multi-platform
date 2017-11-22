@@ -1,8 +1,10 @@
-#include "network/IPV4EndPoint.h"
+#include "osal/IPV4EndPoint.h"
+
 #include <sstream>
-#include "core/Core.h"
+#include <netinet/in.h>
 
 using namespace std;
+using namespace OSAL;
 using namespace Network;
 
 IPV4EndPoint::~IPV4EndPoint()
@@ -50,6 +52,21 @@ IPV4EndPoint & IPV4EndPoint::operator = (const IPV4EndPoint & other)
     return *this;
 }
 
+bool IPV4EndPoint::operator == (const EndPoint & other) const
+{
+    if (&other == this)
+        return true;
+    if (other.Family() != SocketFamily::InternetV4)
+        return false;
+    const IPV4EndPoint * otherAsMACAddress = dynamic_cast<const IPV4EndPoint *>(&other);
+    return (otherAsMACAddress->_ipAddress == _ipAddress);
+}
+
+bool IPV4EndPoint::operator != (const EndPoint & other) const
+{
+    return ! this->operator ==(other);
+}
+
 bool IPV4EndPoint::operator == (const IPV4EndPoint & other) const
 {
     if (&other == this)
@@ -60,6 +77,23 @@ bool IPV4EndPoint::operator == (const IPV4EndPoint & other) const
 bool IPV4EndPoint::operator != (const IPV4EndPoint & other) const
 {
     return ! this->operator ==(other);
+}
+
+size_t IPV4EndPoint::Size() const
+{
+    return sizeof(sockaddr_in);
+}
+
+OSAL::ByteArray IPV4EndPoint::GetBytes() const
+{
+    OSAL::ByteArray result;
+    sockaddr_in address {};
+    address.sin_family = AF_INET;
+    uint32_t ipAddress = _ipAddress.GetUInt32();
+    memcpy(&(address.sin_addr.s_addr), &ipAddress, sizeof(ipAddress));
+    address.sin_port = _port;
+    result.Set(0, reinterpret_cast<const uint8_t *>(&address), sizeof(address));
+    return result;
 }
 
 std::ostream & IPV4EndPoint::PrintTo(std::ostream & stream) const

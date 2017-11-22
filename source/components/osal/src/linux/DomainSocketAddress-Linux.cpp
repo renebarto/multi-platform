@@ -49,7 +49,7 @@ DomainSocketAddress & DomainSocketAddress::operator = (const DomainSocketAddress
     return *this;
 }
 
-bool DomainSocketAddress::operator == (const Address & other) const
+bool DomainSocketAddress::operator == (const EndPoint & other) const
 {
     if (&other == this)
         return true;
@@ -59,7 +59,7 @@ bool DomainSocketAddress::operator == (const Address & other) const
     return (otherAsDomainSocketAddress->_address == _address);
 }
 
-bool DomainSocketAddress::operator != (const Address & other) const
+bool DomainSocketAddress::operator != (const EndPoint & other) const
 {
     return ! this->operator ==(other);
 }
