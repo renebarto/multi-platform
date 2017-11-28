@@ -1,5 +1,9 @@
 #pragma once
 
+#include <osal/linux/DomainSocketAddress.h>
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
+#include <osal/MACAddress.h>
 #include "core/Core.h"
 #include "core/serialization/Serialization.h"
 #include "core/Nullable.h"
@@ -18,6 +22,12 @@ CORE_EXPORT bool Deserialize(const OSAL::String & text, uint64_t & value, int ba
 CORE_EXPORT bool Deserialize(const OSAL::String & text, float & value);
 CORE_EXPORT bool Deserialize(const OSAL::String & text, double & value);
 CORE_EXPORT bool Deserialize(const OSAL::String & text, long double & value);
+#if !defined(WIN_MSVC)
+CORE_EXPORT bool Deserialize(const OSAL::String & text, OSAL::Network::DomainSocketAddress & value);
+#endif
+CORE_EXPORT bool Deserialize(const OSAL::String & text, OSAL::Network::IPV4Address & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, OSAL::Network::IPV6Address & value);
+CORE_EXPORT bool Deserialize(const OSAL::String & text, OSAL::Network::MACAddress & value);
 inline bool Deserialize(const OSAL::String & text, OSAL::String & value)
 {
     value = text;

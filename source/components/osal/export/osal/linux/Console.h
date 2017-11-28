@@ -31,7 +31,7 @@ inline int DetermineHandle(std::ostream * stream)
     return -1;
 }
 
-inline const char * GetAnsiColorCode(ConsoleColorType color)
+inline const char * GetAnsiColorCode(ConsoleColor color)
 {
     switch (color & ConsoleColor::ColorMask)
     {
@@ -75,7 +75,7 @@ ConsoleBase<CharT>::ConsoleBase(std::basic_ostream<CharT> & stream)
 }
 
 template<class CharT>
-void ConsoleBase<CharT>::SetTerminalColor(ConsoleColorType foregroundColor, ConsoleColorType backgroundColor)
+void ConsoleBase<CharT>::SetTerminalColor(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
 {
     if (!ShouldUseColor())
         return;

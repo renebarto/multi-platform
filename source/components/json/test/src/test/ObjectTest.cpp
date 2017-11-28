@@ -411,6 +411,52 @@ TEST_FIXTURE(ObjectTest, Serialize)
               _("}"), stream.str());
 }
 
+TEST_FIXTURE(ObjectTest, FindConst)
+{
+    OSAL::String key1(_("key1"));
+    OSAL::String key2(_("key2"));
+    OSAL::String key3(_("key3"));
+    ValuePtr value1 = std::make_shared<Boolean>(true);
+    ValuePtr value2 = std::make_shared<Boolean>(false);
+
+    Object target(
+        {
+            { key1, value1 },
+            { key2, value2 },
+        });
+    const Object constTarget = target;
+    EXPECT_NOT_NULL(constTarget.Find(key1));
+    EXPECT_NOT_NULL(constTarget.Find(key2));
+    EXPECT_NULL(constTarget.Find(key3));
+    // Careful, using dynamic_pointer_cast can easily cast away const-ness!
+    auto valuePtr = constTarget.Find(key1);
+    EXPECT_TRUE(std::dynamic_pointer_cast<Boolean>(valuePtr)->GetValue());
+    std::dynamic_pointer_cast<Boolean>(valuePtr)->SetValue(false);
+    EXPECT_FALSE(std::dynamic_pointer_cast<Boolean>(valuePtr)->GetValue());
+}
+
+TEST_FIXTURE(ObjectTest, FindNonConst)
+{
+    OSAL::String key1(_("key1"));
+    OSAL::String key2(_("key2"));
+    OSAL::String key3(_("key3"));
+    ValuePtr value1 = std::make_shared<Boolean>(true);
+    ValuePtr value2 = std::make_shared<Boolean>(false);
+
+    Object target(
+        {
+            { key1, value1 },
+            { key2, value2 },
+        });
+    EXPECT_NOT_NULL(target.Find(key1));
+    EXPECT_NOT_NULL(target.Find(key2));
+    EXPECT_NULL(target.Find(key3));
+    auto valuePtr = target.Find(key1);
+    EXPECT_TRUE(std::dynamic_pointer_cast<Boolean>(valuePtr)->GetValue());
+    std::dynamic_pointer_cast<Boolean>(valuePtr)->SetValue(false);
+    EXPECT_FALSE(std::dynamic_pointer_cast<Boolean>(valuePtr)->GetValue());
+}
+
 } // TEST_SUITE(json)
 
 } // namespace Test

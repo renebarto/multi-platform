@@ -4,12 +4,12 @@
 
 using namespace OSAL;
 
-OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColorType color)
+OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColor color)
 {
 	return{ color };
 }
 
-OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColorType color)
+OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColor color)
 {
 	return{ color };
 }

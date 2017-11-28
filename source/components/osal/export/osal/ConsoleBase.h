@@ -52,20 +52,19 @@ enum class ConsoleColor : int
 };
 #endif
 
-using ConsoleColorType = Flag<ConsoleColor, int>;
 DEFINE_FLAG_OPERATORS(ConsoleColor, int);
 
 template<class CharT>
-OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColorType value);
+OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColor value);
 
 struct OSAL_EXPORT _SetForegroundColor
 {
-    ConsoleColorType color;
+    ConsoleColor color;
 };
 
 struct OSAL_EXPORT _SetBackgroundColor
 {
-    ConsoleColorType color;
+    ConsoleColor color;
 };
 
 template<class CharT>
@@ -82,10 +81,10 @@ public:
     ConsoleBase(int handle = OSAL::Files::fileno(stdout));
     ConsoleBase(std::basic_ostream<CharT> & stream);
 
-    void SetForegroundColor(ConsoleColorType foregroundColor);
-    void SetBackgroundColor(ConsoleColorType backgroundColor);
-    void SetTerminalColor(ConsoleColorType foregroundColor = ConsoleColor::Default,
-                          ConsoleColorType backgroundColor = ConsoleColor::Default);
+    void SetForegroundColor(ConsoleColor foregroundColor);
+    void SetBackgroundColor(ConsoleColor backgroundColor);
+    void SetTerminalColor(ConsoleColor foregroundColor = ConsoleColor::Default,
+                          ConsoleColor backgroundColor = ConsoleColor::Default);
     void ResetTerminalColor();
     bool ShouldUseColor();
 
@@ -112,17 +111,48 @@ public:
 protected:
     std::basic_ostream<CharT> * _stream;
     int _handle;
-    ConsoleColorType _currentForegroundColor;
-    ConsoleColorType _currentBackgroundColor;
+    ConsoleColor _currentForegroundColor;
+    ConsoleColor _currentBackgroundColor;
 #if defined(WIN_MSVC) || defined(WIN_MINGW)
     WORD _defaultColorAttributes;
 #endif
 
 };
 
+template<class CharT>
+inline void ConsoleBase<CharT>::SetForegroundColor(ConsoleColor foregroundColor)
+{
+    SetTerminalColor(foregroundColor, _currentBackgroundColor);
+}
+
+template<class CharT>
+inline void ConsoleBase<CharT>::SetBackgroundColor(ConsoleColor backgroundColor)
+{
+    SetTerminalColor(_currentForegroundColor, backgroundColor);
+}
+
+template<class CharT>
+inline void ConsoleBase<CharT>::ResetTerminalColor()
+{
+    SetTerminalColor();
+}
+
+template<class CharT>
+inline ConsoleBase<CharT> & ConsoleBase<CharT>::operator<<(_SetForegroundColor color)
+{
+    SetForegroundColor(color.color);
+    return *this;
+}
+
+template<class CharT>
+inline ConsoleBase<CharT> & ConsoleBase<CharT>::operator<<(_SetBackgroundColor color)
+{
+    SetBackgroundColor(color.color);
+    return *this;
+}
 
 } // namespace OSAL
 
-OSAL_EXPORT OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColorType color);
-OSAL_EXPORT OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColorType color);
+OSAL_EXPORT OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColor color);
+OSAL_EXPORT OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColor color);
 

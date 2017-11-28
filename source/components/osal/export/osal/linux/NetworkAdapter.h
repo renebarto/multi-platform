@@ -31,32 +31,32 @@ enum class AdapterFlags : unsigned int
 class OSAL_EXPORT Adapter
 {
 public:
-    Adapter(const OSAL::String & name, EndPointPtr localAddress, EndPointPtr netmask,
+    Adapter(const String & name, EndPointPtr localAddress, EndPointPtr netmask,
             EndPointPtr broadcastAddress, EndPointPtr destAddress, AdapterFlags flags);
 
-    const OSAL::String & Name()
+    const String & Name() const
     { return _name; }
 
-    const EndPointPtr LocalAddress()
+    const EndPointPtr LocalAddress() const
     { return _localAddress; }
 
     const EndPointPtr NetMask()
     { return _netmask; }
 
-    const EndPointPtr BroadcastAddress()
+    const EndPointPtr BroadcastAddress() const
     { return _broadcastAddress; }
 
-    const EndPointPtr DestAddress()
+    const EndPointPtr DestAddress() const
     { return _destAddress; }
 
-    SocketFamily Family()
+    SocketFamily Family() const
     { return LocalAddress()->Family(); }
 
-    AdapterFlags Flags()
+    AdapterFlags Flags() const
     { return _flags; }
 
 private:
-    OSAL::String _name;
+    String _name;
     EndPointPtr _localAddress;
     EndPointPtr _netmask;
     EndPointPtr _broadcastAddress;

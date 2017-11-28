@@ -81,6 +81,26 @@ bool Object::AddPair(const KVPair & pair)
     return result.second;
 }
 
+const ValuePtr Object::Find(const OSAL::String & name) const
+{
+    for (auto & item : _elements)
+    {
+        if (item.first == name)
+            return item.second;
+    }
+    return nullptr;
+}
+
+ValuePtr Object::Find(const OSAL::String & name)
+{
+    for (auto & item : _elements)
+    {
+        if (item.first == name)
+            return item.second;
+    }
+    return nullptr;
+}
+
 bool Object::Deserialize(std::basic_istream<OSAL::Char> & stream)
 {
     OSAL::String key;

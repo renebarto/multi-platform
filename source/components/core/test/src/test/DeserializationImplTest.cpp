@@ -207,6 +207,152 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeLongDouble)
     EXPECT_FALSE(Deserialize(_("xyz"), actual));
 }
 
+#if !defined(WIN_MSVC)
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeDomainSocketAddress)
+{
+    OSAL::String text = _("/abc/def");
+    OSAL::ByteArray domainAddress(text);
+    OSAL::Network::DomainSocketAddress expected(domainAddress);
+    OSAL::Network::DomainSocketAddress actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeDomainSocketAddressInvalid)
+{
+    const OSAL::String textTooLong = _("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678");
+
+    OSAL::Network::DomainSocketAddress expected;
+    OSAL::Network::DomainSocketAddress actual;
+    EXPECT_FALSE(Deserialize(textTooLong, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+#endif
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV4AddressNumeric)
+{
+    const OSAL::String text = _("255.254.253.252");
+    OSAL::Network::IPV4Address expected({255, 254, 253, 252});
+    OSAL::Network::IPV4Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV4AddressHostName)
+{
+    const OSAL::String text = _("localhost");
+    OSAL::Network::IPV4Address expected({127, 0, 0, 1});
+    OSAL::Network::IPV4Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV4AddressBroadcast)
+{
+    const OSAL::String text = _("255.255.255.255");
+    OSAL::Network::IPV4Address expected({255, 255, 255, 255});
+    OSAL::Network::IPV4Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV4AddressInvalid)
+{
+    const OSAL::String text1 = _("256.255.255.255");
+    const OSAL::String text2 = _("255.255.255.255.255");
+
+    OSAL::Network::IPV4Address expected;
+    OSAL::Network::IPV4Address actual;
+    EXPECT_FALSE(Deserialize(text1, actual));
+    EXPECT_EQ(expected, actual);
+
+    EXPECT_FALSE(Deserialize(text2, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressNumeric)
+{
+    const OSAL::String text = _(_("fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0"));
+    OSAL::Network::IPV6Address expected({0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9, 0xF8, 0xF7, 0xF6, 0xF5, 0xF4, 0xF3, 0xF2, 0xF1, 0xF0});
+    OSAL::Network::IPV6Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressHostName)
+{
+    const OSAL::String text = _("localhost");
+    OSAL::Network::IPV6Address expected({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01});
+    OSAL::Network::IPV6Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressLocalhost)
+{
+    const OSAL::String text = _("::1");
+    OSAL::Network::IPV6Address expected({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01});
+    OSAL::Network::IPV6Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressBroadcast)
+{
+    const OSAL::String text = _("ff02::1");
+    OSAL::Network::IPV6Address expected({0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01});
+    OSAL::Network::IPV6Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressShortened)
+{
+    const OSAL::String text = _("FD3D:4056:8978:0:E133:19D7:2C09:290E");
+    OSAL::Network::IPV6Address expected({0xFD, 0x3D, 0x40, 0x56, 0x89, 0x78, 0x00, 0x00, 0xE1, 0x33, 0x19, 0xD7, 0x2C, 0x09, 0x29, 0x0E});
+    OSAL::Network::IPV6Address actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeIPV6AddressInvalid)
+{
+    const OSAL::String text1 = _("ffffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0");
+    const OSAL::String text2 = _("fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0:0");
+
+    OSAL::Network::IPV6Address expected;
+    OSAL::Network::IPV6Address actual;
+    EXPECT_FALSE(Deserialize(text1, actual));
+    EXPECT_EQ(expected, actual);
+
+    EXPECT_FALSE(Deserialize(text2, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeMACAddress)
+{
+    const OSAL::String text = _("FF-FE-FD-01-02-03");
+    OSAL::Network::MACAddress expected({0xFF, 0xFE, 0xFD, 0x01, 0x02, 0x03});
+    OSAL::Network::MACAddress actual;
+    EXPECT_TRUE(Deserialize(text, actual));
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DeserializationImplTest, DeserializeMACAddressInvalid)
+{
+    const OSAL::String text1 = _("00-11-22-AA-BB");
+    const OSAL::String text2 = _("XX-YY-ZZ-AA-BB-CC");
+    OSAL::Network::MACAddress expected;
+    OSAL::Network::MACAddress actual;
+    EXPECT_FALSE(Deserialize(text1, actual));
+    EXPECT_EQ(expected, actual);
+
+    EXPECT_FALSE(Deserialize(text2, actual));
+    EXPECT_EQ(expected, actual);
+}
+
 } // TEST_SUITE(core)
 
 } // namespace Test

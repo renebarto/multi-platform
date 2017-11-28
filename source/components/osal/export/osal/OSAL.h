@@ -219,6 +219,27 @@ public:
     }
 };
 
+class ArgumentNullException : public ArgumentException
+{
+public:
+    ArgumentNullException(char const * functionName, char const * fileName, int line,
+                          std::string argument) :
+        ArgumentException(functionName, fileName, line, argument)
+    {
+    }
+    ~ArgumentNullException() throw ()
+    {
+    }
+    virtual std::string BuildMessage() const
+    {
+        std::ostringstream stream;
+        stream << Exception::BuildMessage();
+        if (!argument.empty())
+            stream << ": argument null: " << argument;
+        return stream.str();
+    }
+};
+
 //class ArgumentOutOfRangeException : public ArgumentException
 //{
 //public:

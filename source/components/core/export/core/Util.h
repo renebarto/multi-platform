@@ -12,12 +12,14 @@
 #include <core/exports.h>
 //#include <byteswap.h>
 
+namespace OSAL
+{
+    // forward declarations
+    class ByteArray;
+}
+
 namespace Core
 {
-
-// forward declarations
-class ByteArray;
-
 namespace Util
 {
 
@@ -50,11 +52,14 @@ CORE_EXPORT void Sleep(int sleepMS);
 //
 //void DumpToStream(std::ostream & stream, const ByteArray & data);
 //void DumpToStream(std::ostream & stream, const uint8_t * data, int length);
-//
-//std::string Base64Encode(const ByteArray & data);
-//ByteArray Base64Decode(const std::string & dataBase64);
-//ByteArray Base64Decode(const char * dataBase64);
-//
+
+void Base64Encode(const OSAL::ByteArray & input, OSAL::String & output);
+OSAL::String Base64Encode(const OSAL::ByteArray & input);
+void Base64Decode(const OSAL::String & input, OSAL::ByteArray & output);
+OSAL::ByteArray Base64Decode(const OSAL::String & input);
+void Base64Decode(const OSAL::Char * input, OSAL::ByteArray & output);
+OSAL::ByteArray Base64Decode(const OSAL::Char * input);
+
 //bool CompareFiles(const char * pathA, const char * pathB);
 //bool CompareFiles(const std::string & pathA, const std::string & pathB);
 //bool CompareTextFiles(const char * pathA, const char * pathB);
@@ -214,28 +219,6 @@ bool Compare(T const * expected, T const * actual, int numSamples)
 //
 //std::streambuf & serialize_out(std::streambuf & sb, void * p, int size);
 //std::streambuf & serialize_in(std::streambuf & sb, void * p, int size);
-
-#if !defined(WIN_MSVC)
-inline bool TryParse(const OSAL::String & text, OSAL::Network::DomainSocketAddress & ipAddress)
-{
-    return OSAL::Network::DomainSocketAddress::TryParse(text, ipAddress);
-}
-#endif
-
-inline bool TryParse(const OSAL::String & text, OSAL::Network::IPV4Address & ipAddress)
-{
-    return OSAL::Network::IPV4Address::TryParse(text, ipAddress);
-}
-
-inline bool TryParse(const OSAL::String & text, OSAL::Network::IPV6Address & ipAddress)
-{
-    return OSAL::Network::IPV6Address::TryParse(text, ipAddress);
-}
-
-inline bool TryParse(const OSAL::String & text, OSAL::Network::MACAddress & ipAddress)
-{
-    return OSAL::Network::MACAddress::TryParse(text, ipAddress);
-}
 
 } // namespace Util
 } // namespace Core

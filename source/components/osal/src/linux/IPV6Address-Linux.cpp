@@ -162,6 +162,10 @@ std::ostream & IPV6Address::PrintTo(std::ostream & stream) const
         {
             stream << _("::");
         }
+        else if ((i == zeroSequenceStartMax) && (zeroSequenceLengthMax == 1))
+        {
+            stream << _(":0:");
+        }
         else if ((i < zeroSequenceStartMax) || (i >= zeroSequenceStartMax + zeroSequenceLengthMax))
         {
             stream << words[i];

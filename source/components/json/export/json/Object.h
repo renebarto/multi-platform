@@ -119,6 +119,8 @@ public:
 
     virtual ValueType Type() const override { return ValueType::Object; }
     bool AddPair(const KVPair & pair);
+    ValuePtr Find(const OSAL::String & name);
+    const ValuePtr Find(const OSAL::String & name) const;
     size_t Size() const { return _elements.size(); }
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }

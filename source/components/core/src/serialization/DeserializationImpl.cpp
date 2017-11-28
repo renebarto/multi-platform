@@ -250,3 +250,24 @@ bool Core::Deserialize(const OSAL::String & text, long double & value)
     return true;
 }
 
+#if !defined(WIN_MSVC)
+bool Core::Deserialize(const OSAL::String & text, OSAL::Network::DomainSocketAddress & value)
+{
+    return OSAL::Network::DomainSocketAddress::TryParse(text, value);
+}
+#endif
+
+bool Core::Deserialize(const OSAL::String & text, OSAL::Network::IPV4Address & value)
+{
+    return OSAL::Network::IPV4Address::TryParse(text, value);
+}
+
+bool Core::Deserialize(const OSAL::String & text, OSAL::Network::IPV6Address & value)
+{
+    return OSAL::Network::IPV6Address::TryParse(text, value);
+}
+
+bool Core::Deserialize(const OSAL::String & text, OSAL::Network::MACAddress & value)
+{
+    return OSAL::Network::MACAddress::TryParse(text, value);
+}

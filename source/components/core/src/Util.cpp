@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstring>
 #include <core/Core.h>
-//#include "core/ByteArray.h"
+#include <core/serialization/SerializationImpl.h>
 //#include "core/DefaultLogger.h"
 //#include "core/String.h"
 
@@ -188,597 +188,156 @@ void Util::Sleep(int sleepMS)
 //    }
 //    stream << endl << flush;
 //}
-//
-//static const unsigned char charToBase64[256] =
-//{
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255, 62,255,255,255, 63,
-//    52, 53, 54, 55, 56, 57, 58, 59, 60, 61,255,255,255,  0,255,255,
-//    255,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-//    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,255,255,255,255,255,
-//    255, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-//    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-//};
-//
-//static const char base64ToChar[] =
-//    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-//
-//std::string Util::Base64Encode(const ByteArray & data)
-//{
-//    string result;
-//    int index = 0;
-//    int size = data.Size();
-//    while (index < size - 2)
-//    {
-//        result += base64ToChar[(data[index + 0] & 0xFC) >> 2];
-//        result += base64ToChar[(data[index + 0] & 0x03) << 4 | (data[index + 1] & 0xF0) >> 4];
-//        result += base64ToChar[(data[index + 1] & 0x0F) << 2 | (data[index + 2] & 0xC0) >> 6];
-//        result += base64ToChar[(data[index + 2] & 0x3F) >> 0];
-//        index += 3;
-//    }
-//    if ((size % 3) == 1)
-//    {
-//        result += base64ToChar[(data[index + 0] & 0xFC) >> 2];
-//        result += base64ToChar[(data[index + 0] & 0x03) << 4];
-//        result += "==";
-//    }
-//    if ((size % 3) == 2)
-//    {
-//        result += base64ToChar[(data[index + 0] & 0xFC) >> 2];
-//        result += base64ToChar[(data[index + 0] & 0x03) << 4 | (data[index + 1] & 0xF0) >> 4];
-//        result += base64ToChar[(data[index + 1] & 0x0F) << 2];
-//        result += '=';
-//    }
-//    return result;
-//}
-//
-//ByteArray Util::Base64Decode(const std::string & dataBase64)
-//{
-//    return Base64Decode(dataBase64.c_str());
-//}
-//
-//ByteArray Util::Base64Decode(const char * dataBase64)
-//{
-//    ByteArray result;
-//    if (dataBase64 == nullptr)
-//        throw Core::ArgumentNullException(__func__, __FILE__, __LINE__, "dataBase64");
-//    int index = 0;
-//    int offset = 0;
-//    int length = strlen(dataBase64);
-//    while (index < length)
-//    {
-//        uint8_t base64_0 {};
-//        uint8_t base64_1 {};
-//        uint8_t base64_2 {};
-//        uint8_t base64_3 {};
-//        bool endCharFound {};
-//
-//        base64_0 = charToBase64[size_t(dataBase64[index])];
-//        if (base64_0 == 0xFF)
-//            throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                            "Incorrect format for base64 string at offset " + Util::ToString(index) +
-//                                            ": " + string(dataBase64));
-//        index++;
-//
-//        if (index >= length)
-//            throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                            "Incorrect format for base64 string, expected more input at offset " + Util::ToString(index) +
-//                                            ": " + string(dataBase64));
-//        base64_1 = charToBase64[size_t(dataBase64[index])];
-//        if (base64_1 == 0xFF)
-//            throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                            "Incorrect format for base64 string at offset " + Util::ToString(index) +
-//                                            ": " + string(dataBase64));
-//        result.SetUInt8(offset++, (base64_0 & 0x3F) << 2 | (base64_1 & 0x30) >> 4);
-//        index++;
-//
-//        if ((index < length) & (dataBase64[index] == '='))
-//        {
-//            endCharFound = true;
-//        }
-//        if ((index < length) & !endCharFound)
-//        {
-//            base64_2 = charToBase64[size_t(dataBase64[index])];
-//            if (base64_2 == 0xFF)
-//                throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                                "Incorrect format for base64 string at offset " + Util::ToString(index) +
-//                                                ": " + string(dataBase64));
-//            result.SetUInt8(offset++, (base64_1 & 0x0F) << 4 | (base64_2 & 0x3C) >> 2);
-//        }
-//        index++;
-//
-//        if ((index < length) & endCharFound && (dataBase64[index] != '='))
-//        {
-//            throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                            "Expected end of string or '=' for base64 string at offset " + Util::ToString(index) +
-//                                            ": " + string(dataBase64));
-//        }
-//        if ((index < length) & (dataBase64[index] == '='))
-//        {
-//            endCharFound = true;
-//        }
-//        if ((index < length) & !endCharFound)
-//        {
-//            base64_3 = charToBase64[size_t(dataBase64[index])];
-//            if (base64_3 == 0xFF)
-//                throw Core::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
-//                                                "Incorrect format for base64 string at offset " + Util::ToString(index) +
-//                                                ": " + string(dataBase64));
-//            result.SetUInt8(offset++, (base64_2 & 0x03) << 6 | (base64_3 & 0x3F) >> 0);
-//        }
-//        index++;
-//    }
-//    return result;
-//}
-//
-//bool HasValidCharactersForBase(const string & text, int base)
-//{
-//    if (text.empty())
-//        return false;
-//    switch (base)
-//    {
-//    case 2:
-//        for (size_t i = 0; i < text.length(); i++)
-//        {
-//            if (strchr("01", toupper(text[i])) == nullptr)
-//                return false;
-//        }
-//        break;
-//    case 8:
-//        for (size_t i = 0; i < text.length(); i++)
-//        {
-//            if (strchr("01234567", toupper(text[i])) == nullptr)
-//                return false;
-//        }
-//        break;
-//    case 10:
-//        for (size_t i = 0; i < text.length(); i++)
-//        {
-//            if (strchr("0123456789+-", toupper(text[i])) == nullptr)
-//                return false;
-//        }
-//        break;
-//    case 16:
-//        for (size_t i = 0; i < text.length(); i++)
-//        {
-//            if (strchr("0123456789ABCDEF", toupper(text[i])) == nullptr)
-//                return false;
-//        }
-//        break;
-//    default:
-//        return false;
-//    }
-//    return true;
-//}
-//
-//bool HasValidCharactersFloatingPoint(const string & text)
-//{
-//    if (text.empty())
-//        return false;
-//    for (size_t i = 0; i < text.length(); i++)
-//    {
-//        if (strchr("0123456789.+-Ee", toupper(text[i])) == nullptr)
-//            return false;
-//    }
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, int8_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < CHAR_MIN) || (result > CHAR_MAX)))
-//        return false;
-//    value = (int8_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, bool & value)
-//{
-//    if (Core::String::IsEqualIgnoreCase("true", text))
-//    {
-//        value = true;
-//        return true;
-//    }
-//    if (Core::String::IsEqualIgnoreCase("false", text))
-//    {
-//        value = false;
-//        return true;
-//    }
-//
-//    return false;
-//}
-//
-//bool Util::TryParse(const string & text, uint8_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < 0) || (result > UCHAR_MAX)))
-//        return false;
-//    value = (uint8_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, int16_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < SHRT_MIN) || (result > SHRT_MAX)))
-//        return false;
-//    value = (int16_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, uint16_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < 0) || (result > USHRT_MAX)))
-//        return false;
-//    value = (uint16_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, int32_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < INT_MIN) || (result > INT_MAX)))
-//        return false;
-//    value = (int32_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, uint32_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long result = strtol(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < 0) || (result > (long)UINT_MAX)))
-//        return false;
-//    value = (uint32_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, int64_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    long long result = strtoull(text.c_str(), nullptr, base);
-//    if ((base == 10) && ((result < LLONG_MIN) || (result > LLONG_MAX)))
-//        return false;
-//    value = (int64_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, uint64_t & value, int base /*= 10*/)
-//{
-//    if (!HasValidCharactersForBase(text, base))
-//        return false;
-//
-//    unsigned long long result = strtoull(text.c_str(), nullptr, base);
-//    value = (uint64_t)result;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, float & value)
-//{
-//    if (!HasValidCharactersFloatingPoint(text))
-//        return false;
-//
-//    istringstream stream(text);
-//    stream >> value;
-//
-//    return true;
-//}
-//
-//bool Util::TryParse(const string & text, double & value)
-//{
-//    if (!HasValidCharactersFloatingPoint(text))
-//        return false;
-//
-//    istringstream stream(text);
-//    stream >> value;
-//
-//    return true;
-//}
-//
-//string Util::ToString(bool value)
-//{
-//    return value ? "true" : "false";
-//}
-//
-//string Util::ToString(uint8_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<8> x(value);
-//        stream << setfill('0') << setw(8) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(3) << (int)value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << (int)value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(2) << (int)value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(int16_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<16> x(value);
-//        stream << setfill('0') << setw(16) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(6) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(4) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(uint16_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<16> x(value);
-//        stream << setfill('0') << setw(16) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(6) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(4) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(int32_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<32> x(value);
-//        stream << setfill('0') << setw(32) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(11) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(8) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(uint32_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<32> x(value);
-//        stream << setfill('0') << setw(32) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(11) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(8) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(int64_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<64> x(value);
-//        stream << setfill('0') << setw(64) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(22) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(16) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(uint64_t value, int base)
-//{
-//    ostringstream stream;
-//
-//    switch (base)
-//    {
-//    case 2:
-//    {
-//        std::bitset<64> x(value);
-//        stream << setfill('0') << setw(64) << x;
-//    }
-//    break;
-//    case 8:
-//    {
-//        stream << oct << setfill('0') << setw(22) << value;
-//    }
-//    break;
-//    case 10:
-//    {
-//        stream << dec << setfill('0') << value;
-//    }
-//    break;
-//    case 16:
-//    {
-//        stream << hex << uppercase << setfill('0') << setw(16) << value;
-//    }
-//    break;
-//    default:
-//        throw Core::ArgumentException(__func__, __FILE__, __LINE__, "base", "Invalid base specified, only 2, 8, 10, 16 supported");
-//    }
-//    return stream.str();
-//}
-//
-//string Util::ToString(float value, int precision)
-//{
-//    std::ostringstream stream;
-//
-//    stream << setprecision(precision) << value;
-//
-//    return stream.str();
-//}
-//
-//string Util::ToString(double value, int precision)
-//{
-//    std::ostringstream stream;
-//
-//    stream << setprecision(precision) << value;
-//
-//    return stream.str();
-//}
-//
-//string Util::ToString(string value, bool quote)
-//{
-//    std::ostringstream stream;
-//
-//    if (quote)
-//        stream << "\"";
-//    stream << value;
-//    if (quote)
-//        stream << "\"";
-//
-//    return stream.str();
-//}
-//
+
+static const unsigned char charToBase64[256] =
+{
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255, 62,255,255,255, 63,
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61,255,255,255,  0,255,255,
+    255,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,255,255,255,255,255,
+    255, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+    255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+};
+
+static const char base64ToChar[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+void Util::Base64Encode(const OSAL::ByteArray & input, OSAL::String & output)
+{
+    output.clear();
+    int index = 0;
+    int size = input.Size();
+    while (index < size - 2)
+    {
+        output += base64ToChar[(input[index + 0] & 0xFC) >> 2];
+        output += base64ToChar[(input[index + 0] & 0x03) << 4 | (input[index + 1] & 0xF0) >> 4];
+        output += base64ToChar[(input[index + 1] & 0x0F) << 2 | (input[index + 2] & 0xC0) >> 6];
+        output += base64ToChar[(input[index + 2] & 0x3F) >> 0];
+        index += 3;
+    }
+    if ((size % 3) == 1)
+    {
+        output += base64ToChar[(input[index + 0] & 0xFC) >> 2];
+        output += base64ToChar[(input[index + 0] & 0x03) << 4];
+        output += "==";
+    }
+    if ((size % 3) == 2)
+    {
+        output += base64ToChar[(input[index + 0] & 0xFC) >> 2];
+        output += base64ToChar[(input[index + 0] & 0x03) << 4 | (input[index + 1] & 0xF0) >> 4];
+        output += base64ToChar[(input[index + 1] & 0x0F) << 2];
+        output += '=';
+    }
+}
+
+OSAL::String Util::Base64Encode(const OSAL::ByteArray & input)
+{
+    OSAL::String result;
+    Base64Encode(input, result);
+    return result;
+}
+
+void Util::Base64Decode(const OSAL::String & input, OSAL::ByteArray & output)
+{
+    Base64Decode(input.c_str(), output);
+}
+
+OSAL::ByteArray Util::Base64Decode(const OSAL::String & input)
+{
+    OSAL::ByteArray result;
+    Base64Decode(input.c_str(), result);
+    return result;
+}
+
+OSAL::ByteArray Util::Base64Decode(const OSAL::Char * input)
+{
+    OSAL::ByteArray result;
+    Base64Decode(input, result);
+    return result;
+}
+
+void Util::Base64Decode(const OSAL::Char * input, OSAL::ByteArray & output)
+{
+    if (input == nullptr)
+        throw OSAL::ArgumentNullException(__func__, __FILE__, __LINE__, "dataBase64");
+    int index = 0;
+    int offset = 0;
+    int length = strlen(input);
+    while (index < length)
+    {
+        uint8_t base64_0 {};
+        uint8_t base64_1 {};
+        uint8_t base64_2 {};
+        uint8_t base64_3 {};
+        bool endCharFound {};
+
+        base64_0 = charToBase64[size_t(input[index])];
+        if (base64_0 == 0xFF)
+            throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                          "Incorrect format for base64 string at offset " + Serialize(index) +
+                                          ": " + string(input));
+        index++;
+
+        if (index >= length)
+            throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                          "Incorrect format for base64 string, expected more input at offset " + Serialize(index) +
+                                          ": " + string(input));
+        base64_1 = charToBase64[size_t(input[index])];
+        if (base64_1 == 0xFF)
+            throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                          "Incorrect format for base64 string at offset " + Serialize(index) +
+                                          ": " + string(input));
+        output.SetUInt8(offset++, (base64_0 & 0x3F) << 2 | (base64_1 & 0x30) >> 4);
+        index++;
+
+        if ((index < length) & (input[index] == '='))
+        {
+            endCharFound = true;
+        }
+        if ((index < length) & !endCharFound)
+        {
+            base64_2 = charToBase64[size_t(input[index])];
+            if (base64_2 == 0xFF)
+                throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                              "Incorrect format for base64 string at offset " + Serialize(index) +
+                                              ": " + string(input));
+            output.SetUInt8(offset++, (base64_1 & 0x0F) << 4 | (base64_2 & 0x3C) >> 2);
+        }
+        index++;
+
+        if ((index < length) & endCharFound && (input[index] != '='))
+        {
+            throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                          "Expected end of string or '=' for base64 string at offset " + Serialize(index) +
+                                          ": " + string(input));
+        }
+        if ((index < length) & (input[index] == '='))
+        {
+            endCharFound = true;
+        }
+        if ((index < length) & !endCharFound)
+        {
+            base64_3 = charToBase64[size_t(input[index])];
+            if (base64_3 == 0xFF)
+                throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "dataBase64",
+                                              "Incorrect format for base64 string at offset " + Serialize(index) +
+                                              ": " + string(input));
+            output.SetUInt8(offset++, (base64_2 & 0x03) << 6 | (base64_3 & 0x3F) >> 0);
+        }
+        index++;
+    }
+}
+
 //class FileWrapper
 //{
 //public:

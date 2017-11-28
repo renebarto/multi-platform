@@ -38,6 +38,7 @@ bool MACAddress::TryParse(const OSAL::String & text, MACAddress & macAddress)
 {
     OSAL::String str = text;
     OSAL::String delimiter = _("-");
+    MACAddress result;
 
     size_t pos = 0;
     OSAL::String token;
@@ -48,15 +49,20 @@ bool MACAddress::TryParse(const OSAL::String & text, MACAddress & macAddress)
         token = str.substr(0, pos);
         if (!TryParse(token, value))
             return false;
-        macAddress[index++] = value;
+        result._macAddress[index++] = value;
         str.erase(0, pos + delimiter.length());
     }
     if ((index >= AddressSize))
         return false;
     if (!TryParse(str, value))
         return false;
-    macAddress[index++] = value;
-    return (index == AddressSize);
+    result._macAddress[index++] = value;
+    if (index == AddressSize)
+    {
+        macAddress = result;
+        return true;
+    }
+    return false;
 }
 
 MACAddress & MACAddress::operator = (const MACAddress & other)
@@ -92,13 +98,7 @@ bool MACAddress::operator != (const MACAddress & other) const
     return ! this->operator ==(other);
 }
 
-uint8_t & MACAddress::operator[] (size_t offset)
-{
-    assert(offset < AddressSize);
-    return _macAddress[offset];
-}
-
-const uint8_t & MACAddress::operator[] (size_t offset) const
+uint8_t MACAddress::operator[] (size_t offset) const
 {
     assert(offset < AddressSize);
     return _macAddress[offset];

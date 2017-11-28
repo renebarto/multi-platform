@@ -18,7 +18,7 @@ public:
 
     bool ReScan();
 
-    const std::vector<AdapterPtr> & GetAdapters()
+    const std::vector<AdapterPtr> & GetAdapters() const
     { return _adapters; }
 
 private:

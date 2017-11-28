@@ -178,6 +178,15 @@ TEST_FIXTURE(IPV6AddressTest, ParseBroadcast)
               OSAL::Network::IPV6Address::Parse(text));
 }
 
+TEST_FIXTURE(IPV6AddressTest, ParseShortened)
+{
+    const OSAL::String text = _("FD3D:4056:8978:0:E133:19D7:2C09:290E");
+
+    IPV6Address address = OSAL::Network::IPV6Address::Parse(text);
+    EXPECT_EQ(OSAL::Network::IPV6Address({0xFD, 0x3D, 0x40, 0x56, 0x89, 0x78, 0x00, 0x00, 0xE1, 0x33, 0x19, 0xD7, 0x2C, 0x09, 0x29, 0x0E}),
+              address);
+}
+
 TEST_FIXTURE(IPV6AddressTest, ParseInvalid)
 {
     const OSAL::String text1 = _("ffffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0");
@@ -303,6 +312,14 @@ TEST_FIXTURE(IPV6AddressTest, PrintToMultipleZeroSequences2)
     basic_ostringstream<OSAL::Char> stream;
     PrintTo(ipAddress, stream);
     EXPECT_EQ(_("100::100:0:0:1"), stream.str());
+}
+
+TEST_FIXTURE(IPV6AddressTest, PrintToShortened)
+{
+    OSAL::Network::IPV6Address ipAddress({0xFE, 0x3D, 0x40, 0x56, 0x89, 0x78, 0x00, 0x00, 0xE1, 0x33, 0x19, 0xD7, 0x2C, 0x09, 0x29, 0x0E});
+    basic_ostringstream<OSAL::Char> stream;
+    PrintTo(ipAddress, stream);
+    EXPECT_EQ(_("fe3d:4056:8978:0:e133:19d7:2c09:290e"), stream.str());
 }
 
 } // TEST_SUITE(osal)
