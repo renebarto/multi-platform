@@ -4,17 +4,16 @@
 
 namespace StarUML {
 
-class Document : public Container
+class Diagram : public Container
 {
 public:
-    Document();
-    virtual ~Document();
+    Diagram() = delete;
+    explicit Diagram(const OSAL::ByteArray & id, const std::string & name);
+    virtual ~Diagram();
 
     virtual void Serialize(std::ostream & stream) override;
 
     virtual JSON::ValuePtr CreateObject() const override;
-
-    void SetupDefaultProject();
 };
 
 } // namespace StarUML

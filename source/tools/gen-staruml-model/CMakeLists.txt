@@ -85,3 +85,8 @@ if (NOT LOCAL_BUILD)
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         COMPONENT network)
 endif()
+
+if(BUILD_UNIT_TESTS)
+    message(STATUS "Building tests")
+    add_subdirectory(test)
+endif()
