@@ -7,12 +7,17 @@
 namespace StarUML {
 
 class Object
+    : public std::enable_shared_from_this<Object>
 {
 public:
+    using WeakPtr = std::weak_ptr<Object>;
+    using Ptr = std::shared_ptr<Object>;
+    using List = std::vector<Ptr>;
+
     Object() = delete;
-    Object(const std::string & type);
-    Object(const std::string & type, const OSAL::ByteArray & id);
-    Object(const std::string & type, const OSAL::ByteArray & id, const std::string & name);
+    Object(Ptr parent, const std::string & type);
+    Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id);
+    Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name);
     virtual ~Object();
 
     virtual void Serialize(std::ostream & stream);
@@ -23,6 +28,8 @@ public:
     void Id(const OSAL::ByteArray & value) { _id = value; }
     const std::string & Name() const { return _name; }
     void Name(const std::string & value) { _name = value; }
+    Ptr Parent() const { return _parent.lock(); }
+    void Parent(Ptr value) { _parent = value; }
 
     virtual JSON::ValuePtr CreateObject() const;
 
@@ -30,13 +37,11 @@ private:
     std::string _type;
     OSAL::ByteArray _id;
     std::string _name;
+    WeakPtr _parent;
 
 protected:
     std::string GetAttribute(JSON::ValuePtr object, const std::string & name) const;
     void SetAttribute(JSON::ValuePtr object, const std::string & name, const std::string & value) const;
 };
-
-using ObjectPtr = std::shared_ptr<Object>;
-using ObjectList = std::vector<ObjectPtr>;
 
 } // namespace StarUML

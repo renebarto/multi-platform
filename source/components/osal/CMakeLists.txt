@@ -5,6 +5,8 @@ include(show_target_properties)
 
 message("\n** Setting up osal **\n")
 
+find_package(libuuid-dev REQUIRED)
+
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
 set(PACKAGE_DESCRIPTION "OS abstraction layer")
@@ -26,6 +28,7 @@ set(PACKAGE_COMPILER_OPTIONS
     )
 
 set(PACKAGE_INCLUDE_DIRS
+    ${LIBUUID_DEV_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/export
     )
@@ -53,6 +56,7 @@ endif()
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${LINKER_LIBRARIES}
+    ${LIBUUID_DEV_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 
 file(GLOB PACKAGE_SOURCES_BASE src/*.cpp)

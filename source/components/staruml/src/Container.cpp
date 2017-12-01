@@ -1,4 +1,4 @@
-#include "staruml/Container.h"
+#include "../export/staruml/Container.h"
 
 #include <core/Util.h>
 #include <json/String.h>
@@ -7,20 +7,20 @@
 using namespace std;
 using namespace StarUML;
 
-Container::Container(const std::string & type)
-    : Object(type)
+Container::Container(Ptr parent, const std::string & type)
+    : Object(parent, type)
     , _ownedElements()
 {
 }
 
-Container::Container(const std::string & type, const OSAL::ByteArray & id)
-    : Object(type, id)
+Container::Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id)
+    : Object(parent, type, id)
     , _ownedElements()
 {
 }
 
-Container::Container(const std::string & type, const OSAL::ByteArray & id, const std::string & name)
-    : Object(type, id, name)
+Container::Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name)
+    : Object(parent, type, id, name)
       , _ownedElements()
 {
 }

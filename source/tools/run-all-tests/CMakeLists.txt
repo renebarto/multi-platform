@@ -41,6 +41,7 @@ set(PACKAGE_DEPENDENCIES
     network
     xml
     json
+    staruml
     )
 
 set(PACKAGE_LIBS
@@ -75,6 +76,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_XML ${CMAKE_SOURCE_DIR}/source/components/xml
 file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/xml/*.h)
 
+file(GLOB PACKAGE_SOURCES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include/xml/*.h)
+
 list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_OSAL}
     ${PACKAGE_SOURCES_CORE}
@@ -83,6 +87,7 @@ list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_XML}
     ${PACKAGE_SOURCES_JSON}
+    ${PACKAGE_SOURCES_STARUML}
     )
 list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_OSAL}
@@ -92,6 +97,7 @@ list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_XML}
     ${PACKAGE_INCLUDES_JSON}
+    ${PACKAGE_INCLUDES_STARUML}
     )
 set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
     )
@@ -103,6 +109,7 @@ list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
     ${CMAKE_SOURCE_DIR}/source/components/json/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include
     )
 
 set(PACKAGE_BUILD_REFERENCE ${VERSION})

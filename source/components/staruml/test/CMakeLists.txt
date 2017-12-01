@@ -1,13 +1,13 @@
-project(gen-staruml-model.test CXX)
+project(staruml.test CXX)
 
 include(setup_target_properties_executable)
 include(show_target_properties)
 
-message("\n** Setting up gen-staruml-model.test **\n")
+message("\n** Setting up staruml.test **\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
-set(PACKAGE_DESCRIPTION "JSON test application")
+set(PACKAGE_DESCRIPTION "StarUML test application")
 set(PACKAGE_VERSION_MAJOR 1)
 set(PACKAGE_VERSION_MINOR 0)
 set(PACKAGE_VERSION_MICRO 0)
@@ -26,7 +26,6 @@ set(PACKAGE_COMPILER_OPTIONS
 
 set(PACKAGE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/../include
     )
 
 set(PACKAGE_LINK_OPTIONS
@@ -36,7 +35,7 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     osal
     core
-    json
+    staruml
     unit-test-c++)
 
 set(PACKAGE_LIBS
@@ -46,15 +45,10 @@ set(PACKAGE_LIBS
 
 file(GLOB PACKAGE_SOURCES src/*.cpp)
 file(GLOB PACKAGE_SOURCES_TEST src/test/*.cpp)
-file(GLOB PACKAGE_SOURCES_APP ../src/staruml/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC include/*.h)
-file(GLOB_RECURSE PACKAGE_INCLUDES_APP ../include/*.h)
-file(GLOB_RECURSE PACKAGE_INCLUDES_APP ../include/*.h)
 set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
     )
 list(APPEND PACKAGE_SOURCES ${PACKAGE_SOURCES_TEST})
-list(APPEND PACKAGE_SOURCES ${PACKAGE_SOURCES_APP})
-list(APPEND PACKAGE_INCLUDES_PUBLIC ${PACKAGE_INCLUDES_APP})
 
 set(PACKAGE_BUILD_REFERENCE ${VERSION})
 

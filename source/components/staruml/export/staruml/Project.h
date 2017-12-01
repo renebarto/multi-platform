@@ -1,19 +1,21 @@
 #pragma once
 
-#include "staruml/Container.h"
+#include "Container.h"
 
 namespace StarUML {
 
-class Diagram : public Container
+class Project
+    : public Container
 {
 public:
-    Diagram() = delete;
-    explicit Diagram(const OSAL::ByteArray & id, const std::string & name);
-    virtual ~Diagram();
+    Project(const OSAL::ByteArray & id, const std::string & name);
+    virtual ~Project();
 
     virtual void Serialize(std::ostream & stream) override;
 
     virtual JSON::ValuePtr CreateObject() const override;
+
+    void SetupDefault();
 };
 
 } // namespace StarUML

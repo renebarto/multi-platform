@@ -7,7 +7,7 @@
 #include "osal/OSAL.h"
 #include "osal/Console.h"
 
-static const OSAL::String moduleName = _("gen-staruml-model");
+static const OSAL::String moduleName = _("staruml");
 
 #if defined(UNICODE) || defined(_UNICODE)
 int wmain(int argc, const wchar_t * argv[])

@@ -62,5 +62,11 @@ inline void PrintTo(const ByteArray & value, std::basic_ostream<OSAL::Char> & st
     value.PrintTo(stream);
 }
 
+inline std::ostream & operator << (std::ostream & stream, const ByteArray & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
+
 } // namespace OSAL
 

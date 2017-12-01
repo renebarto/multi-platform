@@ -1,4 +1,4 @@
-#include "staruml/Object.h"
+#include "../export/staruml/Object.h"
 
 #include <core/Util.h>
 #include <json/String.h>
@@ -6,24 +6,27 @@
 using namespace std;
 using namespace StarUML;
 
-Object::Object(const std::string & type)
+Object::Object(Ptr parent, const std::string & type)
     : _type(type)
     , _id()
     , _name()
+    , _parent(parent)
 {
 }
 
-Object::Object(const std::string & type, const OSAL::ByteArray & id)
+Object::Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id)
     : _type(type)
     , _id(id)
     , _name()
+    , _parent(parent)
 {
 }
 
-Object::Object(const std::string & type, const OSAL::ByteArray & id, const std::string & name)
+Object::Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name)
     : _type(type)
     , _id(id)
     , _name(name)
+    , _parent(parent)
 {
 }
 
@@ -43,6 +46,12 @@ JSON::ValuePtr Object::CreateObject() const
     auto result = make_shared<JSON::Object>();
     result->AddPair(JSON::KVPair("_type", make_shared<JSON::String>(Type())));
     result->AddPair(JSON::KVPair("_id", make_shared<JSON::String>(Core::Util::Base64Encode(Id()))));
+    if (auto parent = _parent.lock())
+    {
+        auto object = make_shared<JSON::Object>();
+        result->AddPair(JSON::KVPair("_parent", object));
+        object->AddPair(JSON::KVPair("$ref", make_shared<JSON::String>(Core::Util::Base64Encode(parent->Id()))));
+    }
     result->AddPair(JSON::KVPair("name", make_shared<JSON::String>(Name())));
     return result;
 }

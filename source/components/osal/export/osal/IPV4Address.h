@@ -14,26 +14,26 @@ public:
     static const IPV4Address Broadcast;
     static const IPV4Address LocalHost;
 
-    IPV4Address() :
-        _ipAddress(None._ipAddress)
+    IPV4Address()
+        : _ipAddress(None._ipAddress)
     {
     }
-    IPV4Address(const IPV4Address & other) :
-        _ipAddress(other._ipAddress)
+    IPV4Address(const IPV4Address & other)
+        : _ipAddress(other._ipAddress)
     {
     }
-    IPV4Address(const OSAL::ByteArray & ipAddress) :
-        _ipAddress(AddressSize)
+    IPV4Address(const OSAL::ByteArray & ipAddress)
+        : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
     }
-    IPV4Address(uint32_t ipAddress) :
-        _ipAddress(AddressSize)
+    IPV4Address(uint32_t ipAddress)
+        : _ipAddress(AddressSize)
     {
         SetUInt32(ipAddress);
     }
-    IPV4Address(const OSAL::ByteArray & ipAddress, size_t offset) :
-        _ipAddress(AddressSize)
+    IPV4Address(const OSAL::ByteArray & ipAddress, size_t offset)
+        : _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
     }

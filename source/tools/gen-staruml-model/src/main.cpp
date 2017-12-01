@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "staruml/Document.h"
+#include "../../../components/staruml/export/staruml/Document.h"
 
 using namespace std;
 using namespace StarUML;
@@ -13,6 +13,7 @@ int main(int UNUSED(argc), const char * UNUSED(argv[]))
 #endif
 {
     Document document;
+    document.SetupDefaultProject();
 
     document.Serialize(cout);
 

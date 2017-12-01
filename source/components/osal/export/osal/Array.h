@@ -380,4 +380,11 @@ void PrintTo(const Array<T> & value, std::ostream & stream)
     value.PrintTo(stream);
 }
 
+template<class T>
+std::ostream & operator << (std::ostream & stream, const Array<T> & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
+
 } // namespace OSAL

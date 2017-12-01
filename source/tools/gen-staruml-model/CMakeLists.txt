@@ -13,51 +13,51 @@ set(PACKAGE_VERSION_MINOR 0)
 set(PACKAGE_VERSION_MICRO 0)
 set(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO})
 
-set(GEN_STARUML_MODEL_TEST_DEFINITIONS
+set(GEN_STARUML_MODEL_DEFINITIONS
     ${COMPILER_DEFINITIONS}
     TEST_DATA_ROOT="${TEST_DATA_ROOT}")
 
-set(GEN_STARUML_MODEL_TEST_OPTIONS
+set(GEN_STARUML_MODEL_OPTIONS
     ${COMPILER_OPTIONS_CXX}
     )
 
-set(GEN_STARUML_MODEL_TEST_INCLUDE_DIRS
+set(GEN_STARUML_MODEL_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/include
     )
 
-set(GEN_STARUML_MODEL_TEST_LINK_OPTIONS
+set(GEN_STARUML_MODEL_LINK_OPTIONS
     ${LINKER_OPTIONS}
     ${LINK_RPATH})
-list_to_string(GEN_STARUML_MODEL_TEST_LINK_OPTIONS GEN_STARUML_MODEL_TEST_LINK_OPTIONS_STRING)
+list_to_string(GEN_STARUML_MODEL_LINK_OPTIONS GEN_STARUML_MODEL_LINK_OPTIONS_STRING)
 
-set(GEN_STARUML_MODEL_TEST_DEPENDENCIES
-    json
+set(GEN_STARUML_MODEL_DEPENDENCIES
+    staruml
     )
 
-set(GEN_STARUML_MODEL_TEST_LIBS
+set(GEN_STARUML_MODEL_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${LINKER_LIBRARIES}
-    ${GEN_STARUML_MODEL_TEST_DEPENDENCIES})
+    ${GEN_STARUML_MODEL_DEPENDENCIES})
 
-file(GLOB_RECURSE GEN_STARUML_MODEL_TEST_SOURCES src/*.cpp)
-file(GLOB_RECURSE GEN_STARUML_MODEL_TEST_INCLUDES include/*.h)
+file(GLOB_RECURSE GEN_STARUML_MODEL_SOURCES src/*.cpp)
+file(GLOB_RECURSE GEN_STARUML_MODEL_INCLUDES include/*.h)
 
-display_list("Defines                     : " ${GEN_STARUML_MODEL_TEST_DEFINITIONS} )
-display_list("Compiler options            : " ${GEN_STARUML_MODEL_TEST_OPTIONS} )
-display_list("Source files                : " ${GEN_STARUML_MODEL_TEST_SOURCES} )
-display_list("Include files               : " ${GEN_STARUML_MODEL_TEST_INCLUDES} )
-display_list("Include dirs                : " ${GEN_STARUML_MODEL_TEST_INCLUDE_DIRS} )
-display_list("Link libs                   : " ${GEN_STARUML_MODEL_TEST_LIBS} )
-display_list("Linker options              : " ${GEN_STARUML_MODEL_TEST_LINK_OPTIONS} )
-display_list("Dependencies                : " ${GEN_STARUML_MODEL_TEST_DEPENDENCIES} )
+display_list("Defines                     : " ${GEN_STARUML_MODEL_DEFINITIONS} )
+display_list("Compiler options            : " ${GEN_STARUML_MODEL_OPTIONS} )
+display_list("Source files                : " ${GEN_STARUML_MODEL_SOURCES} )
+display_list("Include files               : " ${GEN_STARUML_MODEL_INCLUDES} )
+display_list("Include dirs                : " ${GEN_STARUML_MODEL_INCLUDE_DIRS} )
+display_list("Link libs                   : " ${GEN_STARUML_MODEL_LIBS} )
+display_list("Linker options              : " ${GEN_STARUML_MODEL_LINK_OPTIONS} )
+display_list("Dependencies                : " ${GEN_STARUML_MODEL_DEPENDENCIES} )
 
 # add the executable
-add_executable(${PROJECT_NAME} ${GEN_STARUML_MODEL_TEST_SOURCES} ${GEN_STARUML_MODEL_TEST_INCLUDES})
-target_link_libraries(${PROJECT_NAME} ${GEN_STARUML_MODEL_TEST_LIBS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_TEST_INCLUDE_DIRS})
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_TEST_DEFINITIONS})
-target_compile_options(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_TEST_OPTIONS})
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${GEN_STARUML_MODEL_TEST_LINK_OPTIONS_STRING}")
+add_executable(${PROJECT_NAME} ${GEN_STARUML_MODEL_SOURCES} ${GEN_STARUML_MODEL_INCLUDES})
+target_link_libraries(${PROJECT_NAME} ${GEN_STARUML_MODEL_LIBS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_INCLUDE_DIRS})
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_DEFINITIONS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${GEN_STARUML_MODEL_OPTIONS})
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "${GEN_STARUML_MODEL_LINK_OPTIONS_STRING}")
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO})
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PACKAGE_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME gen-staruml-model)
@@ -84,9 +84,4 @@ if (NOT LOCAL_BUILD)
         RUNTIME
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         COMPONENT network)
-endif()
-
-if(BUILD_UNIT_TESTS)
-    message(STATUS "Building tests")
-    add_subdirectory(test)
 endif()

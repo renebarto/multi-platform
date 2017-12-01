@@ -13,26 +13,26 @@ public:
     static const IPV6Address Broadcast;
     static const IPV6Address LocalHost;
 
-    IPV6Address() :
-        _ipAddress(None._ipAddress)
+    IPV6Address()
+        : _ipAddress(None._ipAddress)
     {
     }
-    IPV6Address(const IPV6Address & other) :
-        _ipAddress(other._ipAddress)
+    IPV6Address(const IPV6Address & other)
+        : _ipAddress(other._ipAddress)
     {
     }
-    IPV6Address(const OSAL::ByteArray & ipAddress) :
-        _ipAddress(AddressSize)
+    IPV6Address(const OSAL::ByteArray & ipAddress)
+        : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
     }
-    IPV6Address(uint8_t ipAddress[16]) :
-        _ipAddress(AddressSize)
+    IPV6Address(uint8_t ipAddress[16])
+        : _ipAddress(AddressSize)
     {
         SetData(OSAL::ByteArray(ipAddress, 16), 0);
     }
-    IPV6Address(const OSAL::ByteArray & ipAddress, size_t offset) :
-        _ipAddress(AddressSize)
+    IPV6Address(const OSAL::ByteArray & ipAddress, size_t offset)
+        : _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
     }
