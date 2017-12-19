@@ -1,4 +1,4 @@
-#include <unit-test-c++/UnitTestC++.h>
+#include <unittest-c++/UnitTestC++.h>
 
 WARNING_PUSH
 WARNING_DISABLE(4265)

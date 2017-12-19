@@ -10,6 +10,8 @@ public:
     OSAL::String testSuiteName;
     OSAL::String testFixtureName;
     OSAL::String testName;
+    OSAL::String testFilter;
+    OSAL::String testColor;
     OSAL::String xmlOutput;
 };
 

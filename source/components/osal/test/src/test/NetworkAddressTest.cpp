@@ -1,4 +1,4 @@
-#include "unit-test-c++/UnitTestC++.h"
+#include <unittest-c++/UnitTestC++.h>
 
 #include "osal/NetworkEndPoint.h"
 
@@ -26,6 +26,9 @@ void NetworkAddressTest::SetUp()
 void NetworkAddressTest::TearDown()
 {
 }
+
+TEST_SUITE(osal)
+{
 
 TEST_FIXTURE(NetworkAddressTest, StreamOperatorSocketFamily)
 {
@@ -81,6 +84,7 @@ TEST_FIXTURE(NetworkAddressTest, StreamOperatorSocketFamily)
 #endif
 }
 
+} // TEST_SUITE(osal)
 } // namespace Test
 } // namespace Network
 } // namespace OSAL

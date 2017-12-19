@@ -6,12 +6,12 @@ using namespace OSAL;
 
 OSAL::_SetForegroundColor fgcolor(OSAL::ConsoleColor color)
 {
-	return{ color };
+    return{ color };
 }
 
 OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColor color)
 {
-	return{ color };
+    return{ color };
 }
 
 #endif // defined(LINUX)

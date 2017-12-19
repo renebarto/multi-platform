@@ -1,6 +1,6 @@
 #include "core/ConsoleLogger.h"
 #include "core/DefaultLogger.h"
-#include "unit-test-c++/UnitTestC++.h"
+#include <unittest-c++/UnitTestC++.h>
 
 using namespace std;
 

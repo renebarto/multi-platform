@@ -1,4 +1,4 @@
-#include "unit-test-c++/UnitTestC++.h"
+#include <unittest-c++/UnitTestC++.h>
 #include "core/CommandLineOption.h"
 #include "core/Util.h"
 

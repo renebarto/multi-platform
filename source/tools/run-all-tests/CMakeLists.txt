@@ -3,11 +3,13 @@ project(run-all-tests CXX)
 include(setup_target_properties_executable)
 include(show_target_properties)
 
-message("\n** Setting up run-all-tests **\n")
+message("\n** Setting up ${PROJECT_NAME} **\n")
+
+find_package(UnitTest-C++ REQUIRED)
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
-set(PACKAGE_DESCRIPTION "RUn all tests")
+set(PACKAGE_DESCRIPTION "Run all tests")
 set(PACKAGE_VERSION_MAJOR 1)
 set(PACKAGE_VERSION_MINOR 0)
 set(PACKAGE_VERSION_MICRO 0)
@@ -26,6 +28,7 @@ set(PACKAGE_COMPILER_OPTIONS
     )
 
 set(PACKAGE_INCLUDE_DIRS
+    ${UNITTEST_CPP_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include
     )
 
@@ -36,16 +39,18 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
-    unit-test-c++
     crypto
     network
     xml
     json
+    parse-c++
     staruml
     )
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
+    ${LIB_CLANG_LIB}
+    ${UNITTEST_CPP_LIBRARIES}
     ${LINKER_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 
@@ -57,9 +62,6 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 
 file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
-
-file(GLOB PACKAGE_SOURCES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/src/test/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES_UNITTESTCPP ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include/unit-test-c++/*.h)
 
 file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
@@ -76,6 +78,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_XML ${CMAKE_SOURCE_DIR}/source/components/xml
 file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/xml/*.h)
 
+file(GLOB PACKAGE_SOURCES_PARSE_CPP ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PARSE_CPP ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/include/parse-c++/*.h)
+
 file(GLOB PACKAGE_SOURCES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include/xml/*.h)
 
@@ -87,16 +92,17 @@ list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_XML}
     ${PACKAGE_SOURCES_JSON}
+    ${PACKAGE_SOURCES_PARSE_CPP}
     ${PACKAGE_SOURCES_STARUML}
     )
 list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_OSAL}
     ${PACKAGE_INCLUDES_CORE}
-    ${PACKAGE_INCLUDES_UNITTESTCPP}
     ${PACKAGE_INCLUDES_CRYPTO}
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_XML}
     ${PACKAGE_INCLUDES_JSON}
+    ${PACKAGE_INCLUDES_PARSE_CPP}
     ${PACKAGE_INCLUDES_STARUML}
     )
 set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
@@ -104,11 +110,11 @@ set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
 list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
-    ${CMAKE_SOURCE_DIR}/source/components/unit-test-c++/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
     ${CMAKE_SOURCE_DIR}/source/components/json/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/include
     ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include
     )
 

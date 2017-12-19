@@ -1,4 +1,4 @@
-#include <unit-test-c++/UnitTestC++.h>
+#include <unittest-c++/UnitTestC++.h>
 
 #include <iostream>
 #include "core/ActiveObject.h"

@@ -3,7 +3,7 @@ project(osal CXX)
 include(define_targets)
 include(show_target_properties)
 
-message("\n** Setting up osal **\n")
+message("\n** Setting up ${PROJECT_NAME} **\n")
 
 find_package(libuuid-dev REQUIRED)
 

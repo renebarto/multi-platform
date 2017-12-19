@@ -3,7 +3,7 @@ project(json CXX)
 include(define_targets)
 include(show_target_properties)
 
-message("\n** Setting up json **\n")
+message("\n** Setting up ${PROJECT_NAME} **\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})

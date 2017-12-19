@@ -5,6 +5,8 @@ CommandLineOptionsParser::CommandLineOptionsParser(OSAL::Console & console)
     , testSuiteName()
     , testFixtureName()
     , testName()
+    , testFilter()
+    , testColor()
     , xmlOutput()
 {
     Core::CommandLineOptionGroup::Ptr group =
@@ -17,6 +19,10 @@ CommandLineOptionsParser::CommandLineOptionsParser(OSAL::Console & console)
                                      testFixtureName);
     group->AddOptionRequiredArgument(_("runtest"), _('t'),
 									 _("Run only specified test (default = all)"), testName);
+    group->AddOptionRequiredArgument(_("gtest_filter"), 0,
+                                     _("Google test filter expression (currently only used to switch to google test emulation)"), testFilter);
+    group->AddOptionRequiredArgument(_("gtest_color"), 0,
+                                     _("Google test color output (currently only used to switch to google test emulation)"), testColor);
     group->AddOptionRequiredArgument(_("xmloutput"), 0, _("Send output to specified XML file"),
                                      xmlOutput);
     AddGroup(group);
