@@ -8,7 +8,7 @@ class Project
     : public Container
 {
 public:
-    Project(const OSAL::ByteArray & id, const std::string & name);
+    Project(const OSAL::GUID & id, const std::string & name);
     virtual ~Project();
 
     virtual void Serialize(std::ostream & stream) override;

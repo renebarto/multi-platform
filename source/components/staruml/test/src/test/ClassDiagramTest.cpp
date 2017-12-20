@@ -16,9 +16,9 @@ public:
     virtual void TearDown();
 
     const std::string ClassDiagramType = "UMLClassDiagram";
-    const OSAL::ByteArray ClassDiagramID = {0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0xa0,
-                                            0x6d, 0xc8, 0xa3, 0x3b, 0xf6, 0xa6};
-    const std::string ClassDiagramIDText = "AAAAAAFF+qBtyKM79qY=";
+    const OSAL::GUID ClassDiagramID = OSAL::GUID({0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0xa0,
+                                                  0x6d, 0xc8, 0xa3, 0x3b, 0xf6, 0xa6, 0x00, 0x00});
+    const std::string ClassDiagramIDText = Core::Util::Base64Encode(ClassDiagramID.GetBytes());
     const std::string ClassDiagramName = "Main";
 
 };

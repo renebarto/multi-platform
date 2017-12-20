@@ -1,15 +1,16 @@
 #include "../export/staruml/Project.h"
 
+#include <osal/GUID.h>
 #include <core/Util.h>
 #include <json/String.h>
 #include <json/Array.h>
-#include "../export/staruml/ClassDiagram.h"
-#include "../export/staruml/Model.h"
+#include "staruml/ClassDiagram.h"
+#include "staruml/Model.h"
 
 using namespace std;
 using namespace StarUML;
 
-Project::Project(const OSAL::ByteArray & id, const std::string & name)
+Project::Project(const OSAL::GUID & id, const std::string & name)
     : Container(nullptr, "Project", id, name)
 {
 }
@@ -33,11 +34,11 @@ JSON::ValuePtr Project::CreateObject() const
 
 void Project::SetupDefault()
 {
-    OSAL::ByteArray id = Core::Util::Base64Decode("AAAAAAFF+qBWK6M3Z8Y=");
-    auto model = make_shared<Model>(shared_from_this(), id, "Model");
+    OSAL::GUID id = OSAL::GUID::Generate();
+    auto model = make_shared<Model>(shared_from_this(), id.GetBytes(), "Model");
     AddElement(model);
-    id = Core::Util::Base64Decode("AAAAAAFF+qBtyKM79qY=");
-    auto classDiagram = make_shared<ClassDiagram>(model, id, "Main");
+    id = OSAL::GUID::Generate();
+    auto classDiagram = make_shared<ClassDiagram>(model, id.GetBytes(), "Main");
     classDiagram->Visible(true);
     classDiagram->DefaultDiagram(true);
     model->AddElement(classDiagram);

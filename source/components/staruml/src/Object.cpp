@@ -6,6 +6,22 @@
 using namespace std;
 using namespace StarUML;
 
+std::ostream & StarUML::operator << (std::ostream & stream, ObjectVisibility value)
+{
+    switch(value)
+    {
+        case ObjectVisibility::Public:
+            stream << "public"; break;
+        case ObjectVisibility::Protected:
+            stream << "protected"; break;
+        case ObjectVisibility::Private:
+            stream << "private"; break;
+        case ObjectVisibility::Package:
+            stream << "package"; break;
+    }
+    return stream;
+}
+
 Object::Object(Ptr parent, const std::string & type)
     : _type(type)
     , _id()
@@ -14,7 +30,7 @@ Object::Object(Ptr parent, const std::string & type)
 {
 }
 
-Object::Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id)
+Object::Object(Ptr parent, const std::string & type, const OSAL::GUID & id)
     : _type(type)
     , _id(id)
     , _name()
@@ -22,7 +38,7 @@ Object::Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id)
 {
 }
 
-Object::Object(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name)
+Object::Object(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name)
     : _type(type)
     , _id(id)
     , _name(name)
@@ -45,12 +61,12 @@ JSON::ValuePtr Object::CreateObject() const
 {
     auto result = make_shared<JSON::Object>();
     result->AddPair(JSON::KVPair("_type", make_shared<JSON::String>(Type())));
-    result->AddPair(JSON::KVPair("_id", make_shared<JSON::String>(Core::Util::Base64Encode(Id()))));
+    result->AddPair(JSON::KVPair("_id", make_shared<JSON::String>(Core::Util::Base64Encode(Id().GetBytes()))));
     if (auto parent = _parent.lock())
     {
         auto object = make_shared<JSON::Object>();
         result->AddPair(JSON::KVPair("_parent", object));
-        object->AddPair(JSON::KVPair("$ref", make_shared<JSON::String>(Core::Util::Base64Encode(parent->Id()))));
+        object->AddPair(JSON::KVPair("$ref", make_shared<JSON::String>(Core::Util::Base64Encode(parent->Id().GetBytes()))));
     }
     result->AddPair(JSON::KVPair("name", make_shared<JSON::String>(Name())));
     return result;

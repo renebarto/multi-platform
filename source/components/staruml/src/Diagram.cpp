@@ -8,7 +8,7 @@
 using namespace std;
 using namespace StarUML;
 
-Diagram::Diagram(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name)
+Diagram::Diagram(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name)
     : Container(parent, type, id, name)
     , _visible(false)
     , _defaultDiagram(false)

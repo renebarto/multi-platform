@@ -7,7 +7,7 @@
 using namespace std;
 using namespace StarUML;
 
-ClassDiagram::ClassDiagram(Ptr parent, const OSAL::ByteArray & id, const std::string & name)
+ClassDiagram::ClassDiagram(Ptr parent, const OSAL::GUID & id, const std::string & name)
     : Diagram(parent, "UMLClassDiagram", id, name)
 {
 }

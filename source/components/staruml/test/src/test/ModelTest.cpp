@@ -17,13 +17,15 @@ public:
     virtual void TearDown();
 
     const std::string ModelType = "UMLModel";
-    const OSAL::ByteArray ModelID = {0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0xa0,
-                                     0x56, 0x2b, 0xa3, 0x37, 0x67, 0xc6};
-    const std::string ModelIDText = "AAAAAAFF+qBWK6M3Z8Y=";
+    const OSAL::GUID ModelID  = OSAL::GUID({0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0xa0,
+                                            0x56, 0x2b, 0xa3, 0x37, 0x67, 0xc6, 0x00, 0x00});
+    const std::string ModelIDText = Core::Util::Base64Encode(ModelID.GetBytes());
     const std::string ModelName = "Model";
     const ObjectVisibility ModelVisibility = ObjectVisibility::Public;
     const std::string ClassDiagramType = "UMLClassDiagram";
-    const std::string ClassDiagramID = "AAAAAAFF+qBtyKM79qY=";
+    const OSAL::GUID ClassDiagramID = OSAL::GUID({0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0xa0,
+                                                  0x6d, 0xc8, 0xa3, 0x3b, 0xf6, 0xa6, 0x00, 0x00});
+    const std::string ClassDiagramIDText = Core::Util::Base64Encode(ClassDiagramID.GetBytes());
     const std::string ClassDiagramName = "Main";
 
 };
@@ -72,7 +74,7 @@ TEST_FIXTURE(ModelTest, SerializeEmpty)
 TEST_FIXTURE(ModelTest, SerializeDefaultModel)
 {
     auto target = make_shared<Model>(nullptr, ModelID, ModelName);
-    auto diagram = make_shared<ClassDiagram>(target, Core::Util::Base64Decode(ClassDiagramID), ClassDiagramName);
+    auto diagram = make_shared<ClassDiagram>(target, ClassDiagramID, ClassDiagramName);
     diagram->Visible(true);
     diagram->DefaultDiagram(true);
     target->AddElement(diagram);
@@ -85,7 +87,7 @@ TEST_FIXTURE(ModelTest, SerializeDefaultModel)
         << "    \"name\" : \"" << ModelName << "\"," << endl
         << "    \"ownedElements\" : [" << endl
         << "        {" << endl
-        << "            \"_id\" : \"" << ClassDiagramID << "\"," << endl
+        << "            \"_id\" : \"" << ClassDiagramIDText << "\"," << endl
         << "            \"_parent\" : {" << endl
         << "                \"$ref\" : \"" << ModelIDText << "\"" << endl
         << "            }," << endl

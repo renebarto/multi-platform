@@ -13,13 +13,13 @@ Container::Container(Ptr parent, const std::string & type)
 {
 }
 
-Container::Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id)
+Container::Container(Ptr parent, const std::string & type, const OSAL::GUID & id)
     : Object(parent, type, id)
     , _ownedElements()
 {
 }
 
-Container::Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name)
+Container::Container(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name)
     : Object(parent, type, id, name)
       , _ownedElements()
 {

@@ -10,8 +10,8 @@ class Container
 public:
     Container() = delete;
     Container(Ptr parent, const std::string & type);
-    Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id);
-    Container(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name);
+    Container(Ptr parent, const std::string & type, const OSAL::GUID & id);
+    Container(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name);
     virtual ~Container();
 
     virtual void Serialize(std::ostream & stream) override;

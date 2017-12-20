@@ -4,6 +4,7 @@
 #include "core/Util.h"
 #include "staruml/Project.h"
 #include "staruml/Model.h"
+#include "staruml/ClassDiagram.h"
 
 using namespace std;
 
@@ -17,16 +18,14 @@ public:
     virtual void TearDown();
 
     const std::string ProjectType = "Project";
-    const OSAL::ByteArray ProjectID ={0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0x1e,
-                                      0x92, 0x8d, 0xa3, 0x36, 0x1d, 0xe7};
-    const std::string ProjectIDText = "AAAAAAFF+h6SjaM2Hec=";
+    const OSAL::GUID ProjectID = OSAL::GUID({0x00, 0x00, 0x00, 0x00, 0x01, 0x45, 0xfa, 0x1e,
+                                             0x92, 0x8d, 0xa3, 0x36, 0x1d, 0xe7, 0x00, 0x00});
+    const std::string ProjectIDText = Core::Util::Base64Encode(ProjectID.GetBytes());
     const std::string ProjectName = "MyProject";
     const std::string ModelType = "UMLModel";
-    const std::string DefaultModelID = "AAAAAAFF+qBWK6M3Z8Y=";
     const std::string DefaultModelName = "Model";
     const ObjectVisibility ModelVisibility = ObjectVisibility::Public;
     const std::string ClassDiagramType = "UMLClassDiagram";
-    const std::string DefaultClassDiagramID = "AAAAAAFF+qBtyKM79qY=";
     const std::string DefaultClassDiagramName = "Main";
 
 };
@@ -73,6 +72,13 @@ TEST_FIXTURE(ProjectTest, SerializeDefaultProject)
     auto target = make_shared<Project>(ProjectID, ProjectName);
     target->SetupDefault();
 
+    const std::shared_ptr<Model> model = dynamic_pointer_cast<Model>(target->OwnedElements()[0]);
+    const OSAL::GUID ModelID = model->Id();
+    const std::string ModelIDText = Core::Util::Base64Encode(ModelID.GetBytes());
+    const std::shared_ptr<ClassDiagram> classDiagram = dynamic_pointer_cast<ClassDiagram>(model->OwnedElements()[0]);
+    const OSAL::GUID ClassDiagramID = classDiagram->Id();
+    const std::string ClassDiagramIDText = Core::Util::Base64Encode(ClassDiagramID.GetBytes());
+
     std::stringstream streamExpected;
     streamExpected
         << "{" << endl
@@ -81,7 +87,7 @@ TEST_FIXTURE(ProjectTest, SerializeDefaultProject)
         << "    \"name\" : \"" << ProjectName << "\"," << endl
         << "    \"ownedElements\" : [" << endl
         << "        {" << endl
-        << "            \"_id\" : \"" << DefaultModelID << "\"," << endl
+        << "            \"_id\" : \"" << ModelIDText << "\"," << endl
         << "            \"_parent\" : {" << endl
         << "                \"$ref\" : \"" << ProjectIDText << "\"" << endl
         << "            }," << endl
@@ -89,9 +95,9 @@ TEST_FIXTURE(ProjectTest, SerializeDefaultProject)
         << "            \"name\" : \"" << DefaultModelName << "\"," << endl
         << "            \"ownedElements\" : [" << endl
         << "                {" << endl
-        << "                    \"_id\" : \"" << DefaultClassDiagramID << "\"," << endl
+        << "                    \"_id\" : \"" << ClassDiagramIDText << "\"," << endl
         << "                    \"_parent\" : {" << endl
-        << "                        \"$ref\" : \"" << DefaultModelID << "\"" << endl
+        << "                        \"$ref\" : \"" << ModelIDText << "\"" << endl
         << "                    }," << endl
         << "                    \"_type\" : \"" << ClassDiagramType << "\"," << endl
         << "                    \"defaultDiagram\" : true," << endl

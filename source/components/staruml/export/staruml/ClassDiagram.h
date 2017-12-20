@@ -9,7 +9,7 @@ class ClassDiagram
 {
 public:
     ClassDiagram() = delete;
-    explicit ClassDiagram(Ptr parent, const OSAL::ByteArray & id, const std::string & name);
+    explicit ClassDiagram(Ptr parent, const OSAL::GUID & id, const std::string & name);
     virtual ~ClassDiagram();
 
     virtual void Serialize(std::ostream & stream) override;

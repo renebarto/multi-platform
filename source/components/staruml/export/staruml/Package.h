@@ -4,20 +4,22 @@
 
 namespace StarUML {
 
-class Model
+class Package
     : public Container
 {
 public:
-    Model() = delete;
-    explicit Model(Ptr parent, const OSAL::GUID & id, const std::string & name);
-    virtual ~Model();
+    Package() = delete;
+    Package(Ptr parent);
+    Package(Ptr parent, const OSAL::GUID & id);
+    Package(Ptr parent, const OSAL::GUID & id, const std::string & name);
+    virtual ~Package();
 
     ObjectVisibility Visibility() const { return _visibility; }
     void Visibility(ObjectVisibility value) { _visibility = value; }
 
     virtual void Serialize(std::ostream & stream) override;
 
-    virtual JSON::ValuePtr CreateObject() const override;
+    virtual JSON::ValuePtr CreateObject() const;
 
 private:
     ObjectVisibility _visibility;

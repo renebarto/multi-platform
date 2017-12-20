@@ -27,8 +27,8 @@ public:
         : _guid(other._guid)
     {
     }
-    GUID(const OSAL::ByteArray & guid)
-        : _guid(guid)
+    GUID(OSAL::ByteArray guid)
+        : _guid(std::move(guid))
     {
         assert(_guid.Size() == GUIDSize);
     }

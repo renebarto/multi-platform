@@ -9,7 +9,7 @@ class Diagram
 {
 public:
     Diagram() = delete;
-    explicit Diagram(Ptr parent, const std::string & type, const OSAL::ByteArray & id, const std::string & name);
+    explicit Diagram(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name);
     virtual ~Diagram();
 
     bool Visible() const { return _visible; }
