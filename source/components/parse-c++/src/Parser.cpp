@@ -110,7 +110,7 @@ void Parser::HandleToken(CXCursor token, CXCursor parentToken)
     Declaration::Ptr parent = _astCollection.Find(parentToken);
 
     CXCursorKind kind = clang_getCursorKind(token);
-    PrintToken(token, parentToken);
+//    PrintToken(token, parentToken);
 
     switch (kind)
     {
@@ -339,7 +339,8 @@ void Parser::AddToMap(Declaration::Ptr object)
 void Parser::AddNamespace(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddNamespace(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddNamespace(token, parentToken);
@@ -349,7 +350,8 @@ void Parser::AddNamespace(CXCursor token, CXCursor parentToken)
 void Parser::AddClass(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddClass(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddClass(token, parentToken);
@@ -359,7 +361,8 @@ void Parser::AddClass(CXCursor token, CXCursor parentToken)
 void Parser::AddStruct(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddStruct(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddStruct(token, parentToken);
@@ -369,7 +372,8 @@ void Parser::AddStruct(CXCursor token, CXCursor parentToken)
 void Parser::AddConstructor(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddConstructor(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddConstructor(token, parentToken);
@@ -378,8 +382,10 @@ void Parser::AddConstructor(CXCursor token, CXCursor parentToken)
 
 void Parser::AddDestructor(CXCursor token, CXCursor parentToken)
 {
+    int result = clang_isCursorDefinition(token);
     Declaration::Ptr object = _astCollection.AddDestructor(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddDestructor(token, parentToken);
@@ -389,7 +395,8 @@ void Parser::AddDestructor(CXCursor token, CXCursor parentToken)
 void Parser::AddMethod(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddMethod(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddMethod(token, parentToken);
@@ -399,7 +406,8 @@ void Parser::AddMethod(CXCursor token, CXCursor parentToken)
 void Parser::AddDataMember(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddDataMember(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddDataMember(token, parentToken);
@@ -409,7 +417,8 @@ void Parser::AddDataMember(CXCursor token, CXCursor parentToken)
 void Parser::AddEnum(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddEnum(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     object = _ast.AddEnum(token, parentToken);
@@ -428,7 +437,8 @@ void Parser::AddEnumValue(CXCursor token, CXCursor parentToken)
 void Parser::AddTypedef(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddTypedef(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     _ast.AddTypedef(token, parentToken);
@@ -438,7 +448,8 @@ void Parser::AddTypedef(CXCursor token, CXCursor parentToken)
 void Parser::AddVariable(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddVariable(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     _ast.AddVariable(token, parentToken);
@@ -448,7 +459,8 @@ void Parser::AddVariable(CXCursor token, CXCursor parentToken)
 void Parser::AddFunction(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddFunction(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     _ast.AddFunction(token, parentToken);
@@ -478,7 +490,8 @@ void Parser::AddBaseClass(CXCursor token, CXCursor parentToken)
 void Parser::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddFunctionTemplate(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     _ast.AddFunctionTemplate(token, parentToken);
@@ -488,7 +501,8 @@ void Parser::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
 void Parser::AddClassTemplate(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr object = _astCollection.AddClassTemplate(token, parentToken);
-    AddToMap(object);
+    if (object)
+        AddToMap(object);
 //    _astCollection.ShowInfo();
 
     _ast.AddClassTemplate(token, parentToken);

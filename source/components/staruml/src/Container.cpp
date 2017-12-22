@@ -7,19 +7,19 @@
 using namespace std;
 using namespace StarUML;
 
-Container::Container(Ptr parent, const std::string & type)
+Container::Container(Object::Ptr parent, const std::string & type)
     : Object(parent, type)
     , _ownedElements()
 {
 }
 
-Container::Container(Ptr parent, const std::string & type, const OSAL::GUID & id)
+Container::Container(Object::Ptr parent, const std::string & type, const OSAL::GUID & id)
     : Object(parent, type, id)
     , _ownedElements()
 {
 }
 
-Container::Container(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name)
+Container::Container(Object::Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name)
     : Object(parent, type, id, name)
       , _ownedElements()
 {

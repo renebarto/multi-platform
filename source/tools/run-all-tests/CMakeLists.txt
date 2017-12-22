@@ -55,7 +55,7 @@ set(PACKAGE_LIBS
     ${PACKAGE_DEPENDENCIES})
 
 file(GLOB PACKAGE_SOURCES src/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES include/*.h)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC include/*.h)
 
 file(GLOB PACKAGE_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/include/osal/*.h)

@@ -8,10 +8,13 @@ class Container
     : public Object
 {
 public:
+    using Ptr = std::shared_ptr<Container>;
+    using List = std::vector<Ptr>;
+
     Container() = delete;
-    Container(Ptr parent, const std::string & type);
-    Container(Ptr parent, const std::string & type, const OSAL::GUID & id);
-    Container(Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name);
+    Container(Object::Ptr parent, const std::string & type);
+    Container(Object::Ptr parent, const std::string & type, const OSAL::GUID & id);
+    Container(Object::Ptr parent, const std::string & type, const OSAL::GUID & id, const std::string & name);
     virtual ~Container();
 
     virtual void Serialize(std::ostream & stream) override;

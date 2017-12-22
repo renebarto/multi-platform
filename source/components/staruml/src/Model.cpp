@@ -7,7 +7,7 @@
 using namespace std;
 using namespace StarUML;
 
-Model::Model(Ptr parent, const OSAL::GUID & id, const std::string & name)
+Model::Model(Object::Ptr parent, const OSAL::GUID & id, const std::string & name)
     : Container(parent, "UMLModel", id, name)
     , _visibility(ObjectVisibility::Public)
 {

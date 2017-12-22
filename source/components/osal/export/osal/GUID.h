@@ -19,6 +19,7 @@ enum class GUIDVersion
 class OSAL_EXPORT GUID
 {
 public:
+    static const GUID Null;
     GUID()
         : _guid(GUIDSize)
     {

@@ -9,16 +9,19 @@ using namespace StarUML;
 
 Package::Package(Ptr parent)
     : Container(parent, "UMLPackage")
+      , _visibility(ObjectVisibility::Public)
 {
 }
 
 Package::Package(Ptr parent, const OSAL::GUID & id)
     : Container(parent, "UMLPackage", id)
+    , _visibility(ObjectVisibility::Public)
 {
 }
 
 Package::Package(Ptr parent, const OSAL::GUID & id, const std::string & name)
     : Container(parent, "UMLPackage", id, name)
+      , _visibility(ObjectVisibility::Public)
 {
 }
 

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Container.h"
+#include "staruml/Container.h"
 
 namespace StarUML {
+
+class Model;
 
 class Project
     : public Container
@@ -16,6 +18,11 @@ public:
     virtual JSON::ValuePtr CreateObject() const override;
 
     void SetupDefault();
+
+    Container::Ptr GetFirstModel();
+
+private:
+    Container::List _models;
 };
 
 } // namespace StarUML

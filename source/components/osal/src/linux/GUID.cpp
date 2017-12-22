@@ -5,6 +5,8 @@
 using namespace std;
 using namespace OSAL;
 
+const GUID GUID::Null;
+
 GUID GUID::Generate()
 {
     GUID guid;

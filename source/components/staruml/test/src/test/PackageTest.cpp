@@ -34,7 +34,31 @@ void PackageTest::TearDown()
 TEST_SUITE(staruml)
 {
 
-TEST_FIXTURE(PackageTest, Construct)
+TEST_FIXTURE(PackageTest, ConstructParent)
+{
+    auto target = make_shared<Package>(nullptr);
+
+    EXPECT_EQ("", target->Name());
+    EXPECT_EQ(OSAL::GUID::Null, target->Id());
+    EXPECT_EQ(PackageType, target->Type());
+    EXPECT_EQ(nullptr, target->Parent());
+    EXPECT_EQ(size_t {0}, target->OwnedElements().size());
+    EXPECT_EQ(ObjectVisibility::Public, target->Visibility());
+}
+
+TEST_FIXTURE(PackageTest, ConstructParentID)
+{
+    auto target = make_shared<Package>(nullptr, PackageID);
+
+    EXPECT_EQ("", target->Name());
+    EXPECT_EQ(PackageID, target->Id());
+    EXPECT_EQ(PackageType, target->Type());
+    EXPECT_EQ(nullptr, target->Parent());
+    EXPECT_EQ(size_t {0}, target->OwnedElements().size());
+    EXPECT_EQ(ObjectVisibility::Public, target->Visibility());
+}
+
+TEST_FIXTURE(PackageTest, ConstructParentIDName)
 {
     auto target = make_shared<Package>(nullptr, PackageID, PackageName);
 
@@ -43,6 +67,7 @@ TEST_FIXTURE(PackageTest, Construct)
     EXPECT_EQ(PackageType, target->Type());
     EXPECT_EQ(nullptr, target->Parent());
     EXPECT_EQ(size_t {0}, target->OwnedElements().size());
+    EXPECT_EQ(ObjectVisibility::Public, target->Visibility());
 }
 
 TEST_FIXTURE(PackageTest, SerializeEmpty)

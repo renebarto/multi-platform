@@ -12,6 +12,7 @@ using namespace StarUML;
 
 Project::Project(const OSAL::GUID & id, const std::string & name)
     : Container(nullptr, "Project", id, name)
+    , _models()
 {
 }
 
@@ -35,11 +36,19 @@ JSON::ValuePtr Project::CreateObject() const
 void Project::SetupDefault()
 {
     OSAL::GUID id = OSAL::GUID::Generate();
-    auto model = make_shared<Model>(shared_from_this(), id.GetBytes(), "Model");
+    auto model = make_shared<Model>(shared_from_this(), id, "Model");
     AddElement(model);
+    _models.push_back(model);
     id = OSAL::GUID::Generate();
-    auto classDiagram = make_shared<ClassDiagram>(model, id.GetBytes(), "Main");
+    auto classDiagram = make_shared<ClassDiagram>(model, id, "Main");
     classDiagram->Visible(true);
     classDiagram->DefaultDiagram(true);
     model->AddElement(classDiagram);
+}
+
+Container::Ptr Project::GetFirstModel()
+{
+    if (_models.size() > 0)
+        return _models[0];
+    return nullptr;
 }
