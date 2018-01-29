@@ -21,7 +21,7 @@ public:
     ByteArray(const ByteArray & other) : Array(other) {}
     ByteArray(ByteArray && other) : Array()
     {
-        Move(other);
+        Move(std::move(other));
     }
     ByteArray(std::initializer_list<uint8_t> data) : Array(data) {}
 
@@ -57,7 +57,7 @@ public:
     std::ostream & PrintTo(std::ostream & stream) const;
 };
 
-inline void PrintTo(const ByteArray & value, std::basic_ostream<OSAL::Char> & stream)
+inline void PrintTo(const ByteArray & value, std::ostream & stream)
 {
     value.PrintTo(stream);
 }

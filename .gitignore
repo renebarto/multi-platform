@@ -3,4 +3,5 @@ cmake-build-*/
 build/
 output/
 *.pc
+cppcheck-output.xml
 valgrind.log

@@ -1,11 +1,14 @@
 #include "osal/Path.h"
 
-static const OSAL::Char _Dot = _('.');
-static const OSAL::Char _Slash = _('/');
-static const OSAL::Char * _CurrentDir = _(".");
-static const OSAL::Char * _ParentDir = _("..");
+using namespace std;
 
-void OSAL::Path::SplitPath(const String & path, String & directory, String & fileName)
+namespace OSAL {
+namespace Path {
+
+static const char _Dot = '.';
+static const char * _CurrentDir = ".";
+
+void SplitPath(const string & path, string & directory, string & fileName)
 {
     directory = {};
     fileName = {};
@@ -15,7 +18,7 @@ void OSAL::Path::SplitPath(const String & path, String & directory, String & fil
         return;
     }
     size_t lastPathDelimiterPos = path.find_last_of(PathSeparator());
-    if (lastPathDelimiterPos != String::npos)
+    if (lastPathDelimiterPos != string::npos)
     {
         fileName = path.substr(lastPathDelimiterPos + 1);
         directory = path.substr(0, lastPathDelimiterPos);
@@ -24,45 +27,45 @@ void OSAL::Path::SplitPath(const String & path, String & directory, String & fil
     fileName = path.substr(0, lastPathDelimiterPos);
 }
 
-OSAL::String OSAL::Path::Extension(const String & path)
+string Extension(const string & path)
 {
     size_t lastPathDelimiterPos = path.find_last_of(_Dot);
-    if (lastPathDelimiterPos != String::npos)
+    if (lastPathDelimiterPos != string::npos)
     {
         return path.substr(lastPathDelimiterPos);
     }
-    return String();
+    return string();
 }
 
-OSAL::String OSAL::Path::StripExtension(const String & path)
+string StripExtension(const string & path)
 {
     size_t lastPathDelimiterPos = path.find_last_of(_Dot);
-    if (lastPathDelimiterPos != String::npos)
+    if (lastPathDelimiterPos != string::npos)
     {
         return path.substr(0, lastPathDelimiterPos);
     }
     return path;
 }
 
-OSAL::String OSAL::Path::LastPartOfPath(const String & path)
+string LastPartOfPath(const string & path)
 {
     size_t lastPathDelimiterPos = path.find_last_of(PathSeparator());
-    if (lastPathDelimiterPos != String::npos)
+    if (lastPathDelimiterPos != string::npos)
     {
         return path.substr(lastPathDelimiterPos + 1);
     }
     return path;
 }
 
-bool OSAL::Path::HasNoPath(const String & path)
+bool HasNoPath(const string & path)
 {
-    String directory;
-    String fileName;
+    string directory;
+    string fileName;
     Path::SplitPath(path, directory, fileName);
     return directory.empty();
 }
 
-OSAL::String OSAL::Path::CreatePathWithDefault(const String & pathOrFileName, const String & defaultPath)
+string CreatePathWithDefault(const string & pathOrFileName, const string & defaultPath)
 {
     if (HasNoPath(pathOrFileName))
     {
@@ -71,9 +74,9 @@ OSAL::String OSAL::Path::CreatePathWithDefault(const String & pathOrFileName, co
     return pathOrFileName;
 }
 
-OSAL::String OSAL::Path::CombinePath(const String & basePath, const String & subPath)
+string CombinePath(const string & basePath, const string & subPath)
 {
-    String result = basePath;
+    string result = basePath;
     if (result.empty())
         result += _CurrentDir;
     if (result[result.length() - 1] != PathSeparator())
@@ -82,82 +85,14 @@ OSAL::String OSAL::Path::CombinePath(const String & basePath, const String & sub
     return result;
 }
 
-OSAL::String OSAL::Path::RelativePath(const String & path)
+string StripPathToSubDirectory(const string & path, const string & subDirectoryName)
 {
-    String currentDir = CurrentDir();
-    String fullPath = FullPath(path);
-    size_t index = 0;
-    while ((index < currentDir.length()) && (index < fullPath.length()) && (currentDir[index] == fullPath[index]))
-        index++;
-    String relativePath = {};
-#if defined(WIN_MSVC)
-#if defined(UNICODE) || defined(_UNICODE)
-    wchar_t drive[_MAX_DRIVE];
-    wchar_t dir[_MAX_DIR];
-    _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
-    bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
-                           ((wcslen(dir) != 0) && (dir[0] == PathSeparator()) && (index <= wcslen(drive) + 1));
-#else
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    _splitpath(fullPath.c_str, drive, dir, nullptr, nullptr);
-    bool isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
-#endif
-#else
-    bool isAbsolutePath = (index == 1); // All paths start with /
-#endif
-    if (isAbsolutePath)
-    {
-        relativePath = fullPath;
-    }
-    else
-    {
-        currentDir = currentDir.substr(index);
-        fullPath = fullPath.substr(index);
-        if (currentDir.empty())
-        {
-            relativePath = _CurrentDir;
-            if ((fullPath.length() > 0) && (fullPath[0] == PathSeparator()))
-                fullPath = fullPath.substr(1); // Split was before /
-        }
-        else
-        {
-            size_t pathDelimiterPos = String::npos;
-            do
-            {
-                pathDelimiterPos = currentDir.find_last_of(_Slash);
-                if (pathDelimiterPos != String::npos)
-                {
-                    currentDir = currentDir.substr(0, pathDelimiterPos);
-                    relativePath = AddSlashIfNeeded(relativePath);
-                    relativePath += _ParentDir;
-                }
-            }
-            while (pathDelimiterPos != String::npos);
-            if (!currentDir.empty())
-            {
-                relativePath = AddSlashIfNeeded(relativePath);
-                relativePath += _ParentDir;
-            }
-        }
-        if (!fullPath.empty())
-        {
-            relativePath = AddSlashIfNeeded(relativePath);
-            relativePath += fullPath;
-        }
-    }
-
-    return relativePath;
-}
-
-OSAL::String OSAL::Path::StripPathToSubDirectory(const String & path, const String & subDirectoryName)
-{
-    String strippedPath = path;
+    string strippedPath = path;
     bool done = false;
     while (!done)
     {
         size_t index = strippedPath.find_last_of(PathSeparator());
-        if (index != String::npos)
+        if (index != string::npos)
         {
             if (strippedPath.substr(index + 1) == subDirectoryName)
             {
@@ -176,3 +111,5 @@ OSAL::String OSAL::Path::StripPathToSubDirectory(const String & path, const Stri
     return strippedPath;
 }
 
+} // namespace Path
+} // namespace OSAL

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "osal/OSAL.h"
+
+#include "osal/osal.h"
 #include "osal/ByteArray.h"
 
 namespace OSAL {
@@ -43,8 +44,8 @@ public:
     GUIDVersion GetVersion() const;
     int GetVariant() const;
 
-    static GUID Parse(const OSAL::String & text);
-    static bool TryParse(const OSAL::String & text, GUID & ipAddress);
+    static GUID Parse(const std::string & text);
+    static bool TryParse(const std::string & text, GUID & ipAddress);
     GUID & operator = (const GUID & other);
     bool operator == (const GUID & other) const;
     bool operator != (const GUID & other) const;
@@ -58,7 +59,7 @@ private:
     ByteArray _guid;
     static const size_t GUIDSize = 16;
 
-    static bool TryParse(const OSAL::String & text, uint8_t & value);
+    static bool TryParse(const std::string & text, uint8_t & value);
 };
 
 inline void PrintTo(const GUID & value, std::ostream & stream)

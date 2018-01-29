@@ -1,35 +1,31 @@
 #pragma once
 
+#include <semaphore.h>
+#include <unistd.h>
 #include <cstdlib>
+#include <string>
+#include <typeinfo>
 
 namespace OSAL {
 namespace System {
 
+OSAL_EXPORT std::string Name();
+OSAL_EXPORT std::string Variant();
+OSAL_EXPORT std::string Release();
+OSAL_EXPORT std::string Version();
+OSAL_EXPORT std::string Platform();
+
+OSAL_EXPORT std::string DemangleName(const std::string & mangledName);
+
+template <class T>
+inline std::string TypeName(const T & x)
+{
+    return DemangleName(typeid(x).name());
+}
+
 inline const char * getenv(const char * name)
 {
     return ::getenv(name);
-}
-inline const wchar_t * getenv(const wchar_t * name)
-{
-    std::string nameNarrow = OSAL::WStringToString(name);
-    static std::wstring buffer;
-    const char * result = ::getenv(nameNarrow.c_str());
-    if (result == nullptr)
-    {
-        return nullptr;
-    }
-    buffer = ToWideString(result);
-    return buffer.c_str();
-}
-
-inline int chdir(const char * path)
-{
-    return ::chdir(path);
-}
-inline int chdir(const wchar_t * path)
-{
-    std::string pathNarrow = OSAL::WStringToString(path);
-    return ::chdir(pathNarrow.c_str());
 }
 
 } // namespace System

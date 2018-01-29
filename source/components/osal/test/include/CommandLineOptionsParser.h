@@ -1,18 +1,18 @@
 #pragma once
 
-#include <core/CommandLineParser.h>
-
-class CommandLineOptionsParser : public Core::CommandLineParser
-{
-public:
-    CommandLineOptionsParser(OSAL::Console & console);
-
-    OSAL::String testSuiteName;
-    OSAL::String testFixtureName;
-    OSAL::String testName;
-    OSAL::String testFilter;
-    OSAL::String testColor;
-    OSAL::String xmlOutput;
-};
-
-
+//#include <core/CommandLineParser.h>
+//
+//class CommandLineOptionsParser : public Core::CommandLineParser
+//{
+//public:
+//    CommandLineOptionsParser(OSAL::Console & console);
+//
+//    std::string testSuiteName;
+//    std::string testFixtureName;
+//    std::string testName;
+//    std::string testFilter;
+//    std::string testColor;
+//    std::string xmlOutput;
+//};
+//
+//

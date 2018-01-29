@@ -1,13 +1,11 @@
-#include <algorithm>
-#include <cstring>
 #include "osal/ByteArray.h"
-#include "osal/OSAL.h"
-#include "osal/Strings.h"
+
+//#include <algorithm>
+//#include <cstring>
 
 using namespace std;
 
-namespace OSAL
-{
+namespace OSAL {
 
 static const size_t BytesPerRow = 16;
 static const size_t MaxBytesToDisplay = 512;
@@ -44,7 +42,7 @@ ByteArray & ByteArray::operator = (ByteArray && other)
 {
     if (this != &other)
     {
-        Move(other);
+        Move(std::move(other));
     }
 
     return *this;
@@ -143,7 +141,7 @@ void ByteArray::SetUInt64BE(size_t offset, uint64_t value)
 
 std::ostream & ByteArray::PrintTo(std::ostream & stream) const
 {
-    stream << OSAL::OS::TypeName(*this) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
+    stream << OSAL::System::TypeName(*this) << " Size: " << _size << " Allocated: " << _allocatedSize << std::endl;
     size_t maxValuesToDisplay = std::min<size_t>(_size, MaxBytesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += BytesPerRow)
     {
@@ -152,7 +150,7 @@ std::ostream & ByteArray::PrintTo(std::ostream & stream) const
             if (i + offset < maxValuesToDisplay)
             {
                 uint8_t value = _data[i + offset];
-                stream << std::hex << std::setw(2) << std::setfill(_('0')) << (int)value << _(" ");
+                stream << std::hex << std::setw(2) << std::setfill('0') << (int)value << " ";
             }
             else
             {
@@ -164,7 +162,7 @@ std::ostream & ByteArray::PrintTo(std::ostream & stream) const
             if (i + offset < maxValuesToDisplay)
             {
                 uint8_t value = _data[i + offset];
-                stream << static_cast<OSAL::Char>(((value >= 32) && (value < 128)) ? value : _('?')) << _(" ");
+                stream << static_cast<char>(((value >= 32) && (value < 128)) ? value : '?') << " ";
             }
         }
         stream << std::endl;

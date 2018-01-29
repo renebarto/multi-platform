@@ -1,7 +1,5 @@
 #pragma once
 
-#include <osal/Strings.h>
-
 #define DEFINE_FLAG_OPERATORS(T, B) \
 inline T operator | (const T & lhs, const T & rhs) \
 { \

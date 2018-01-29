@@ -1,10 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6)
 
 project(multi-platform C CXX)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+option(MEASURE_COVERAGE "Determine coverage" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" ON)
+option(LOCAL_BUILD "Only perform local build, no install" OFF)
+option(SCRIPTS_DIR "CMake scripts location" "${CMAKE_SOURCE_DIR}/cmake")
 
-#include(config)
+list(APPEND CMAKE_MODULE_PATH ${SCRIPTS_DIR})
+
+include(define_targets)
 include(functions)
 include(setup_pkgconfig_file_vars)
 include(setup_default_options)
@@ -48,9 +53,6 @@ setup_pkgconfig_file_vars()
 
 setup_default_options()
 
-option(MEASURE_COVERAGE "Determine coverage" OFF)
-option(BUILD_UNIT_TESTS "Build unit tests" ON)
-option(LOCAL_BUILD "Only perform local build, no install" OFF)
 if ("${PLATFORM_NAME}" STREQUAL "")
     set(PLATFORM_NAME "x86_64")
 endif()

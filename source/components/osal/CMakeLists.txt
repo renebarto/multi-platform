@@ -1,11 +1,13 @@
-project(osal CXX)
+project(osal)
+
+set(CMAKE_CXX_STANDARD 11)
 
 include(define_targets)
 include(show_target_properties)
 
 message("\n** Setting up ${PROJECT_NAME} **\n")
 
-find_package(libuuid-dev REQUIRED)
+find_package(uuid-dev REQUIRED)
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
@@ -55,7 +57,7 @@ endif()
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
-    ${LINKER_LIBRARIES}
+#    ${LINKER_LIBRARIES}
     ${LIBUUID_DEV_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 

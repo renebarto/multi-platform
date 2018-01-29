@@ -1,6 +1,7 @@
 #include <unittest-c++/UnitTestC++.h>
 
 #include "osal/GUID.h"
+#include "osal/Exception.h"
 
 using namespace std;
 
@@ -32,9 +33,9 @@ TEST_FIXTURE(GUIDTest, Constructor)
     OSAL::GUID target;
     OSAL::ByteArray reference({0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0});
-    const OSAL::String expected = _("00000000-0000-0000-0000-000000000000");
+    const std::string expected = "00000000-0000-0000-0000-000000000000";
     EXPECT_TRUE(reference == target.GetBytes());
-    basic_ostringstream<OSAL::Char> stream;
+    ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
 }
@@ -44,9 +45,9 @@ TEST_FIXTURE(GUIDTest, ConstructorCopy)
     OSAL::GUID guid({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                      0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
     OSAL::GUID target(guid);
-    const OSAL::String expected = _("00010203-0405-0607-0809-0a0b0c0d0e0f");
+    const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
     EXPECT_TRUE(guid == target.GetBytes());
-    basic_ostringstream<OSAL::Char> stream;
+    ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
 }
@@ -57,9 +58,9 @@ TEST_FIXTURE(GUIDTest, ConstructorByteArray)
                           0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
     OSAL::GUID target({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
-    const OSAL::String expected = _("00010203-0405-0607-0809-0a0b0c0d0e0f");
+    const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
     EXPECT_TRUE(guid == target.GetBytes());
-    basic_ostringstream<OSAL::Char> stream;
+    ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
 }
@@ -114,7 +115,7 @@ TEST_FIXTURE(GUIDTest, GenerateRandom)
 
 TEST_FIXTURE(GUIDTest, Parse)
 {
-    const OSAL::String text = _("0f0e0d0c-0b0a-0908-0706-050403020100");
+    const std::string text = "0f0e0d0c-0b0a-0908-0706-050403020100";
     OSAL::ByteArray guid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::GUID expected(guid);
@@ -124,13 +125,13 @@ TEST_FIXTURE(GUIDTest, Parse)
 
 TEST_FIXTURE(GUIDTest, ParseInvalid)
 {
-    const OSAL::String text1 = _("0f0e0d0c-0b0a-0908-0706050403020100");
-    const OSAL::String text2 = _("0f0e0d0c-0b0a-09080706-050403020100");
-    const OSAL::String text3 = _("0f0e0d0c-0b0a0908-0706-050403020100");
-    const OSAL::String text4 = _("0f0e0d0c0b0a-0908-0706-050403020100");
-    const OSAL::String text5 = _("0f0e0d0c0b0a09080706050403020100");
-    const OSAL::String text6 = _("0f0e0d0c-0b0a-0908-0706-0504030201");
-    const OSAL::String text7 = _("0f0e0d0c-0b0a-0908-0706-05040302010000");
+    const std::string text1 = "0f0e0d0c-0b0a-0908-0706050403020100";
+    const std::string text2 = "0f0e0d0c-0b0a-09080706-050403020100";
+    const std::string text3 = "0f0e0d0c-0b0a0908-0706-050403020100";
+    const std::string text4 = "0f0e0d0c0b0a-0908-0706-050403020100";
+    const std::string text5 = "0f0e0d0c0b0a09080706050403020100";
+    const std::string text6 = "0f0e0d0c-0b0a-0908-0706-0504030201";
+    const std::string text7 = "0f0e0d0c-0b0a-0908-0706-05040302010000";
 
     EXPECT_THROW(OSAL::GUID::Parse(text1), OSAL::ArgumentException);
     EXPECT_THROW(OSAL::GUID::Parse(text2), OSAL::ArgumentException);
@@ -143,7 +144,7 @@ TEST_FIXTURE(GUIDTest, ParseInvalid)
 
 TEST_FIXTURE(GUIDTest, TryParse)
 {
-    const OSAL::String text = _("0f0e0d0c-0b0a-0908-0706-050403020100");
+    const std::string text = "0f0e0d0c-0b0a-0908-0706-050403020100";
     OSAL::ByteArray guid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::GUID actual;
@@ -154,13 +155,13 @@ TEST_FIXTURE(GUIDTest, TryParse)
 
 TEST_FIXTURE(GUIDTest, TryParseInvalid)
 {
-    const OSAL::String text1 = _("0f0e0d0c-0b0a-0908-0706050403020100");
-    const OSAL::String text2 = _("0f0e0d0c-0b0a-09080706-050403020100");
-    const OSAL::String text3 = _("0f0e0d0c-0b0a0908-0706-050403020100");
-    const OSAL::String text4 = _("0f0e0d0c0b0a-0908-0706-050403020100");
-    const OSAL::String text5 = _("0f0e0d0c0b0a09080706050403020100");
-    const OSAL::String text6 = _("0f0e0d0c-0b0a-0908-0706-0504030201");
-    const OSAL::String text7 = _("0f0e0d0c-0b0a-0908-0706-05040302010000");
+    const std::string text1 = "0f0e0d0c-0b0a-0908-0706050403020100";
+    const std::string text2 = "0f0e0d0c-0b0a-09080706-050403020100";
+    const std::string text3 = "0f0e0d0c-0b0a0908-0706-050403020100";
+    const std::string text4 = "0f0e0d0c0b0a-0908-0706-050403020100";
+    const std::string text5 = "0f0e0d0c0b0a09080706050403020100";
+    const std::string text6 = "0f0e0d0c-0b0a-0908-0706-0504030201";
+    const std::string text7 = "0f0e0d0c-0b0a-0908-0706-05040302010000";
     OSAL::GUID guid;
     EXPECT_FALSE(OSAL::GUID::TryParse(text1, guid));
     EXPECT_FALSE(OSAL::GUID::TryParse(text2, guid));
@@ -244,8 +245,8 @@ TEST_FIXTURE(GUIDTest, PrintTo)
 {
     OSAL::GUID target({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                        0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
-    const OSAL::String expected = _("0f0e0d0c-0b0a-0908-0706-050403020100");
-    basic_ostringstream<OSAL::Char> stream;
+    const std::string expected = "0f0e0d0c-0b0a-0908-0706-050403020100";
+    ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
 }
@@ -254,8 +255,8 @@ TEST_FIXTURE(GUIDTest, PrintToNonMember)
 {
     OSAL::GUID target({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                        0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
-    const OSAL::String expected = _("0f0e0d0c-0b0a-0908-0706-050403020100");
-    basic_ostringstream<OSAL::Char> stream;
+    const std::string expected = "0f0e0d0c-0b0a-0908-0706-050403020100";
+    ostringstream stream;
     PrintTo(target, stream);
     EXPECT_EQ(expected, stream.str());
 }
@@ -264,8 +265,8 @@ TEST_FIXTURE(GUIDTest, OperatorStream)
 {
     OSAL::GUID target({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                        0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
-    const OSAL::String expected = _("0f0e0d0c-0b0a-0908-0706-050403020100");
-    basic_ostringstream<OSAL::Char> stream;
+    const std::string expected = "0f0e0d0c-0b0a-0908-0706-050403020100";
+    ostringstream stream;
     stream << target;
     EXPECT_EQ(expected, stream.str());
 }

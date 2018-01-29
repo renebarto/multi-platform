@@ -1,5 +1,0 @@
-2014-05-30 12:09:54.184796 - StreamLoggerTest:StreamLoggerTest: Error: ABC
-2014-05-30 12:09:54.184854 - StreamLoggerTest:StreamLoggerTest: Warning: ABC
-2014-05-30 12:09:54.184910 - StreamLoggerTest:StreamLoggerTest: Message: ABC
-2014-05-30 12:09:54.184957 - StreamLoggerTest:StreamLoggerTest: Info: ABC
-2014-05-30 12:09:54.185003 - StreamLoggerTest:StreamLoggerTest: Debug: ABC

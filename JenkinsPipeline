@@ -17,12 +17,6 @@ pipeline {
                 echo 'Test'
                 sh 'mkdir -p reports'
                 sh 'output/debug/bin/osal.test --xmloutput reports/osal.test.xml'
-                sh 'output/debug/bin/core.test --xmloutput reports/core.test.xml'
-                sh 'output/debug/bin/crypto.test --xmloutput reports/crypto.test.xml'
-                sh 'output/debug/bin/json.test --xmloutput reports/json.test.xml'
-                sh 'output/debug/bin/unit-test-c++.test --xmloutput reports/unit-test-c++.test.xml'
-                sh 'output/debug/bin/xml.test --xmloutput reports/xml.test.xml'
-                sh 'output/debug/bin/network.test --xmloutput reports/network.test.xml'
                 step([$class: 'XUnitBuilder',
                     thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
                     tools: [[$class: 'JUnitType', pattern: 'reports/**'],

@@ -1,39 +1,31 @@
 #pragma once
 
-#include "osal/Strings.h"
+#include <string>
+
+#include "osal/exports.h"
 
 namespace OSAL {
 namespace Path {
 
-OSAL_EXPORT Char PathSeparator();
+OSAL_EXPORT char PathSeparator();
 
-OSAL_EXPORT String AddSlashIfNeeded(const String & path);
-OSAL_EXPORT bool FileExists(const String & path);
-OSAL_EXPORT bool DirectoryExists(const String & path);
-OSAL_EXPORT void MakeSureDirectoryExists(const String & path);
-OSAL_EXPORT void MakeSureFileDoesNotExist(const String & path);
-OSAL_EXPORT String ResolveTilde(const String & path);
-OSAL_EXPORT void SplitPath(const String & path, String & directory, String & fileName);
-OSAL_EXPORT String Extension(const String & path);
-OSAL_EXPORT String StripExtension(const String & path);
-OSAL_EXPORT String LastPartOfPath(const String & path);
-OSAL_EXPORT bool HasNoPath(const String & path);
-OSAL_EXPORT String CreatePathWithDefault(const String & pathOrFileName, const String & defaultPath);
-OSAL_EXPORT String CombinePath(const String & basePath, const String & subPath);
-OSAL_EXPORT String FullPath(const String & path);
-OSAL_EXPORT String RelativePath(const String & path);
-OSAL_EXPORT String CurrentDir();
-OSAL_EXPORT String StripPathToSubDirectory(const String & path, const String & subDirectoryName);
+OSAL_EXPORT std::string AddSlashIfNeeded(const std::string & path);
+OSAL_EXPORT bool FileExists(const std::string & path);
+OSAL_EXPORT bool DirectoryExists(const std::string & path);
+OSAL_EXPORT void MakeSureDirectoryExists(const std::string & path);
+OSAL_EXPORT void MakeSureFileDoesNotExist(const std::string & path);
+OSAL_EXPORT std::string ResolveTilde(const std::string & path);
+OSAL_EXPORT void SplitPath(const std::string & path, std::string & directory, std::string & fileName);
+OSAL_EXPORT std::string Extension(const std::string & path);
+OSAL_EXPORT std::string StripExtension(const std::string & path);
+OSAL_EXPORT std::string LastPartOfPath(const std::string & path);
+OSAL_EXPORT bool HasNoPath(const std::string & path);
+OSAL_EXPORT std::string CreatePathWithDefault(const std::string & pathOrFileName, const std::string & defaultPath);
+OSAL_EXPORT std::string CombinePath(const std::string & basePath, const std::string & subPath);
+OSAL_EXPORT std::string FullPath(const std::string & path);
+OSAL_EXPORT std::string RelativePath(const std::string & path);
+OSAL_EXPORT std::string CurrentDir();
+OSAL_EXPORT std::string StripPathToSubDirectory(const std::string & path, const std::string & subDirectoryName);
 
 } // namespace Path
 } // namespace OSAL
-
-#if defined(WIN_MSVC)
-#include "osal/windows/Path.h"
-#elif defined(WIN_MINGW)
-#include "osal/mingw/Path.h"
-#elif defined(DARWIN)
-#include "osal/darwin/Path.h"
-#elif defined(LINUX)
-#include "osal/linux/Path.h"
-#endif

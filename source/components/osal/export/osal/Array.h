@@ -2,9 +2,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 #include <initializer_list>
-#include "osal/OSAL.h"
-#include "osal/Strings.h"
+#include <iomanip>
+#include <iostream>
+
+#include "osal/osal.h"
+#include "osal/System.h"
+#include "osal/Util.h"
 
 namespace OSAL
 {
@@ -71,7 +76,7 @@ protected:
     void AllocateSize(size_t size);
     void Free();
     void Copy(const Array<T> & other);
-    void Move(Array<T> & other);
+    void Move(Array<T> && other);
 
 protected:
     static const size_t MinimumSize = 16;
@@ -303,7 +308,8 @@ typename std::enable_if<std::is_integral<T>::value, void>::type PrintTo(std::ost
 template<class T>
 std::ostream & Array<T>::PrintTo(std::ostream & stream) const
 {
-    stream << OSAL::OS::TypeName(*this) << _(" Item size: ") << sizeof(T) << _(" Size: ") << _size << _(" Allocated: ") << _allocatedSize << std::endl;
+    stream << OSAL::System::TypeName(*this)
+           << " Item size: " << sizeof(T) << " Size: " << _size << " Allocated: " << _allocatedSize << std::endl;
     size_t maxValuesToDisplay = std::min(_size, MaxValuesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
     {
@@ -364,7 +370,7 @@ void Array<T>::Copy(const Array<T> & other)
 }
 
 template<class T>
-void Array<T>::Move(Array<T> & other)
+void Array<T>::Move(Array<T> && other)
 {
     _size = other._size;
     _allocatedSize = other._allocatedSize;
