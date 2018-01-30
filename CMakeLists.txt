@@ -7,6 +7,7 @@ option(BUILD_UNIT_TESTS "Build unit tests" ON)
 option(LOCAL_BUILD "Only perform local build, no install" OFF)
 option(SCRIPTS_DIR "CMake scripts location" "${CMAKE_SOURCE_DIR}/cmake")
 
+message(STATUS "Scripts location: ${SCRIPTS_DIR}")
 list(APPEND CMAKE_MODULE_PATH ${SCRIPTS_DIR})
 
 include(define_targets)
