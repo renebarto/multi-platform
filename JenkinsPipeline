@@ -7,7 +7,7 @@ pipeline {
                 echo 'Build'
                 sh 'mkdir -p build'
                 sh 'cd build'
-                sh 'cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts/workspace'
+				sh 'cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DMEASURE_COVERAGE=ON -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts/workspace'
                 sh 'make clean'
                 sh 'make'
             }
@@ -15,12 +15,23 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'Test'
-                sh 'mkdir -p reports'
-                sh 'output/debug/bin/osal.test --xmloutput reports/osal.test.xml'
+                sh 'mkdir -p test-results'
+				sh 'rm -rf test-results/*'
+                sh 'output/debug/bin/run-all-tests --xmloutput test-results/all-tests.test.xml'
                 step([$class: 'XUnitBuilder',
                     thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
-                    tools: [[$class: 'JUnitType', pattern: 'reports/**'],
-                           [$class: 'UnitTestJunitHudsonTestType', pattern: 'reports/**/*.xml']]])
+                    tools: [[$class: 'JUnitType', pattern: 'test-results/**'],
+                           [$class: 'UnitTestJunitHudsonTestType', pattern: 'test-results/**/*.xml']]])
+            }
+        }
+        stage('Coverage'){
+            steps {
+                echo 'Measure coverage'
+                sh 'mkdir -p gcov-results'
+				sh 'rm -rf gcov-results/*'
+                sh 'gcovr --xml --xml-pretty --output=gcov-results/gcovr.xml -r source/ build/source/'
+                step([$class: 'CoberturaPublisher',
+                     coberturaReportFile: 'gcov-results/gcovr.xml'])
             }
         }
         stage('Deploy') {
