@@ -7,7 +7,7 @@ pipeline {
                 echo 'Build'
                 sh 'mkdir -p build'
                 sh 'cd build'
-                sh 'cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DLOCAL_BUILD=ON'
+                sh 'cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts'
                 sh 'make clean'
                 sh 'make'
             }
