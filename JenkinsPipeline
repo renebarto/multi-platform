@@ -27,7 +27,7 @@ pipeline {
                 echo 'Measure coverage'
                 sh 'mkdir -p gcov-results'
 				sh 'rm -rf gcov-results/*'
-                sh 'gcovr --xml --xml-pretty --output=gcov-results/gcovr.xml -r source/ build/source/'
+                sh 'gcovr --xml --xml-pretty --output=gcov-results/gcovr.xml -r source/'
                 step([$class: 'CoberturaPublisher',
                      coberturaReportFile: 'gcov-results/gcovr.xml'])
             }
