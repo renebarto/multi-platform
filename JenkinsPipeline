@@ -6,10 +6,9 @@ pipeline {
             steps {
                 echo 'Build'
                 sh 'mkdir -p build'
-                sh 'cd build'
-				sh 'cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DMEASURE_COVERAGE=ON -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts/workspace'
-                sh 'make clean'
-                sh 'make'
+                sh 'cd build;cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DMEASURE_COVERAGE=ON -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts/workspace'
+                sh 'cd build;make clean'
+                sh 'cd build;make'
             }
         }
         stage('Test'){
