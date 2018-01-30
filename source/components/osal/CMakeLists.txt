@@ -1,7 +1,5 @@
 project(osal)
 
-set(CMAKE_CXX_STANDARD 11)
-
 include(define_targets)
 include(show_target_properties)
 

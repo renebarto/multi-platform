@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-project(multi-platform C CXX)
+project(multi-platform C)
 
 option(MEASURE_COVERAGE "Determine coverage" OFF)
 option(BUILD_UNIT_TESTS "Build unit tests" ON)
@@ -16,6 +16,7 @@ include(setup_pkgconfig_file_vars)
 include(setup_default_options)
 
 set(LANGUAGE CXX)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 
 find_package(Threads REQUIRED)

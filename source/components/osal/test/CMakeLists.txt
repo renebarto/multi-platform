@@ -1,7 +1,5 @@
 project(osal.test)
 
-set(CMAKE_CXX_STANDARD 11)
-
 include(setup_target_properties_executable)
 include(show_target_properties)
 
