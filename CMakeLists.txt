@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-project(multi-platform C)
+project(multi-platform)
 
 option(MEASURE_COVERAGE "Determine coverage" OFF)
 option(BUILD_UNIT_TESTS "Build unit tests" ON)
