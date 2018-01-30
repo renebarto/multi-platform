@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <direct.h>
 #include <string>
 #include <typeinfo>
 
@@ -23,7 +24,12 @@ inline std::string TypeName(const T & x)
 
 inline const char * getenv(const char * name)
 {
-    return ::getenv(name);
+    static char buffer[4096];
+    if (::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) == 0)
+    {
+        return nullptr;
+    }
+    return buffer;
 }
 
 } // namespace System

@@ -8,6 +8,16 @@ option(LOCAL_BUILD "Only perform local build, no install" OFF)
 option(SCRIPTS_DIR "CMake scripts location" "${CMAKE_SOURCE_DIR}/cmake")
 
 message(STATUS "Scripts location: ${SCRIPTS_DIR}")
+if (MEASURE_COVERAGE)
+    message(STATUS "Measuring coverage")
+endif()
+if (BUILD_UNIT_TESTS)
+    message(STATUS "Building unit tests")
+endif()
+if (LOCAL_BUILD)
+    message(STATUS "Local build")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${SCRIPTS_DIR})
 
 include(define_targets)

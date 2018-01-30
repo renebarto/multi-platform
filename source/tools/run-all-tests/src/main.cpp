@@ -1,6 +1,7 @@
 #include <unittest-c++/UnitTestC++.h>
 
 #include <fstream>
+#include "osal/osal.h"
 #include "osal/Console.h"
 //#include <core/ConsoleLogger.h>
 //#include <core/DefaultLogger.h>
@@ -9,7 +10,7 @@
 
 using namespace std;
 
-static const std::string moduleName = "osal";
+static const string moduleName = "run-all-tests";
 
 int main(int argc, const char * argv[])
 {
@@ -21,7 +22,7 @@ int main(int argc, const char * argv[])
 //    Core::ConsoleLogger logger(Core::TheLogger(), console);
 
     CommandLineOptionsParser parser(console);
-    std::string applicationName = argv[0];
+    string applicationName = argv[0];
 
     if (!parser.Parse(argc, argv))
     {
@@ -41,7 +42,7 @@ int main(int argc, const char * argv[])
 
     if (!parser.xmlOutput.empty())
     {
-        std::basic_ofstream<char> outputFile;
+        std::ofstream outputFile;
 
         outputFile.open(parser.xmlOutput);
         UnitTestCpp::XMLTestReporter reporter(outputFile);
