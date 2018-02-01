@@ -12,7 +12,42 @@ static const size_t TestSize = 16;
 
 class ByteArrayTest : public UnitTestCpp::TestFixture
 {
+public:
+    static void AssertionHandler(bool expression, const char * expressionText, const char * file, int line, const char * func)
+    {
+        _hadAssertion = true;
+        _expression = expression;
+        _expressionText = expressionText;
+        _file = file;
+        _line = line;
+        _func = func;
+    }
+    static bool _hadAssertion;
+    static bool _expression;
+    static const char * _expressionText;
+    static const char * _file;
+    static int _line;
+    static const char * _func;
+
+    void SetUp() override
+    {
+        _hadAssertion = false;
+        _expression = false;
+        _expressionText = nullptr;
+        _file = nullptr;
+        _line = 0;
+        _func = nullptr;
+        SetAssertionHandler(AssertionHandler);
+    }
 };
+
+bool ByteArrayTest::_hadAssertion = false;
+bool ByteArrayTest::_expression = false;
+const char * ByteArrayTest::_expressionText = nullptr;
+const char * ByteArrayTest::_file = nullptr;
+int ByteArrayTest::_line = 0;
+const char * ByteArrayTest::_func = nullptr;
+
 
 TEST_SUITE(osal)
 {
@@ -230,6 +265,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt8)
     EXPECT_EQ(ref[13], byteArray.GetUInt8(13));
     EXPECT_EQ(ref[14], byteArray.GetUInt8(14));
     EXPECT_EQ(ref[15], byteArray.GetUInt8(15));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt8(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt16InitializedArray)
@@ -282,6 +321,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt16)
     EXPECT_EQ(ref[10] | ref[11] << 8, byteArray.GetUInt16(10));
     EXPECT_EQ(ref[12] | ref[13] << 8, byteArray.GetUInt16(12));
     EXPECT_EQ(ref[14] | ref[15] << 8, byteArray.GetUInt16(14));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt16(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt32InitializedArray)
@@ -322,6 +365,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt32)
     EXPECT_EQ((uint32_t)(ref[4] | ref[5] << 8 | ref[6] << 16 | ref[7] << 24), byteArray.GetUInt32(4));
     EXPECT_EQ((uint32_t)(ref[8] | ref[9] << 8 | ref[10] << 16 | ref[11] << 24), byteArray.GetUInt32(8));
     EXPECT_EQ((uint32_t)(ref[12] | ref[13] << 8 | ref[14] << 16 | ref[15] << 24), byteArray.GetUInt32(12));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt32(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt64InitializedArray)
@@ -362,6 +409,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt64)
                          (uint64_t)ref[10] << 16 | (uint64_t)ref[11] << 24 |
                          (uint64_t)ref[12] << 32 | (uint64_t)ref[13] << 40 |
                          (uint64_t)ref[14] << 48 | (uint64_t)ref[15] << 56), byteArray.GetUInt64(8));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt64(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt16BE)
@@ -396,6 +447,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt16BE)
     EXPECT_EQ(ref[10] << 8 | ref[11], byteArray.GetUInt16BE(10));
     EXPECT_EQ(ref[12] << 8 | ref[13], byteArray.GetUInt16BE(12));
     EXPECT_EQ(ref[14] << 8 | ref[15], byteArray.GetUInt16BE(14));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt16BE(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt32BE)
@@ -422,6 +477,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt32BE)
     EXPECT_EQ((uint32_t)(ref[4] << 24 | ref[5] << 16 | ref[6] << 8 | ref[7] << 0), byteArray.GetUInt32BE(4));
     EXPECT_EQ((uint32_t)(ref[8] << 24 | ref[9] << 16 | ref[10] << 8 | ref[11] << 0), byteArray.GetUInt32BE(8));
     EXPECT_EQ((uint32_t)(ref[12] << 24 | ref[13] << 16 | ref[14] << 8 | ref[15] << 0), byteArray.GetUInt32BE(12));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt32BE(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetUInt64BE)
@@ -450,6 +509,10 @@ TEST_FIXTURE(ByteArrayTest, GetUInt64BE)
                          (uint64_t)ref[10] << 40 | (uint64_t)ref[11] << 32 |
                          (uint64_t)ref[12] << 24 | (uint64_t)ref[13] << 16 |
                          (uint64_t)ref[14] << 8 | (uint64_t)ref[15] << 0), byteArray.GetUInt64BE(8));
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.GetUInt64BE(size_t{16});
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, SetPtrInitializedArray)
@@ -589,6 +652,10 @@ TEST_FIXTURE(ByteArrayTest, GetByteArray)
     ByteArray bytes = byteArray.Get(12, size);
     EXPECT_EQ(size, bytes.Size());
     EXPECT_TRUE(memcmp(bytes.Data(), ref, size) == 0);
+
+    ASSERT_FALSE(_hadAssertion);
+    byteArray.Get(byteArray.Size(), 1);
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ByteArrayTest, OperatorEquals)

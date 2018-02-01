@@ -9,7 +9,41 @@ static constexpr size_t TestSize = 16;
 
 class ArrayTest : public UnitTestCpp::TestFixture
 {
+public:
+    static void AssertionHandler(bool expression, const char * expressionText, const char * file, int line, const char * func)
+    {
+        _hadAssertion = true;
+        _expression = expression;
+        _expressionText = expressionText;
+        _file = file;
+        _line = line;
+        _func = func;
+    }
+    static bool _hadAssertion;
+    static bool _expression;
+    static const char * _expressionText;
+    static const char * _file;
+    static int _line;
+    static const char * _func;
+
+    void SetUp() override
+    {
+        _hadAssertion = false;
+        _expression = false;
+        _expressionText = nullptr;
+        _file = nullptr;
+        _line = 0;
+        _func = nullptr;
+        SetAssertionHandler(AssertionHandler);
+    }
 };
+
+bool ArrayTest::_hadAssertion = false;
+bool ArrayTest::_expression = false;
+const char * ArrayTest::_expressionText = nullptr;
+const char * ArrayTest::_file = nullptr;
+int ArrayTest::_line = 0;
+const char * ArrayTest::_func = nullptr;
 
 TEST_SUITE(osal)
 {
@@ -189,17 +223,25 @@ TEST_FIXTURE(ArrayTest, Get)
     Array<uint8_t> values = valueArray.Get(12, 4);
     EXPECT_EQ(size, values.Size());
     EXPECT_TRUE(memcmp(values.Data(), ref, size * sizeof(uint8_t)) == 0);
+
+    EXPECT_FALSE(_hadAssertion);
+    valueArray.Get(valueArray.Size());
+    EXPECT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, GetPtr)
 {
     uint8_t ref[] = { 0x0D, 0x0E, 0x0F, 0x10 };
     Array<uint8_t> valueArray({ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 });
-	const size_t size = sizeof(ref) / sizeof(uint8_t);
+    const size_t size = sizeof(ref) / sizeof(uint8_t);
 
     uint8_t data[size];
     EXPECT_EQ(size, valueArray.Get(12, data, size));
     EXPECT_TRUE(memcmp(ref, data, size * sizeof(int8_t)) == 0);
+
+    EXPECT_FALSE(_hadAssertion);
+    valueArray.Get(valueArray.Size(), data, 1);
+    EXPECT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, GetArrayByRef)
@@ -212,6 +254,10 @@ TEST_FIXTURE(ArrayTest, GetArrayByRef)
     EXPECT_EQ(size, valueArray.Get(12, data, size));
     EXPECT_EQ(size, data.Size());
     EXPECT_TRUE(memcmp(ref, data.Data(), size * sizeof(int8_t)) == 0);
+
+    EXPECT_FALSE(_hadAssertion);
+    valueArray.Get(valueArray.Size(), data, 1);
+    EXPECT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, GetArray)
@@ -222,6 +268,10 @@ TEST_FIXTURE(ArrayTest, GetArray)
     Array<uint8_t> values = valueArray.Get(12, size);
     EXPECT_EQ(size, values.Size());
     EXPECT_TRUE(memcmp(values.Data(), ref, size * sizeof(uint8_t)) == 0);
+
+    EXPECT_FALSE(_hadAssertion);
+    values = valueArray.Get(valueArray.Size(), 1);
+    EXPECT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, SetUninitializedArray)
@@ -402,6 +452,10 @@ TEST_FIXTURE(ArrayTest, OperatorIndex)
     EXPECT_EQ(0x10, target[size_t{15}]);
     target[size_t{15}] = 0xFF;
     EXPECT_EQ(0xFF, target[size_t{15}]);
+
+    ASSERT_FALSE(_hadAssertion);
+    target[size_t{16}];
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, OperatorIndexConst)
@@ -424,6 +478,10 @@ TEST_FIXTURE(ArrayTest, OperatorIndexConst)
     EXPECT_EQ(0x0E, targetConst[size_t{13}]);
     EXPECT_EQ(0x0F, targetConst[size_t{14}]);
     EXPECT_EQ(0x10, targetConst[size_t{15}]);
+
+    ASSERT_FALSE(_hadAssertion);
+    targetConst[size_t{16}];
+    ASSERT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(ArrayTest, PrintTo)

@@ -1,13 +1,13 @@
 #pragma once
 
 #include <algorithm>
-#include <cassert>
 #include <cstring>
 #include <initializer_list>
 #include <iomanip>
 #include <iostream>
 
 #include "osal/osal.h"
+#include "osal/Assert.h"
 #include "osal/System.h"
 #include "osal/Util.h"
 
@@ -169,14 +169,14 @@ void Array<T>::Clear()
 template<class T>
 T Array<T>::Get(size_t offset) const
 {
-    assert(offset < _size);
+    ASSERT(offset < _size);
     return _data[offset];
 }
 
 template<class T>
 size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 {
-    assert(offset < _size);
+    ASSERT(offset < _size);
     size_t valuesToRead = std::min<size_t>(length, _size - offset);
     memcpy(data, this->_data + offset, valuesToRead * sizeof(T));
     return valuesToRead;
@@ -185,7 +185,7 @@ size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 template<class T>
 size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 {
-    assert(offset < _size);
+    ASSERT(offset < _size);
     data.Clear();
     size_t valuesToRead = std::min(length, _size - offset);
     data.Set(0, this->_data + offset, valuesToRead);
@@ -195,7 +195,7 @@ size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 template<class T>
 Array<T> Array<T>::Get(size_t offset, size_t length) const
 {
-    assert(offset + length <= _size);
+    ASSERT(offset + length <= _size);
     return Array<T>(Data() + offset, length);
 }
 
@@ -284,14 +284,14 @@ bool Array<T>::operator != (const Array<T> & other) const
 template<class T>
 T& Array<T>::operator[] (size_t offset)
 {
-    assert(offset < _size);
+    ASSERT(offset < _size);
     return _data[offset];
 }
 
 template<class T>
 const T& Array<T>::operator[] (size_t offset) const
 {
-    assert(offset < _size);
+    ASSERT(offset < _size);
     return _data[offset];
 }
 

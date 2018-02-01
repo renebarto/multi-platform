@@ -10,7 +10,41 @@ namespace Test {
 
 class GUIDTest : public UnitTestCpp::TestFixture
 {
+public:
+    static void AssertionHandler(bool expression, const char * expressionText, const char * file, int line, const char * func)
+    {
+        _hadAssertion = true;
+        _expression = expression;
+        _expressionText = expressionText;
+        _file = file;
+        _line = line;
+        _func = func;
+    }
+    static bool _hadAssertion;
+    static bool _expression;
+    static const char * _expressionText;
+    static const char * _file;
+    static int _line;
+    static const char * _func;
+
+    void SetUp() override
+    {
+        _hadAssertion = false;
+        _expression = false;
+        _expressionText = nullptr;
+        _file = nullptr;
+        _line = 0;
+        _func = nullptr;
+        SetAssertionHandler(AssertionHandler);
+    }
 };
+
+bool GUIDTest::_hadAssertion = false;
+bool GUIDTest::_expression = false;
+const char * GUIDTest::_expressionText = nullptr;
+const char * GUIDTest::_file = nullptr;
+int GUIDTest::_line = 0;
+const char * GUIDTest::_func = nullptr;
 
 TEST_SUITE(osal)
 {
@@ -43,13 +77,43 @@ TEST_FIXTURE(GUIDTest, ConstructorByteArray)
 {
     OSAL::ByteArray guid({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                           0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
-    OSAL::GUID target({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                       0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
+    OSAL::GUID target(guid);
     const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
     EXPECT_TRUE(guid == target.GetBytes());
     ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(GUIDTest, ConstructorByteArrayTooShort)
+{
+    EXPECT_FALSE(_hadAssertion);
+    OSAL::ByteArray guidTooShort({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E});
+    OSAL::GUID target(guidTooShort);
+    const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e00";
+    EXPECT_NE(guidTooShort, target.GetBytes());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+
+    EXPECT_TRUE(_hadAssertion);
+}
+
+TEST_FIXTURE(GUIDTest, ConstructorByteArrayTooLong)
+{
+    EXPECT_FALSE(_hadAssertion);
+    OSAL::ByteArray guidTooLong({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+                                 0x10});
+    OSAL::GUID target(guidTooLong);
+    const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
+    EXPECT_NE(guidTooLong, target.GetBytes());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+
+    EXPECT_TRUE(_hadAssertion);
 }
 
 TEST_FIXTURE(GUIDTest, Generate)

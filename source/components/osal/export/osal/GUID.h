@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "osal/osal.h"
+#include "osal/Assert.h"
 #include "osal/ByteArray.h"
 
 namespace OSAL {
@@ -32,7 +33,9 @@ public:
     GUID(OSAL::ByteArray guid)
         : _guid(std::move(guid))
     {
-        assert(_guid.Size() == GUIDSize);
+        ASSERT(_guid.Size() == GUIDSize);
+        if (_guid.Size() != GUIDSize)
+            _guid.Size(GUIDSize);
     }
     virtual ~GUID() {}
 
