@@ -21,9 +21,17 @@ inline std::string TypeName(const T & x)
     return DemangleName(typeid(x).name());
 }
 
-inline const char * getenv(const char * name)
+inline const char * GetEnvironmentVariable(const char * name)
 {
     return ::getenv(name);
+}
+inline int SetEnvironmentVariable(const char * name, const char * value, bool overwrite = true)
+{
+    return ::setenv(name, value, overwrite ? 1 : 0);
+}
+inline int UnSetEnvironmentVariable(const char * name)
+{
+    return ::unsetenv(name);
 }
 
 } // namespace System

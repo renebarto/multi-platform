@@ -7,6 +7,10 @@ option(BUILD_UNIT_TESTS "Build unit tests" ON)
 option(LOCAL_BUILD "Only perform local build, no install" OFF)
 option(SCRIPTS_DIR "CMake scripts location" "${CMAKE_SOURCE_DIR}/cmake")
 
+if ("${PLATFORM_NAME}" STREQUAL "")
+    set(PLATFORM_NAME "x86_64")
+endif()
+
 message(STATUS "Scripts location: ${SCRIPTS_DIR}")
 if (MEASURE_COVERAGE)
     message(STATUS "Measuring coverage")

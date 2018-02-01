@@ -121,7 +121,7 @@ bool Console::ShouldUseColor()
     if (!OSAL::Files::IsTTY(_handle))
         return false;
 
-    const char * termSetting = OSAL::System::getenv("TERM");
+    const char * termSetting = OSAL::System::GetEnvironmentVariable("TERM");
     if (!termSetting)
         return false;
     std::string term               = termSetting;

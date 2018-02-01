@@ -55,6 +55,16 @@ inline std::string WStringToString(const std::wstring & value)
     return converter.to_bytes(value);
 }
 
+inline std::string ToString(const std::string & value)
+{
+    return value;
+}
+
+inline std::string ToString(const std::wstring & value)
+{
+    return WStringToString(value);
+}
+
 inline std::wstring ToWideString(const std::string & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
