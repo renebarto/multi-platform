@@ -22,7 +22,7 @@ class Array
 {
 public:
     Array();
-    Array(size_t size);
+    explicit Array(size_t size);
     Array(const T * data, size_t length);
     Array(const Array<T> & other);
     Array(Array<T> && other);
@@ -70,7 +70,7 @@ public:
     bool operator != (const Array<T> & other) const;
     T& operator[] (size_t offset);
     const T& operator[] (size_t offset) const;
-    std::ostream & PrintTo(std::ostream & stream) const;
+    virtual std::ostream & PrintTo(std::ostream & stream) const;
 
 protected:
     void AllocateSize(size_t size);
@@ -128,7 +128,7 @@ Array<T>::Array(Array<T> && other)
     , _allocatedSize(0)
     , _data(nullptr)
 {
-    Move(other);
+    Move(std::move(other));
 }
 
 template<class T>
@@ -254,7 +254,7 @@ Array<T> & Array<T>::operator = (Array<T> && other)
 {
     if (this != &other)
     {
-        Move(other);
+        Move(std::move(other));
     }
 
     return *this;

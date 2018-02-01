@@ -10,8 +10,6 @@ TEST_SUITE(core) {
 class CommandLineParserTest : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
     void CheckDefinedVerboseBrief(const CommandLineParser &parser) const
     {
         EXPECT_TRUE(parser.HaveOption("verbose"));
@@ -252,14 +250,6 @@ public:
         EXPECT_EQ(value, parser.GetOption("file"));
     }
 };
-
-void CommandLineParserTest::SetUp()
-{
-}
-
-void CommandLineParserTest::TearDown()
-{
-}
 
 static const string ApplicationName = "CommandLineParserTest";
 

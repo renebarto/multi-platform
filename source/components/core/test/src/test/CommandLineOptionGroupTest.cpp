@@ -8,19 +8,8 @@ namespace Test {
 
 class CommandLineOptionGroupTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
 
-
-void CommandLineOptionGroupTest::SetUp()
-{
-}
-
-void CommandLineOptionGroupTest::TearDown()
-{
-}
 
 static const string GroupName = "group";
 static const string GroupDescription = "Group description";

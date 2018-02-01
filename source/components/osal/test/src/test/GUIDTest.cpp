@@ -10,20 +10,7 @@ namespace Test {
 
 class GUIDTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void GUIDTest::SetUp()
-{
-
-}
-
-void GUIDTest::TearDown()
-{
-
-}
 
 TEST_SUITE(osal)
 {

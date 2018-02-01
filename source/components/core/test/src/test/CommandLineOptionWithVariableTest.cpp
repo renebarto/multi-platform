@@ -8,18 +8,7 @@ namespace Test {
 
 class CommandLineOptionWithVariableTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void CommandLineOptionWithVariableTest::SetUp()
-{
-}
-
-void CommandLineOptionWithVariableTest::TearDown()
-{
-}
 
 static const char ShortName = 's';
 static const string LongName = "longname";

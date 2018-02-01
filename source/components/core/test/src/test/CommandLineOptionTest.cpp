@@ -8,18 +8,7 @@ namespace Test {
 
 class CommandLineOptionTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void CommandLineOptionTest::SetUp()
-{
-}
-
-void CommandLineOptionTest::TearDown()
-{
-}
 
 static const CommandLineArgumentType ArgType = CommandLineArgumentType::OptionalArgument;
 static const char ShortName = 's';

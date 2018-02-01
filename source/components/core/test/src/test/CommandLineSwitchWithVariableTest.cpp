@@ -8,18 +8,7 @@ namespace Test {
 
 class CommandLineSwitchWithVariableTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void CommandLineSwitchWithVariableTest::SetUp()
-{
-}
-
-void CommandLineSwitchWithVariableTest::TearDown()
-{
-}
 
 static const string LongName = "longname";
 static const string Description = "Some description";

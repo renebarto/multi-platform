@@ -54,7 +54,7 @@ public:
     }
     ByteArray & operator = (const ByteArray & other);
     ByteArray & operator = (ByteArray && other);
-    std::ostream & PrintTo(std::ostream & stream) const;
+    std::ostream & PrintTo(std::ostream & stream) const override;
 };
 
 inline void PrintTo(const ByteArray & value, std::ostream & stream)
