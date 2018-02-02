@@ -129,7 +129,7 @@ TEST_FIXTURE(FilesTest, Stat)
         ThrowOnError(__func__, __FILE__, __LINE__, errno);
 
     EXPECT_EQ(long{6}, statInfo.st_size);
-    EXPECT_EQ(S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH, statInfo.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+    EXPECT_EQ(S_IRUSR | S_IWUSR, statInfo.st_mode & S_IRWXU);
 }
 
 } // TEST_SUITE(osal)
