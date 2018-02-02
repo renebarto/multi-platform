@@ -1,6 +1,5 @@
 #include <unittest-c++/UnitTestC++.h>
 
-//#include "osal/ByteArray.h"
 #include "osal/Path.h"
 #include "osal/TestData.h"
 
