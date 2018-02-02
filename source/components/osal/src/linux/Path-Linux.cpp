@@ -168,4 +168,20 @@ string OSAL::Path::RelativePath(const string & path)
     return relativePath;
 }
 
+string OSAL::Path::HomePath()
+{
+    const char * homeDir = OSAL::System::GetEnvironmentVariable("HOME");
+    return homeDir ? homeDir : "";
+}
+
+string OSAL::Path::SystemBinariesPath()
+{
+    return "/usr/bin";
+}
+
+string OSAL::Path::SystemLibrariesPath()
+{
+    return "/usr/lib";
+}
+
 #endif // defined(LINUX)

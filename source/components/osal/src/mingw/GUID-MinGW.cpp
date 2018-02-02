@@ -1,6 +1,6 @@
 #include "osal/PlatformDefines.h"
 
-#if defined(LINUX)
+#if defined(WIN_MINGW)
 
 #include "uuid/uuid.h"
 
@@ -196,4 +196,4 @@ std::ostream & GUID::PrintTo(std::ostream & stream) const
     return stream;
 }
 
-#endif // defined(LINUX)
+#endif // defined(WIN_MINGW)

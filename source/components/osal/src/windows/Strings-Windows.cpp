@@ -1,3 +1,7 @@
+#include "osal/PlatformDefines.h"
+
+#if defined(WIN_MSVC)
+
 #include "osal/Strings.h"
 
 WARNING_PUSH
@@ -11,7 +15,7 @@ WARNING_PUSH
 WARNING_DISABLE(4242)
 WARNING_DISABLE(4302)
 WARNING_DISABLE(4365)
-string OSAL::ToLower(const string & text)
+string OSAL::Strings::ToLower(const string & text)
 {
     string result;
     for (size_t i = 0; i < text.length(); i++)
@@ -23,7 +27,7 @@ string OSAL::ToLower(const string & text)
     return result;
 }
 
-string OSAL::ToUpper(const string & text)
+string OSAL::Strings::ToUpper(const string & text)
 {
     string result;
     for (size_t i = 0; i < text.length(); i++)
@@ -36,3 +40,4 @@ string OSAL::ToUpper(const string & text)
 }
 WARNING_POP
 
+#endif // defined(WIN_MSVC)

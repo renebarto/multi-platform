@@ -1,6 +1,6 @@
 #include "osal/PlatformDefines.h"
 
-#if defined(LINUX)
+#if defined(DARWIN)
 
 #include "osal/Console.h"
 #include "osal/System.h"
@@ -143,4 +143,4 @@ OSAL::_SetBackgroundColor bgcolor(OSAL::ConsoleColor color)
     return {color};
 }
 
-#endif // defined(LINUX)
+#endif // defined(DARWIN)

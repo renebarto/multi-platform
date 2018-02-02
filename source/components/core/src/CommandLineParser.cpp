@@ -565,7 +565,7 @@ void CommandLineParser::SelectOption(CommandLineOption::Ptr option, const char *
 {
     option->SetOptionFound();
     string argument = (value != nullptr) ? value : "";
-    argument        = OSAL::Trim(argument, "\"");
+    argument        = OSAL::Strings::Trim(argument, "\"");
     switch (option->ArgType())
     {
     case CommandLineArgumentType::NoArgument:
@@ -583,7 +583,7 @@ void CommandLineParser::SelectOption(CommandLineOption::Ptr option, const char *
 
 void CommandLineParser::AddNonOption(const char * value)
 {
-    _nonOptions.push_back(string(OSAL::Trim(value, "\"")));
+    _nonOptions.push_back(string(OSAL::Strings::Trim(value, "\"")));
     OnParseNonOption(value);
 }
 

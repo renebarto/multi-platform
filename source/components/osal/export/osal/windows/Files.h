@@ -51,10 +51,5 @@ inline ssize_t Write(FileDescriptor fd, const void * buf, size_t count)
     return ::_write(fd, buf, count);
 }
 
-inline int ChDir(const char * path)
-{
-    return ::_chdir(path);
-}
-
 } // namespace Files
 } // namespace OSAL

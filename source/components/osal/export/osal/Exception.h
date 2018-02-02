@@ -2,14 +2,15 @@
 
 #include <cstring>
 #include <iomanip>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
-#include "osal/exports.h"
 #include "osal/System.h"
 #include "osal/Unused.h"
+#include "osal/exports.h"
 
-namespace OSAL {
+namespace OSAL
+{
 
 class BaseException : public std::exception
 {
@@ -17,43 +18,36 @@ protected:
     std::string message;
     const std::exception * innerException;
     mutable std::string whatMessage;
+
 public:
-    BaseException()
-        : message()
-          , innerException(nullptr)
+    BaseException() : message(), innerException(nullptr)
     {
     }
-    BaseException(const BaseException & innerException)
-        : message()
-          , innerException(&innerException)
+    BaseException(const BaseException & innerException) : message(), innerException(&innerException)
     {
     }
     // Not a copy constructor!!
     BaseException(const std::exception & innerException)
-        : message()
-          , innerException(&innerException)
+        : message(), innerException(&innerException)
     {
     }
-    BaseException(const std::string & message)
-        : message(message)
-          , innerException(nullptr)
+    BaseException(const std::string & message) : message(message), innerException(nullptr)
     {
     }
     BaseException(const std::string & message, const std::exception & innerException)
-        : message(message)
-          , innerException(&innerException)
+        : message(message), innerException(&innerException)
     {
     }
     ~BaseException() noexcept
     {
     }
-    BaseException & operator = (const BaseException & other)
+    BaseException & operator=(const BaseException & other)
     {
-        message = other.message;
+        message        = other.message;
         innerException = other.innerException;
         return *this;
     }
-    const char* what() const throw()
+    const char * what() const throw()
     {
         whatMessage = FormatMessage();
         return whatMessage.c_str();
@@ -68,6 +62,7 @@ public:
     {
         message = value;
     }
+
 private:
     std::string FormatMessage() const
     {
@@ -92,27 +87,26 @@ protected:
     char const * functionName;
     char const * fileName;
     int line;
+
 public:
     Exception() = delete;
     Exception(char const * functionName, char const * fileName, int line)
-        : BaseException()
-          , functionName(functionName)
-          , fileName(fileName)
-          , line(line)
+        : BaseException(), functionName(functionName), fileName(fileName), line(line)
     {
     }
     Exception(char const * functionName, char const * fileName, int line, const std::string & message)
-        : BaseException(message)
-          , functionName(functionName)
-          , fileName(fileName)
-          , line(line)
+        : BaseException(message), functionName(functionName), fileName(fileName), line(line)
     {
     }
-    Exception(char const * functionName, char const * fileName, int line, const std::string & message, const std::exception & innerException)
+    Exception(char const * functionName,
+              char const * fileName,
+              int line,
+              const std::string & message,
+              const std::exception & innerException)
         : BaseException(message, innerException)
-          , functionName(functionName)
-          , fileName(fileName)
-          , line(line)
+        , functionName(functionName)
+        , fileName(fileName)
+        , line(line)
     {
     }
     ~Exception()
@@ -138,15 +132,18 @@ class SystemError : public Exception
 {
 protected:
     int errorCode;
+
 public:
     SystemError(char const * functionName, char const * fileName, int line, int errorCode)
-        : Exception(functionName, fileName, line)
-          , errorCode(errorCode)
+        : Exception(functionName, fileName, line), errorCode(errorCode)
     {
     }
-    SystemError(char const * functionName, char const * fileName, int line, int errorCode, std::string message)
-        : Exception(functionName, fileName, line, message)
-          , errorCode(errorCode)
+    SystemError(char const * functionName,
+                char const * fileName,
+                int line,
+                int errorCode,
+                std::string message)
+        : Exception(functionName, fileName, line, message), errorCode(errorCode)
     {
     }
     ~SystemError()
@@ -159,9 +156,9 @@ public:
     virtual std::string BuildMessage() const override
     {
         std::ostringstream stream;
-		stream << Exception::BuildMessage() << " errno=" << errorCode
-			<< " (0x" << std::hex << std::setw(8) << std::setfill('0') << errorCode << "): \""
-			<< strerror(errorCode) << "\"";
+        stream << Exception::BuildMessage() << " errno=" << errorCode << " (0x" << std::hex
+               << std::setw(8) << std::setfill('0') << errorCode << "): \"" << strerror(errorCode)
+               << "\"";
         return stream.str();
     }
 };
@@ -182,17 +179,18 @@ class ArgumentException : public Exception
 {
 protected:
     std::string argument;
+
 public:
-    ArgumentException(char const * functionName, char const * fileName, int line,
-                      std::string argument)
-        : Exception(functionName, fileName, line)
-          , argument(argument)
+    ArgumentException(char const * functionName, char const * fileName, int line, std::string argument)
+        : Exception(functionName, fileName, line), argument(argument)
     {
     }
-    ArgumentException(char const * functionName, char const * fileName, int line,
-                      std::string argument, std::string message)
-        : Exception(functionName, fileName, line, message)
-          , argument(argument)
+    ArgumentException(char const * functionName,
+                      char const * fileName,
+                      int line,
+                      std::string argument,
+                      std::string message)
+        : Exception(functionName, fileName, line, message), argument(argument)
     {
     }
     ~ArgumentException()
@@ -211,12 +209,11 @@ public:
 class ArgumentNullException : public ArgumentException
 {
 public:
-    ArgumentNullException(char const * functionName, char const * fileName, int line,
-                          std::string argument) :
-        ArgumentException(functionName, fileName, line, argument)
+    ArgumentNullException(char const * functionName, char const * fileName, int line, std::string argument)
+        : ArgumentException(functionName, fileName, line, argument)
     {
     }
-    ~ArgumentNullException() throw ()
+    ~ArgumentNullException() throw()
     {
     }
     virtual std::string BuildMessage() const
@@ -238,4 +235,3 @@ inline void ThrowOnError(const char * functionName, const char * fileName, int l
 }
 
 } // namespace OSAL
-

@@ -1,6 +1,6 @@
 #include "osal/PlatformDefines.h"
 
-#if defined(LINUX)
+#if defined(DARWIN)
 
 #include <cxxabi.h>
 #include <ext/stdio_filebuf.h>
@@ -73,4 +73,4 @@ string System::DemangleName(const string & mangledName)
     return result;
 }
 
-#endif // defined(LINUX)
+#endif // defined(DARWIN)

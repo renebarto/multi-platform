@@ -1,9 +1,13 @@
+#include "osal/PlatformDefines.h"
+
+#if defined(WIN_MINGW)
+
 #include "osal/Strings.h"
 
 using namespace std;
 using namespace OSAL;
 
-string OSAL::ToLower(const string & text)
+string OSAL::Strings::ToLower(const string & text)
 {
     string result;
     for (size_t i = 0; i < text.length(); i++)
@@ -17,7 +21,7 @@ string OSAL::ToLower(const string & text)
     return result;
 }
 
-string OSAL::ToUpper(const string & text)
+string OSAL::Strings::ToUpper(const string & text)
 {
     string result;
     for (size_t i = 0; i < text.length(); i++)
@@ -30,3 +34,5 @@ string OSAL::ToUpper(const string & text)
     }
     return result;
 }
+
+#endif // defined(WIN_MINGW)

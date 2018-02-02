@@ -5,8 +5,9 @@
 #include <string>
 #include <osal/osal.h>
 
-namespace OSAL
-{
+namespace OSAL {
+namespace Strings {
+
 OSAL_EXPORT std::string Trim(const std::string & value, const std::string & stripChars);
 
 OSAL_EXPORT std::string TrimSpaces(const std::string & value);
@@ -83,6 +84,7 @@ inline std::string ToNarrowString(const std::string & value)
 #endif
 }
 
+} // namespace Strings
 } // namespace OSAL
 
 #if defined(WIN_MSVC)

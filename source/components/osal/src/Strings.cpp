@@ -4,7 +4,7 @@ using namespace std;
 using namespace OSAL;
 using namespace OSAL::Strings;
 
-string OSAL::Trim(const string & value, const string & stripChars)
+string OSAL::Strings::Trim(const string & value, const string & stripChars)
 {
     const char * find = stripChars.c_str();
 
@@ -17,7 +17,7 @@ string OSAL::Trim(const string & value, const string & stripChars)
     return value.substr(indexLeft, indexRight - indexLeft);
 }
 
-string OSAL::TrimSpaces(const string & value)
+string OSAL::Strings::TrimSpaces(const string & value)
 {
     size_t indexLeft = 0;
     while ((indexLeft < value.length()) && isspace(value[indexLeft]))
@@ -28,7 +28,7 @@ string OSAL::TrimSpaces(const string & value)
     return value.substr(indexLeft, indexRight - indexLeft);
 }
 
-string OSAL::TrimLeft(const string & value, const string & stripChars)
+string OSAL::Strings::TrimLeft(const string & value, const string & stripChars)
 {
     const char * find = stripChars.c_str();
 
@@ -38,7 +38,7 @@ string OSAL::TrimLeft(const string & value, const string & stripChars)
     return value.substr(indexLeft, value.length() - indexLeft);
 }
 
-string OSAL::TrimSpacesLeft(const string & value)
+string OSAL::Strings::TrimSpacesLeft(const string & value)
 {
     size_t indexLeft = 0;
     while ((indexLeft < value.length()) && isspace(value[indexLeft]))
@@ -46,7 +46,7 @@ string OSAL::TrimSpacesLeft(const string & value)
     return value.substr(indexLeft, value.length() - indexLeft);
 }
 
-string OSAL::TrimRight(const string & value, const string & stripChars)
+string OSAL::Strings::TrimRight(const string & value, const string & stripChars)
 {
     const char * find = stripChars.c_str();
 
@@ -56,7 +56,7 @@ string OSAL::TrimRight(const string & value, const string & stripChars)
     return value.substr(0, indexRight);
 }
 
-string OSAL::TrimSpacesRight(const string & value)
+string OSAL::Strings::TrimSpacesRight(const string & value)
 {
     size_t indexRight = value.length();
     while ((indexRight > 0) && isspace(value[indexRight - 1]))
@@ -64,12 +64,12 @@ string OSAL::TrimSpacesRight(const string & value)
     return value.substr(0, indexRight - 0);
 }
 
-bool OSAL::IsEqual(const string & lhs, const string & rhs)
+bool OSAL::Strings::IsEqual(const string & lhs, const string & rhs)
 {
     return (lhs == rhs);
 }
 
-bool OSAL::IsEqualIgnoreCase(const string & lhs, const string & rhs)
+bool OSAL::Strings::IsEqualIgnoreCase(const string & lhs, const string & rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -82,27 +82,27 @@ bool OSAL::IsEqualIgnoreCase(const string & lhs, const string & rhs)
     return true;
 }
 
-bool OSAL::IsEqual(const char * lhs, const char * rhs)
+bool OSAL::Strings::IsEqual(const char * lhs, const char * rhs)
 {
     return OSAL::Strings::strcmp(lhs, rhs) == 0;
 }
 
-bool OSAL::IsEqualIgnoreCase(const char * lhs, const char * rhs)
+bool OSAL::Strings::IsEqualIgnoreCase(const char * lhs, const char * rhs)
 {
     return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
-bool OSAL::IsEqual(const wchar_t * lhs, const wchar_t * rhs)
+bool OSAL::Strings::IsEqual(const wchar_t * lhs, const wchar_t * rhs)
 {
     return OSAL::Strings::strcmp(lhs, rhs) == 0;
 }
 
-bool OSAL::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
+bool OSAL::Strings::IsEqualIgnoreCase(const wchar_t * lhs, const wchar_t * rhs)
 {
     return OSAL::Strings::strcasecmp(lhs, rhs) == 0;
 }
 
-string OSAL::Quote(const string & text)
+string OSAL::Strings::Quote(const string & text)
 {
     if ((text[0] == '\"') && (text[text.length() - 1] == '\"'))
     {
@@ -111,7 +111,7 @@ string OSAL::Quote(const string & text)
     return "\"" + text + "\"";
 }
 
-string OSAL::UnQuote(const string & text)
+string OSAL::Strings::UnQuote(const string & text)
 {
     if ((text.length() >= 2) && (text[0] == '\"') && (text[text.length() - 1] == '\"'))
     {

@@ -1,8 +1,18 @@
 #pragma once
 
+#include <osal/exports.h>
+
 #include <string>
 
-#include "osal/exports.h"
+#if defined(WIN_MSVC)
+#include "osal/windows/Path.h"
+#elif defined(WIN_MINGW)
+#include "osal/mingw/Path.h"
+#elif defined(DARWIN)
+#include "osal/darwin/Path.h"
+#elif defined(LINUX)
+#include "osal/linux/Path.h"
+#endif
 
 namespace OSAL {
 namespace Path {
@@ -26,6 +36,13 @@ OSAL_EXPORT std::string FullPath(const std::string & path);
 OSAL_EXPORT std::string RelativePath(const std::string & path);
 OSAL_EXPORT std::string CurrentDir();
 OSAL_EXPORT std::string StripPathToSubDirectory(const std::string & path, const std::string & subDirectoryName);
+OSAL_EXPORT std::string HomePath();
+OSAL_EXPORT std::string SystemBinariesPath();
+OSAL_EXPORT std::string SystemLibrariesPath();
+inline int ChangeCurrentDirectory(const std::string & directory)
+{
+    return ChDir(directory.c_str());
+}
 
 } // namespace Path
 } // namespace OSAL

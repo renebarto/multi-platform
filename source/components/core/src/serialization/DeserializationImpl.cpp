@@ -74,12 +74,12 @@ static bool HasValidCharactersFloatingPoint(const string & text)
 
 bool Core::Deserialize(const string & text, bool & value)
 {
-    if (OSAL::IsEqualIgnoreCase(BooleanTrueLiteral, text))
+    if (OSAL::Strings::IsEqualIgnoreCase(BooleanTrueLiteral, text))
     {
         value = true;
         return true;
     }
-    if (OSAL::IsEqualIgnoreCase(BooleanFalseLiteral, text))
+    if (OSAL::Strings::IsEqualIgnoreCase(BooleanFalseLiteral, text))
     {
         value = false;
         return true;

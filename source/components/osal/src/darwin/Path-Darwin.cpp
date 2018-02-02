@@ -1,6 +1,6 @@
 #include "osal/PlatformDefines.h"
 
-#if defined(LINUX)
+#if defined(DARWIN)
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -168,4 +168,20 @@ string OSAL::Path::RelativePath(const string & path)
     return relativePath;
 }
 
-#endif // defined(LINUX)
+string OSAL::Path::HomePath()
+{
+    const char * homeDir = OSAL::System::GetEnvironmentVariable("HOME");
+    return homeDir ? homeDir : "";
+}
+
+string OSAL::Path::SystemBinariesPath()
+{
+    return "/usr/bin";
+}
+
+string OSAL::Path::SystemLibrariesPath()
+{
+    return "/usr/lib";
+}
+
+#endif // defined(DARWIN)

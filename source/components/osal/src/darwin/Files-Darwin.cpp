@@ -1,6 +1,6 @@
 #include "osal/PlatformDefines.h"
 
-#if defined(LINUX)
+#if defined(DARWIN)
 
 #include <cassert>
 #include <ext/stdio_filebuf.h>
@@ -47,4 +47,4 @@ std::string const & TemporaryFile::GetPath() const
     return _path;
 }
 
-#endif // defined(LINUX)
+#endif // defined(DARWIN)
