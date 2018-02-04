@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdint>
 #include <cstdlib>
+#include <osal/PlatformDefines.h>
 
 using namespace std;
 

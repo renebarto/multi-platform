@@ -1,5 +1,7 @@
 #include "osal/Path.h"
 
+#include <algorithm>
+
 using namespace std;
 
 namespace OSAL {
@@ -8,23 +10,32 @@ namespace Path {
 static const char _Dot = '.';
 static const char * _CurrentDir = ".";
 
+static string ReplaceWithPathSeparator(const std::string & path)
+{
+    string result = path;
+    if (PathSeparator() != '/')
+        std::replace(result.begin(), result.end(), '/', PathSeparator());
+    return result;
+}
+
 void SplitPath(const string & path, string & directory, string & fileName)
 {
     directory = {};
     fileName = {};
-    if (DirectoryExists(path))
+    string replacedPath = ReplaceWithPathSeparator(path);
+    if (DirectoryExists(replacedPath))
     {
-        directory = path;
+        directory = replacedPath;
         return;
     }
-    size_t lastPathDelimiterPos = path.find_last_of(PathSeparator());
+    size_t lastPathDelimiterPos = replacedPath.find_last_of(PathSeparator());
     if (lastPathDelimiterPos != string::npos)
     {
-        fileName = path.substr(lastPathDelimiterPos + 1);
-        directory = path.substr(0, lastPathDelimiterPos);
+        fileName = replacedPath.substr(lastPathDelimiterPos + 1);
+        directory = replacedPath.substr(0, lastPathDelimiterPos);
         return;
     }
-    fileName = path.substr(0, lastPathDelimiterPos);
+    fileName = replacedPath.substr(0, lastPathDelimiterPos);
 }
 
 string Extension(const string & path)
@@ -42,19 +53,20 @@ string StripExtension(const string & path)
     size_t lastPathDelimiterPos = path.find_last_of(_Dot);
     if (lastPathDelimiterPos != string::npos)
     {
-        return path.substr(0, lastPathDelimiterPos);
+        return ReplaceWithPathSeparator(path.substr(0, lastPathDelimiterPos));
     }
-    return path;
+    return ReplaceWithPathSeparator(path);
 }
 
 string LastPartOfPath(const string & path)
 {
-    size_t lastPathDelimiterPos = path.find_last_of(PathSeparator());
+    string replacedPath = ReplaceWithPathSeparator(path);
+    size_t lastPathDelimiterPos = replacedPath.find_last_of(PathSeparator());
     if (lastPathDelimiterPos != string::npos)
     {
-        return path.substr(lastPathDelimiterPos + 1);
+        return replacedPath.substr(lastPathDelimiterPos + 1);
     }
-    return path;
+    return replacedPath;
 }
 
 bool HasNoPath(const string & path)
@@ -71,23 +83,24 @@ string CreatePathWithDefault(const string & pathOrFileName, const string & defau
     {
         return CombinePath(defaultPath, pathOrFileName);
     }
-    return pathOrFileName;
+
+    return ReplaceWithPathSeparator(pathOrFileName);
 }
 
 string CombinePath(const string & basePath, const string & subPath)
 {
-    string result = basePath;
+    string result = ReplaceWithPathSeparator(basePath);
     if (result.empty())
         result += _CurrentDir;
     if (result[result.length() - 1] != PathSeparator())
         result += PathSeparator();
-    result += subPath;
+    result += ReplaceWithPathSeparator(subPath);
     return result;
 }
 
 string StripPathToSubDirectory(const string & path, const string & subDirectoryName)
 {
-    string strippedPath = path;
+    string strippedPath = ReplaceWithPathSeparator(path);
     bool done = false;
     while (!done)
     {
@@ -105,10 +118,20 @@ string StripPathToSubDirectory(const string & path, const string & subDirectoryN
         }
         else
         {
-			return {};
+            return {};
         }
     }
     return strippedPath;
+}
+
+string ResolveTilde(const string & path)
+{
+    string replacedPath = ReplaceWithPathSeparator(path);
+    if (replacedPath.length() < 2)
+        return replacedPath;
+    if (replacedPath.substr(0, 2) != string("~") + PathSeparator())
+        return replacedPath;
+    return CombinePath(HomePath(), replacedPath.substr(2));
 }
 
 } // namespace Path

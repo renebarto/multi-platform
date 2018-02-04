@@ -1,4 +1,4 @@
-#include <unittest-c++/UnitTestC++.h>
+#include <unittest-cpp/UnitTestC++.h>
 
 #include "osal/Path.h"
 #include "osal/TestData.h"
@@ -103,8 +103,8 @@ TEST_FIXTURE(PathTest, CreatePathWithDefault)
 
 TEST_FIXTURE(PathTest, CombinePath)
 {
-    string basePath     = "/Home/User";
-    string subDirectory = "/Subdirectory";
+    string basePath     = string(1, Path::PathSeparator()) + "Home" + Path::PathSeparator() + "User";
+    string subDirectory = "Subdirectory";
     string expected     = basePath + Path::PathSeparator() + subDirectory;
 
     EXPECT_EQ(expected, Path::CombinePath(basePath, subDirectory));
@@ -112,19 +112,9 @@ TEST_FIXTURE(PathTest, CombinePath)
 
 TEST_FIXTURE(PathTest, FullPath)
 {
-// string currentDirectory = Path::CurrentDir();
-// string subDirectory = "test";
-// string relativePath = "../../" + subDirectory;
-// string result = currentDirectory;
-// size_t pathDelimiterPos = result.find_last_of(Path::PathSeparator());
-// if (pathDelimiterPos != string::npos)
-//     result = result.substr(0, pathDelimiterPos);
-// pathDelimiterPos = result.find_last_of(Path::PathSeparator());
-// if (pathDelimiterPos != string::npos)
-//     result = result.substr(0, pathDelimiterPos + 1) + subDirectory;
-// string expected = result;
-// EXPECT_EQ(expected, Path::FullPath(relativePath));
     string home = Path::HomePath();
+    if (home[home.length() - 1] != Path::PathSeparator())
+        home += Path::PathSeparator();
     EXPECT_EQ(home, Path::FullPath(string("~") + Path::PathSeparator()));
 }
 
@@ -186,7 +176,11 @@ TEST_FIXTURE(PathTest, RelativePath3)
 
 TEST_FIXTURE(PathTest, RelativePath4)
 {
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+    string expected = "A:\\";
+#else
     string expected = Path::SystemBinariesPath();
+#endif
     string fullPath = expected;
     EXPECT_EQ(expected, Path::RelativePath(fullPath));
 }
@@ -195,7 +189,7 @@ TEST_FIXTURE(PathTest, CurrentDir)
 {
     string currentDirectory = Path::CurrentDir();
     string newPath          = Path::StripPathToSubDirectory(Test::Data::RegularFilePath(),
-                                                   Test::Data::ProjectName());
+                                                            Test::Data::ProjectName());
     EXPECT_EQ(0, Path::ChangeCurrentDirectory(newPath));
     string newCurrentDirectory = Path::CurrentDir();
     EXPECT_EQ(0, Path::ChangeCurrentDirectory(currentDirectory));

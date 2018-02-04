@@ -42,18 +42,24 @@ OSAL_EXPORT std::string UnQuote(const std::string & text);
 
 inline std::wstring StringToWString(const std::string & value)
 {
-    using convert_type = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_type, wchar_t> converter;
+    int size = MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length(), nullptr, 0);
+    wchar_t buffer[size + 1];
 
-    return converter.from_bytes(value);
+    MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length(), buffer, size);
+    std::wstring result(buffer, size);
+
+    return result;
 }
 
 inline std::string WStringToString(const std::wstring & value)
 {
-    using convert_type = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_type, wchar_t> converter;
+    int size = WideCharToMultiByte(CP_UTF8, 0, value.c_str(), value.length(), nullptr, 0, nullptr, nullptr);
+    char buffer[size + 1];
 
-    return converter.to_bytes(value);
+    WideCharToMultiByte(CP_UTF8, 0, value.c_str(), value.length(), buffer, size, nullptr, nullptr);
+    std::string result(buffer, size);
+
+    return result;
 }
 
 inline std::string ToString(const std::string & value)

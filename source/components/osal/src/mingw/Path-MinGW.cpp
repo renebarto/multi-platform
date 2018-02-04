@@ -13,7 +13,7 @@
 
 using namespace std;
 
-static const char _PathSeparator = '/';
+static const char _PathSeparator = '\\';
 static const char _Slash = '/';
 static const char * _CurrentDir = ".";
 static const char * _ParentDir = "..";
@@ -66,23 +66,14 @@ void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
     {
         unlink(path.c_str());
     }
-    mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-}
-
-string OSAL::Path::ResolveTilde(const string & path)
-{
-    if (path.length() < 2)
-        return path;
-    if (path.substr(0, 2) != "~/")
-        return path;
-    return CombinePath(string(getenv("HOME")), path.substr(2));
+    CreateDir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
 string OSAL::Path::FullPath(const string & path)
 {
     char buffer[PATH_MAX];
     string resolvedPath = ResolveTilde(path);
-    const char * fullpath = realpath(resolvedPath.c_str(), buffer);
+    const char * fullpath = _fullpath(buffer, resolvedPath.c_str(), sizeof(buffer));
     if (fullpath == nullptr)
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
     return string(fullpath);
@@ -90,7 +81,7 @@ string OSAL::Path::FullPath(const string & path)
 
 string OSAL::Path::CurrentDir()
 {
-    char * currentDirectory = get_current_dir_name();
+    char * currentDirectory = getcwd(nullptr, 0);;
     if (currentDirectory == nullptr)
     {
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
@@ -108,19 +99,20 @@ string OSAL::Path::RelativePath(const string & path)
     while ((index < currentDir.length()) && (index < fullPath.length()) && (currentDir[index] == fullPath[index]))
         index++;
     string relativePath = {};
-#if defined(WIN_MSVC)
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
     #if defined(UNICODE) || defined(_UNICODE)
-    wchar_t drive[_MAX_DRIVE];
-    wchar_t dir[_MAX_DIR];
-    _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
-    bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
-                           ((wcslen(dir) != 0) && (dir[0] == PathSeparator()) && (index <= wcslen(drive) + 1));
-#else
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    _splitpath(fullPath.c_str, drive, dir, nullptr, nullptr);
-    bool isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
-#endif
+        wchar_t drive[_MAX_DRIVE];
+        wchar_t dir[_MAX_DIR];
+        _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
+        bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
+                               ((wcslen(dir) != 0) && (dir[0] == _PathSeparator) && (index <= wcslen(drive) + 1));
+    #else
+        char drive[_MAX_DRIVE];
+        char dir[_MAX_DIR];
+        _splitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
+        bool isAbsolutePath = ((strlen(drive) != 0) && (index <= strlen(drive))) ||
+                              ((strlen(dir) != 0) && (dir[0] == _PathSeparator) && (index <= strlen(drive) + 1));
+    #endif
 #else
     bool isAbsolutePath = (index == 1); // All paths start with /
 #endif
@@ -135,7 +127,7 @@ string OSAL::Path::RelativePath(const string & path)
         if (currentDir.empty())
         {
             relativePath = _CurrentDir;
-            if ((fullPath.length() > 0) && (fullPath[0] == PathSeparator()))
+            if ((fullPath.length() > 0) && (fullPath[0] == _PathSeparator))
                 fullPath = fullPath.substr(1); // Split was before /
         }
         else
@@ -143,7 +135,7 @@ string OSAL::Path::RelativePath(const string & path)
             size_t pathDelimiterPos = string::npos;
             do
             {
-                pathDelimiterPos = currentDir.find_last_of(_Slash);
+                pathDelimiterPos = currentDir.find_last_of(_PathSeparator);
                 if (pathDelimiterPos != string::npos)
                 {
                     currentDir = currentDir.substr(0, pathDelimiterPos);
@@ -170,7 +162,7 @@ string OSAL::Path::RelativePath(const string & path)
 
 string OSAL::Path::HomePath()
 {
-    const char * homeDir = OSAL::System::GetEnvironmentVariable("HOME");
+    const char * homeDir = OSAL::System::GetEnvironmentVariable("USERPROFILE");
     return homeDir ? homeDir : "";
 }
 

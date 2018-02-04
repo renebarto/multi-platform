@@ -1,3 +1,7 @@
+#include "osal/PlatformDefines.h"
+
+#if defined(WIN_MINGW)
+
 #include "osal/Assert.h"
 
 #include <cassert>
@@ -14,7 +18,7 @@ void InternalAssertionHandler(bool expression, const char * expressionText, cons
         if (currentAssertHandler)
             currentAssertHandler(expression, expressionText, file, line, func);
         else
-            __assert_fail(expressionText, file, line, func);
+            _assert(expressionText, file, line);
     }
 }
 
@@ -27,3 +31,4 @@ AssertHandler * SetAssertionHandler(AssertHandler * handler)
 
 } // namespace OSAL
 
+#endif // defined(WIN_MINGW)

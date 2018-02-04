@@ -1,4 +1,4 @@
-#include <unittest-c++/UnitTestC++.h>
+#include <unittest-cpp/UnitTestC++.h>
 
 #include "core/CommandLineParser.h"
 

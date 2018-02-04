@@ -1,4 +1,4 @@
-#include <unittest-c++/UnitTestC++.h>
+#include <unittest-cpp/UnitTestC++.h>
 
 #include "osal/Array.h"
 
@@ -112,8 +112,8 @@ TEST_FIXTURE(ArrayTest, CastToConstElementPointer)
     size_t size = sizeof(data) / sizeof(uint8_t);
     Array<uint8_t> valueArray({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
     EXPECT_EQ(size, valueArray.Size());
-    EXPECT_TRUE(memcmp(static_cast<const uint8_t *>(valueArray), data, size) == 0);
-    EXPECT_TRUE(memcmp(static_cast<const uint8_t *>(valueArray), data, size) == 0);
+    EXPECT_TRUE(memcmp(static_cast<const uint8_t *>(valueArray.Data()), data, size) == 0);
+    EXPECT_TRUE(memcmp(static_cast<const uint8_t *>(valueArray.Data()), data, size) == 0);
 }
 
 TEST_FIXTURE(ArrayTest, CastToElementPointer)
@@ -122,8 +122,8 @@ TEST_FIXTURE(ArrayTest, CastToElementPointer)
     size_t size = sizeof(data) / sizeof(uint8_t);
     Array<uint8_t> valueArray({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
     EXPECT_EQ(size, valueArray.Size());
-    EXPECT_TRUE(memcmp(static_cast<uint8_t *>(valueArray), data, size) == 0);
-    EXPECT_TRUE(memcmp(static_cast<uint8_t *>(valueArray), data, size) == 0);
+    EXPECT_TRUE(memcmp(static_cast<uint8_t *>(valueArray.Data()), data, size) == 0);
+    EXPECT_TRUE(memcmp(static_cast<uint8_t *>(valueArray.Data()), data, size) == 0);
 }
 
 TEST_FIXTURE(ArrayTest, OperatorAssign)
@@ -561,8 +561,8 @@ TEST_FIXTURE(ArrayTest, CastToConstElementPointerInt32)
     size_t size = sizeof(data) / sizeof(int32_t);
     Array<int32_t> valueArray({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
     EXPECT_EQ(size, valueArray.Size());
-    EXPECT_TRUE(memcmp((const int32_t *)valueArray, data, size * sizeof(int32_t)) == 0);
-    EXPECT_TRUE(memcmp(static_cast<const int32_t *>(valueArray), data, size * sizeof(int32_t)) == 0);
+    EXPECT_TRUE(memcmp(static_cast<const int32_t *>(valueArray.Data()), data, size * sizeof(int32_t)) == 0);
+    EXPECT_TRUE(memcmp(static_cast<const int32_t *>(valueArray.Data()), data, size * sizeof(int32_t)) == 0);
 }
 
 TEST_FIXTURE(ArrayTest, CastToElementPointerInt32)
@@ -571,8 +571,8 @@ TEST_FIXTURE(ArrayTest, CastToElementPointerInt32)
     size_t size = sizeof(data) / sizeof(int32_t);
     Array<int32_t> valueArray({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
     EXPECT_EQ(size, valueArray.Size());
-    EXPECT_TRUE(memcmp((int32_t *)valueArray, data, size * sizeof(int32_t)) == 0);
-    EXPECT_TRUE(memcmp(static_cast<int32_t *>(valueArray), data, size * sizeof(int32_t)) == 0);
+    EXPECT_TRUE(memcmp(static_cast<int32_t *>(valueArray.Data()), data, size * sizeof(int32_t)) == 0);
+    EXPECT_TRUE(memcmp(static_cast<int32_t *>(valueArray.Data()), data, size * sizeof(int32_t)) == 0);
 }
 
 TEST_FIXTURE(ArrayTest, OperatorAssignInt32)

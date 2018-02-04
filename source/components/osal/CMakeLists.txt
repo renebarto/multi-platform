@@ -2,10 +2,14 @@ project(osal)
 
 include(define_targets)
 include(show_target_properties)
+include(platform)
+include(dump_all_vars)
 
 message("\n** Setting up ${PROJECT_NAME} **\n")
 
+if(LINUX OR APPLE)
 find_package(uuid-dev REQUIRED)
+endif()
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
@@ -44,7 +48,8 @@ set(PACKAGE_DEPENDENCIES
 if (WIN_MSVC OR MINGW)
     list(APPEND PACKAGE_DEPENDENCIES
         Dbghelp.lib
-        Ws2_32.lib)
+        Ws2_32.lib
+        Rpcrt4.dll)
 elseif (LINUX OR APPLE)
     list(APPEND PACKAGE_DEPENDENCIES
         )

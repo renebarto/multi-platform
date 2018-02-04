@@ -69,15 +69,6 @@ void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
     mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
-string OSAL::Path::ResolveTilde(const string & path)
-{
-    if (path.length() < 2)
-        return path;
-    if (path.substr(0, 2) != "~/")
-        return path;
-    return CombinePath(string(getenv("HOME")), path.substr(2));
-}
-
 string OSAL::Path::FullPath(const string & path)
 {
     char buffer[PATH_MAX];
@@ -114,12 +105,12 @@ string OSAL::Path::RelativePath(const string & path)
     wchar_t dir[_MAX_DIR];
     _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
     bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
-                           ((wcslen(dir) != 0) && (dir[0] == PathSeparator()) && (index <= wcslen(drive) + 1));
+                           ((wcslen(dir) != 0) && (dir[0] == _PathSeparator) && (index <= wcslen(drive) + 1));
 #else
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
     _splitpath(fullPath.c_str, drive, dir, nullptr, nullptr);
-    bool isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == PathSeparator()));
+    bool isAbsolutePath = (strlen(drive) != 0) || ((strlen(dir) != 0) && (dir[0] == _PathSeparator));
 #endif
 #else
     bool isAbsolutePath = (index == 1); // All paths start with /
@@ -135,7 +126,7 @@ string OSAL::Path::RelativePath(const string & path)
         if (currentDir.empty())
         {
             relativePath = _CurrentDir;
-            if ((fullPath.length() > 0) && (fullPath[0] == PathSeparator()))
+            if ((fullPath.length() > 0) && (fullPath[0] == _PathSeparator))
                 fullPath = fullPath.substr(1); // Split was before /
         }
         else
@@ -143,7 +134,7 @@ string OSAL::Path::RelativePath(const string & path)
             size_t pathDelimiterPos = string::npos;
             do
             {
-                pathDelimiterPos = currentDir.find_last_of(_Slash);
+                pathDelimiterPos = currentDir.find_last_of(_PathSeparator);
                 if (pathDelimiterPos != string::npos)
                 {
                     currentDir = currentDir.substr(0, pathDelimiterPos);

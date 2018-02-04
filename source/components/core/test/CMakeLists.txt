@@ -5,7 +5,11 @@ include(show_target_properties)
 
 message("\n** Setting up ${PROJECT_NAME} **\n")
 
-find_package(unittest-c++ REQUIRED)
+if(LINUX OR DARWIN)
+    find_package(unittest-cpp REQUIRED)
+else()
+    include(${PLATFORM_INSTALL}/unittest-cpp.cmake)
+endif()
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})

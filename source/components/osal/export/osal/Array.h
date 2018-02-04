@@ -38,15 +38,7 @@ public:
     {
         return _data;
     }
-    operator const T * () const
-    {
-        return _data;
-    }
     T * Data()
-    {
-        return _data;
-    }
-    operator T * ()
     {
         return _data;
     }

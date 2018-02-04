@@ -69,7 +69,7 @@ struct OSAL_EXPORT _SetBackgroundColor
                 ConsoleColor color;
         };
 
-class Console
+class OSAL_EXPORT Console
 {
 private:
     // The type of basic IO manipulators (endl, ends, and flush) for narrow

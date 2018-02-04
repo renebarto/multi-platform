@@ -1,4 +1,4 @@
-#include <unittest-c++/UnitTestC++.h>
+#include <unittest-cpp/UnitTestC++.h>
 
 #include "osal/Exception.h"
 #include "osal/Files.h"
@@ -81,7 +81,11 @@ TEST_FIXTURE(FilesTest, GetSize)
     const std::string path = Test::Data::RegularFilePath();
 
     auto fileSize = Files::GetSize(path.c_str());
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+    EXPECT_EQ(long{7}, fileSize);
+#else
     EXPECT_EQ(long{6}, fileSize);
+#endif
 }
 
 TEST_FIXTURE(FilesTest, Read)
@@ -104,7 +108,11 @@ TEST_FIXTURE(FilesTest, Write)
     const std::string path = Test::Data::DummyFilePath();
     Files::FileDescriptor fd = Files::Open(path.c_str(), O_RDWR | O_CREAT);
 
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+    uint8_t data[] { 'H', 'e', 'l', 'l', 'o', ' ', 'b', 'a', 'c', 'k', '\r', '\n' };
+#else
     uint8_t data[] { 'H', 'e', 'l', 'l', 'o', ' ', 'b', 'a', 'c', 'k', '\n' };
+#endif
     uint8_t buffer[20];
     ssize_t bytesWritten = Files::Write(fd, data, sizeof(data));
     EXPECT_EQ(sizeof(data), bytesWritten);
@@ -128,7 +136,11 @@ TEST_FIXTURE(FilesTest, Stat)
     if (-1 == Files::Stat(path.c_str(), &statInfo))
         ThrowOnError(__func__, __FILE__, __LINE__, errno);
 
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+    EXPECT_EQ(long{7}, statInfo.st_size);
+#else
     EXPECT_EQ(long{6}, statInfo.st_size);
+#endif
     EXPECT_EQ(S_IRUSR | S_IWUSR, statInfo.st_mode & S_IRWXU);
 }
 

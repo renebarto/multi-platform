@@ -1,11 +1,11 @@
-#include <unittest-c++/UnitTestC++.h>
+#include <unittest-cpp/UnitTestC++.h>
 
 #include <fstream>
 #include "osal/osal.h"
 #include "osal/Console.h"
 //#include <core/ConsoleLogger.h>
 //#include <core/DefaultLogger.h>
-#include <unittest-c++/ConsoleGoogleTestReporter.h>
+#include <unittest-cpp/ConsoleGoogleTestReporter.h>
 #include "CommandLineOptionsParser.h"
 
 using namespace std;

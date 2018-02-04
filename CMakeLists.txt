@@ -5,13 +5,16 @@ project(multi-platform)
 option(MEASURE_COVERAGE "Determine coverage" OFF)
 option(BUILD_UNIT_TESTS "Build unit tests" ON)
 option(LOCAL_BUILD "Only perform local build, no install" OFF)
-option(SCRIPTS_DIR "CMake scripts location" "${CMAKE_SOURCE_DIR}/cmake")
+if ("${SCRIPTS_DIR}" STREQUAL "")
+    set(SCRIPTS_DIR "${CMAKE_SOURCE_DIR}/cmake")
+endif()
 
 if ("${PLATFORM_NAME}" STREQUAL "")
     set(PLATFORM_NAME "x86_64")
 endif()
 
-message(STATUS "Scripts location: ${SCRIPTS_DIR}")
+message(STATUS "Scripts location        : ${SCRIPTS_DIR}")
+message(STATUS "Test data location      : ${TEST_DATA_ROOT}")
 if (MEASURE_COVERAGE)
     message(STATUS "Measuring coverage")
 endif()
@@ -37,7 +40,7 @@ find_package(Threads REQUIRED)
 
 setup_version()
 
-message(STATUS "Version: ${VERSION}")
+message(STATUS "Version                 : ${VERSION}")
 
 set_build_type()
 set_config_dir()

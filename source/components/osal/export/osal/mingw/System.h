@@ -31,6 +31,26 @@ inline const char * getenv(const char * name)
     }
     return buffer;
 }
+inline const char * GetEnvironmentVariable(const char * name)
+{
+    static char buffer[4096];
+    if (::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) == 0)
+    {
+        return nullptr;
+    }
+    return buffer;
+}
+inline int SetEnvironmentVariable(const char * name, const char * value, bool overwrite = true)
+{
+    static char buffer[4096];
+    if (!overwrite && ::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) != 0)
+        return 0;
+    return ::SetEnvironmentVariableA(name, value) ? 0 : EINVAL;
+}
+inline int UnSetEnvironmentVariable(const char * name)
+{
+    return ::SetEnvironmentVariableA(name, nullptr) ? 0 : EINVAL;
+}
 
 } // namespace System
 } // namespace OSAL
