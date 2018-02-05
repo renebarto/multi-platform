@@ -78,5 +78,10 @@ inline __off_t GetSize(const char * path)
     return data.st_size;
 }
 
+inline int CreatePipe(FileDescriptor fds[2])
+{
+    return ::pipe(fds);
+}
+
 } // namespace Files
 } // namespace OSAL

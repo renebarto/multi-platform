@@ -144,6 +144,15 @@ TEST_FIXTURE(FilesTest, Stat)
     EXPECT_EQ(S_IRUSR | S_IWUSR, statInfo.st_mode & S_IRWXU);
 }
 
+TEST_FIXTURE(FilesTest, CreatePipe)
+{
+    Files::FileDescriptor fds[2] = {-1, -1};
+    Files::CreatePipe(fds);
+    EXPECT_NE(-1, fds[0]);
+    EXPECT_NE(-1, fds[1]);
+    EXPECT_NE(fds[0], fds[1]);
+}
+
 class TemporaryFileTest : public UnitTestCpp::TestFixture
 {
 public:

@@ -5,8 +5,6 @@
 namespace OSAL {
 namespace Test {
 
-static constexpr size_t TestSize = 16;
-
 class AssertTest : public UnitTestCpp::TestFixture
 {
 public:

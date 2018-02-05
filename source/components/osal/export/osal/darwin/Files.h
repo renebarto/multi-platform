@@ -51,5 +51,36 @@ inline ssize_t Write(FileDescriptor fd, const void * buf, size_t count)
     return ::write(fd, buf, count);
 }
 
+inline int Remove(const char * path)
+{
+    return ::unlink(path);
+}
+
+inline int Stat(const char * path, struct stat * data)
+{
+    return ::stat(path, data);
+}
+
+inline mode_t GetFilePermissions(const char * path)
+{
+    struct stat data;
+    if (::stat(path, &data) == -1)
+        return 0;
+    return data.st_mode;
+}
+
+inline _off_t GetSize(const char * path)
+{
+    struct stat data;
+    if (::stat(path, &data) == -1)
+        return 0;
+    return data.st_size;
+}
+
+inline int CreatePipe(FileDescriptor fds[2])
+{
+    return ::pipe(fds);
+}
+
 } // namespace Files
 } // namespace OSAL
