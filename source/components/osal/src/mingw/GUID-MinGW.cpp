@@ -224,16 +224,16 @@ bool OSAL::GUID::TryParse(const std::string & text, GUID & guid)
 
     if (str.length() != 36)
         return false;
-    if (str.find(delimiter) != 8)
+    if (str[8] != delimiter)
         return false;
     str.erase(8, 1);
-    if (str.find(delimiter) != 12)
+    if (str[12] != delimiter)
         return false;
     str.erase(12, 1);
-    if (str.find(delimiter) != 16)
+    if (str[16] != delimiter)
         return false;
     str.erase(16, 1);
-    if (str.find(delimiter) != 20)
+    if (str[20] != delimiter)
         return false;
     str.erase(20, 1);
     if (str.find(delimiter) != std::string::npos)
