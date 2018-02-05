@@ -1,5 +1,6 @@
 #include <unittest-cpp/UnitTestC++.h>
 
+#include <type_traits>
 #include <osal/FlagOperators.h>
 #include <core/serialization/Serialization.h>
 #include <core/serialization/SerializationImpl.h>
@@ -21,10 +22,16 @@ enum class MyFlags : uint8_t
     ALL = 0xFF,
 };
 
-DEFINE_FLAG_OPERATORS(MyFlags, uint8_t);
+//DEFINE_FLAG_OPERATORS(MyFlags, uint8_t);
 
 } // namespace Test
 } // namespace OSAL
+
+template<>
+struct is_flag<OSAL::Test::MyFlags>
+{
+    static constexpr bool value=true;
+};
 
 WARNING_PUSH
 WARNING_DISABLE(4592)
@@ -45,7 +52,7 @@ WARNING_POP
 namespace OSAL {
 namespace Test {
 
-inline std::basic_ostream<char> & operator << (std::basic_ostream<char> & stream, const MyFlags & value)
+inline std::ostream & operator << (std::ostream & stream, const MyFlags & value)
 {
     stream << Core::Serialize(value);
     return stream;

@@ -17,57 +17,63 @@ namespace OSAL
 // See Message& operator<<(...) below for why.
 void OSAL_EXPORT operator <<(const OSAL::Secret&, int);
 
-namespace OSAL
-{
+namespace OSAL {
 
 #if defined(LINUX) || defined(DARWIN)
-enum class ConsoleColor : int
-{
-    Default = -1,
-    Black = 0,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    White,
-    ColorMask = 0x07,
-    Intensity = 0x08,
-    Bold = 0x10,
-};
+    enum class ConsoleColor : int {
+        Default = -1,
+        Black = 0,
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        White,
+        ColorMask = 0x07,
+        Intensity = 0x08,
+        Bold = 0x10,
+    };
 #elif defined(WIN_MSVC) || defined(WIN_MINGW)
-enum class ConsoleColor : int
-{
-    Default = -1,
-    Black = 0,
-    Red = FOREGROUND_RED,
-    Green = FOREGROUND_GREEN,
-    Yellow = FOREGROUND_RED | FOREGROUND_GREEN,
-    Blue = FOREGROUND_BLUE,
-    Magenta = FOREGROUND_RED | FOREGROUND_BLUE,
-    Cyan = FOREGROUND_GREEN | FOREGROUND_BLUE,
-    White = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
-    ColorMask = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
-    Intensity = FOREGROUND_INTENSITY,
-    Bold = 0,
-};
+    enum class ConsoleColor : int
+    {
+        Default = -1,
+        Black = 0,
+        Red = FOREGROUND_RED,
+        Green = FOREGROUND_GREEN,
+        Yellow = FOREGROUND_RED | FOREGROUND_GREEN,
+        Blue = FOREGROUND_BLUE,
+        Magenta = FOREGROUND_RED | FOREGROUND_BLUE,
+        Cyan = FOREGROUND_GREEN | FOREGROUND_BLUE,
+        White = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+        ColorMask = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+        Intensity = FOREGROUND_INTENSITY,
+        Bold = 0,
+    };
 #endif
 
-DEFINE_FLAG_OPERATORS(ConsoleColor, int);
+} // namespace OSAL
+
+template<>
+struct is_flag<OSAL::ConsoleColor>
+{
+    static constexpr bool value=true;
+};
 
 template<class CharT>
-OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, ConsoleColor value);
+OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, OSAL::ConsoleColor value);
+
+namespace OSAL {
 
 struct OSAL_EXPORT _SetForegroundColor
-        {
-                ConsoleColor color;
-        };
+{
+        ConsoleColor color;
+};
 
 struct OSAL_EXPORT _SetBackgroundColor
-        {
-                ConsoleColor color;
-        };
+{
+        ConsoleColor color;
+};
 
 class OSAL_EXPORT Console
 {
