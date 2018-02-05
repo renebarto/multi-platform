@@ -162,6 +162,8 @@ template<class T>
 T Array<T>::Get(size_t offset) const
 {
     ASSERT(offset < _size);
+    if (offset >= _size)
+        return 0;
     return _data[offset];
 }
 
@@ -169,6 +171,8 @@ template<class T>
 size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 {
     ASSERT(offset < _size);
+    if (offset >= _size)
+        return 0;
     size_t valuesToRead = std::min<size_t>(length, _size - offset);
     memcpy(data, this->_data + offset, valuesToRead * sizeof(T));
     return valuesToRead;
@@ -179,6 +183,8 @@ size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 {
     ASSERT(offset < _size);
     data.Clear();
+    if (offset >= _size)
+        return 0;
     size_t valuesToRead = std::min(length, _size - offset);
     data.Set(0, this->_data + offset, valuesToRead);
     return valuesToRead;
@@ -188,6 +194,8 @@ template<class T>
 Array<T> Array<T>::Get(size_t offset, size_t length) const
 {
     ASSERT(offset + length <= _size);
+    if (offset + length > _size)
+        return Array<T>();
     return Array<T>(Data() + offset, length);
 }
 
@@ -277,6 +285,8 @@ template<class T>
 T& Array<T>::operator[] (size_t offset)
 {
     ASSERT(offset < _size);
+    if (offset >= _size)
+        return _data[0];
     return _data[offset];
 }
 
@@ -284,6 +294,8 @@ template<class T>
 const T& Array<T>::operator[] (size_t offset) const
 {
     ASSERT(offset < _size);
+    if (offset >= _size)
+        return _data[0];
     return _data[offset];
 }
 

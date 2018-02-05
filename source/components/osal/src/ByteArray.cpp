@@ -51,12 +51,16 @@ ByteArray & ByteArray::operator = (ByteArray && other)
 ByteArray ByteArray::Get(size_t offset, size_t length) const
 {
     ASSERT(offset + length <= _size);
+    if (offset + length > _size)
+        return ByteArray();
     return ByteArray(Data() + offset, length);
 }
 
 uint8_t ByteArray::GetUInt8(size_t offset) const
 {
     ASSERT(offset < _size);
+    if (offset >= _size)
+        return 0;
     return _data[offset];
 }
 
