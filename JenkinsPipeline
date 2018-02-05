@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo 'Test'
                 sh 'mkdir -p test-results'
-				sh 'rm -rf test-results/*'
+                sh 'rm -rf test-results/*'
                 sh 'output/debug/bin/run-all-tests --xmloutput test-results/all-tests.test.xml'
                 step([$class: 'XUnitBuilder',
                     thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
@@ -26,7 +26,7 @@ pipeline {
             steps {
                 echo 'Measure coverage'
                 sh 'mkdir -p gcov-results'
-				sh 'rm -rf gcov-results/*'
+                sh 'rm -rf gcov-results/*'
                 sh 'gcovr --xml --xml-pretty --output=gcov-results/gcovr.xml -r source/'
                 step([$class: 'CoberturaPublisher',
                      coberturaReportFile: 'gcov-results/gcovr.xml'])

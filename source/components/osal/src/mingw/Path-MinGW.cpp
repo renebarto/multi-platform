@@ -18,7 +18,7 @@ static const char _Slash = '/';
 static const char * _CurrentDir = ".";
 static const char * _ParentDir = "..";
 
-string OSAL::Path::AddSlashIfNeeded(const string & path)
+string OSAL::Path::AddSeparatorIfNeeded(const string & path)
 {
     string result = path;
     if ((path.length() > 0) && (path[path.length() - 1] != _PathSeparator))
@@ -139,20 +139,20 @@ string OSAL::Path::RelativePath(const string & path)
                 if (pathDelimiterPos != string::npos)
                 {
                     currentDir = currentDir.substr(0, pathDelimiterPos);
-                    relativePath = AddSlashIfNeeded(relativePath);
+                    relativePath = AddSeparatorIfNeeded(relativePath);
                     relativePath += _ParentDir;
                 }
             }
             while (pathDelimiterPos != string::npos);
             if (!currentDir.empty())
             {
-                relativePath = AddSlashIfNeeded(relativePath);
+                relativePath = AddSeparatorIfNeeded(relativePath);
                 relativePath += _ParentDir;
             }
         }
         if (!fullPath.empty())
         {
-            relativePath = AddSlashIfNeeded(relativePath);
+            relativePath = AddSeparatorIfNeeded(relativePath);
             relativePath += fullPath;
         }
     }

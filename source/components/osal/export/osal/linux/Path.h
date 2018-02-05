@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unistd.h>
+#include <sys/stat.h>
 
 namespace OSAL {
 namespace Path {

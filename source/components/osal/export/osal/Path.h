@@ -19,7 +19,7 @@ namespace Path {
 
 OSAL_EXPORT char PathSeparator();
 
-OSAL_EXPORT std::string AddSlashIfNeeded(const std::string & path);
+OSAL_EXPORT std::string AddSeparatorIfNeeded(const std::string & path);
 OSAL_EXPORT bool FileExists(const std::string & path);
 OSAL_EXPORT bool DirectoryExists(const std::string & path);
 OSAL_EXPORT void MakeSureDirectoryExists(const std::string & path);

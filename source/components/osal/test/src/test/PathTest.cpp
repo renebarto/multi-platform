@@ -112,10 +112,8 @@ TEST_FIXTURE(PathTest, CombinePath)
 
 TEST_FIXTURE(PathTest, FullPath)
 {
-    string home = Path::HomePath();
-    if (home[home.length() - 1] != Path::PathSeparator())
-        home += Path::PathSeparator();
-    EXPECT_EQ(home, Path::FullPath(string("~") + Path::PathSeparator()));
+    string home = Path::AddSeparatorIfNeeded(Path::HomePath());
+    EXPECT_EQ(home, Path::AddSeparatorIfNeeded(Path::FullPath(string("~") + Path::PathSeparator())));
 }
 
 TEST_FIXTURE(PathTest, StripPathToSubDirectory)
