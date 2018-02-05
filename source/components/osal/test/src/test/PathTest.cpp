@@ -1,5 +1,6 @@
 #include <unittest-cpp/UnitTestC++.h>
 
+#include "osal/Files.h"
 #include "osal/Path.h"
 #include "osal/TestData.h"
 
@@ -192,6 +193,52 @@ TEST_FIXTURE(PathTest, CurrentDir)
     string newCurrentDirectory = Path::CurrentDir();
     EXPECT_EQ(0, Path::ChangeCurrentDirectory(currentDirectory));
     EXPECT_EQ(newPath, newCurrentDirectory);
+}
+
+TEST_FIXTURE(PathTest, MakeSureFileDoesNotExist)
+{
+    string dummyFile = Test::Data::DummyFilePath();
+
+    Files::Remove(dummyFile.c_str());
+    EXPECT_FALSE(Path::FileExists(dummyFile));
+    auto fd = Files::Create(dummyFile.c_str(), S_IRUSR | S_IWUSR);
+    Files::Close(fd);
+    EXPECT_TRUE(Path::FileExists(dummyFile));
+    Path::MakeSureFileDoesNotExist(dummyFile);
+    EXPECT_FALSE(Path::FileExists(dummyFile));
+}
+
+TEST_FIXTURE(PathTest, MakeSureDirectoryExists)
+{
+    string newDirectory = Test::Data::DummyDirPath();
+
+    Path::RemoveDirectory(newDirectory);
+    EXPECT_FALSE(Path::DirectoryExists(newDirectory));
+    Path::MakeSureDirectoryExists(newDirectory);
+    EXPECT_TRUE(Path::DirectoryExists(newDirectory));
+    Path::RemoveDirectory(newDirectory);
+}
+
+TEST_FIXTURE(PathTest, CreateDirectory)
+{
+    string newDirectory = Test::Data::DummyDirPath();
+
+    Path::RemoveDirectory(newDirectory);
+    EXPECT_FALSE(Path::DirectoryExists(newDirectory));
+    EXPECT_EQ(0, Path::CreateDirectory(newDirectory, S_IRWXU));
+    EXPECT_TRUE(Path::DirectoryExists(newDirectory));
+    Path::RemoveDirectory(newDirectory);
+}
+
+TEST_FIXTURE(PathTest, RemoveDirectory)
+{
+    string newDirectory = Test::Data::DummyDirPath();
+
+    EXPECT_NE(0, Path::RemoveDirectory(newDirectory));
+    EXPECT_FALSE(Path::DirectoryExists(newDirectory));
+    Path::MakeSureDirectoryExists(newDirectory);
+    EXPECT_TRUE(Path::DirectoryExists(newDirectory));
+    EXPECT_EQ(0, Path::RemoveDirectory(newDirectory));
 }
 
 } // TEST_SUITE(osal)

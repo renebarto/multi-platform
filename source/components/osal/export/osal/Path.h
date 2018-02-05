@@ -43,6 +43,14 @@ inline int ChangeCurrentDirectory(const std::string & directory)
 {
     return ChDir(directory.c_str());
 }
+inline int CreateDirectory(const std::string & directory, mode_t mode)
+{
+    return MkDir(directory.c_str(), mode);
+}
+inline int RemoveDirectory(const std::string & directory)
+{
+    return RmDir(directory.c_str());
+}
 
 } // namespace Path
 } // namespace OSAL

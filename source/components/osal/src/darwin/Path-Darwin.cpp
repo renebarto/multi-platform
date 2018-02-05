@@ -49,14 +49,6 @@ bool OSAL::Path::DirectoryExists(const string & path)
 
 void OSAL::Path::MakeSureDirectoryExists(const string & path)
 {
-    if (FileExists(path))
-    {
-        unlink(path.c_str());
-    }
-}
-
-void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
-{
     struct stat status;
     memset(&status, 0, sizeof(status));
     stat(path.c_str(), &status);
@@ -67,6 +59,14 @@ void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
         unlink(path.c_str());
     }
     mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+}
+
+void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
+{
+    if (FileExists(path))
+    {
+        unlink(path.c_str());
+    }
 }
 
 string OSAL::Path::FullPath(const string & path)
