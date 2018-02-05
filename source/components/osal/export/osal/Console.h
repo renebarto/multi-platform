@@ -60,8 +60,7 @@ struct is_flag<OSAL::ConsoleColor>
     static constexpr bool value=true;
 };
 
-template<class CharT>
-OSAL_EXPORT std::basic_ostream<CharT> & operator << (std::basic_ostream<CharT> & stream, OSAL::ConsoleColor value);
+OSAL_EXPORT std::ostream & operator << (std::ostream & stream, OSAL::ConsoleColor value);
 
 namespace OSAL {
 
@@ -94,7 +93,9 @@ public:
     void SetTerminalColor(ConsoleColor foregroundColor = ConsoleColor::Default,
                           ConsoleColor backgroundColor = ConsoleColor::Default);
     void ResetTerminalColor();
-    bool ShouldUseColor();
+    bool ShouldUseColor() const;
+    bool ForceUseColor() const;
+    void ForceUseColor(bool value);
 
     // Streams a non-pointer _value to this object.
     template <typename T>
@@ -119,6 +120,7 @@ public:
 protected:
     Files::FileDescriptor _handle;
     std::ostream * _stream;
+    bool _forceUseColor;
     ConsoleColor _currentForegroundColor;
     ConsoleColor _currentBackgroundColor;
 

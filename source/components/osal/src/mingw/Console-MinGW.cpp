@@ -61,6 +61,7 @@ static const char * GetAnsiColorCode(ConsoleColor color)
 Console::Console(int handle)
     : _handle(handle)
     , _stream(DetermineStream(_handle))
+    , _forceUseColor()
     , _currentForegroundColor(ConsoleColor::Default)
     , _currentBackgroundColor(ConsoleColor::Default)
 {
@@ -69,6 +70,7 @@ Console::Console(int handle)
 Console::Console(FILE * file)
     : _handle(OSAL::Files::GetFileDescriptor(file))
     , _stream(DetermineStream(_handle))
+    , _forceUseColor()
     , _currentForegroundColor(ConsoleColor::Default)
     , _currentBackgroundColor(ConsoleColor::Default)
 {
@@ -77,6 +79,7 @@ Console::Console(FILE * file)
 Console::Console(std::ostream & stream)
     : _handle(DetermineHandle(&stream))
     , _stream(&stream)
+    , _forceUseColor()
     , _currentForegroundColor(ConsoleColor::Default)
     , _currentBackgroundColor(ConsoleColor::Default)
 {
@@ -89,15 +92,15 @@ void Console::SetTerminalColor(ConsoleColor foregroundColor, ConsoleColor backgr
     std::string command = "\033[0";
     if (foregroundColor != ConsoleColor::Default)
     {
-        if ((foregroundColor & ConsoleColor::Bold) == ConsoleColor::Bold)
-        {
-            command += ";1";
-        }
         if ((foregroundColor & ConsoleColor::Intensity) == ConsoleColor::Intensity)
             command += ";9";
         else
             command += ";3";
         command += GetAnsiColorCode(foregroundColor);
+        if ((foregroundColor & ConsoleColor::Bold) == ConsoleColor::Bold)
+        {
+            command += ";1";
+        }
     }
     if (backgroundColor != ConsoleColor::Default)
     {
@@ -106,6 +109,10 @@ void Console::SetTerminalColor(ConsoleColor foregroundColor, ConsoleColor backgr
         else
             command += ";4";
         command += GetAnsiColorCode(backgroundColor);
+        if ((backgroundColor & ConsoleColor::Bold) == ConsoleColor::Bold)
+        {
+            command += ";1";
+        }
     }
     command += "m";
     if (_stream)
@@ -116,6 +123,8 @@ void Console::SetTerminalColor(ConsoleColor foregroundColor, ConsoleColor backgr
 
 bool Console::ShouldUseColor()
 {
+    if (ForceUseColor())
+        return true;
     if (_handle == InvalidHandle)
         return false;
     if (!OSAL::Files::IsTTY(_handle))
@@ -129,6 +138,16 @@ bool Console::ShouldUseColor()
         || (term == "xterm-256color") || (term == "screen") || (term == "screen-256color")
         || (term == "linux") || (term == "cygwin");
     return term_supports_color;
+}
+
+bool Console::ForceUseColor() const
+{
+    return _forceUseColor;
+}
+
+void Console::ForceUseColor(bool value)
+{
+    _forceUseColor = value;
 }
 
 } // namespace OSAL

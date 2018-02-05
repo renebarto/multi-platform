@@ -2,7 +2,6 @@
 
 #if defined(LINUX)
 
-#include <cassert>
 #include <ext/stdio_filebuf.h>
 
 #include "osal/Files.h"

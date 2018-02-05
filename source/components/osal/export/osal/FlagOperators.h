@@ -34,7 +34,8 @@ inline operator | (typename std::underlying_type<flags>::type lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator |= (flags & lhs, flags rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator |= (flags & lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -43,7 +44,8 @@ inline flags & operator |= (flags & lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator |= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator |= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs | rhs;
     return lhs;
@@ -77,7 +79,8 @@ inline operator & (typename std::underlying_type<flags>::type lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator &= (flags & lhs, flags rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator &= (flags & lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -86,7 +89,8 @@ inline flags & operator &= (flags & lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator &= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator &= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs & rhs;
     return lhs;
@@ -120,7 +124,8 @@ inline operator ^ (typename std::underlying_type<flags>::type lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator ^= (flags & lhs, flags rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator ^= (flags & lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -129,7 +134,8 @@ inline flags & operator ^= (flags & lhs, flags rhs)
 }
 
 template<typename flags>
-inline flags & operator ^= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+typename std::enable_if<is_flag<flags>::value, flags &>::type
+inline operator ^= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs ^ rhs;
     return lhs;
