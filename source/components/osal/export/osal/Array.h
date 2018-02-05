@@ -364,6 +364,7 @@ void Array<T>::Copy(const Array<T> & other)
 template<class T>
 void Array<T>::Move(Array<T> && other)
 {
+    Free();
     _size = other._size;
     _allocatedSize = other._allocatedSize;
     _data = other._data;
