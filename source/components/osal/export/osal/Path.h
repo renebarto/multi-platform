@@ -39,6 +39,7 @@ OSAL_EXPORT std::string StripPathToSubDirectory(const std::string & path, const 
 OSAL_EXPORT std::string HomePath();
 OSAL_EXPORT std::string SystemBinariesPath();
 OSAL_EXPORT std::string SystemLibrariesPath();
+OSAL_EXPORT std::string TempPath();
 inline int ChangeCurrentDirectory(const std::string & directory)
 {
     return ChDir(directory.c_str());

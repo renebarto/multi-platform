@@ -176,4 +176,10 @@ string OSAL::Path::SystemLibrariesPath()
     return "/usr/lib";
 }
 
+string OSAL::Path::TempPath()
+{
+    const char * tempFolder = OSAL::System::GetEnvironmentVariable("TMP");
+    return tempFolder ? tempFolder : "";
+}
+
 #endif // defined(WIN_MINGW)

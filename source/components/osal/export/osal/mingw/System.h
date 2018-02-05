@@ -22,15 +22,6 @@ inline std::string TypeName(const T & x)
     return DemangleName(typeid(x).name());
 }
 
-inline const char * getenv(const char * name)
-{
-    static char buffer[4096];
-    if (::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) == 0)
-    {
-        return nullptr;
-    }
-    return buffer;
-}
 inline const char * GetEnvironmentVariable(const char * name)
 {
     static char buffer[4096];

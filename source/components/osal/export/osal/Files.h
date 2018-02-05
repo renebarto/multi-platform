@@ -21,7 +21,7 @@ public:
     TemporaryFile();
     ~TemporaryFile();
     void Close();
-    std::iostream & GetStream();
+    std::iostream * GetStream();
     std::string const & GetPath() const;
 
 private:

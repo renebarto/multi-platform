@@ -9,6 +9,9 @@ using namespace std;
 namespace OSAL {
 namespace Test {
 
+TEST_SUITE(osal)
+{
+
 class FilesTest : public UnitTestCpp::TestFixture
 {
 public:
@@ -17,9 +20,6 @@ public:
         Files::Remove(Test::Data::DummyFilePath().c_str());
     }
 };
-
-TEST_SUITE(osal)
-{
 
 TEST_FIXTURE(FilesTest, OpenExisting)
 {
@@ -142,6 +142,45 @@ TEST_FIXTURE(FilesTest, Stat)
     EXPECT_EQ(long{6}, statInfo.st_size);
 #endif
     EXPECT_EQ(S_IRUSR | S_IWUSR, statInfo.st_mode & S_IRWXU);
+}
+
+class TemporaryFileTest : public UnitTestCpp::TestFixture
+{
+public:
+    void TearDown() override
+    {
+        Files::Remove(Test::Data::DummyFilePath().c_str());
+    }
+};
+
+TEST_FIXTURE(TemporaryFileTest, Constructor)
+{
+    Files::TemporaryFile file;
+
+    EXPECT_NOT_NULL(file.GetStream());
+    EXPECT_NE(string {}, file.GetPath());
+    EXPECT_EQ(size_t {0}, file.GetPath().find(Path::TempPath()));
+}
+
+TEST_FIXTURE(TemporaryFileTest, Close)
+{
+    Files::TemporaryFile file;
+
+    file.Close();
+    EXPECT_NULL(file.GetStream());
+    EXPECT_NE(string {}, file.GetPath());
+    EXPECT_EQ(size_t {0}, file.GetPath().find(Path::TempPath()));
+}
+
+TEST_FIXTURE(TemporaryFileTest, Destructor)
+{
+    string path;
+    {
+        Files::TemporaryFile file;
+        path = file.GetPath();
+    }
+
+    EXPECT_FALSE(Path::FileExists(path));
 }
 
 } // TEST_SUITE(osal)

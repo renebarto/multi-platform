@@ -36,10 +36,9 @@ void TemporaryFile::Close()
     _stream = nullptr;
 }
 
-std::iostream & TemporaryFile::GetStream()
+std::iostream * TemporaryFile::GetStream()
 {
-    assert(_stream != nullptr);
-    return *_stream;
+    return _stream.get();
 }
 
 std::string const & TemporaryFile::GetPath() const
