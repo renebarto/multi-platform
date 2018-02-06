@@ -15,7 +15,13 @@ constexpr size_t MAX_TIME_ZONE_NAME = 4;
 class timespec : public ::timespec
 {
 public:
-    timespec() = default;
+    timespec()
+        : ::timespec()
+    {}
+    timespec(long seconds, long nanoSeconds)
+            : ::timespec { seconds, nanoSeconds }
+    {
+    }
 
     inline bool operator == (const timespec & other) const
     {
