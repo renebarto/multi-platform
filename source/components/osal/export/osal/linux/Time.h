@@ -85,18 +85,26 @@ using TimeValMicroSeconds = long;
 struct OSAL_EXPORT tm
 {
     tm();
-    tm(const ::tm & other);
+    tm(const ::tm & other, bool localTime);
     tm(const tm & other);
-    tm(int second, int minute, int hour, int day, int month, int year);
+    tm(int second, int minute, int hour, int day, int month, int year, bool localTime);
 
     void Initialize();
 
     tm & operator=(const tm & other);
     tm & operator=(const ::tm & other);
 
-    static long LocalTimeOffsetSeconds() { return tm_tzOffset; }
+    long ActiveLocalTimeOffsetSeconds() const { return tm_tzOffset + (_tm.tm_isdst ? tm_dstOffset : 0); }
+    static long LocalTimeOffsetSecondsNonDaylightSavings() { return tm_tzOffset; }
+    static long LocalTimeOffsetSecondsDaylightSavings() { return tm_tzOffset + tm_dstOffset; }
+    std::string ActiveTimeZoneName() const { return _tm.tm_isdst ? tm_tzNameDst : tm_tzName; };
+    static std::string NonDaylightSavingsTimeZoneName() { return tm_tzName; }
+    static std::string DaylightSavingsActiveTimeZoneName() { return tm_tzNameDst; }
 
     ::tm & GetTime() { return _tm; }
+    const ::tm & GetTime() const { return _tm; }
+
+    bool IsEmpty() const;
 
 private:
     struct ::tm _tm;
@@ -128,14 +136,12 @@ inline time_t mktime(tm * tim)
     return ::mktime(&(tim->GetTime()));
 }
 
-inline size_t strftime(char * strDest, size_t maxSize, const char * format, const ::tm * time)
+inline std::string strftime(const char * format, const tm * time)
 {
-    return ::strftime(strDest, maxSize, format, time);
-}
-
-inline size_t strftime(wchar_t * strDest, size_t maxSize, const wchar_t * format, const ::tm * time)
-{
-    return ::wcsftime(strDest, maxSize, format, time);
+    constexpr size_t BufferSize = 4096;
+    char buffer[BufferSize];
+    size_t charsWritten = ::strftime(buffer, BufferSize, format, &(time->GetTime()));
+    return std::string(buffer, charsWritten);
 }
 
 inline int ClockGetResolution(clockid_t clockID, OSAL::Time::timespec * res)

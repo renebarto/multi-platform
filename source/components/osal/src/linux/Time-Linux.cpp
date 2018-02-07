@@ -21,9 +21,16 @@ tm::tm()
         Initialize();
 }
 
-tm::tm(const ::tm & other)
-    : _tm(_tm)
+tm::tm(const ::tm & other, bool localTime)
+    : _tm(other)
 {
+    if (!initialized)
+        Initialize();
+    if (!IsEmpty())
+    {
+        time_t epochTime = mktime(this);
+        _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
+    }
 }
 
 tm::tm(const tm & other)
@@ -31,7 +38,7 @@ tm::tm(const tm & other)
 {
 }
 
-tm::tm(int second, int minute, int hour, int day, int month, int year)
+tm::tm(int second, int minute, int hour, int day, int month, int year, bool localTime)
     : _tm()
 {
     if (!initialized)
@@ -40,8 +47,15 @@ tm::tm(int second, int minute, int hour, int day, int month, int year)
     _tm.tm_min  = minute;
     _tm.tm_hour = hour;
     _tm.tm_mday = day;
-    _tm.tm_mon  = month;
-    _tm.tm_year = year;
+    _tm.tm_mon  = month - 1;
+    _tm.tm_year = year - 1900;
+    time_t epochTime = mktime(this);
+    _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
+    if (_tm.tm_isdst)
+    {
+        epochTime += tm_dstOffset;
+        _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
+    }
 }
 
 void tm::Initialize()
@@ -66,6 +80,19 @@ tm & tm::operator = (const ::tm & other)
 {
     _tm = other;
     return *this;
+}
+
+bool tm::IsEmpty() const
+{
+    return (_tm.tm_year == 0) &&
+           (_tm.tm_mon == 0) &&
+           (_tm.tm_mday == 0) &&
+           (_tm.tm_hour == 0) &&
+           (_tm.tm_min == 0) &&
+           (_tm.tm_sec == 0) &&
+           (_tm.tm_yday == 0) &&
+           (_tm.tm_wday == 0) &&
+           (_tm.tm_isdst == 0);
 }
 
 } // namespace Time
