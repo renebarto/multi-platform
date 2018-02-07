@@ -49,12 +49,22 @@ class TimeTest : public UnitTestCpp::TestFixture
 TEST_SUITE(osal)
 {
 
-TEST_FIXTURE(TimeTest, timespec_Constructor)
+TEST_FIXTURE(TimeTest, timespec_ConstructorDefault)
 {
     Time::timespec time;
 
     EXPECT_EQ(long {0}, time.tv_sec);
     EXPECT_EQ(long {0}, time.tv_nsec);
+}
+
+TEST_FIXTURE(TimeTest, timespec_Constructor)
+{
+    const long Seconds = 1234;
+    const long NanoSeconds = 123456789;
+    Time::timespec time(Seconds, NanoSeconds);
+
+    EXPECT_EQ(Seconds, time.tv_sec);
+    EXPECT_EQ(NanoSeconds, time.tv_nsec);
 }
 
 TEST_FIXTURE(TimeTest, timespec_EqualsOperator)
@@ -194,6 +204,53 @@ TEST_FIXTURE(TimeTest, timespec_PrintTo)
     time.PrintTo(stream);
     string expected = "tv_sec=1234 tv_nsec=123456789";
     EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(TimeTest, tm_ConstructorDefault)
+{
+    Time::tm time;
+
+    EXPECT_EQ(long {0}, time.GetTime().tm_year);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mon);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_hour);
+    EXPECT_EQ(long {0}, time.GetTime().tm_min);
+    EXPECT_EQ(long {0}, time.GetTime().tm_sec);
+    EXPECT_EQ(long {0}, time.GetTime().tm_yday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_wday);
+//    EXPECT_EQ(long {0}, time.LocalTimeOffsetSeconds());
+}
+
+TEST_FIXTURE(TimeTest, tm_Constructor_tm)
+{
+    ::tm tm;
+    Time::tm time(tm);
+
+    EXPECT_EQ(long {0}, time.GetTime().tm_year);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mon);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_hour);
+    EXPECT_EQ(long {0}, time.GetTime().tm_min);
+    EXPECT_EQ(long {0}, time.GetTime().tm_sec);
+    EXPECT_EQ(long {0}, time.GetTime().tm_yday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_wday);
+//    EXPECT_EQ(long {0}, time.LocalTimeOffsetSeconds());
+}
+
+TEST_FIXTURE(TimeTest, tm_CopyConstructor)
+{
+    Time::tm other;
+    Time::tm time(other);
+
+    EXPECT_EQ(long {0}, time.GetTime().tm_year);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mon);
+    EXPECT_EQ(long {0}, time.GetTime().tm_mday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_hour);
+    EXPECT_EQ(long {0}, time.GetTime().tm_min);
+    EXPECT_EQ(long {0}, time.GetTime().tm_sec);
+    EXPECT_EQ(long {0}, time.GetTime().tm_yday);
+    EXPECT_EQ(long {0}, time.GetTime().tm_wday);
+//    EXPECT_EQ(long {0}, time.LocalTimeOffsetSeconds());
 }
 
 } // TEST_SUITE(osal)
