@@ -12,6 +12,7 @@ namespace OSAL {
 namespace Files {
 
 typedef int FileDescriptor;
+constexpr FileDescriptor InvalidHandle = static_cast<FileDescriptor>(-1);
 
 inline FileDescriptor GetFileDescriptor(FILE * file)
 {

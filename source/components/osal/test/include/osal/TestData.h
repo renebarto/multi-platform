@@ -11,6 +11,9 @@ extern std::string BuildLogPath(const std::string & componentName, const std::st
 class Data
 {
 public:
+    static std::string _applicationName;
+    static void ApplicationName(const std::string & applicationName) { _applicationName = applicationName; }
+    static std::string ApplicationName();
     static const std::string ProjectName() { return "osal"; }
 
     static std::string TestDirectory()

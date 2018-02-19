@@ -1,6 +1,6 @@
 #include "osal/Util.h"
 
-size_t OSAL::NextPowerOfTwo(size_t value)
+size_t OSAL::Util::NextPowerOfTwo(size_t value)
 {
     size_t rest = value;
     size_t numberOfOnes = 0;
@@ -14,4 +14,5 @@ size_t OSAL::NextPowerOfTwo(size_t value)
     }
     return static_cast<size_t>((numberOfOnes != 1) ? 1 << power : 1 << (power - 1));
 }
+
 

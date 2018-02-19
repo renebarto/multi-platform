@@ -3,10 +3,9 @@
 #include <fstream>
 #include "osal/osal.h"
 #include "osal/Console.h"
-//#include <core/ConsoleLogger.h>
-//#include <core/DefaultLogger.h>
 #include <unittest-cpp/ConsoleGoogleTestReporter.h>
 #include "CommandLineOptionsParser.h"
+#include "osal/TestData.h"
 
 using namespace std;
 
@@ -40,6 +39,7 @@ int main(int argc, const char * argv[])
 
     int result = 0;
 
+    OSAL::Test::Data::ApplicationName(applicationName);
     if (!parser.xmlOutput.empty())
     {
         std::ofstream outputFile;

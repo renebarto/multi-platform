@@ -18,21 +18,20 @@ static const size_t ValuesPerRow = 8;
 static const size_t MaxValuesToDisplay = 128;
 
 template<class T>
-class Array
+class FixedArray
 {
 public:
-    Array();
-    explicit Array(size_t size);
-    Array(const T * data, size_t length);
-    Array(const Array<T> & other);
-    Array(Array<T> && other);
-    Array(std::initializer_list<T> data);
-    virtual ~Array();
+    FixedArray() = delete;
+    explicit FixedArray(size_t size);
+    FixedArray(const T * data, size_t length);
+    FixedArray(const FixedArray<T> & other);
+    FixedArray(FixedArray<T> && other);
+    FixedArray(std::initializer_list<T> data);
+    virtual ~FixedArray();
     size_t Size() const
     {
         return _size;
     }
-    void Size(size_t newSize);
 
     const T * Data() const
     {
@@ -47,19 +46,15 @@ public:
 
     T Get(size_t offset) const;
     size_t Get(size_t offset, T * data, size_t length) const;
-    size_t Get(size_t offset, Array<T> & data, size_t length) const;
-    Array<T> Get(size_t offset, size_t length) const;
+    size_t Get(size_t offset, FixedArray<T> & data, size_t length) const;
+    FixedArray<T> Get(size_t offset, size_t length) const;
     void Set(size_t offset, T data);
     void Set(size_t offset, const T * data, size_t length);
-    void Set(size_t offset, const Array<T> & data);
-    void Append(const Array<T> & data)
-    {
-        Set(this->Size(), data);
-    }
-    Array<T> & operator = (const Array<T> & other);
-    Array<T> & operator = (Array<T> && other);
-    bool operator == (const Array<T> & other) const;
-    bool operator != (const Array<T> & other) const;
+    void Set(size_t offset, const FixedArray<T> & data);
+    FixedArray<T> & operator = (const FixedArray<T> & other);
+    FixedArray<T> & operator = (FixedArray<T> && other);
+    bool operator == (const FixedArray<T> & other) const;
+    bool operator != (const FixedArray<T> & other) const;
     T& operator[] (size_t offset);
     const T& operator[] (size_t offset) const;
     virtual std::ostream & PrintTo(std::ostream & stream) const;
@@ -67,68 +62,56 @@ public:
 protected:
     void AllocateSize(size_t size);
     void Free();
-    void Copy(const Array<T> & other);
-    void Move(Array<T> && other);
+    void Copy(const FixedArray<T> & other);
+    void Move(FixedArray<T> && other);
 
 protected:
-    static const size_t MinimumSize = 16;
     size_t _size;
-    size_t _allocatedSize;
     T * _data;
 };
 
 template<class T>
-Array<T>::Array()
+FixedArray<T>::FixedArray(size_t size)
     : _size(0)
-    , _allocatedSize(0)
-    , _data(nullptr)
-{
-}
-
-template<class T>
-Array<T>::Array(size_t size)
-    : _size(0)
-    , _allocatedSize(0)
     , _data(nullptr)
 {
     AllocateSize(size);
-    memset(_data, 0, size * sizeof(T));
-    this->_size = size;
+    Clear();
 }
 
 template<class T>
-Array<T>::Array(const T * data, size_t size)
+FixedArray<T>::FixedArray(const T * data, size_t size)
     : _size(0)
-    , _allocatedSize(0)
     , _data(nullptr)
 {
+    AllocateSize(size);
+    Clear();
     Set(0, data, size);
 }
 
 template<class T>
-Array<T>::Array(const Array<T> & other)
+FixedArray<T>::FixedArray(const FixedArray<T> & other)
     : _size(0)
-    , _allocatedSize(0)
     , _data(nullptr)
 {
     Copy(other);
 }
 
 template<class T>
-Array<T>::Array(Array<T> && other)
+FixedArray<T>::FixedArray(FixedArray<T> && other)
     : _size(0)
-    , _allocatedSize(0)
     , _data(nullptr)
 {
     Move(std::move(other));
 }
 
 template<class T>
-Array<T>::Array(std::initializer_list<T> data)
+FixedArray<T>::FixedArray(std::initializer_list<T> data)
     : _size(0)
-    , _allocatedSize(0)
     , _data(nullptr)
 {
+    AllocateSize(data.size());
+    Clear();
     size_t offset = 0;
     for (auto const & value : data)
     {
@@ -137,29 +120,21 @@ Array<T>::Array(std::initializer_list<T> data)
 }
 
 template<class T>
-Array<T>::~Array()
+FixedArray<T>::~FixedArray()
 {
     Free();
 }
 
 template<class T>
-void Array<T>::Size(size_t newSize)
+void FixedArray<T>::Clear()
 {
-    AllocateSize(newSize);
-    if (newSize > _size)
-        memset(_data + _size, 0, (newSize - _size) * sizeof(T));
-    _size = newSize;
+    if (_data == nullptr)
+        return;
+    memset(_data, 0, _size * sizeof(T));
 }
 
 template<class T>
-void Array<T>::Clear()
-{
-    _size = 0;
-    memset(_data, 0, _allocatedSize * sizeof(T));
-}
-
-template<class T>
-T Array<T>::Get(size_t offset) const
+T FixedArray<T>::Get(size_t offset) const
 {
     ASSERT(offset < _size);
     if (offset >= _size)
@@ -168,7 +143,7 @@ T Array<T>::Get(size_t offset) const
 }
 
 template<class T>
-size_t Array<T>::Get(size_t offset, T * data, size_t length) const
+size_t FixedArray<T>::Get(size_t offset, T * data, size_t length) const
 {
     ASSERT(offset < _size);
     if (offset >= _size)
@@ -179,7 +154,7 @@ size_t Array<T>::Get(size_t offset, T * data, size_t length) const
 }
 
 template<class T>
-size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
+size_t FixedArray<T>::Get(size_t offset, FixedArray<T> & data, size_t length) const
 {
     ASSERT(offset < _size);
     data.Clear();
@@ -191,55 +166,38 @@ size_t Array<T>::Get(size_t offset, Array<T> & data, size_t length) const
 }
 
 template<class T>
-Array<T> Array<T>::Get(size_t offset, size_t length) const
+FixedArray<T> FixedArray<T>::Get(size_t offset, size_t length) const
 {
     ASSERT(offset + length <= _size);
     if (offset + length > _size)
-        return Array<T>();
-    return Array<T>(Data() + offset, length);
+        return FixedArray<T>(0);
+    return FixedArray<T>(Data() + offset, length);
 }
 
 template<class T>
-void Array<T>::Set(size_t offset, T value)
+void FixedArray<T>::Set(size_t offset, T value)
 {
-    if (_allocatedSize <= offset)
-    {
-        AllocateSize(offset + 1);
-    }
-    if (_size <= offset)
-    {
-        _size = offset + 1;
-    }
+    ASSERT(_size > offset);
     _data[offset] = value;
 }
 
 template<class T>
-void Array<T>::Set(size_t offset, const T * data, size_t length)
+void FixedArray<T>::Set(size_t offset, const T * data, size_t length)
 {
-    if (_allocatedSize < length + offset)
-    {
-        AllocateSize(length + offset);
-    }
+    ASSERT(_size >= length + offset);
     memcpy(this->_data + offset, data, length * sizeof(T));
-    if (_size < offset + length)
-    {
-        this->_size = offset + length;
-    }
 }
 
 template<class T>
-void Array<T>::Set(size_t offset, const Array<T> & data)
+void FixedArray<T>::Set(size_t offset, const FixedArray<T> & data)
 {
     size_t dataSize = data.Size();
-    if (_allocatedSize < dataSize + offset)
-    {
-        AllocateSize(dataSize + offset);
-    }
+    ASSERT(_size >= dataSize + offset);
     Set(offset, data.Data(), dataSize);
 }
 
 template<class T>
-Array<T> & Array<T>::operator = (const Array<T> & other)
+FixedArray<T> & FixedArray<T>::operator = (const FixedArray<T> & other)
 {
     if (this != &other)
     {
@@ -250,7 +208,7 @@ Array<T> & Array<T>::operator = (const Array<T> & other)
 }
 
 template<class T>
-Array<T> & Array<T>::operator = (Array<T> && other)
+FixedArray<T> & FixedArray<T>::operator = (FixedArray<T> && other)
 {
     if (this != &other)
     {
@@ -261,7 +219,7 @@ Array<T> & Array<T>::operator = (Array<T> && other)
 }
 
 template<class T>
-bool Array<T>::operator == (const Array<T> & other) const
+bool FixedArray<T>::operator == (const FixedArray<T> & other) const
 {
     if (&other == this)
         return true;
@@ -276,13 +234,13 @@ bool Array<T>::operator == (const Array<T> & other) const
 }
 
 template<class T>
-bool Array<T>::operator != (const Array<T> & other) const
+bool FixedArray<T>::operator != (const FixedArray<T> & other) const
 {
     return ! this->operator ==(other);
 }
 
 template<class T>
-T& Array<T>::operator[] (size_t offset)
+T& FixedArray<T>::operator[] (size_t offset)
 {
     ASSERT(offset < _size);
     if (offset >= _size)
@@ -291,7 +249,7 @@ T& Array<T>::operator[] (size_t offset)
 }
 
 template<class T>
-const T& Array<T>::operator[] (size_t offset) const
+const T& FixedArray<T>::operator[] (size_t offset) const
 {
     ASSERT(offset < _size);
     if (offset >= _size)
@@ -310,10 +268,10 @@ typename std::enable_if<std::is_integral<T>::value, void>::type PrintTo(std::ost
     stream << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
 }
 template<class T>
-std::ostream & Array<T>::PrintTo(std::ostream & stream) const
+std::ostream & FixedArray<T>::PrintTo(std::ostream & stream) const
 {
     stream << OSAL::System::TypeName(*this)
-           << " Item size: " << sizeof(T) << " Size: " << _size << " Allocated: " << _allocatedSize << std::endl;
+           << " Item size: " << sizeof(T) << " Size: " << _size << std::endl;
     size_t maxValuesToDisplay = std::min(_size, MaxValuesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
     {
@@ -332,67 +290,50 @@ std::ostream & Array<T>::PrintTo(std::ostream & stream) const
 }
 
 template<class T>
-void Array<T>::AllocateSize(size_t newSize)
+void FixedArray<T>::AllocateSize(size_t newSize)
 {
     if (newSize < 0)
         return;
-    size_t newSizeAllocated = Util::NextPowerOfTwo(newSize);
-    if (newSizeAllocated < MinimumSize)
-    {
-        newSizeAllocated = MinimumSize;
-    }
-    if (_data == nullptr)
-    {
-        _data = reinterpret_cast<T *>(malloc(newSizeAllocated * sizeof(T)));
-    }
-    else
-    {
-        _data = reinterpret_cast<T *>(realloc(_data, newSizeAllocated * sizeof(T)));
-    }
-    _allocatedSize = (_data != nullptr) ? newSizeAllocated : 0;
-    if (_size > _allocatedSize)
-    {
-        _size = _allocatedSize;
-    }
+    Free();
+    _data = reinterpret_cast<T *>(malloc(newSize * sizeof(T)));
+    _size = newSize;
 }
 
 template<class T>
-void Array<T>::Free()
+void FixedArray<T>::Free()
 {
     if (_data != nullptr)
     {
         free(_data);
     }
     _size = 0;
-    _allocatedSize = 0;
 }
 
 template<class T>
-void Array<T>::Copy(const Array<T> & other)
+void FixedArray<T>::Copy(const FixedArray<T> & other)
 {
+    AllocateSize(other.Size());
     Set(0, other.Data(), other.Size());
 }
 
 template<class T>
-void Array<T>::Move(Array<T> && other)
+void FixedArray<T>::Move(FixedArray<T> && other)
 {
     Free();
     _size = other._size;
-    _allocatedSize = other._allocatedSize;
     _data = other._data;
     other._size = 0;
-    other._allocatedSize = 0;
     other._data = nullptr;
 }
 
 template<class T>
-void PrintTo(const Array<T> & value, std::ostream & stream)
+void PrintTo(const FixedArray<T> & value, std::ostream & stream)
 {
     value.PrintTo(stream);
 }
 
 template<class T>
-std::ostream & operator << (std::ostream & stream, const Array<T> & value)
+std::ostream & operator << (std::ostream & stream, const FixedArray<T> & value)
 {
     value.PrintTo(stream);
     return stream;
