@@ -65,7 +65,7 @@ TEST_FIXTURE(ProcessTest, RunEcho)
 
 TEST_FIXTURE(ProcessTest, RunEchoTestNoInput)
 {
-    string path = Path::FullPath("./echotest");
+    string path = Path::FullPath("echotest");
     vector<string> args { "a", "b", "c"};
     MyProcess process(path, args);
     process.Start();
@@ -89,7 +89,7 @@ TEST_FIXTURE(ProcessTest, RunEchoTestNoInput)
 
 TEST_FIXTURE(ProcessTest, RunEchoTestWithInput)
 {
-    string path = Path::FullPath("./echotest");
+    string path = Path::FullPath("echotest");
     vector<string> args { "a", "b", "c" };
     MyProcess process(path, args);
     process.WriteInputLine("def");
