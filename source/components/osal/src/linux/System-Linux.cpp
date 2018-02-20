@@ -9,12 +9,16 @@
 #include "osal/System.h"
 
 using namespace std;
-using namespace OSAL;
+
+namespace OSAL
+{
+namespace System
+{
 
 static utsname NameInfo;
 static bool NameInfoInitialized = false;
 
-string System::Name()
+string Name()
 {
     if (!NameInfoInitialized)
     {
@@ -23,7 +27,8 @@ string System::Name()
     }
     return NameInfo.sysname;
 }
-string System::Variant()
+
+string Variant()
 {
     if (!NameInfoInitialized)
     {
@@ -32,7 +37,8 @@ string System::Variant()
     }
     return NameInfo.nodename;
 }
-string System::Release()
+
+string Release()
 {
     if (!NameInfoInitialized)
     {
@@ -41,7 +47,8 @@ string System::Release()
     }
     return NameInfo.release;
 }
-string System::Version()
+
+string Version()
 {
     if (!NameInfoInitialized)
     {
@@ -50,7 +57,8 @@ string System::Version()
     }
     return NameInfo.version;
 }
-string System::Platform()
+
+string Platform()
 {
     if (!NameInfoInitialized)
     {
@@ -60,7 +68,7 @@ string System::Platform()
     return NameInfo.machine;
 }
 
-string System::DemangleName(const string & mangledName)
+string DemangleName(const string & mangledName)
 {
     string result;
     int status;
@@ -72,5 +80,30 @@ string System::DemangleName(const string & mangledName)
     }
     return result;
 }
+
+SystemLog::SystemLog(const string & identifier)
+    : SystemLog(identifier, SystemLogOption::LogConsoleOnError | SystemLogOption::LogNoDelayOpen |
+                            SystemLogOption::LogPError | SystemLogOption::LogPID)
+{
+}
+
+SystemLog::SystemLog(const string & identifier, SystemLogOption options)
+    : _identifier(identifier)
+{
+    openlog(_identifier.c_str(), static_cast<int>(options), LOG_USER);
+}
+
+SystemLog::~SystemLog()
+{
+    closelog();
+}
+
+void SystemLog::Write(SystemLogPriority priority, std::string const & message)
+{
+    syslog(static_cast<int>(priority), "%s", message.c_str());
+}
+
+} // namespace System
+} // namespace OSAL
 
 #endif // defined(LINUX)

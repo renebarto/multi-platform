@@ -128,7 +128,7 @@ TEST_SUITE(osal)
 #if defined(WIN_MSVC)
     TEST_FIXTURE(SystemTest, LookupFunction)
     {
-        OSAL::String typeName = OSAL::OS::TypeName(f);
+        std::string typeName = OSAL::OS::TypeName(f);
 
         EXPECT_EQ(_("void __cdecl(int)"), typeName);
     }
@@ -136,7 +136,7 @@ TEST_SUITE(osal)
     TEST_FIXTURE(SystemTest, LookupClass)
     {
         A a;
-        OSAL::String typeName = OSAL::OS::TypeName(a);
+        std::string typeName = OSAL::OS::TypeName(a);
 
         EXPECT_EQ(_("OSAL::Test::A"), typeName);
     }

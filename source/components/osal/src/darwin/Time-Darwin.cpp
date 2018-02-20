@@ -16,7 +16,7 @@ const tm & BaseTime()
 
 const long tm::tm_tzOffset = 0;
 const int tm::tm_dstOffset = 0;
-const OSAL::Char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
+const char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
 
 tm::tm(bool initialize)
 : _tm()
@@ -48,7 +48,7 @@ void tm::Update()
     tzset();
     *(const_cast<long *>(&tm_tzOffset)) = ::timezone;
     *(const_cast<int *>(&tm_dstOffset)) = ::daylight;
-    OSAL::Strings::strncpy(const_cast<OSAL::Char *>(tm_tzName), ::tzname[0],
+    OSAL::Strings::strncpy(const_cast<char *>(tm_tzName), ::tzname[0],
                            MAX_TIME_ZONE_NAME + 1);
 }
 tm & tm::operator=(const tm & other)

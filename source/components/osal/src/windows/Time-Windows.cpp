@@ -8,8 +8,8 @@ namespace Time {
 
 long tm::tm_tzOffset = 0;
 int tm::tm_dstOffset = 0;
-OSAL::Char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
-OSAL::Char tm::tm_tzNameDst[MAX_TIME_ZONE_NAME + 1] = _("");
+char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
+char tm::tm_tzNameDst[MAX_TIME_ZONE_NAME + 1] = _("");
 bool tm::initialized = false;
 static constexpr int SecondsPerMinute = 60;
 

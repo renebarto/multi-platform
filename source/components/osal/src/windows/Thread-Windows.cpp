@@ -34,7 +34,7 @@ static void RaiseException(THREADNAME_INFO & info)
 #pragma warning(pop)
 }
 
-static void SetThreadName(HANDLE threadHandle, const OSAL::String & threadName)
+static void SetThreadName(HANDLE threadHandle, const std::string & threadName)
 {
     std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
     DWORD threadID = ::GetThreadId(threadHandle);
@@ -48,12 +48,12 @@ static void SetThreadName(HANDLE threadHandle, const OSAL::String & threadName)
     RaiseException(info);
 }
 
-void OSAL::Thread::SetThreadName(std::thread & thread, const OSAL::String & threadName)
+void OSAL::Thread::SetThreadName(std::thread & thread, const std::string & threadName)
 {
     SetThreadName(static_cast<HANDLE>(thread.native_handle()), threadName);
 }
 
-void OSAL::Thread::SetThreadNameSelf(const OSAL::String & threadName)
+void OSAL::Thread::SetThreadNameSelf(const std::string & threadName)
 {
 	SetThreadName(GetCurrentThread(), threadName);
 }

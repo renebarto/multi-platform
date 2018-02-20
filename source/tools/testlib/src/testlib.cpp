@@ -6,12 +6,12 @@ using namespace std;
 
 __attribute__((constructor)) void Initialize()
 {
-    cerr << "Initializing..." << endl;
+//    cerr << "Initializing..." << endl;
 }
 
 __attribute__((constructor)) void UnInitialize()
 {
-    cerr << "UnInitializing..." << endl;
+//    cerr << "UnInitializing..." << endl;
 }
 
 int TheAnswer()

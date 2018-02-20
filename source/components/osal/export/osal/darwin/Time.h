@@ -53,7 +53,7 @@ struct OSAL_EXPORT tm
     static const long tm_tzOffset;
     // tm_dstOffset is defined as the number of seconds to add to result in standard time. For Western European time, this is -3600
     static const int tm_dstOffset;
-    static const OSAL::Char tm_tzName[MAX_TIME_ZONE_NAME + 1];
+    static const char tm_tzName[MAX_TIME_ZONE_NAME + 1];
 };
 
 inline tm * localtime(const time_t * timep)
