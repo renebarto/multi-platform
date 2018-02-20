@@ -46,7 +46,7 @@ public:
 
 TEST_FIXTURE(CommandLineOptionTest, PrintArgType)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
     stream << CommandLineArgumentType::NoArgument;
     EXPECT_EQ("None", stream.str());
 

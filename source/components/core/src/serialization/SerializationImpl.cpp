@@ -15,7 +15,7 @@ string Core::Serialize(bool value)
 
 string Core::Serialize(int8_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -48,7 +48,7 @@ string Core::Serialize(int8_t value, int base)
 
 string Core::Serialize(uint8_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -81,7 +81,7 @@ string Core::Serialize(uint8_t value, int base)
 
 string Core::Serialize(int16_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -114,7 +114,7 @@ string Core::Serialize(int16_t value, int base)
 
 string Core::Serialize(uint16_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -147,7 +147,7 @@ string Core::Serialize(uint16_t value, int base)
 
 string Core::Serialize(int32_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -180,7 +180,7 @@ string Core::Serialize(int32_t value, int base)
 
 string Core::Serialize(uint32_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -213,7 +213,7 @@ string Core::Serialize(uint32_t value, int base)
 
 string Core::Serialize(int64_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -246,7 +246,7 @@ string Core::Serialize(int64_t value, int base)
 
 string Core::Serialize(uint64_t value, int base)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     switch (base)
     {
@@ -279,7 +279,7 @@ string Core::Serialize(uint64_t value, int base)
 
 string Core::Serialize(float value, int precision)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     stream << std::setprecision(precision) << value;
 
@@ -288,7 +288,7 @@ string Core::Serialize(float value, int precision)
 
 string Core::Serialize(double value, int precision)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     stream << std::setprecision(precision) << value;
 
@@ -297,7 +297,7 @@ string Core::Serialize(double value, int precision)
 
 string Core::Serialize(long double value, int precision)
 {
-    std::basic_ostringstream<char> stream;
+    std::ostringstream stream;
 
     stream << std::setprecision(precision) << value;
 

@@ -52,8 +52,7 @@ public:
     bool operator != (const EndPoint & other) const;
     bool operator == (const DomainSocketAddress & other) const;
     bool operator != (const DomainSocketAddress & other) const;
-    uint8_t & operator[] (size_t offset);
-    const uint8_t & operator[] (size_t offset) const;
+    uint8_t operator[] (size_t offset) const;
 
     std::string GetData() const;
     void SetData(const std::string & value);

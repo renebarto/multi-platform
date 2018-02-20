@@ -623,7 +623,7 @@ string CommandLineParser::GetHelp(const string & applicationName,
     string strippedPath         = OSAL::Path::LastPartOfPath(applicationName);
     const int indentOptions     = 2;
     const int indentDescription = 25;
-    basic_ostringstream<char> stream;
+    ostringstream stream;
     stream << "Usage:" << endl;
     stream << _name << ": " << _description << endl << endl;
     stream << string(indentOptions, ' ') << strippedPath << " [OPTION...]" << endl << endl;

@@ -25,7 +25,7 @@ IPV4Address IPV4Address::Parse(const string & text)
     IPV4Address ipAddress;
     if (!TryParse(text, ipAddress))
     {
-        basic_ostringstream<char> stream;
+        ostringstream stream;
         stream << "IPV4Address string representation must be formatted as ddd.ddd.ddd.ddd, string is " << text;
         throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }

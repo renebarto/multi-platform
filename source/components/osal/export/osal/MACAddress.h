@@ -9,7 +9,7 @@ namespace Network {
 class OSAL_EXPORT MACAddress : public EndPoint
 {
 public:
-    static const size_t AddressSize = 6;
+    static const size_t AddressSize;
 
     MACAddress() :
         _macAddress(AddressSize)
@@ -30,6 +30,11 @@ public:
         SetData(macAddress, offset);
     }
     virtual ~MACAddress();
+
+    static EndPointPtr Create();
+    static EndPointPtr Create(const EndPoint & other);
+    static EndPointPtr Create(const std::string & text);
+
     static MACAddress Parse(const std::string & text);
     static bool TryParse(const std::string & text, MACAddress & macAddress);
     MACAddress & operator = (const MACAddress & other);
