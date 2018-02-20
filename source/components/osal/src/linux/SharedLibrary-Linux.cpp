@@ -4,6 +4,7 @@
 
 #include "osal/Path.h"
 #include "osal/SharedLibrary.h"
+#include "osal/Exception.h"
 
 using namespace std;
 using namespace OSAL;
@@ -93,7 +94,10 @@ std::string SharedLibrary::GetFileName() const
         return _fileName;
     const size_t BufferSize = 4096;
     char buffer[BufferSize];
-    readlink("/proc/self/exe", buffer, BufferSize);
+    ssize_t size = readlink("/proc/self/exe", buffer, BufferSize);
+    if (size < 0)
+        ThrowOnError(__func__, __FILE__, __LINE__, errno);
+    buffer[size] = '\0';
     return Path::LastPartOfPath(buffer);
 }
 
