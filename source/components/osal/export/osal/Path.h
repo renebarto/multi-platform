@@ -40,6 +40,7 @@ OSAL_EXPORT std::string HomePath();
 OSAL_EXPORT std::string SystemBinariesPath();
 OSAL_EXPORT std::string SystemLibrariesPath();
 OSAL_EXPORT std::string TempPath();
+OSAL_EXPORT std::string ResolveSymbolicLink(const std::string & path);
 inline int ChangeCurrentDirectory(const std::string & directory)
 {
     return ChDir(directory.c_str());

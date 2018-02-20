@@ -181,4 +181,28 @@ string OSAL::Path::TempPath()
     return tempFolder ? tempFolder : "";
 }
 
+std::string OSAL::Path::ResolveSymbolicLink(const std::string & path)
+{
+    std::string result = path;
+    bool done = false;
+    while (!done)
+    {
+        constexpr size_t BufferSize = 4096;
+        char buffer[BufferSize];
+        ssize_t returnValue = readlink(result.c_str(), buffer, BufferSize);
+        if (returnValue < 0)
+        {
+            if (errno == EINVAL)
+            {
+                done = true;
+                continue;
+            }
+            ThrowOnError(__func__, __FILE__, __LINE__, errno);
+        }
+        buffer[returnValue] = '\0';
+        result = buffer;
+    }
+    return result;
+}
+
 #endif // defined(LINUX)

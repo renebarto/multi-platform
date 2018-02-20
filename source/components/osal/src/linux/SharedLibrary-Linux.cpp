@@ -92,13 +92,7 @@ std::string SharedLibrary::GetFileName() const
 {
     if (!_fileName.empty())
         return _fileName;
-    const size_t BufferSize = 4096;
-    char buffer[BufferSize];
-    ssize_t size = readlink("/proc/self/exe", buffer, BufferSize);
-    if (size < 0)
-        ThrowOnError(__func__, __FILE__, __LINE__, errno);
-    buffer[size] = '\0';
-    return Path::LastPartOfPath(buffer);
+    return Path::LastPartOfPath(Path::ResolveSymbolicLink("/proc/self/exe"));
 }
 
 std::string SharedLibrary::GetFullPath() const
