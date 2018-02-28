@@ -74,12 +74,6 @@ uint8_t & IPV4Address::operator[] (size_t offset)
     return _ipAddress[offset];
 }
 
-const uint8_t & IPV4Address::operator[] (size_t offset) const
-{
-    ASSERT(offset < AddressSize);
-    return _ipAddress[offset];
-}
-
 uint32_t IPV4Address::GetUInt32() const
 {
     return _ipAddress.GetUInt32(0);

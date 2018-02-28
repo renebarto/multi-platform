@@ -140,7 +140,7 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateDefault)
     ASSERT_NOT_NULL(target);
     OSAL::ByteArray reference(OSAL::Network::DomainSocketAddress::AddressSize);
     const std::string expected = "";
-    EXPECT_TRUE(reference == target->GetBytes());
+    EXPECT_EQ(reference, target->GetBytes());
     ostringstream stream;
     target->PrintTo(stream);
     EXPECT_EQ(expected, stream.str());

@@ -9,6 +9,7 @@ namespace Network {
 class OSAL_EXPORT IPV4Address
 {
 public:
+    static const size_t AddressSize = 4;
     static const IPV4Address Any;
     static const IPV4Address None;
     static const IPV4Address Broadcast;
@@ -27,15 +28,15 @@ public:
     {
         SetData(ipAddress, 0);
     }
-    IPV4Address(uint32_t ipAddress)
-        : _ipAddress(AddressSize)
-    {
-        SetUInt32(ipAddress);
-    }
     IPV4Address(const OSAL::ByteArray & ipAddress, size_t offset)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
+    }
+    IPV4Address(uint32_t ipAddress)
+        : _ipAddress(AddressSize)
+    {
+        SetUInt32(ipAddress);
     }
 
     virtual ~IPV4Address();
@@ -46,7 +47,6 @@ public:
     bool operator == (const IPV4Address & other) const;
     bool operator != (const IPV4Address & other) const;
     uint8_t & operator[] (size_t offset);
-    const uint8_t & operator[] (size_t offset) const;
 
     uint32_t GetUInt32() const;
     void SetUInt32(uint32_t value);
@@ -58,7 +58,6 @@ public:
 
 private:
     OSAL::ByteArray _ipAddress;
-    static const size_t AddressSize = 4;
 
     void SetData(const OSAL::ByteArray & data, size_t offset);
 };

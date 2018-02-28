@@ -15,28 +15,28 @@ public:
     static const DomainSocketAddress Broadcast;
     static const DomainSocketAddress LocalHost;
 
-    DomainSocketAddress() :
-        _address(None._address)
+    DomainSocketAddress()
+        : _address(None._address)
     {
     }
-    DomainSocketAddress(const DomainSocketAddress & other) :
-        _address(other._address)
+    DomainSocketAddress(const DomainSocketAddress & other)
+        : _address(other._address)
     {
     }
-    DomainSocketAddress(const OSAL::ByteArray & address) :
-        _address(AddressSize)
+    DomainSocketAddress(const OSAL::ByteArray & address)
+        : _address(AddressSize)
     {
         SetData(address, 0);
     }
-    DomainSocketAddress(const std::string & address) :
-        _address(AddressSize)
-    {
-        SetData(address);
-    }
-    DomainSocketAddress(const OSAL::ByteArray & address, size_t offset) :
-        _address(AddressSize)
+    DomainSocketAddress(const OSAL::ByteArray & address, size_t offset)
+        : _address(AddressSize)
     {
         SetData(address, offset);
+    }
+    DomainSocketAddress(const std::string & address)
+        : _address(AddressSize)
+    {
+        SetData(address);
     }
 
     virtual ~DomainSocketAddress();

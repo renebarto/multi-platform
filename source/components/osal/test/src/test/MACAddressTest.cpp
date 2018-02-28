@@ -129,7 +129,7 @@ TEST_FIXTURE(MACAddressTest, CreateDefault)
     ASSERT_NOT_NULL(target);
     OSAL::ByteArray reference(OSAL::Network::MACAddress::AddressSize);
     const string expected = "00-00-00-00-00-00";
-    EXPECT_TRUE(reference == target->GetBytes());
+    EXPECT_EQ(reference, target->GetBytes());
     ostringstream stream;
     target->PrintTo(stream);
     EXPECT_EQ(expected, stream.str());

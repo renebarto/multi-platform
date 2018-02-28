@@ -11,7 +11,9 @@ namespace Network {
 class OSAL_EXPORT IPV6EndPoint : public OSAL::Network::EndPoint
 {
 public:
-    static constexpr uint16_t AnyPort = 0;
+    using PortType = uint16_t;
+    static const size_t AddressSize = IPV6Address::AddressSize + sizeof(PortType);
+    static const PortType AnyPort;
 
     IPV6EndPoint()
         : _ipAddress()
@@ -35,7 +37,7 @@ public:
         , _scopeIdentifier()
     {
     }
-    IPV6EndPoint(const OSAL::Network::IPV6Address & ipAddress, uint16_t port,
+    IPV6EndPoint(const OSAL::Network::IPV6Address & ipAddress, PortType port,
                  uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
         : _ipAddress(ipAddress)
         , _port(port)
@@ -43,7 +45,7 @@ public:
         , _scopeIdentifier(scopeIdentifier)
     {
     }
-    IPV6EndPoint(uint8_t ipAddress[16], uint16_t port,
+    IPV6EndPoint(uint8_t ipAddress[16], PortType port,
                  uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
         : _ipAddress(ipAddress)
         , _port(port)
@@ -51,7 +53,7 @@ public:
         , _scopeIdentifier(scopeIdentifier)
     {
     }
-    IPV6EndPoint(uint16_t port)
+    IPV6EndPoint(PortType port)
         : _ipAddress(OSAL::Network::IPV6Address::None)
         , _port(port)
         , _flowInformation()
@@ -62,7 +64,7 @@ public:
     virtual ~IPV6EndPoint() override;
 
     static EndPointPtr Create();
-    static EndPointPtr Create(EndPointPtr other);
+    static EndPointPtr Create(const EndPoint & other);
     static EndPointPtr Create(const std::string & text);
 
     static IPV6EndPoint Parse(const std::string & text);
@@ -74,7 +76,7 @@ public:
     bool operator != (const IPV6EndPoint & other) const;
 
     const OSAL::Network::IPV6Address & GetIPAddress() const { return _ipAddress; }
-    uint16_t GetPort() const { return _port; }
+    PortType GetPort() const { return _port; }
     uint32_t GetFlowInfo() const { return _flowInformation; }
     uint32_t GetScopeID() const { return _scopeIdentifier; }
 
@@ -85,7 +87,7 @@ public:
 
 private:
     OSAL::Network::IPV6Address _ipAddress;
-    uint16_t _port;
+    PortType _port;
     uint32_t _flowInformation;
     uint32_t _scopeIdentifier;
 };

@@ -11,7 +11,9 @@ namespace Network {
 class OSAL_EXPORT IPV4EndPoint : public OSAL::Network::EndPoint
 {
 public:
-    static constexpr uint16_t AnyPort = 0;
+    using PortType = uint16_t;
+    static const size_t AddressSize = IPV4Address::AddressSize + sizeof(PortType);
+    static const PortType AnyPort;
 
     IPV4EndPoint()
         : _ipAddress()
@@ -28,17 +30,17 @@ public:
         , _port(AnyPort)
     {
     }
-    IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress, uint16_t port)
+    IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress, PortType port)
         : _ipAddress(ipAddress)
         , _port(port)
     {
     }
-    IPV4EndPoint(uint32_t ipAddress, uint16_t port)
+    IPV4EndPoint(uint32_t ipAddress, PortType port)
         : _ipAddress(ipAddress)
         , _port(port)
     {
     }
-    IPV4EndPoint(uint16_t port)
+    IPV4EndPoint(PortType port)
         : _ipAddress(OSAL::Network::IPV4Address::None)
         , _port(port)
     {
@@ -47,7 +49,7 @@ public:
     virtual ~IPV4EndPoint();
 
     static EndPointPtr Create();
-    static EndPointPtr Create(EndPointPtr other);
+    static EndPointPtr Create(const EndPoint & other);
     static EndPointPtr Create(const std::string & text);
 
     static IPV4EndPoint Parse(const std::string & text);
@@ -59,7 +61,7 @@ public:
     bool operator != (const IPV4EndPoint & other) const;
 
     const OSAL::Network::IPV4Address & GetIPAddress() const { return _ipAddress; }
-    uint16_t GetPort() const { return _port; }
+    PortType GetPort() const { return _port; }
 
     virtual OSAL::Network::SocketFamily Family() const override { return OSAL::Network::SocketFamily::InternetV4; }
     virtual size_t Size() const override;
@@ -68,7 +70,7 @@ public:
 
 private:
     OSAL::Network::IPV4Address _ipAddress;
-    uint16_t _port;
+    PortType _port;
 };
 
 } // namespace Network

@@ -8,8 +8,35 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+const IPV4EndPoint::PortType IPV4EndPoint::AnyPort = 0;
+
 IPV4EndPoint::~IPV4EndPoint()
 {
+}
+
+EndPointPtr IPV4EndPoint::Create()
+{
+    auto result = std::make_shared<IPV4EndPoint>();
+    return result;
+}
+
+EndPointPtr IPV4EndPoint::Create(const EndPoint &other)
+{
+    if ((other.Family() != SocketFamily::InternetV4))
+        return nullptr;
+    const IPV4EndPoint * pOther = dynamic_cast<const IPV4EndPoint *>(&other);
+    auto result = std::make_shared<IPV4EndPoint>(*pOther);
+    return result;
+}
+
+EndPointPtr IPV4EndPoint::Create(const std::string &text)
+{
+    auto result = std::make_shared<IPV4EndPoint>();
+    if (!TryParse(text, *result))
+    {
+        return nullptr;
+    }
+    return result;
 }
 
 IPV4EndPoint IPV4EndPoint::Parse(const string & text)

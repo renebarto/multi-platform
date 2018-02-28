@@ -11,21 +11,21 @@ class OSAL_EXPORT MACAddress : public EndPoint
 public:
     static const size_t AddressSize;
 
-    MACAddress() :
-        _macAddress(AddressSize)
+    MACAddress()
+        : _macAddress(AddressSize)
     {
     }
-    MACAddress(const MACAddress & other) :
-        _macAddress(other._macAddress)
+    MACAddress(const MACAddress & other)
+        : _macAddress(other._macAddress)
     {
     }
-    MACAddress(const ByteArray & macAddress) :
-        _macAddress(AddressSize)
+    MACAddress(const ByteArray & macAddress)
+        : _macAddress(AddressSize)
     {
         SetData(macAddress, 0);
     }
-    MACAddress(const ByteArray & macAddress, size_t offset) :
-        _macAddress(AddressSize)
+    MACAddress(const ByteArray & macAddress, size_t offset)
+        : _macAddress(AddressSize)
     {
         SetData(macAddress, offset);
     }

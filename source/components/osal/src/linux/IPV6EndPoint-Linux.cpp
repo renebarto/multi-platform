@@ -9,8 +9,35 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+const IPV6EndPoint::PortType IPV6EndPoint::AnyPort = 0;
+
 IPV6EndPoint::~IPV6EndPoint()
 {
+}
+
+EndPointPtr IPV6EndPoint::Create()
+{
+    auto result = std::make_shared<IPV6EndPoint>();
+    return result;
+}
+
+EndPointPtr IPV6EndPoint::Create(const EndPoint &other)
+{
+    if ((other.Family() != SocketFamily::InternetV6))
+        return nullptr;
+    const IPV6EndPoint * pOther = dynamic_cast<const IPV6EndPoint *>(&other);
+    auto result = std::make_shared<IPV6EndPoint>(*pOther);
+    return result;
+}
+
+EndPointPtr IPV6EndPoint::Create(const std::string &text)
+{
+    auto result = std::make_shared<IPV6EndPoint>();
+    if (!TryParse(text, *result))
+    {
+        return nullptr;
+    }
+    return result;
 }
 
 IPV6EndPoint IPV6EndPoint::Parse(const string & text)
