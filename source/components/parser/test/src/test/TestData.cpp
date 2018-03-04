@@ -1,9 +1,8 @@
-#include "osal/TestData.h"
+#include "parser/TestData.h"
 
-#include "osal/Exception.h"
 #include "osal/Path.h"
 
-namespace OSAL {
+namespace Parser {
 namespace Test {
 
 std::string Data::_applicationName = "";
@@ -14,4 +13,4 @@ std::string Data::ApplicationName()
 }
 
 } // namespace Test
-} // namespace OSAL
+} // namespace Parser

@@ -1,0 +1,21 @@
+namespace WPEFramework {
+
+namespace PluginHost {
+
+[id(0x00000020)]
+interface IPlugin
+{
+    const string Initialize([in] PluginHost::IShell* shell);
+    void Deinitialize([in] PluginHost::IShell* shell);
+    string Information() const;
+}
+
+[id(0x00000021)]
+interface IPlugin::INotification
+{
+    void StateChange([in] PluginHost::IShell* plugin);
+}
+
+} // namespace PluginHost
+} // namespace WPEFramework
+

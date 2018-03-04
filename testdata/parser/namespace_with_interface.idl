@@ -1,0 +1,8 @@
+namespace WPEFramework {
+namespace PluginHost {
+[id(0x00000020)]
+interface IPlugin
+{
+} // interface IPlugin
+} // namespace PluginHost
+} // namespace WPEFramework

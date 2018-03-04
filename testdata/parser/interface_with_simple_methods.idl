@@ -1,0 +1,18 @@
+namespace WPEFramework {
+namespace PluginHost {
+[id(0x00000021)]
+interface IPlugin
+{
+    void Load() const;
+    string LoadString([in] string name);
+    const uint8 LoadU8([in] uint8 data, [in] uint32 offset);
+    uint16 LoadU16([out, size_is(size)] uint8 * data, [in] uint32 size);
+    uint32 LoadU32();
+    uint64 LoadU64();
+    sint8 LoadS8();
+    sint16 LoadS16();
+    sint32 LoadS32();
+    sint64 LoadS64();
+}
+} // namespace PluginHost
+} // namespace WPEFramework

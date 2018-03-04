@@ -1,0 +1,8 @@
+namespace WPEFramework {
+namespace PluginHost {
+[id(0x00000021)]
+interface IPlugin::INotification
+{
+}
+} // namespace PluginHost
+} // namespace WPEFramework
