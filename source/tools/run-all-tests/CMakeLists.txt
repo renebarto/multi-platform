@@ -43,6 +43,7 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
+    parser
 #    crypto
 #    network
 #    xml
@@ -66,6 +67,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 
 file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
+
+file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/include/parser/*.h)
 
 file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
@@ -91,7 +95,7 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_STARUML ${CMAKE_SOURCE_DIR}/source/components
 list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_OSAL}
     ${PACKAGE_SOURCES_CORE}
-    ${PACKAGE_SOURCES_UNITTESTCPP}
+    ${PACKAGE_SOURCES_PARSER}
     ${PACKAGE_SOURCES_CRYPTO}
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_XML}
@@ -102,6 +106,7 @@ list(APPEND PACKAGE_SOURCES
 list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_OSAL}
     ${PACKAGE_INCLUDES_CORE}
+    ${PACKAGE_INCLUDES_PARSER}
     ${PACKAGE_INCLUDES_CRYPTO}
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_XML}
@@ -114,6 +119,7 @@ set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
 list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
