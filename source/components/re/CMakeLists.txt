@@ -1,4 +1,4 @@
-project(parser)
+project(re)
 
 include(define_targets)
 include(show_target_properties)
@@ -9,7 +9,7 @@ message("\n** Setting up ${PROJECT_NAME} **\n")
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
-set(PACKAGE_DESCRIPTION "Generic parser library")
+set(PACKAGE_DESCRIPTION "Regular expression library")
 set(PACKAGE_VERSION_MAJOR 1)
 set(PACKAGE_VERSION_MINOR 0)
 set(PACKAGE_VERSION_MICRO 0)
@@ -46,8 +46,8 @@ set(PACKAGE_LIBS
     ${PACKAGE_DEPENDENCIES})
 
 file(GLOB PACKAGE_SOURCES src/*.cpp)
-file(GLOB PACKAGE_INCLUDES_PUBLIC export/parser/*.h)
-file(GLOB PACKAGE_INCLUDES_PRIVATE include/parser/*.h)
+file(GLOB PACKAGE_INCLUDES_PUBLIC export/re/*.h)
+file(GLOB PACKAGE_INCLUDES_PRIVATE include/re/*.h)
 
 set(PACKAGE_BUILD_REFERENCE ${VERSION})
 

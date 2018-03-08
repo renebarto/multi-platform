@@ -58,7 +58,7 @@ TEST_FIXTURE(LexerTest, Empty)
 
     LexerToken token = lexer.ReadToken();
     EXPECT_EQ("", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 1, 0) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 1, 0) == token.location);
     EXPECT_TRUE(reader.IsEOF());
 }
 
@@ -74,193 +74,193 @@ TEST_FIXTURE(LexerTest, SimpleTest)
     LexerToken token = lexer.ReadToken();
     EXPECT_EQ(LexerToken::Type::SquareBracketOpen, token.type);
     EXPECT_EQ("[", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 1, 0) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 1, 0) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::SquareBracketClose, token.type);
     EXPECT_EQ("]", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 2, 1) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 2, 1) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::CurlyBraceOpen, token.type);
     EXPECT_EQ("{", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 3, 2) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 3, 2) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::CurlyBraceClose, token.type);
     EXPECT_EQ("}", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 4, 3) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 4, 3) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Whitespace, token.type);
     EXPECT_EQ("  ", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 5, 4) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 5, 4) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::LineComment, token.type);
     EXPECT_EQ(" Line comment", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 7, 6) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 7, 6) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 22, 21) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 22, 21) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::ParenthesisOpen, token.type);
     EXPECT_EQ("(", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 1, 22) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 1, 22) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::ParenthesisClose, token.type);
     EXPECT_EQ(")", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 2, 23) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 2, 23) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Asterisk, token.type);
     EXPECT_EQ("*", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 3, 24) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 3, 24) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Semicolon, token.type);
     EXPECT_EQ(";", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 4, 25) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 4, 25) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Whitespace, token.type);
     EXPECT_EQ(" \t", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 5, 26) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 5, 26) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::BlockComment, token.type);
     EXPECT_EQ(" Block comment ", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 7, 28) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 7, 28) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 2, 26, 47) == token.location);
+    EXPECT_TRUE(FSA(path, 2, 26, 47) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Colon, token.type);
     EXPECT_EQ(":", token.value);
-    EXPECT_TRUE(SourceLocation(path, 3, 1, 48) == token.location);
+    EXPECT_TRUE(FSA(path, 3, 1, 48) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Comma, token.type);
     EXPECT_EQ(",", token.value);
-    EXPECT_TRUE(SourceLocation(path, 3, 2, 49) == token.location);
+    EXPECT_TRUE(FSA(path, 3, 2, 49) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 3, 3, 50) == token.location);
+    EXPECT_TRUE(FSA(path, 3, 3, 50) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Identifier, token.type);
     EXPECT_EQ("abcdefg", token.value);
-    EXPECT_TRUE(SourceLocation(path, 4, 1, 51) == token.location);
+    EXPECT_TRUE(FSA(path, 4, 1, 51) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 4, 8, 58) == token.location);
+    EXPECT_TRUE(FSA(path, 4, 8, 58) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("12345678", token.value);
-    EXPECT_TRUE(SourceLocation(path, 5, 1, 59) == token.location);
+    EXPECT_TRUE(FSA(path, 5, 1, 59) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 5, 9, 67) == token.location);
+    EXPECT_TRUE(FSA(path, 5, 9, 67) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::OctNumber, token.type);
     EXPECT_EQ("01234567", token.value);
-    EXPECT_TRUE(SourceLocation(path, 6, 1, 68) == token.location);
+    EXPECT_TRUE(FSA(path, 6, 1, 68) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 6, 9, 76) == token.location);
+    EXPECT_TRUE(FSA(path, 6, 9, 76) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::HexNumber, token.type);
     EXPECT_EQ("0x123456789aBcDeF", token.value);
-    EXPECT_TRUE(SourceLocation(path, 7, 1, 77) == token.location);
+    EXPECT_TRUE(FSA(path, 7, 1, 77) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 7, 18, 94) == token.location);
+    EXPECT_TRUE(FSA(path, 7, 18, 94) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::String, token.type);
     EXPECT_EQ("Hello!$#", token.value);
-    EXPECT_TRUE(SourceLocation(path, 8, 1, 95) == token.location);
+    EXPECT_TRUE(FSA(path, 8, 1, 95) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::NewLine, token.type);
     EXPECT_EQ("\n", token.value);
-    EXPECT_TRUE(SourceLocation(path, 8, 11, 105) == token.location);
+    EXPECT_TRUE(FSA(path, 8, 11, 105) == token.location);
     EXPECT_TRUE(reader.IsEOF());
 
 
-    EXPECT_TRUE(SourceLocation(path, 9, 1, 106) == reader.Location());
+    EXPECT_TRUE(FSA(path, 9, 1, 106) == reader.Location());
 }
 
 TEST_FIXTURE(LexerTest, UnsupportedCharacters)
@@ -275,24 +275,24 @@ TEST_FIXTURE(LexerTest, UnsupportedCharacters)
     LexerToken token = lexer.ReadToken();
     EXPECT_EQ(LexerToken::Type::None, token.type);
     EXPECT_EQ("#", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 1, 0) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 1, 0) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::None, token.type);
     EXPECT_EQ("%", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 2, 1) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 2, 1) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::None, token.type);
     EXPECT_EQ("^", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 3, 2) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 3, 2) == token.location);
     EXPECT_TRUE(reader.IsEOF());
 
-    EXPECT_TRUE(SourceLocation(path, 1, 3, 3) == reader.Location());
+    EXPECT_TRUE(FSA(path, 1, 3, 3) == reader.Location());
 }
 
 TEST_FIXTURE(LexerTest, ReadAheadToken)
@@ -307,59 +307,59 @@ TEST_FIXTURE(LexerTest, ReadAheadToken)
     LexerToken token = lexer.ReadAheadToken();
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("123", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 1, 0) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 1, 0) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("123", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 1, 0) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 1, 0) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Whitespace, token.type);
     EXPECT_EQ(" ", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 4, 3) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 4, 3) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadAheadToken();
 
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("456", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 5, 4) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 5, 4) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("456", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 5, 4) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 5, 4) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Whitespace, token.type);
     EXPECT_EQ(" ", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 8, 7) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 8, 7) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::DecNumber, token.type);
     EXPECT_EQ("789", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 9, 8) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 9, 8) == token.location);
     EXPECT_TRUE(reader.IsEOF());
 
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::Eof, token.type);
     EXPECT_EQ("", token.value);
-    EXPECT_TRUE(SourceLocation(path, 1, 11, 11) == token.location);
+    EXPECT_TRUE(FSA(path, 1, 11, 11) == token.location);
     EXPECT_TRUE(reader.IsEOF());
 
-    EXPECT_TRUE(SourceLocation(path, 1, 11, 11) == reader.Location());
+    EXPECT_TRUE(FSA(path, 1, 11, 11) == reader.Location());
 }
 
 } // TEST_SUITE(parser)

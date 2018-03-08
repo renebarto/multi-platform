@@ -16,11 +16,11 @@ public:
     char ReadAheadChar();
     std::string ReadAheadChars(size_t count);
     bool IsEOF() const;
-    const SourceLocation Location() const { return _sourceLocation; }
+    const FSA Location() const { return _sourceLocation; }
 
 protected:
     std::istream & _stream;
-    SourceLocation _sourceLocation;
+    FSA _sourceLocation;
     CyclicBuffer<char> _buffer;
 
     void FillBuffer();

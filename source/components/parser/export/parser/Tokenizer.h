@@ -61,19 +61,19 @@ struct Token
         , value()
         , location()
     {}
-    Token(TokenType aType, SourceLocation aLocation)
+    Token(TokenType aType, FSA aLocation)
         : type(aType)
         , value()
         , location(aLocation)
     {}
-    Token(TokenType aType, const std::string & aValue, SourceLocation aLocation)
+    Token(TokenType aType, const std::string & aValue, FSA aLocation)
         : type(aType)
         , value(aValue)
         , location(aLocation)
     {}
     TokenType type;
     std::string value;
-    SourceLocation location;
+    FSA location;
 };
 
 using TokenList = std::vector<Token>;

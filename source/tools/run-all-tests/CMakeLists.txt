@@ -43,6 +43,7 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
+    re
     parser
 #    crypto
 #    network
@@ -67,6 +68,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 
 file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
+
+file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/re/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/re/test/include/re/*.h)
 
 file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/include/parser/*.h)

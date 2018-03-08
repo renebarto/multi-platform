@@ -4,27 +4,27 @@
 
 namespace Parser {
 
-struct SourceLocation
+struct FSA
 {
-    SourceLocation()
+    FSA()
             : fileName()
             , line(1)
             , column(1)
             , fileOffset()
     {}
-    explicit SourceLocation(const std::string & aFileName)
+    explicit FSA(const std::string & aFileName)
             : fileName(aFileName)
             , line(1)
             , column(1)
             , fileOffset()
     {}
-    SourceLocation(const SourceLocation & other)
+    FSA(const FSA & other)
             : fileName(other.fileName)
             , line(other.line)
             , column(other.column)
             , fileOffset(other.fileOffset)
     {}
-    SourceLocation(SourceLocation && other)
+    FSA(FSA && other)
             : fileName(std::move(other.fileName))
             , line(other.line)
             , column(other.column)
@@ -35,7 +35,7 @@ struct SourceLocation
         other.column = {1};
         other.fileOffset = {};
     }
-    SourceLocation(const std::string & aFileName, unsigned aLine, unsigned aColumn, ssize_t aFileOffset)
+    FSA(const std::string & aFileName, unsigned aLine, unsigned aColumn, ssize_t aFileOffset)
             : fileName(aFileName)
             , line(aLine)
             , column(aColumn)
@@ -43,7 +43,7 @@ struct SourceLocation
     {
     }
 
-    SourceLocation & operator = (const SourceLocation & other)
+    FSA & operator = (const FSA & other)
     {
         if (this != &other)
         {
@@ -54,7 +54,7 @@ struct SourceLocation
         }
         return *this;
     }
-    SourceLocation & operator = (SourceLocation && other)
+    FSA & operator = (FSA && other)
     {
         if (this != &other)
         {
@@ -82,7 +82,7 @@ struct SourceLocation
 
 } // namespace Parser
 
-inline bool operator == (const Parser::SourceLocation & lhs, const Parser::SourceLocation & rhs)
+inline bool operator == (const Parser::FSA & lhs, const Parser::FSA & rhs)
 {
     return (lhs.fileName == rhs.fileName) &&
            (lhs.line == rhs.line) &&
@@ -90,12 +90,12 @@ inline bool operator == (const Parser::SourceLocation & lhs, const Parser::Sourc
            (lhs.fileOffset == rhs.fileOffset);
 }
 
-inline bool operator != (const Parser::SourceLocation & lhs, const Parser::SourceLocation & rhs)
+inline bool operator != (const Parser::FSA & lhs, const Parser::FSA & rhs)
 {
     return ! operator == (lhs, rhs);
 }
 
-inline std::ostream & operator << (std::ostream & stream, const Parser::SourceLocation & location)
+inline std::ostream & operator << (std::ostream & stream, const Parser::FSA & location)
 {
     stream << location.fileName << ":" << location.line << ":" << location.column;
     if (location.fileOffset < 0)
