@@ -69,8 +69,8 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
 
-file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/re/test/src/test/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/re/test/include/re/*.h)
+file(GLOB PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/re/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/re/test/include/re/*.h)
 
 file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/include/parser/*.h)
@@ -99,6 +99,7 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_STARUML ${CMAKE_SOURCE_DIR}/source/components
 list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_OSAL}
     ${PACKAGE_SOURCES_CORE}
+    ${PACKAGE_SOURCES_RE}
     ${PACKAGE_SOURCES_PARSER}
     ${PACKAGE_SOURCES_CRYPTO}
     ${PACKAGE_SOURCES_NETWORK}
@@ -110,6 +111,7 @@ list(APPEND PACKAGE_SOURCES
 list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_OSAL}
     ${PACKAGE_INCLUDES_CORE}
+    ${PACKAGE_INCLUDES_RE}
     ${PACKAGE_INCLUDES_PARSER}
     ${PACKAGE_INCLUDES_CRYPTO}
     ${PACKAGE_INCLUDES_NETWORK}
