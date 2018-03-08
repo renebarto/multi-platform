@@ -3,7 +3,7 @@
 #include <string>
 #include "osal/Path.h"
 
-namespace Parser {
+namespace RE {
 namespace Test {
 
 extern std::string BuildLogPath(const std::string & componentName, const std::string & fileName);
@@ -36,5 +36,5 @@ public:
 };
 
 } // namespace Test
-} // namespace Parser
+} // namespace RE
 

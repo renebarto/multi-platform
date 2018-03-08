@@ -2,7 +2,7 @@
 
 #include "osal/Path.h"
 
-namespace Parser {
+namespace RE {
 namespace Test {
 
 std::string Data::_applicationName = "";
@@ -13,4 +13,4 @@ std::string Data::ApplicationName()
 }
 
 } // namespace Test
-} // namespace Parser
+} // namespace RE

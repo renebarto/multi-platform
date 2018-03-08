@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
 
     int result = 0;
 
-    Parser::Test::Data::ApplicationName(applicationName);
+    RE::Test::Data::ApplicationName(applicationName);
     if (!parser.xmlOutput.empty())
     {
         std::basic_ofstream<char> outputFile;
