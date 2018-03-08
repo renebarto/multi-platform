@@ -125,6 +125,7 @@ set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
 list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/re/test/include
     ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
