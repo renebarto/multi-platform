@@ -17,20 +17,19 @@ TEST_SUITE(re) {
 
 TEST_FIXTURE(CharSetTest, ConstructDefault)
 {
-    CharSet<char> charSet;
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    CharSet charSet;
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{0}, charSet.Count());
-    EXPECT_EQ('\xFF', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, ConstructSingleChar)
 {
     char singleChar = 'a';
-    CharSet<char> charSet(singleChar);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    CharSet charSet(singleChar);
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
             EXPECT_TRUE(charSet.Contains(ch));
@@ -38,14 +37,13 @@ TEST_FIXTURE(CharSetTest, ConstructSingleChar)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{1}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, ConstructRange)
 {
-    CharSet<char>::CharRange range('a', 'c');
-    CharSet<char> charSet(range);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    CharSet::Range range('a', 'c');
+    CharSet charSet(range);
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -53,15 +51,14 @@ TEST_FIXTURE(CharSetTest, ConstructRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, ConstructCopy)
 {
-    CharSet<char>::CharRange range('a', 'c');
-    CharSet<char> other(range);
-    CharSet<char> charSet(other);
-    for (char ch = 0; ch < other.CharMax; ++ch)
+    CharSet::Range range('a', 'c');
+    CharSet other(range);
+    CharSet charSet(other);
+    for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(other.Contains(ch));
@@ -69,8 +66,7 @@ TEST_FIXTURE(CharSetTest, ConstructCopy)
             EXPECT_FALSE(other.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, other.Count());
-    EXPECT_EQ('a', other.First());
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -78,21 +74,19 @@ TEST_FIXTURE(CharSetTest, ConstructCopy)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, ConstructMove)
 {
-    CharSet<char>::CharRange range('a', 'c');
-    CharSet<char> other(range);
-    CharSet<char> charSet(std::move(other));
-    for (char ch = 0; ch < other.CharMax; ++ch)
+    CharSet::Range range('a', 'c');
+    CharSet other(range);
+    CharSet charSet(std::move(other));
+    for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         EXPECT_FALSE(other.Contains(ch));
     }
     EXPECT_EQ(size_t{0}, other.Count());
-    EXPECT_EQ('\xFF', other.First());
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -100,16 +94,15 @@ TEST_FIXTURE(CharSetTest, ConstructMove)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, Assign)
 {
-    CharSet<char>::CharRange range('a', 'c');
-    CharSet<char> other(range);
-    CharSet<char> charSet;
+    CharSet::Range range('a', 'c');
+    CharSet other(range);
+    CharSet charSet;
     charSet = other;
-    for (char ch = 0; ch < other.CharMax; ++ch)
+    for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(other.Contains(ch));
@@ -117,8 +110,7 @@ TEST_FIXTURE(CharSetTest, Assign)
             EXPECT_FALSE(other.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, other.Count());
-    EXPECT_EQ('a', other.First());
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -126,22 +118,20 @@ TEST_FIXTURE(CharSetTest, Assign)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, AssignMove)
 {
-    CharSet<char>::CharRange range('a', 'c');
-    CharSet<char> other(range);
-    CharSet<char> charSet;
+    CharSet::Range range('a', 'c');
+    CharSet other(range);
+    CharSet charSet;
     charSet = std::move(other);
-    for (char ch = 0; ch < other.CharMax; ++ch)
+    for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         EXPECT_FALSE(other.Contains(ch));
     }
     EXPECT_EQ(size_t{0}, other.Count());
-    EXPECT_EQ('\xFF', other.First());
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -149,7 +139,6 @@ TEST_FIXTURE(CharSetTest, AssignMove)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, AddSingleChar)
@@ -157,9 +146,9 @@ TEST_FIXTURE(CharSetTest, AddSingleChar)
     char singleChar = 'a';
     char secondChar = 'b';
     char otherChar = 'd';
-    CharSet<char> charSet;
+    CharSet charSet;
     charSet.Add(singleChar);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
             EXPECT_TRUE(charSet.Contains(ch));
@@ -167,11 +156,10 @@ TEST_FIXTURE(CharSetTest, AddSingleChar)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{1}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 
     charSet.Add(secondChar);
     charSet.Add(otherChar);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((ch == singleChar) || (ch == secondChar) || (ch == otherChar))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -179,22 +167,21 @@ TEST_FIXTURE(CharSetTest, AddSingleChar)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, AddRange)
 {
-    CharSet<char>::CharRange firstRange('g', 'i');
-    CharSet<char>::CharRange nonOverlappingBefore('d', 'e');
-    CharSet<char>::CharRange nonOverlappingAfter('k', 'l');
-    CharSet<char>::CharRange connectingBefore('d', 'f');
-    CharSet<char>::CharRange connectingAfter('j', 'l');
-    CharSet<char>::CharRange overlappingSub('g', 'h');
-    CharSet<char>::CharRange overlappingExtending('a', 'z');
-    CharSet<char>::CharRange otherRange('A', 'Z');
-    CharSet<char> charSet;
+    CharSet::Range firstRange('g', 'i');
+    CharSet::Range nonOverlappingBefore('d', 'e');
+    CharSet::Range nonOverlappingAfter('k', 'l');
+    CharSet::Range connectingBefore('d', 'f');
+    CharSet::Range connectingAfter('j', 'l');
+    CharSet::Range overlappingSub('g', 'h');
+    CharSet::Range overlappingExtending('a', 'z');
+    CharSet::Range otherRange('A', 'Z');
+    CharSet charSet;
     charSet.Add(firstRange);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if ((firstRange.from <= ch) && (firstRange.to >= ch))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -202,10 +189,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{3}, charSet.Count());
-    EXPECT_EQ('g', charSet.First());
 
     charSet.Add(nonOverlappingBefore);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((firstRange.from <= ch) && (firstRange.to >= ch)) ||
             ((nonOverlappingBefore.from <= ch) && (nonOverlappingBefore.to >= ch)))
@@ -214,10 +200,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{5}, charSet.Count());
-    EXPECT_EQ('d', charSet.First());
 
     charSet.Add(nonOverlappingAfter);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((firstRange.from <= ch) && (firstRange.to >= ch)) ||
             ((nonOverlappingBefore.from <= ch) && (nonOverlappingBefore.to >= ch)) ||
@@ -227,10 +212,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{7}, charSet.Count());
-    EXPECT_EQ('d', charSet.First());
 
     charSet.Add(connectingBefore);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((firstRange.from <= ch) && (firstRange.to >= ch)) ||
             ((connectingBefore.from <= ch) && (connectingBefore.to >= ch)) ||
@@ -240,10 +224,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{8}, charSet.Count());
-    EXPECT_EQ('d', charSet.First());
 
     charSet.Add(connectingAfter);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((firstRange.from <= ch) && (firstRange.to >= ch)) ||
             ((connectingBefore.from <= ch) && (connectingBefore.to >= ch)) ||
@@ -253,10 +236,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{9}, charSet.Count());
-    EXPECT_EQ('d', charSet.First());
 
     charSet.Add(overlappingSub);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((firstRange.from <= ch) && (firstRange.to >= ch)) ||
             ((connectingBefore.from <= ch) && (connectingBefore.to >= ch)) ||
@@ -266,10 +248,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{9}, charSet.Count());
-    EXPECT_EQ('d', charSet.First());
 
     charSet.Add(overlappingExtending);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((overlappingExtending.from <= ch) && (overlappingExtending.to >= ch)))
             EXPECT_TRUE(charSet.Contains(ch));
@@ -277,10 +258,9 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{26}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
 
     charSet.Add(otherRange);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (((overlappingExtending.from <= ch) && (overlappingExtending.to >= ch)) ||
             ((otherRange.from <= ch) && (otherRange.to >= ch)))
@@ -289,14 +269,13 @@ TEST_FIXTURE(CharSetTest, AddRange)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{52}, charSet.Count());
-    EXPECT_EQ('A', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, Clear)
 {
     char singleChar = 'a';
-    CharSet<char> charSet(singleChar);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    CharSet charSet(singleChar);
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
             EXPECT_TRUE(charSet.Contains(ch));
@@ -304,21 +283,19 @@ TEST_FIXTURE(CharSetTest, Clear)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{1}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
     charSet.Clear();
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{0}, charSet.Count());
-    EXPECT_EQ('\xFF', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, Fill)
 {
     char singleChar = 'a';
-    CharSet<char> charSet(singleChar);
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    CharSet charSet(singleChar);
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
             EXPECT_TRUE(charSet.Contains(ch));
@@ -326,14 +303,12 @@ TEST_FIXTURE(CharSetTest, Fill)
             EXPECT_FALSE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{1}, charSet.Count());
-    EXPECT_EQ('a', charSet.First());
     charSet.Fill();
-    for (char ch = 0; ch < charSet.CharMax; ++ch)
+    for (char ch = 0; ch < charSet.MaxValue; ++ch)
     {
         EXPECT_TRUE(charSet.Contains(ch));
     }
     EXPECT_EQ(size_t{128}, charSet.Count());
-    EXPECT_EQ('\0', charSet.First());
 }
 
 TEST_FIXTURE(CharSetTest, Iterator)
@@ -342,7 +317,7 @@ TEST_FIXTURE(CharSetTest, Iterator)
     char lastChar = 'c';
     char firstCharSecondRange = 'd';
     char lastCharSecondRange = 'f';
-    CharSet<char> charSet(firstChar);
+    CharSet charSet(firstChar);
     auto it = charSet.begin();
     EXPECT_FALSE(it == charSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -354,7 +329,7 @@ TEST_FIXTURE(CharSetTest, Iterator)
     it = charSet.begin();
     EXPECT_TRUE(it == charSet.end());
 
-    charSet.Add(CharSet<char>::CharRange(firstChar, lastChar));
+    charSet.Add(CharSet::Range(firstChar, lastChar));
     it = charSet.begin();
     EXPECT_FALSE(it == charSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -362,7 +337,7 @@ TEST_FIXTURE(CharSetTest, Iterator)
     ++it;
     EXPECT_TRUE(it == charSet.end());
 
-    charSet.Add(CharSet<char>::CharRange(firstCharSecondRange, lastCharSecondRange));
+    charSet.Add(CharSet::Range(firstCharSecondRange, lastCharSecondRange));
     it = charSet.begin();
     EXPECT_FALSE(it == charSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -373,14 +348,14 @@ TEST_FIXTURE(CharSetTest, Iterator)
 
 TEST_FIXTURE(CharSetTest, Includes)
 {
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Includes(connectingBefore));
@@ -392,14 +367,14 @@ TEST_FIXTURE(CharSetTest, Includes)
 
 TEST_FIXTURE(CharSetTest, Overlaps)
 {
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Overlaps(connectingBefore));
@@ -411,15 +386,15 @@ TEST_FIXTURE(CharSetTest, Overlaps)
 
 TEST_FIXTURE(CharSetTest, OperatorEquals)
 {
-    CharSet<char> target(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target(CharSet::Range('g', 'i'));
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     EXPECT_TRUE(target == firstRange);
     EXPECT_FALSE(target == nonOverlappingBefore);
     EXPECT_FALSE(target == nonOverlappingAfter);
@@ -432,15 +407,15 @@ TEST_FIXTURE(CharSetTest, OperatorEquals)
 
 TEST_FIXTURE(CharSetTest, OperatorNotEquals)
 {
-    CharSet<char> target(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target(CharSet::Range('g', 'i'));
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     EXPECT_FALSE(target != firstRange);
     EXPECT_TRUE(target != nonOverlappingBefore);
     EXPECT_TRUE(target != nonOverlappingAfter);
@@ -453,16 +428,16 @@ TEST_FIXTURE(CharSetTest, OperatorNotEquals)
 
 TEST_FIXTURE(CharSetTest, OperatorAnd)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     target = firstRange & firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange & nonOverlappingBefore;
@@ -483,63 +458,63 @@ TEST_FIXTURE(CharSetTest, OperatorAnd)
 
 TEST_FIXTURE(CharSetTest, OperatorOr)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
 
-    CharSet<char> expected;
+    CharSet expected;
     EXPECT_EQ(expected, target);
     target = firstRange | firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange | nonOverlappingBefore;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('d', 'e'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange | nonOverlappingAfter;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('k', 'l'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingBefore;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('d', 'f'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingAfter;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('j', 'l'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingSub;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('g', 'h'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingExtending;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('a', 'z'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange | otherRange;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('A', 'Z'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(CharSetTest, OperatorMinus)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     target = firstRange - firstRange;
     EXPECT_EQ(empty, target);
     target = firstRange - nonOverlappingBefore;
@@ -550,7 +525,7 @@ TEST_FIXTURE(CharSetTest, OperatorMinus)
     EXPECT_EQ(firstRange, target);
     target = firstRange - connectingAfter;
     EXPECT_EQ(firstRange, target);
-    CharSet<char> expected('i');
+    CharSet expected('i');
     target = firstRange - overlappingSub;
     EXPECT_EQ(expected, target);
     target = firstRange - overlappingExtending;
@@ -561,16 +536,16 @@ TEST_FIXTURE(CharSetTest, OperatorMinus)
 
 TEST_FIXTURE(CharSetTest, OperatorAndEquals)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     target = firstRange;
     target &= firstRange;
     EXPECT_EQ(firstRange, target);
@@ -599,71 +574,71 @@ TEST_FIXTURE(CharSetTest, OperatorAndEquals)
 
 TEST_FIXTURE(CharSetTest, OperatorOrEquals)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
 
-    CharSet<char> expected;
+    CharSet expected;
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target |= nonOverlappingBefore;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('d', 'e'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= nonOverlappingAfter;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('k', 'l'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingBefore;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('d', 'f'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingAfter;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('j', 'l'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingSub;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('g', 'h'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingExtending;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('a', 'z'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= otherRange;
-    expected = CharSet<char>(firstRange);
-    expected.Add(CharSet<char>::CharRange('A', 'Z'));
+    expected = CharSet(firstRange);
+    expected.Add(CharSet::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(CharSetTest, OperatorMinusEquals)
 {
-    CharSet<char> target;
-    CharSet<char> empty;
-    CharSet<char> firstRange(CharSet<char>::CharRange('g', 'i'));
-    CharSet<char> nonOverlappingBefore(CharSet<char>::CharRange('d', 'e'));
-    CharSet<char> nonOverlappingAfter(CharSet<char>::CharRange('k', 'l'));
-    CharSet<char> connectingBefore(CharSet<char>::CharRange('d', 'f'));
-    CharSet<char> connectingAfter(CharSet<char>::CharRange('j', 'l'));
-    CharSet<char> overlappingSub(CharSet<char>::CharRange('g', 'h'));
-    CharSet<char> overlappingExtending(CharSet<char>::CharRange('a', 'z'));
-    CharSet<char> otherRange(CharSet<char>::CharRange('A', 'Z'));
+    CharSet target;
+    CharSet empty;
+    CharSet firstRange(CharSet::Range('g', 'i'));
+    CharSet nonOverlappingBefore(CharSet::Range('d', 'e'));
+    CharSet nonOverlappingAfter(CharSet::Range('k', 'l'));
+    CharSet connectingBefore(CharSet::Range('d', 'f'));
+    CharSet connectingAfter(CharSet::Range('j', 'l'));
+    CharSet overlappingSub(CharSet::Range('g', 'h'));
+    CharSet overlappingExtending(CharSet::Range('a', 'z'));
+    CharSet otherRange(CharSet::Range('A', 'Z'));
     target = firstRange;
     target -= firstRange;
     EXPECT_EQ(empty, target);
@@ -679,7 +654,7 @@ TEST_FIXTURE(CharSetTest, OperatorMinusEquals)
     target = firstRange;
     target -= connectingAfter;
     EXPECT_EQ(firstRange, target);
-    CharSet<char> expected('i');
+    CharSet expected('i');
     target = firstRange;
     target -= overlappingSub;
     EXPECT_EQ(expected, target);

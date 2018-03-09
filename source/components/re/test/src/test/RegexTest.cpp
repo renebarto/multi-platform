@@ -26,11 +26,12 @@ TEST_FIXTURE(RegexTest, ConstructDefault)
 
 TEST_FIXTURE(RegexTest, ConstructStringLiteral)
 {
-//    Regex regex("abc");
-//    EXPECT_FALSE(regex.Match(""));
-//    EXPECT_TRUE(regex.PartialMatch(""));
-//    EXPECT_FALSE(regex.Match("abc"));
-//    EXPECT_TRUE(regex.PartialMatch("abc"));
+    Regex regex("abc");
+    cout << regex;
+    EXPECT_FALSE(regex.Match(""));
+    EXPECT_TRUE(regex.PartialMatch(""));
+    EXPECT_FALSE(regex.Match("abc"));
+    EXPECT_TRUE(regex.PartialMatch("abc"));
 }
 
 } // TEST_SUITE(re)

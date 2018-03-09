@@ -4,46 +4,11 @@
 #include <map>
 #include <set>
 #include <vector>
+#include "InputSet.h"
 
 namespace RE {
 
-template<typename InputValue>
-class InputSet
-{
-public:
-    using Set = std::set<InputValue>;
-    InputSet()
-        : _contents()
-    {}
-    InputSet(InputValue value)
-        : _contents()
-    {
-        Add(value);
-    }
-    InputSet(std::initializer_list<InputValue> values)
-        : _contents()
-    {
-        Add(values.begin(), values.end());
-    }
-    void Add(InputValue value)
-    {
-        _contents.emplace(value);
-    }
-    template<class InputIterator>
-    void Add(InputIterator begin, InputIterator end)
-    {
-        _contents.insert(begin, end);
-    }
-    bool Contains(InputValue value) const
-    {
-        return _contents.find(value) != _contents.end();
-    }
-
-protected:
-    Set _contents;
-};
-
-template<typename InputValue, typename State, typename InputSpecifier = InputSet<InputValue>>
+template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
 class FSARule
 {
 public:
@@ -104,26 +69,26 @@ public:
     }
 };
 
-template<typename InputValue, typename State, typename InputSpecifier = InputSet<InputValue>>
-using FSARuleSet = std::vector<FSARule<InputValue, State, InputSpecifier>>;
+template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
+using FSARuleSet = std::vector<FSARule<State, InputValue, InputSpecifier>>;
 
-template<typename InputValue, typename State, typename InputSpecifier = InputSet<InputValue>>
+template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
 class FSA
 {
 public:
-    FSA(const FSARuleSet<InputValue, State, InputSpecifier> & rules)
+    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules)
         : _rules(rules)
         , _initialState()
         , _finalState(_initialState)
         , _currentState(_initialState)
     {}
-    FSA(const FSARuleSet<InputValue, State, InputSpecifier> & rules, State initialState)
+    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules, State initialState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(_initialState)
         , _currentState(_initialState)
     {}
-    FSA(const FSARuleSet<InputValue, State, InputSpecifier> & rules, State initialState, State finalState)
+    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules, State initialState, State finalState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(finalState)
@@ -183,13 +148,13 @@ public:
     bool IsFinalState() const { return _currentState == _finalState; }
 
 protected:
-    const FSARuleSet<InputValue, State, InputSpecifier> & _rules;
+    const FSARuleSet<State, InputValue, InputSpecifier> & _rules;
     State _initialState;
     State _finalState;
     State _currentState;
 };
 
-template<typename InputValue, typename State, typename InputSpecifier = InputSet<InputValue>>
+template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
 class FSAValidator
 {
 public:
@@ -197,7 +162,7 @@ public:
         : _map()
     {}
 
-    bool Validate(const FSARuleSet<InputValue, State, InputSpecifier> & rules,
+    bool Validate(const FSARuleSet<State, InputValue, InputSpecifier> & rules,
                   const std::set<State> & states, State finalState) const
     {
         _map.clear();
@@ -208,7 +173,7 @@ public:
         }
         return true;
     }
-    bool Validate(const FSARuleSet<InputValue, State, InputSpecifier> & rules,
+    bool Validate(const FSARuleSet<State, InputValue, InputSpecifier> & rules,
                   State from, State to) const
     {
         auto it = _map.find(from);
@@ -242,10 +207,10 @@ protected:
     mutable std::map<State, bool> _map;
 };
 
-template<typename InputValue, typename State, typename InputSpecifier>
-bool FSA<InputValue, State, InputSpecifier>::Validate() const
+template<typename State, typename InputValue, typename InputSpecifier>
+bool FSA<State, InputValue, InputSpecifier>::Validate() const
 {
-    FSAValidator<InputValue, State, InputSpecifier> validator;
+    FSAValidator<State, InputValue, InputSpecifier> validator;
     std::set<State> states({_initialState});
     for (auto const & rule : _rules)
     {
