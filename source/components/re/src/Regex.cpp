@@ -11,12 +11,18 @@ static const CharSet DigitSet(CharSet::Range('0', '9'));
 static const CharSet WordCharSet(CharSet::Range('0', '9') |
                                  CharSet::Range('a', 'z') | CharSet::Range('A', 'Z') |
                                  CharSet::Range('_'));
-static const CharSet WhitespaceSet(CharSet::Range('\r') | CharSet::Range('\n') | CharSet::Range(' ') |
-                                   CharSet::Range('\t') | CharSet::Range('\f'));
+static const CharSet::Range Cr('\r');
+static const CharSet::Range Lf('\n');
+static const CharSet::Range Space(' ');
+static const CharSet::Range Tab('\t');
+static const CharSet::Range VTab('\f');
+static const CharSet WhitespaceSet(Cr | Lf | Space | Tab | VTab);
 
 Regex::Regex(const std::string & pattern)
-    : _pattern(pattern), _regexTerms(), _currentTerm(), _currentFSMState(), _fsmRules(),
-      _fsm(_fsmRules, StartState, EndState)
+    : _pattern(pattern)
+    , _currentFSMState()
+    , _fsmRules()
+    , _fsm(_fsmRules, StartState, EndState)
 {
     if (!BuildFSM())
         throw invalid_argument("Invalid regular expression");
@@ -50,17 +56,18 @@ bool Regex::PartialMatch(const std::string & text)
 
 bool Regex::ParseEscapedChar(const std::string & pattern, size_t & index, char & ch)
 {
-    if (index >= _pattern.length())
+    if (index >= pattern.length())
         return false;
     ch = pattern[index];
     return true;
 }
 
-bool Regex::ParseLiteral(const std::string & pattern, size_t & index)
+bool Regex::ParseLiteral(Term & term, const std::string & pattern, size_t & index)
 {
-    if (index >= _pattern.length())
+    TermElement element;
+    if (index >= pattern.length())
         return false;
-    while (index < _pattern.length())
+    while (index < pattern.length())
     {
         char ch = pattern[index];
         if (ch == '\\')
@@ -69,6 +76,7 @@ bool Regex::ParseLiteral(const std::string & pattern, size_t & index)
             ++index;
             if (!ParseEscapedChar(pattern, index, escapedChar))
                 return false;
+            ++index;
             switch (escapedChar)
             {
                 case '.':
@@ -85,7 +93,8 @@ bool Regex::ParseLiteral(const std::string & pattern, size_t & index)
                 case '}':
                 case '(':
                 case ')':
-                    CreateLiteralTerm(escapedChar);
+                    element = CreateLiteralElement(escapedChar);
+                    term.Add(element);
                     break;
                 default:
                     return false;
@@ -101,13 +110,16 @@ bool Regex::ParseLiteral(const std::string & pattern, size_t & index)
             return true;
         } else if (ch == '*')
         {
-            ChangeLastTermRepeat(0, -1);
+            ChangeRepeat(element, 0, -1);
+            ++index;
         } else if (ch == '+')
         {
-            ChangeLastTermRepeat(1, -1);
+            ChangeRepeat(element, 1, -1);
+            ++index;
         } else if (ch == '?')
         {
-            ChangeLastTermRepeat(0, 1);
+            ChangeRepeat(element, 0, 1);
+            ++index;
         } else if (ch == '(')
         {
             return true;
@@ -132,67 +144,226 @@ bool Regex::ParseLiteral(const std::string & pattern, size_t & index)
             return false;
         } else
         {
-            CreateLiteralTerm(ch);
+            element = CreateLiteralElement(ch);
+            ++index;
+            term.Add(element);
         }
-        ++index;
     }
     return true;
 }
 
-bool Regex::Parse(const std::string & pattern, size_t & index)
+bool Regex::ParseRange(Term & term, const std::string & pattern, size_t & index, char expectedEndChar)
 {
-    while (index < _pattern.length())
+    bool negatedSet = false;
+    CharSet charSet;
+    if (index >= pattern.length())
+        return false;
+    if (pattern[index] == '^')
     {
-        char ch = _pattern[index];
-        if (ch == '\\')
+        negatedSet = true;
+        ++index;
+    }
+    if (index >= pattern.length())
+        return false;
+    while (index < pattern.length())
+    {
+        char ch = pattern[index];
+        if (ch == expectedEndChar)
+        {
+            ++index;
+            break;
+        }
+        else if (ch == '\\')
         {
             char escapedChar;
+            ++index;
             if (!ParseEscapedChar(pattern, index, escapedChar))
                 return false;
             ++index;
             switch (escapedChar)
             {
                 case 'd':
-                    CreateDigitTerm();
+                    charSet |= DigitSet;
                     break;
                 case 'D':
-                    CreateNonDigitTerm();
+                    charSet |= ~DigitSet;
                     break;
                 case 'w':
-                    CreateWordCharTerm();
+                    charSet |= WordCharSet;
                     break;
                 case 'W':
-                    CreateNonWordCharTerm();
+                    charSet |= ~WordCharSet;
                     break;
                 case 's':
-                    CreateWhitespaceTerm();
+                    charSet |= WhitespaceSet;
                     break;
                 case 'S':
-                    CreateNonWhitespaceTerm();
+                    charSet |= ~WhitespaceSet;
                     break;
                 case 't':
-                    CreateTabTerm();
+                    charSet |= Tab;
                     break;
                 case 'r':
-                    CreateCarriageReturnTerm();
+                    charSet |= Cr;
                     break;
                 case 'R':
-                    CreateLineBreakTerm();
+                    charSet |= (Cr | Lf | VTab);
                     break;
                 case 'n':
-                    CreateLineFeedTerm();
+                    charSet |= Lf;
                     break;
                 case 'N':
-                    CreateNonLineBreakTerm();
+                    charSet |= ~(Cr | Lf | VTab);
                     break;
                 case 'v':
-                    CreateVerticalTabTerm();
+                    charSet |= VTab;
                     break;
                 case 'V':
-                    CreateNonVerticalTabTerm();
+                    charSet |= ~VTab;
                     break;
                 default:
-                    ParseLiteral(_pattern, index);
+                    if (index >= pattern.length())
+                        return false;
+                    if (pattern[index] == '-')
+                    {
+                        ++index;
+                        if (pattern[index] == '\\')
+                        {
+                            char escapedChar;
+                            ++index;
+                            if (!ParseEscapedChar(pattern, index, escapedChar))
+                                return false;
+                            charSet |= CharSet::Range(ch, escapedChar);
+                        }
+                        else
+                        {
+                            char endRangeChar = pattern[index];
+                            charSet |= CharSet::Range(ch, endRangeChar);
+                        }
+                        ++index;
+                    }
+                    else
+                        charSet |= ch;
+                    break;
+            }
+        } else if (ch == '.')
+        {
+            charSet |= CharSet::All;
+        } else if (ch == '[')
+        {
+            return false;
+        } else
+        {
+            ++index;
+            if (index >= pattern.length())
+                return false;
+            if (pattern[index] == '-')
+            {
+                ++index;
+                if (pattern[index] == '\\')
+                {
+                    char escapedChar;
+                    ++index;
+                    if (!ParseEscapedChar(pattern, index, escapedChar))
+                        return false;
+                    charSet |= CharSet::Range(ch, escapedChar);
+                }
+                else
+                {
+                    char endRangeChar = pattern[index];
+                    charSet |= CharSet::Range(ch, endRangeChar);
+                }
+                ++index;
+            }
+            else
+                charSet |= ch;
+        }
+    }
+    TermElement element;
+    if (negatedSet)
+    {
+        element = TermElement(TermElement::Type::NotSet, charSet);
+    }
+    else
+    {
+        element = TermElement(TermElement::Type::Set, charSet);
+    }
+    term.Add(element);
+    return true;
+}
+
+bool Regex::ParseTerm(Term & term, const std::string & pattern, size_t & index)
+{
+    TermElement element;
+    while (index < pattern.length())
+    {
+        char ch = pattern[index];
+        if (ch == '\\')
+        {
+            char escapedChar;
+            ++index;
+            if (!ParseEscapedChar(pattern, index, escapedChar))
+                return false;
+            ++index;
+            switch (escapedChar)
+            {
+                case 'd':
+                    element = CreateDigitElement();
+                    term.Add(element);
+                    break;
+                case 'D':
+                    element = CreateNonDigitElement();
+                    term.Add(element);
+                    break;
+                case 'w':
+                    element = CreateWordCharElement();
+                    term.Add(element);
+                    break;
+                case 'W':
+                    element = CreateNonWordCharElement();
+                    term.Add(element);
+                    break;
+                case 's':
+                    element = CreateWhitespaceElement();
+                    term.Add(element);
+                    break;
+                case 'S':
+                    element = CreateNonWhitespaceElement();
+                    term.Add(element);
+                    break;
+                case 't':
+                    element = CreateTabElement();
+                    term.Add(element);
+                    break;
+                case 'r':
+                    element = CreateCarriageReturnElement();
+                    term.Add(element);
+                    break;
+                case 'R':
+                    element = CreateLineBreakElement();
+                    term.Add(element);
+                    break;
+                case 'n':
+                    element = CreateLineFeedElement();
+                    term.Add(element);
+                    break;
+                case 'N':
+                    element = CreateNonLineBreakElement();
+                    term.Add(element);
+                    break;
+                case 'v':
+                    element = CreateVerticalTabElement();
+                    term.Add(element);
+                    break;
+                case 'V':
+                    element = CreateNonVerticalTabElement();
+                    term.Add(element);
+                    break;
+                default:
+                    Term subTerm;
+                    if (!ParseLiteral(subTerm, pattern, index))
+                        return false;
+                    term.Add(subTerm);
                     break;
             }
         } else if (ch == '^')
@@ -221,7 +392,10 @@ bool Regex::Parse(const std::string & pattern, size_t & index)
 
         } else if (ch == '[')
         {
-
+            Term subTerm;
+            index++;
+            ParseRange(subTerm, pattern, index, ']');
+            term.Add(subTerm);
         } else if (ch == ']')
         {
 
@@ -236,10 +410,11 @@ bool Regex::Parse(const std::string & pattern, size_t & index)
 
         } else
         {
-            if (!ParseLiteral(_pattern, index))
+            Term subTerm;
+            if (!ParseLiteral(subTerm, pattern, index))
                 return false;
+            term.Add(subTerm);
         }
-        ++index;
     }
     return true;
 }
@@ -247,105 +422,93 @@ bool Regex::Parse(const std::string & pattern, size_t & index)
 bool Regex::BuildFSM()
 {
     size_t index = 0;
-    if (!Parse(_pattern, index))
+    if (!ParseTerm(*this, _pattern, index))
         return false;
-    SaveCurrentTerm();
     return true;
 }
 
-void Regex::CreateLiteralTerm(char ch)
+TermElement Regex::CreateLiteralElement(char ch)
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::Literal, ch);
+    return TermElement(TermElement::Type::Literal, ch);
 }
 
-void Regex::CreateDigitTerm()
+TermElement Regex::CreateDigitElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::Digit, DigitSet);
+    return TermElement(TermElement::Type::Digit, DigitSet);
 }
 
-void Regex::CreateNonDigitTerm()
+TermElement Regex::CreateNonDigitElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::NotDigit, ~DigitSet);
+    return TermElement(TermElement::Type::NotDigit, ~DigitSet);
 }
 
-void Regex::CreateWordCharTerm()
+TermElement Regex::CreateWordCharElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::WordChar, WordCharSet);
+    return TermElement(TermElement::Type::WordChar, WordCharSet);
 }
 
-void Regex::CreateNonWordCharTerm()
+TermElement Regex::CreateNonWordCharElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::NotWordChar, ~WordCharSet);
+    return TermElement(TermElement::Type::NotWordChar, ~WordCharSet);
 }
 
-void Regex::CreateWhitespaceTerm()
+TermElement Regex::CreateWhitespaceElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::Whitespace, WhitespaceSet);
+    return TermElement(TermElement::Type::Whitespace, WhitespaceSet);
 }
 
-void Regex::CreateNonWhitespaceTerm()
+TermElement Regex::CreateNonWhitespaceElement()
 {
-    SaveCurrentTerm();
-    _currentTerm = Term(Term::TermType::NotWhitespace, ~WhitespaceSet);
+    return TermElement(TermElement::Type::NotWhitespace, ~WhitespaceSet);
 }
 
-void Regex::CreateTabTerm()
+TermElement Regex::CreateTabElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateCarriageReturnTerm()
+TermElement Regex::CreateCarriageReturnElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateLineBreakTerm()
+TermElement Regex::CreateLineBreakElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateNonLineBreakTerm()
+TermElement Regex::CreateNonLineBreakElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateLineFeedTerm()
+TermElement Regex::CreateLineFeedElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateVerticalTabTerm()
+TermElement Regex::CreateVerticalTabElement()
 {
-
+    return TermElement();
 }
 
-void Regex::CreateNonVerticalTabTerm()
+TermElement Regex::CreateNonVerticalTabElement()
 {
+    return TermElement();
+}
 
+void Regex::ChangeRepeat(TermElement & element, int minCount, int maxCount)
+{
+    element.SetMinMaxCount(minCount, maxCount);
 }
 
 void Regex::ChangeLastTermRepeat(int minCount, int maxCount)
 {
-    _currentTerm.SetMinMaxCount(minCount, maxCount);
 }
 
-void Regex::SaveCurrentTerm()
+Term Regex::CreateTerm()
 {
-    if (_currentTerm.Type() != Term::TermType::None)
-    {
-        AddCurrentTerm();
-    }
-}
-
-void Regex::AddCurrentTerm()
-{
-    _regexTerms.push_back(_currentTerm);
+    return Term();
 }
 
 bool Regex::Match(const std::string & text, size_t & index)

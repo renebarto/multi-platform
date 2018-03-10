@@ -686,6 +686,37 @@ TEST_FIXTURE(InputSetTest, OperatorMinusEquals)
     EXPECT_EQ(firstRange, target);
 }
 
+TEST_FIXTURE(InputSetTest, PrintSingleChar)
+{
+    ostringstream stream;
+
+    InputSet<char> inputSet('a');
+    stream << inputSet;
+    string expected = "a";
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(InputSetTest, PrintRange)
+{
+    ostringstream stream;
+
+    InputSet<char> inputSet(InputSet<char>::Range('g', 'i'));
+    stream << inputSet;
+    string expected = "g-i";
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(InputSetTest, Print)
+{
+    ostringstream stream;
+
+    InputSet<char> inputSet(InputSet<char>::Range('g', 'i'));
+    inputSet |= InputSet<char>::Range('k', 'l');
+    stream << inputSet;
+    string expected = "g-i,k-l";
+    EXPECT_EQ(expected, stream.str());
+}
+
 } // TEST_SUITE(re)
 
 } // namespace Test

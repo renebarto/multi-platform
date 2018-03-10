@@ -128,6 +128,23 @@ public:
     ConstIterator end() const
     { return _ranges.end(); }
 
+    void PrintTo(std::ostream & stream) const
+    {
+        bool firstElement = true;
+        for (auto const & range : _ranges)
+        {
+            if (!firstElement)
+            {
+                stream << ",";
+            }
+            if (range.from == range.to)
+                stream << range.from;
+            else
+                stream << range.from << "-" << range.to;
+            firstElement = false;
+        }
+    }
+
 private:
     Container _ranges;
 
@@ -400,5 +417,12 @@ const InputSet<Type> InputSet<Type>::Empty = InputSet<Type>();
 // Only support positive _ranges
 template<class Type>
 const InputSet<Type> InputSet<Type>::All = InputSet<Type>(InputSet<Type>::Range(0, std::numeric_limits<Type>::max()));
+
+template<class Type>
+std::ostream & operator << (std::ostream & stream, const InputSet<Type> & inputSet)
+{
+    inputSet.PrintTo(stream);
+    return stream;
+}
 
 } // namespace RE
