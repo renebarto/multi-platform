@@ -1,7 +1,7 @@
 #include "unittest-cpp/UnitTestC++.h"
 
 #include <fstream>
-#include "re/InputSet.h"
+#include "re/ValueSet.h"
 #include "re/TestData.h"
 
 using namespace std;
@@ -17,24 +17,24 @@ TEST_SUITE(re) {
 
 TEST_FIXTURE(InputSetTest, Empty)
 {
-    InputSet<char> target;
-    InputSet<char> expected = InputSet<char>::Empty;
+    ValueSet<char> target;
+    ValueSet<char> expected = ValueSet<char>::Empty;
 
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(InputSetTest, Full)
 {
-    InputSet<char> target;
+    ValueSet<char> target;
     target.Fill();
-    InputSet<char> expected = InputSet<char>::All;
+    ValueSet<char> expected = ValueSet<char>::All;
 
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(InputSetTest, ConstructDefault)
 {
-    InputSet<char> inputSet;
+    ValueSet<char> inputSet;
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         EXPECT_FALSE(inputSet.Contains(ch));
@@ -45,7 +45,7 @@ TEST_FIXTURE(InputSetTest, ConstructDefault)
 TEST_FIXTURE(InputSetTest, ConstructSingleChar)
 {
     char singleChar = 'a';
-    InputSet<char> inputSet(singleChar);
+    ValueSet<char> inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -58,8 +58,8 @@ TEST_FIXTURE(InputSetTest, ConstructSingleChar)
 
 TEST_FIXTURE(InputSetTest, ConstructRange)
 {
-    InputSet<char>::Range range('a', 'c');
-    InputSet<char> inputSet(range);
+    ValueSet<char>::Range range('a', 'c');
+    ValueSet<char> inputSet(range);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
@@ -72,9 +72,9 @@ TEST_FIXTURE(InputSetTest, ConstructRange)
 
 TEST_FIXTURE(InputSetTest, ConstructCopy)
 {
-    InputSet<char>::Range range('a', 'c');
-    InputSet<char> other(range);
-    InputSet<char> inputSet(other);
+    ValueSet<char>::Range range('a', 'c');
+    ValueSet<char> other(range);
+    ValueSet<char> inputSet(other);
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
@@ -95,9 +95,9 @@ TEST_FIXTURE(InputSetTest, ConstructCopy)
 
 TEST_FIXTURE(InputSetTest, ConstructMove)
 {
-    InputSet<char>::Range range('a', 'c');
-    InputSet<char> other(range);
-    InputSet<char> inputSet(std::move(other));
+    ValueSet<char>::Range range('a', 'c');
+    ValueSet<char> other(range);
+    ValueSet<char> inputSet(std::move(other));
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         EXPECT_FALSE(other.Contains(ch));
@@ -115,9 +115,9 @@ TEST_FIXTURE(InputSetTest, ConstructMove)
 
 TEST_FIXTURE(InputSetTest, Assign)
 {
-    InputSet<char>::Range range('a', 'c');
-    InputSet<char> other(range);
-    InputSet<char> inputSet;
+    ValueSet<char>::Range range('a', 'c');
+    ValueSet<char> other(range);
+    ValueSet<char> inputSet;
     inputSet = other;
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
@@ -139,9 +139,9 @@ TEST_FIXTURE(InputSetTest, Assign)
 
 TEST_FIXTURE(InputSetTest, AssignMove)
 {
-    InputSet<char>::Range range('a', 'c');
-    InputSet<char> other(range);
-    InputSet<char> inputSet;
+    ValueSet<char>::Range range('a', 'c');
+    ValueSet<char> other(range);
+    ValueSet<char> inputSet;
     inputSet = std::move(other);
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
@@ -163,7 +163,7 @@ TEST_FIXTURE(InputSetTest, AddSingleChar)
     char singleChar = 'a';
     char secondChar = 'b';
     char otherChar = 'd';
-    InputSet<char> inputSet;
+    ValueSet<char> inputSet;
     inputSet.Add(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
@@ -188,15 +188,15 @@ TEST_FIXTURE(InputSetTest, AddSingleChar)
 
 TEST_FIXTURE(InputSetTest, AddRange)
 {
-    InputSet<char>::Range firstRange('g', 'i');
-    InputSet<char>::Range nonOverlappingBefore('d', 'e');
-    InputSet<char>::Range nonOverlappingAfter('k', 'l');
-    InputSet<char>::Range connectingBefore('d', 'f');
-    InputSet<char>::Range connectingAfter('j', 'l');
-    InputSet<char>::Range overlappingSub('g', 'h');
-    InputSet<char>::Range overlappingExtending('a', 'z');
-    InputSet<char>::Range otherRange('A', 'Z');
-    InputSet<char> inputSet;
+    ValueSet<char>::Range firstRange('g', 'i');
+    ValueSet<char>::Range nonOverlappingBefore('d', 'e');
+    ValueSet<char>::Range nonOverlappingAfter('k', 'l');
+    ValueSet<char>::Range connectingBefore('d', 'f');
+    ValueSet<char>::Range connectingAfter('j', 'l');
+    ValueSet<char>::Range overlappingSub('g', 'h');
+    ValueSet<char>::Range overlappingExtending('a', 'z');
+    ValueSet<char>::Range otherRange('A', 'Z');
+    ValueSet<char> inputSet;
     inputSet.Add(firstRange);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
@@ -291,7 +291,7 @@ TEST_FIXTURE(InputSetTest, AddRange)
 TEST_FIXTURE(InputSetTest, Clear)
 {
     char singleChar = 'a';
-    InputSet<char> inputSet(singleChar);
+    ValueSet<char> inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -311,7 +311,7 @@ TEST_FIXTURE(InputSetTest, Clear)
 TEST_FIXTURE(InputSetTest, Fill)
 {
     char singleChar = 'a';
-    InputSet<char> inputSet(singleChar);
+    ValueSet<char> inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -334,7 +334,7 @@ TEST_FIXTURE(InputSetTest, Iterator)
     char lastChar = 'c';
     char firstCharSecondRange = 'd';
     char lastCharSecondRange = 'f';
-    InputSet<char> inputSet(firstChar);
+    ValueSet<char> inputSet(firstChar);
     auto it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -346,7 +346,7 @@ TEST_FIXTURE(InputSetTest, Iterator)
     it = inputSet.begin();
     EXPECT_TRUE(it == inputSet.end());
 
-    inputSet.Add(InputSet<char>::Range(firstChar, lastChar));
+    inputSet.Add(ValueSet<char>::Range(firstChar, lastChar));
     it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -354,7 +354,7 @@ TEST_FIXTURE(InputSetTest, Iterator)
     ++it;
     EXPECT_TRUE(it == inputSet.end());
 
-    inputSet.Add(InputSet<char>::Range(firstCharSecondRange, lastCharSecondRange));
+    inputSet.Add(ValueSet<char>::Range(firstCharSecondRange, lastCharSecondRange));
     it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -365,14 +365,14 @@ TEST_FIXTURE(InputSetTest, Iterator)
 
 TEST_FIXTURE(InputSetTest, Includes)
 {
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Includes(connectingBefore));
@@ -384,14 +384,14 @@ TEST_FIXTURE(InputSetTest, Includes)
 
 TEST_FIXTURE(InputSetTest, Overlaps)
 {
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Overlaps(connectingBefore));
@@ -403,15 +403,15 @@ TEST_FIXTURE(InputSetTest, Overlaps)
 
 TEST_FIXTURE(InputSetTest, OperatorEquals)
 {
-    InputSet<char> target(InputSet<char>::Range('g', 'i'));
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     EXPECT_TRUE(target == firstRange);
     EXPECT_FALSE(target == nonOverlappingBefore);
     EXPECT_FALSE(target == nonOverlappingAfter);
@@ -424,15 +424,15 @@ TEST_FIXTURE(InputSetTest, OperatorEquals)
 
 TEST_FIXTURE(InputSetTest, OperatorNotEquals)
 {
-    InputSet<char> target(InputSet<char>::Range('g', 'i'));
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     EXPECT_FALSE(target != firstRange);
     EXPECT_TRUE(target != nonOverlappingBefore);
     EXPECT_TRUE(target != nonOverlappingAfter);
@@ -445,92 +445,92 @@ TEST_FIXTURE(InputSetTest, OperatorNotEquals)
 
 TEST_FIXTURE(InputSetTest, OperatorAnd)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     target = firstRange & firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange & nonOverlappingBefore;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange & nonOverlappingAfter;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange & connectingBefore;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange & connectingAfter;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange & overlappingSub;
     EXPECT_EQ(overlappingSub, target);
     target = firstRange & overlappingExtending;
     EXPECT_EQ(firstRange, target);
     target = firstRange & otherRange;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorOr)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
 
-    InputSet<char> expected;
+    ValueSet<char> expected;
     EXPECT_EQ(expected, target);
     target = firstRange | firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange | nonOverlappingBefore;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('d', 'e'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange | nonOverlappingAfter;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('k', 'l'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingBefore;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('d', 'f'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingAfter;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('j', 'l'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingSub;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('g', 'h'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingExtending;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('a', 'z'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange | otherRange;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('A', 'Z'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorMinus)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     target = firstRange - firstRange;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange - nonOverlappingBefore;
     EXPECT_EQ(firstRange, target);
     target = firstRange - nonOverlappingAfter;
@@ -539,50 +539,50 @@ TEST_FIXTURE(InputSetTest, OperatorMinus)
     EXPECT_EQ(firstRange, target);
     target = firstRange - connectingAfter;
     EXPECT_EQ(firstRange, target);
-    InputSet<char> expected('i');
+    ValueSet<char> expected('i');
     target = firstRange - overlappingSub;
     EXPECT_EQ(expected, target);
     target = firstRange - overlappingExtending;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange - otherRange;
     EXPECT_EQ(firstRange, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorNot)
 {
-    InputSet<char> other(InputSet<char>::Range('a', 'z'));
-    InputSet<char> target = ~other;
-    InputSet<char> expected = InputSet<char>::All - other;
+    ValueSet<char> other(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> target = ~other;
+    ValueSet<char> expected = ValueSet<char>::All - other;
 
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorAndEquals)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     target = firstRange;
     target &= firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target &= nonOverlappingBefore;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target &= nonOverlappingAfter;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target &= connectingBefore;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target &= connectingAfter;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target &= overlappingSub;
     EXPECT_EQ(overlappingSub, target);
@@ -591,77 +591,77 @@ TEST_FIXTURE(InputSetTest, OperatorAndEquals)
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target &= otherRange;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorOrEquals)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
 
-    InputSet<char> expected;
+    ValueSet<char> expected;
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target |= nonOverlappingBefore;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('d', 'e'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= nonOverlappingAfter;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('k', 'l'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingBefore;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('d', 'f'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingAfter;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('j', 'l'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingSub;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('g', 'h'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingExtending;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('a', 'z'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= otherRange;
-    expected = InputSet<char>(firstRange);
-    expected.Add(InputSet<char>::Range('A', 'Z'));
+    expected = ValueSet<char>(firstRange);
+    expected.Add(ValueSet<char>::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
 TEST_FIXTURE(InputSetTest, OperatorMinusEquals)
 {
-    InputSet<char> target;
-    InputSet<char> firstRange(InputSet<char>::Range('g', 'i'));
-    InputSet<char> nonOverlappingBefore(InputSet<char>::Range('d', 'e'));
-    InputSet<char> nonOverlappingAfter(InputSet<char>::Range('k', 'l'));
-    InputSet<char> connectingBefore(InputSet<char>::Range('d', 'f'));
-    InputSet<char> connectingAfter(InputSet<char>::Range('j', 'l'));
-    InputSet<char> overlappingSub(InputSet<char>::Range('g', 'h'));
-    InputSet<char> overlappingExtending(InputSet<char>::Range('a', 'z'));
-    InputSet<char> otherRange(InputSet<char>::Range('A', 'Z'));
+    ValueSet<char> target;
+    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
+    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
+    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
+    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
+    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
+    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
+    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
+    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
     target = firstRange;
     target -= firstRange;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target -= nonOverlappingBefore;
     EXPECT_EQ(firstRange, target);
@@ -674,13 +674,13 @@ TEST_FIXTURE(InputSetTest, OperatorMinusEquals)
     target = firstRange;
     target -= connectingAfter;
     EXPECT_EQ(firstRange, target);
-    InputSet<char> expected('i');
+    ValueSet<char> expected('i');
     target = firstRange;
     target -= overlappingSub;
     EXPECT_EQ(expected, target);
     target = firstRange;
     target -= overlappingExtending;
-    EXPECT_EQ(InputSet<char>::Empty, target);
+    EXPECT_EQ(ValueSet<char>::Empty, target);
     target = firstRange;
     target -= otherRange;
     EXPECT_EQ(firstRange, target);
@@ -690,7 +690,7 @@ TEST_FIXTURE(InputSetTest, PrintSingleChar)
 {
     ostringstream stream;
 
-    InputSet<char> inputSet('a');
+    ValueSet<char> inputSet('a');
     stream << inputSet;
     string expected = "a";
     EXPECT_EQ(expected, stream.str());
@@ -700,7 +700,7 @@ TEST_FIXTURE(InputSetTest, PrintRange)
 {
     ostringstream stream;
 
-    InputSet<char> inputSet(InputSet<char>::Range('g', 'i'));
+    ValueSet<char> inputSet(ValueSet<char>::Range('g', 'i'));
     stream << inputSet;
     string expected = "g-i";
     EXPECT_EQ(expected, stream.str());
@@ -710,8 +710,8 @@ TEST_FIXTURE(InputSetTest, Print)
 {
     ostringstream stream;
 
-    InputSet<char> inputSet(InputSet<char>::Range('g', 'i'));
-    inputSet |= InputSet<char>::Range('k', 'l');
+    ValueSet<char> inputSet(ValueSet<char>::Range('g', 'i'));
+    inputSet |= ValueSet<char>::Range('k', 'l');
     stream << inputSet;
     string expected = "g-i,k-l";
     EXPECT_EQ(expected, stream.str());

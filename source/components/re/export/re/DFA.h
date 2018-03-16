@@ -4,19 +4,19 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "InputSet.h"
+#include "ValueSet.h"
 
 namespace RE {
 
-template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
-class FSARule
+template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+class DFARule
 {
 public:
-    FSARule() = delete;
+    DFARule() = delete;
 
-    static FSARule Create(InputSpecifier input, State state, State nextState)
+    static DFARule Create(InputSpecifier input, State state, State nextState)
     {
-        return FSARule(input, state, nextState);
+        return DFARule(input, state, nextState);
     }
 
     State ExpectedState() const
@@ -46,18 +46,18 @@ protected:
     State _nextState;
 
 public:
-    FSARule(InputSpecifier input, State state, State nextState)
+    DFARule(InputSpecifier input, State state, State nextState)
         : _expectedInput(input)
         , _expectedState(state)
         , _nextState(nextState)
     {}
-    FSARule(const FSARule & other)
+    DFARule(const DFARule & other)
         : _expectedInput(other._expectedInput)
         , _expectedState(other._expectedState)
         , _nextState(other._nextState)
     {
     }
-    FSARule & operator = (const FSARule & other)
+    DFARule & operator = (const DFARule & other)
     {
         if (this != &other)
         {
@@ -69,45 +69,45 @@ public:
     }
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
-using FSARuleSet = std::vector<FSARule<State, InputValue, InputSpecifier>>;
+template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+using DFARuleSet = std::vector<DFARule<State, InputValue, InputSpecifier>>;
 
-template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
-class FSA
+template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+class DFA
 {
 public:
-    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules)
+    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules)
         : _rules(rules)
         , _initialState()
         , _finalState(_initialState)
         , _currentState(_initialState)
     {}
-    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules, State initialState)
+    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(_initialState)
         , _currentState(_initialState)
     {}
-    FSA(const FSARuleSet<State, InputValue, InputSpecifier> & rules, State initialState, State finalState)
+    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState, State finalState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(finalState)
         , _currentState(_initialState)
     {}
-    FSA(const FSA & other)
+    DFA(const DFA & other)
         : _rules(other._rules)
         , _initialState(other._initialState)
         , _finalState(other._finalState)
         , _currentState(other._currentState)
     {}
-    FSA(FSA && other)
+    DFA(DFA && other)
         : _rules(std::move(other._rules))
         , _initialState(other._initialState)
         , _finalState(other._finalState)
         , _currentState(other._currentState)
     {}
 
-    FSA & operator = (const FSA & other)
+    DFA & operator = (const DFA & other)
     {
         if (this != &other)
         {
@@ -118,7 +118,7 @@ public:
         }
         return *this;
     }
-    FSA & operator = (FSA && other)
+    DFA & operator = (DFA && other)
     {
         if (this != &other)
         {
@@ -148,21 +148,21 @@ public:
     bool IsFinalState() const { return _currentState == _finalState; }
 
 protected:
-    const FSARuleSet<State, InputValue, InputSpecifier> & _rules;
+    const DFARuleSet<State, InputValue, InputSpecifier> & _rules;
     State _initialState;
     State _finalState;
     State _currentState;
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = InputSet<InputValue>>
-class FSAValidator
+template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+class DFAValidator
 {
 public:
-    FSAValidator()
+    DFAValidator()
         : _map()
     {}
 
-    bool Validate(const FSARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const DFARuleSet<State, InputValue, InputSpecifier> & rules,
                   const std::set<State> & states, State finalState) const
     {
         _map.clear();
@@ -173,7 +173,7 @@ public:
         }
         return true;
     }
-    bool Validate(const FSARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const DFARuleSet<State, InputValue, InputSpecifier> & rules,
                   State from, State to) const
     {
         auto it = _map.find(from);
@@ -208,9 +208,9 @@ protected:
 };
 
 template<typename State, typename InputValue, typename InputSpecifier>
-bool FSA<State, InputValue, InputSpecifier>::Validate() const
+bool DFA<State, InputValue, InputSpecifier>::Validate() const
 {
-    FSAValidator<State, InputValue, InputSpecifier> validator;
+    DFAValidator<State, InputValue, InputSpecifier> validator;
     std::set<State> states({_initialState});
     for (auto const & rule : _rules)
     {

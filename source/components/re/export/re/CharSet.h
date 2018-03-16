@@ -1,9 +1,9 @@
 #pragma once
 
-#include "InputSet.h"
+#include "ValueSet.h"
 
 namespace RE {
 
-using CharSet = InputSet<char>;
+using CharSet = ValueSet<char>;
 
 } // namespace RE

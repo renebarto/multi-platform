@@ -1,7 +1,7 @@
 #include "unittest-cpp/UnitTestC++.h"
 
 #include <fstream>
-#include "re/FSA.h"
+#include "re/DFA.h"
 #include "re/CharSet.h"
 #include "re/TestData.h"
 
@@ -10,38 +10,38 @@ using namespace std;
 namespace RE {
 namespace Test {
 
-class FSATest : public UnitTestCpp::TestFixture
+class DFATest : public UnitTestCpp::TestFixture
 {
 };
 
 TEST_SUITE(re) {
 
-static FSARuleSet<int> EmptyRules
+static DFARuleSet<int> EmptyRules
 {
 
 };
-static FSARuleSet<int> Rules
+static DFARuleSet<int> Rules
 {
-    FSARule<int>::Create('a', 0, 1),
+    DFARule<int>::Create('a', 0, 1),
 };
 
-static FSARuleSet<int> RulesCharSet
+static DFARuleSet<int> RulesCharSet
 {
-    FSARule<int>::Create(CharSet::Range('a', 'c'), 0, 1),
-    FSARule<int>::Create(CharSet::Range('a', 'c'), 1, 2),
+    DFARule<int>::Create(CharSet::Range('a', 'c'), 0, 1),
+    DFARule<int>::Create(CharSet::Range('a', 'c'), 1, 2),
 };
 
-TEST_FIXTURE(FSATest, ConstructRules)
+TEST_FIXTURE(DFATest, ConstructRules)
 {
-    FSA<int> finiteStateAutomaton(EmptyRules);
+    DFA<int> finiteStateAutomaton(EmptyRules);
     EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, ConstructRulesInitialState)
+TEST_FIXTURE(DFATest, ConstructRulesInitialState)
 {
-    FSA<int> finiteStateAutomaton(Rules, 0);
+    DFA<int> finiteStateAutomaton(Rules, 0);
     EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
     // Initial state: 0, Final state: 0, Rules 0->1
@@ -49,9 +49,9 @@ TEST_FIXTURE(FSATest, ConstructRulesInitialState)
     EXPECT_FALSE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, ConstructRulesInitialAndFinalState)
+TEST_FIXTURE(DFATest, ConstructRulesInitialAndFinalState)
 {
-    FSA<int> finiteStateAutomaton(Rules, 0, 1);
+    DFA<int> finiteStateAutomaton(Rules, 0, 1);
     EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     // Initial state: 0, Final state: 1, Rules 0->1
@@ -59,9 +59,9 @@ TEST_FIXTURE(FSATest, ConstructRulesInitialAndFinalState)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, HandleInputEmptyRules)
+TEST_FIXTURE(DFATest, HandleInputEmptyRules)
 {
-    FSA<int> finiteStateAutomaton(EmptyRules, 123);
+    DFA<int> finiteStateAutomaton(EmptyRules, 123);
     EXPECT_FALSE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(123, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
@@ -70,9 +70,9 @@ TEST_FIXTURE(FSATest, HandleInputEmptyRules)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, HandleInput)
+TEST_FIXTURE(DFATest, HandleInput)
 {
-    FSA<int> finiteStateAutomaton(Rules, 0, 1);
+    DFA<int> finiteStateAutomaton(Rules, 0, 1);
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(1, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
@@ -81,9 +81,9 @@ TEST_FIXTURE(FSATest, HandleInput)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, Reset)
+TEST_FIXTURE(DFATest, Reset)
 {
-    FSA<int> finiteStateAutomaton(Rules, 0, 1);
+    DFA<int> finiteStateAutomaton(Rules, 0, 1);
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(1, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
@@ -94,9 +94,9 @@ TEST_FIXTURE(FSATest, Reset)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, HandleInputInvalidState)
+TEST_FIXTURE(DFATest, HandleInputInvalidState)
 {
-    FSA<int> finiteStateAutomaton(Rules, 2, 1);
+    DFA<int> finiteStateAutomaton(Rules, 2, 1);
     EXPECT_FALSE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(2, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
@@ -105,18 +105,18 @@ TEST_FIXTURE(FSATest, HandleInputInvalidState)
     EXPECT_FALSE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, HandleInputInvalidInput)
+TEST_FIXTURE(DFATest, HandleInputInvalidInput)
 {
-    FSA<int> finiteStateAutomaton(Rules, 0, 1);
+    DFA<int> finiteStateAutomaton(Rules, 0, 1);
     EXPECT_FALSE(finiteStateAutomaton.HandleInput('b'));
     EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-TEST_FIXTURE(FSATest, HandleInputCharSet)
+TEST_FIXTURE(DFATest, HandleInputCharSet)
 {
-    FSA<int> finiteStateAutomaton(RulesCharSet, 0, 2);
+    DFA<int> finiteStateAutomaton(RulesCharSet, 0, 2);
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(1, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
@@ -129,18 +129,18 @@ TEST_FIXTURE(FSATest, HandleInputCharSet)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-static FSARuleSet<int> RulesCharSetComplex
+static DFARuleSet<int> RulesCharSetComplex
 {
-    FSARule<int>::Create('a', 0, 1),
-    FSARule<int>::Create('b', 0, 3),
-    FSARule<int>::Create('c', 1, 2),
-    FSARule<int>::Create('d', 3, 2),
-    FSARule<int>::Create('e', 3, 0),
+    DFARule<int>::Create('a', 0, 1),
+    DFARule<int>::Create('b', 0, 3),
+    DFARule<int>::Create('c', 1, 2),
+    DFARule<int>::Create('d', 3, 2),
+    DFARule<int>::Create('e', 3, 0),
 };
 
-TEST_FIXTURE(FSATest, HandleInputCharSetComplex)
+TEST_FIXTURE(DFATest, HandleInputCharSetComplex)
 {
-    FSA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2);
+    DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2);
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(1, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
@@ -170,18 +170,18 @@ TEST_FIXTURE(FSATest, HandleInputCharSetComplex)
     EXPECT_TRUE(finiteStateAutomaton.Validate());
 }
 
-static FSARuleSet<int> RulesCharSetComplexIncorrect
+static DFARuleSet<int> RulesCharSetComplexIncorrect
 {
-    FSARule<int>::Create('a', 0, 1),
-    FSARule<int>::Create('b', 0, 3),
-    FSARule<int>::Create('c', 0, 4),
-    FSARule<int>::Create('d', 1, 2),
-    FSARule<int>::Create('e', 3, 2),
+    DFARule<int>::Create('a', 0, 1),
+    DFARule<int>::Create('b', 0, 3),
+    DFARule<int>::Create('c', 0, 4),
+    DFARule<int>::Create('d', 1, 2),
+    DFARule<int>::Create('e', 3, 2),
 };
 
-TEST_FIXTURE(FSATest, HandleInputCharSetComplexIncorrect)
+TEST_FIXTURE(DFATest, HandleInputCharSetComplexIncorrect)
 {
-    FSA<int> finiteStateAutomaton(RulesCharSetComplexIncorrect, 0, 2);
+    DFA<int> finiteStateAutomaton(RulesCharSetComplexIncorrect, 0, 2);
     // Initial state: 0, Final state: 2, Rules 0->1, 0->3, 1->2, 3->2, 3->4
     // We cannot get from 4 to final state
     EXPECT_FALSE(finiteStateAutomaton.Validate());
