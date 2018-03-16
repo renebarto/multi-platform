@@ -41,12 +41,12 @@ struct LexerToken
         , value()
         , location()
     {}
-    LexerToken(LexerToken::Type aType, FSA aLocation)
+    LexerToken(LexerToken::Type aType, SourceLocation aLocation)
         : type(aType)
         , value()
         , location(aLocation)
     {}
-    LexerToken(LexerToken::Type aType, const std::string & aValue, FSA aLocation)
+    LexerToken(LexerToken::Type aType, const std::string & aValue, SourceLocation aLocation)
         : type(aType)
         , value(aValue)
         , location(aLocation)
@@ -55,7 +55,7 @@ struct LexerToken
 
     Type type;
     std::string value;
-    FSA location;
+    SourceLocation location;
 };
 
 enum LexerState

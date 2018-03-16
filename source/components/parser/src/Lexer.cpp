@@ -26,7 +26,7 @@ LexerToken Lexer::ReadToken()
         _pushbackQueue.pop_front();
         return token;
     }
-    FSA location = _reader.Location();
+    SourceLocation location = _reader.Location();
     string value;
     LexerState state {};
     _activeRule = nullptr;
