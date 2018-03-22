@@ -18,30 +18,45 @@ public:
     };
 
     Operation GetOperation() const { return _operation; }
-    ASTNode::Ptr GetLeftNode() const { return _leftNode; }
-    ASTNode::Ptr GetRightNode() const { return _rightNode; }
+    const std::vector<ASTNode::Ptr> & GetNodes() const { return _nodes; }
     const Term & GetTerm() const { return _term; }
+    void UpdateTerm(int minCount, int maxCount) { _term.SetMinMaxCount(minCount, maxCount); }
+
+    void Insert(ASTNode::Ptr node)
+    {
+        _nodes.push_back(node);
+    }
     virtual void PrintTo(std::ostream & stream, int indent = 0) const = 0;
 
 protected:
     ASTNode()
         : _operation()
-        , _leftNode()
-        , _rightNode()
+        , _nodes()
         , _term()
     {}
-    ASTNode(Operation operation, ASTNode::Ptr leftNode, ASTNode::Ptr rightNode, const Term & term)
+    ASTNode(Operation operation, const Term & term)
         : _operation(operation)
-        , _leftNode(leftNode)
-        , _rightNode(rightNode)
+        , _nodes()
         , _term(term)
-    {}
+    {
+    }
+    ASTNode(Operation operation, ASTNode::Ptr node, const Term & term)
+        : _operation(operation)
+        , _nodes()
+        , _term(term)
+    {
+        Insert(node);
+    }
 
     Operation _operation;
-    ASTNode::Ptr _leftNode;
-    ASTNode::Ptr _rightNode;
+    std::vector<ASTNode::Ptr> _nodes;
     Term _term;
 };
+
+inline void PrintTo(const ASTNode::Operation & operation, std::ostream & stream)
+{
+    stream << operation;
+}
 
 } // namespace RE
 
@@ -65,28 +80,11 @@ inline std::ostream & operator << (std::ostream & stream, RE::ASTNode::Operation
 
 namespace RE {
 
-class ASTLeafNull : public ASTNode
-{
-public:
-    ASTLeafNull()
-        : ASTNode(Operation::Null, ASTNode::Ptr(), ASTNode::Ptr(), Term())
-    {}
-
-    static ASTNode::Ptr Create()
-    {
-        return std::make_shared<ASTLeafNull>();
-    }
-    void PrintTo(std::ostream & stream, int indent = 0) const override
-    {
-        stream << std::string((indent + 1) * 4, ' ') << "empty" << std::endl;
-    }
-};
-
 class ASTLeaf : public ASTNode
 {
 public:
     ASTLeaf(const Term & term)
-        : ASTNode(Operation::Leaf, ASTNode::Ptr(), ASTNode::Ptr(), term)
+        : ASTNode(Operation::Leaf, term)
     {}
 
     static ASTNode::Ptr Create(const Term & term)
@@ -101,53 +99,49 @@ public:
     }
 };
 
-class ASTUnaryOperation : public ASTNode
+class ASTOrOperation : public ASTNode
 {
 public:
-    ASTUnaryOperation()
+    ASTOrOperation()
+        : ASTNode(ASTNode::Operation::Or, Term())
     {}
 
     static ASTNode::Ptr Create()
     {
-        return std::make_shared<ASTUnaryOperation>();
+        return std::make_shared<ASTOrOperation>();
     }
 
 protected:
     void PrintTo(std::ostream & stream, int indent = 0) const override
     {
-        stream << _operation << "(";
-        if (_leftNode != nullptr)
-            _leftNode->PrintTo(stream, indent + 1);
-        else
-            stream << "null";
-        stream << ")" << std::endl;
+        stream << std::string((indent + 1) * 4, ' ') << "Operation " << _operation << std::endl;
+        for (auto const & node : _nodes)
+        {
+            node->PrintTo(stream, indent + 1);
+        }
     }
 };
 
-class ASTBinaryOperation : public ASTNode
+class ASTConcatOperation : public ASTNode
 {
 public:
-    ASTBinaryOperation(Operation operation, ASTNode::Ptr leftNode, ASTNode::Ptr rightNode)
-        : ASTNode(operation, leftNode, rightNode, Term())
+    ASTConcatOperation()
+        : ASTNode(ASTNode::Operation::Concat, Term())
     {}
 
-    static ASTNode::Ptr Create(Operation operation, ASTNode::Ptr leftNode, ASTNode::Ptr rightNode)
+    static ASTNode::Ptr Create()
     {
-        return std::make_shared<ASTBinaryOperation>(operation, leftNode, rightNode);
+        return std::make_shared<ASTConcatOperation>();
     }
 
 protected:
     void PrintTo(std::ostream & stream, int indent = 0) const override
     {
-        stream << std::string((indent + 1) * 4, ' ') << "operation: " << _operation << std::endl;
-        if (_leftNode != nullptr)
-            _leftNode->PrintTo(stream, indent + 1);
-        else
-            stream << "null";
-        if (_rightNode != nullptr)
-            _rightNode->PrintTo(stream, indent + 1);
-        else
-            stream << "null";
+        stream << std::string((indent + 1) * 4, ' ') << "Operation " << _operation << std::endl;
+        for (auto const & node : _nodes)
+        {
+            node->PrintTo(stream, indent + 1);
+        }
     }
 };
 

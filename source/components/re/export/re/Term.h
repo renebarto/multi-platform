@@ -8,6 +8,7 @@ namespace RE {
 class Term
 {
 public:
+    static constexpr int Any = -1;
     enum Type
     {
         None,
@@ -38,6 +39,12 @@ public:
         , _charSet(ch)
         , _minCount(1)
         , _maxCount(1)
+    {}
+    Term(Type type, char ch, int minCount, int maxCount)
+        : _type(type)
+        , _charSet(ch)
+        , _minCount(minCount)
+        , _maxCount(maxCount)
     {}
     Term(Type type, CharSet charSet)
         : _type(type)

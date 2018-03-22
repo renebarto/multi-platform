@@ -34,45 +34,39 @@ bool Tokenizer::ReadToken(Token & token)
     switch (ch)
     {
         case '[':
-            token = Token(TokenType::SquareBracketOpen); return true;
+            token = Token(TokenType::SquareBracketOpen, ch); return true;
         case ']':
-            token = Token(TokenType::SquareBracketClose); return true;
+            token = Token(TokenType::SquareBracketClose, ch); return true;
         case '{':
-            token = Token(TokenType::CurlyBraceOpen); return true;
+            token = Token(TokenType::CurlyBraceOpen, ch); return true;
         case '}':
-            token = Token(TokenType::CurlyBraceClose); return true;
+            token = Token(TokenType::CurlyBraceClose, ch); return true;
         case '(':
-            token = Token(TokenType::ParenthesisOpen); return true;
+            token = Token(TokenType::ParenthesisOpen, ch); return true;
         case ')':
-            token = Token(TokenType::ParenthesisClose); return true;
+            token = Token(TokenType::ParenthesisClose, ch); return true;
         case '.':
-            token = Token(TokenType::Dot); return true;
+            token = Token(TokenType::Dot, ch); return true;
         case '*':
-            token = Token(TokenType::Asterisk); return true;
+            token = Token(TokenType::Asterisk, ch); return true;
         case '+':
-            token = Token(TokenType::Plus); return true;
+            token = Token(TokenType::Plus, ch); return true;
         case '?':
-            token = Token(TokenType::QuestionMark); return true;
+            token = Token(TokenType::QuestionMark, ch); return true;
         case '-':
-            token = Token(TokenType::Dash); return true;
+            token = Token(TokenType::Dash, ch); return true;
         case '|':
-            token = Token(TokenType::Or); return true;
+            token = Token(TokenType::Or, ch); return true;
+        case '^':
+            token = Token(TokenType::Caret, ch); return true;
         case ' ':
+            token = Token(TokenType::Space, ch); return true;
         case '\t':
-        {
-            token = Token(TokenType::Whitespace);
-            while (_reader.PeekChar(ch) && ((ch == ' ') || (ch == '\t')))
-                _reader.Advance();
-            return true;
-        }
+            token = Token(TokenType::Tab, ch); return true;
         case '\n':
+            token = Token(TokenType::NewLine, ch); return true;
         case '\r':
-        {
-            token = Token(TokenType::NewLine);
-            while (_reader.PeekChar(ch) && ((ch == '\r') || (ch == '\n')))
-                _reader.Advance();
-            return true;
-        }
+            token = Token(TokenType::Return, ch); return true;
     }
     if (isalnum(ch) || (ch == '_'))
     {
@@ -96,6 +90,12 @@ bool Tokenizer::ReadToken(Token & token)
                 return true;
             case 'W':
                 token = Token(TokenType::NotWordChar);
+                return true;
+            case 'a':
+                token = Token(TokenType::AlphaChar);
+                return true;
+            case 'A':
+                token = Token(TokenType::NotAlphaChar);
                 return true;
             case 's':
                 token = Token(TokenType::WhitespaceChar);

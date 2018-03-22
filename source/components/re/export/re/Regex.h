@@ -32,14 +32,11 @@ protected:
     AST _ast;
 
     bool ParseRegex();
-    ASTNode::Ptr Parse(TokenIterator & it);
-    bool ParseAlternative(Term & term);
-    bool ParseTerm(Term & term, char expectedEndChar);
-    bool GetEscapedChar(char & ch);
-    bool ParseEscapedChar(Term & term);
-    bool ParseLiteral(Term & term);
-    bool ParseRange(Term & term, char expectedEndChar);
-    bool ParseMultiplicity(int & minCount, int & maxCount, char expectedEndChar);
+    bool Have(const TokenIterator & it, TokenType type);
+    bool Expect(TokenIterator & it, TokenType type);
+    void AddNodeAndCheckMultiplicity(TokenIterator & it, ASTNode::Ptr & root, const ASTNode::Ptr & node);
+    ASTNode::Ptr ParseAlternative(TokenIterator & it);
+    ASTNode::Ptr ParseRange(TokenIterator & it);
     Term CreateDigitElement();
     Term CreateNonDigitElement();
     Term CreateWordCharElement();
@@ -54,10 +51,12 @@ protected:
     Term CreateVerticalTabElement();
     Term CreateNonVerticalTabElement();
     Term CreateLiteralElement(char ch);
+    Term CreateLiteralElement(CharSet charSet);
     void ChangeRepeat(Term & element, int minCount, int maxCount);
     void ChangeLastTermRepeat(int minCount, int maxCount);
     Term CreateTerm();
     bool Match(const std::string & text, size_t & index);
+
 };
 
 } // namespace RE

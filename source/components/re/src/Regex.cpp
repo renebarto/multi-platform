@@ -9,9 +9,9 @@ using namespace std;
 namespace RE {
 
 static const CharSet DigitSet(CharSet::Range('0', '9'));
-static const CharSet WordCharSet(CharSet::Range('0', '9') |
-                                 CharSet::Range('a', 'z') | CharSet::Range('A', 'Z') |
-                                 CharSet::Range('_'));
+static const CharSet AlphaCharSet(CharSet::Range('a', 'z') | CharSet::Range('A', 'Z') |
+                                  CharSet::Range('_'));
+static const CharSet WordCharSet(DigitSet | AlphaCharSet);
 static const CharSet::Range Cr('\r');
 static const CharSet::Range Lf('\n');
 static const CharSet::Range Space(' ');
@@ -43,64 +43,182 @@ bool Regex::ParseRegex()
     if (!_tokenizer.Tokenize())
         return false;
     auto it = _tokenizer.GetTokenIterator();
-    if (_tokenizer.GetTokenIterator().AtEnd())
+    if (it.AtEnd())
         return true;
-    ASTNode::Ptr root = Parse(it);
-    _ast.Root(root);
-    if (root == nullptr)
-        return false;
-    return true;
+    ASTNode::Ptr rootNode = ASTOrOperation::Create();
+    _ast.Root(rootNode);
+    while (!it.AtEnd())
+    {
+        auto node = ParseAlternative(it);
+        rootNode->Insert(node);
+        if (it.AtEnd())
+            return true;
+        if (!Expect(it, TokenType::Or))
+            return false;
+        if (it.AtEnd())
+        {
+            rootNode->Insert(ASTConcatOperation::Create());
+        }
+    }
+    return (rootNode != nullptr);
+}
+bool Regex::Expect(TokenIterator & it, TokenType type)
+{
+    if (Have(it, type))
+    {
+        ++it;
+        return true;
+    }
+    return false;
 }
 
-ASTNode::Ptr Regex::Parse(TokenIterator & it)
+bool Regex::Have(const TokenIterator & it, TokenType type)
 {
-    if (it.AtEnd())
-        return ASTLeafNull::Create();
-    switch (it->type)
+    return (it->type == type);
+}
+
+void Regex::AddNodeAndCheckMultiplicity(TokenIterator & it, ASTNode::Ptr & root, const ASTNode::Ptr & node)
+{
+    root->Insert(node);
+    ++it;
+    if (Have(it, TokenType::Plus))
     {
-        case TokenType::Literal:
-            {
-                ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
-                ++it;
-                if (it.AtEnd())
+        node->UpdateTerm(1, Term::Any);
+        ++it;
+    } else if (Have(it, TokenType::Asterisk))
+    {
+        node->UpdateTerm(0, Term::Any);
+        ++it;
+    } else if (Have(it, TokenType::QuestionMark))
+    {
+        node->UpdateTerm(0, 1);
+        ++it;
+    }
+}
+
+ASTNode::Ptr Regex::ParseAlternative(TokenIterator & it)
+{
+    ASTNode::Ptr rootNode = ASTConcatOperation::Create();
+    while (!it.AtEnd())
+    {
+        switch (it->type)
+        {
+            case TokenType::Digit:
+                ++it; break;
+            case TokenType::NotDigit:
+                ++it; break;
+            case TokenType::WordChar:
+                ++it; break;
+            case TokenType::NotWordChar:
+                ++it; break;
+            case TokenType::AlphaChar:
+                ++it; break;
+            case TokenType::NotAlphaChar:
+                ++it; break;
+            case TokenType::WhitespaceChar:
+                ++it; break;
+            case TokenType::NotWhitespaceChar:
+                ++it; break;
+            case TokenType::Literal:
                 {
-                    return node;
+                    ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                }
+                break;
+            case TokenType::Space:
+                ++it; break;
+            case TokenType::Tab:
+                ++it; break;
+            case TokenType::NewLine:
+                ++it; break;
+            case TokenType::Return:
+                ++it; break;
+            case TokenType::SquareBracketOpen:
+                {
+                    ++it;
+                    ASTNode::Ptr node = ParseRange(it);
+                    if (!Have(it, TokenType::SquareBracketClose))
+                        return nullptr;
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                    ++it;
+                }
+                break;
+            case TokenType::Or:
+                {
+                    return rootNode;
+                }
+                break;
+            default:
+                return nullptr;
+        }
+    }
+    return rootNode;
+}
+
+ASTNode::Ptr Regex::ParseRange(TokenIterator & it)
+{
+    bool negatedSet = false;
+    CharSet charSet;
+    while (!it.AtEnd())
+    {
+        switch (it->type)
+        {
+        case TokenType::SquareBracketClose:
+            return negatedSet ? ASTLeaf::Create(Term(Term::Type::NotSet, charSet))
+                              : ASTLeaf::Create(Term(Term::Type::Set, charSet));
+        case TokenType::Caret:
+            {
+                if (negatedSet)
+                    return nullptr;
+                negatedSet = true;
+                ++it;
+            }
+            break;
+        case TokenType::Digit:
+            charSet |= DigitSet;        ++it; break;
+        case TokenType::NotDigit:
+            charSet |= ~DigitSet;       ++it; break;
+        case TokenType::WordChar:
+            charSet |= WordCharSet;     ++it; break;
+        case TokenType::NotWordChar:
+            charSet |= ~WordCharSet;    ++it; break;
+        case TokenType::AlphaChar:
+            charSet |= AlphaCharSet;     ++it; break;
+        case TokenType::NotAlphaChar:
+            charSet |= ~AlphaCharSet;    ++it; break;
+        case TokenType::WhitespaceChar:
+            charSet |= WhitespaceSet;   ++it; break;
+        case TokenType::NotWhitespaceChar:
+            charSet |= ~WhitespaceSet;  ++it; break;
+        case TokenType::Literal:
+        case TokenType::Space:
+        case TokenType::Tab:
+        case TokenType::NewLine:
+        case TokenType::Return:
+            {
+                char charStart = it->value;
+                ++it;
+                if (Have(it, TokenType::Dash))
+                {
+                    ++it;
+                    if (it->type == TokenType::Literal)
+                    {
+                        char charEnd = it->value;
+                        charSet |= CharSet::Range(charStart, charEnd);
+                        ++it;
+                    }
+                    else
+                        return nullptr;
                 }
                 else
-                {
-                    switch (it->type)
-                    {
-                        case TokenType::Literal:
-                            {
-                                ASTNode::Ptr rhs = Parse(it);
-                                ASTNode::Ptr lhs = node;
-                                return ASTBinaryOperation::Create(ASTNode::Operation::Concat, lhs, rhs);
-                            }
-                            break;
-                        case TokenType::Or:
-                            {
-                                ++it;
-                                ASTNode::Ptr rhs = Parse(it);
-                                ASTNode::Ptr lhs = node;
-                                return ASTBinaryOperation::Create(ASTNode::Operation::Or, lhs, rhs);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                    charSet |= charStart;
             }
             break;
-        case TokenType::Or:
-            {
-                ++it;
-                ASTNode::Ptr rhs = Parse(it);
-                return ASTBinaryOperation::Create(ASTNode::Operation::Or, ASTLeafNull::Create(), rhs);
-            }
-            break;
+        case TokenType::Dot:
+            return nullptr;
         default:
-            ++it;
-            break;
+            return nullptr;
+        }
     }
     return nullptr;
 }
@@ -179,170 +297,6 @@ ASTNode::Ptr Regex::Parse(TokenIterator & it)
 //    }
 //    return true;
 //}
-//bool Regex::ParseLiteral(Term & term)
-//{
-//    if (_reader.AtEnd())
-//        return false;
-//    char ch;
-//    if (!_reader.GetChar(ch))
-//        return false;
-//    Term element = CreateLiteralElement(ch);
-//    term.Add(element);
-//    return true;
-//}
-//
-//bool Regex::ParseRange(Term & term, char expectedEndChar)
-//{
-//    bool negatedSet = false;
-//    CharSet charSet;
-//    if (_reader.AtEnd())
-//        return false;
-//    char ch;
-//    if (!_reader.PeekChar(ch))
-//        return false;
-//    if (ch == '^')
-//    {
-//        negatedSet = true;
-//        _reader.Advance();
-//    }
-//    if (_reader.AtEnd())
-//        return false;
-//    while (!_reader.AtEnd())
-//    {
-//        if (!_reader.PeekChar(ch))
-//            return false;
-//        if (ch == expectedEndChar)
-//        {
-//            _reader.Advance();
-//            break;
-//        }
-//        else if (ch == '\\')
-//        {
-//            char escapedChar;
-//            _reader.Advance();
-//            if (!GetEscapedChar(escapedChar))
-//                return false;
-//            _reader.Advance();
-//            switch (escapedChar)
-//            {
-//                case 'd':
-//                    charSet |= DigitSet;
-//                    break;
-//                case 'D':
-//                    charSet |= ~DigitSet;
-//                    break;
-//                case 'w':
-//                    charSet |= WordCharSet;
-//                    break;
-//                case 'W':
-//                    charSet |= ~WordCharSet;
-//                    break;
-//                case 's':
-//                    charSet |= WhitespaceSet;
-//                    break;
-//                case 'S':
-//                    charSet |= ~WhitespaceSet;
-//                    break;
-//                case 't':
-//                    charSet |= Tab;
-//                    break;
-//                case 'r':
-//                    charSet |= Cr;
-//                    break;
-//                case 'R':
-//                    charSet |= (Cr | Lf | VTab);
-//                    break;
-//                case 'n':
-//                    charSet |= Lf;
-//                    break;
-//                case 'N':
-//                    charSet |= ~(Cr | Lf | VTab);
-//                    break;
-//                case 'v':
-//                    charSet |= VTab;
-//                    break;
-//                case 'V':
-//                    charSet |= ~VTab;
-//                    break;
-//                default:
-//                    if (_reader.AtEnd())
-//                        return false;
-//                    char ch1;
-//                    if (!_reader.PeekChar(ch1))
-//                        return false;
-//                    if (ch1 == '-')
-//                    {
-//                        char endRangeChar;
-//                        if (!_reader.GetChar(endRangeChar))
-//                            return false;
-//                        if (endRangeChar == '\\')
-//                        {
-//                            char escapedChar2;
-//                            _reader.Advance();
-//                            if (!GetEscapedChar(escapedChar2))
-//                                return false;
-//                            charSet |= CharSet::Range(escapedChar, escapedChar2);
-//                        }
-//                        else
-//                        {
-//                            charSet |= CharSet::Range(escapedChar, endRangeChar);
-//                        }
-//                        _reader.Advance();
-//                    }
-//                    else
-//                        charSet |= ch;
-//                    break;
-//            }
-//        } else if (ch == '.')
-//        {
-//            charSet |= CharSet::All;
-//        } else if (ch == '[')
-//        {
-//            return false;
-//        } else
-//        {
-//            _reader.Advance();
-//            if (_reader.AtEnd())
-//                return false;
-//            char ch1;
-//            if (!_reader.PeekChar(ch1))
-//                return false;
-//            if (ch1 == '-')
-//            {
-//                char endRangeChar;
-//                if (!_reader.GetChar(endRangeChar))
-//                    return false;
-//                if (endRangeChar == '\\')
-//                {
-//                    char escapedChar;
-//                    _reader.Advance();
-//                    if (!GetEscapedChar(escapedChar))
-//                        return false;
-//                    charSet |= CharSet::Range(ch, escapedChar);
-//                }
-//                else
-//                {
-//                    charSet |= CharSet::Range(ch, endRangeChar);
-//                }
-//                _reader.Advance();
-//            }
-//            else
-//                charSet |= ch;
-//        }
-//    }
-//    Term element;
-//    if (negatedSet)
-//    {
-//        element = Term(Term::Type::NotSet, charSet);
-//    }
-//    else
-//    {
-//        element = Term(Term::Type::Set, charSet);
-//    }
-//    term.Add(element);
-//    return true;
-//}
-//
 //bool Regex::ParseMultiplicity(int & minCount, int & maxCount, char expectedEndChar)
 //{
 //    if (_reader.AtEnd())
@@ -572,6 +526,11 @@ ASTNode::Ptr Regex::Parse(TokenIterator & it)
 Term Regex::CreateLiteralElement(char ch)
 {
     return Term(Term::Type::Literal, ch);
+}
+
+Term Regex::CreateLiteralElement(CharSet charSet)
+{
+    return Term(Term::Type::Literal, charSet);
 }
 
 Term Regex::CreateDigitElement()

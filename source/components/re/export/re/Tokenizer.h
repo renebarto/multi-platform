@@ -25,13 +25,18 @@ enum class TokenType
     QuestionMark,
     Dash,
     Or,
-    Whitespace,
+    Caret,
+    Space,
+    Tab,
     NewLine,
-    Digit,
+    Return,
+    Digit, // '0'..'9'
     NotDigit,
-    WordChar,
+    WordChar, // '0'..'9', 'A'..'Z', 'a'..'z', '_'
     NotWordChar,
-    WhitespaceChar,
+    AlphaChar, // 'A'..'Z', 'a'..'z', '_'
+    NotAlphaChar,
+    WhitespaceChar, // ' ', '\t', '\f', '\r', '\n'
     NotWhitespaceChar,
 };
 
@@ -64,53 +69,68 @@ struct Token
     {
         switch (type)
         {
-            case RE::TokenType::None:
+            case TokenType::None:
                 stream << "None"; break;
-            case RE::TokenType::SquareBracketOpen:
+            case TokenType::SquareBracketOpen:
                 stream << "["; break;
-            case RE::TokenType::SquareBracketClose:
+            case TokenType::SquareBracketClose:
                 stream << "]"; break;
-            case RE::TokenType::CurlyBraceOpen:
+            case TokenType::CurlyBraceOpen:
                 stream << "{"; break;
-            case RE::TokenType::CurlyBraceClose:
+            case TokenType::CurlyBraceClose:
                 stream << "}"; break;
-            case RE::TokenType::ParenthesisOpen:
+            case TokenType::ParenthesisOpen:
                 stream << "("; break;
-            case RE::TokenType::ParenthesisClose:
+            case TokenType::ParenthesisClose:
                 stream << ")"; break;
-            case RE::TokenType::Literal:
+            case TokenType::Literal:
                 stream << "Literal " << value; break;
-            case RE::TokenType::Dot:
+            case TokenType::Dot:
                 stream << "."; break;
-            case RE::TokenType::Asterisk:
+            case TokenType::Asterisk:
                 stream << "*"; break;
-            case RE::TokenType::Plus:
+            case TokenType::Plus:
                 stream << "+"; break;
-            case RE::TokenType::QuestionMark:
+            case TokenType::QuestionMark:
                 stream << "?"; break;
-            case RE::TokenType::Dash:
+            case TokenType::Dash:
                 stream << "-"; break;
-            case RE::TokenType::Or:
+            case TokenType::Or:
                 stream << "|"; break;
-            case RE::TokenType::Whitespace:
-                stream << "Whitespace " << value; break;
-            case RE::TokenType::NewLine:
+            case TokenType::Caret:
+                stream << "^"; break;
+            case TokenType::Space:
+                stream << "Space" << value; break;
+            case TokenType::Tab:
+                stream << "Tab" << value; break;
+            case TokenType::NewLine:
                 stream << "LF" << value; break;
-            case RE::TokenType::Digit:
+            case TokenType::Return:
+                stream << "CR" << value; break;
+            case TokenType::Digit:
                 stream << "Digit"; break;
-            case RE::TokenType::NotDigit:
+            case TokenType::NotDigit:
                 stream << "~Digit"; break;
-            case RE::TokenType::WordChar:
-                stream << "Worchar"; break;
-            case RE::TokenType::NotWordChar:
-                stream << "~Worchar"; break;
-            case RE::TokenType::WhitespaceChar:
+            case TokenType::WordChar:
+                stream << "Wordchar"; break;
+            case TokenType::NotWordChar:
+                stream << "~Wordchar"; break;
+            case TokenType::AlphaChar:
+                stream << "AlphaChar"; break;
+            case TokenType::NotAlphaChar:
+                stream << "~AlphaChar"; break;
+            case TokenType::WhitespaceChar:
                 stream << "Whitespace"; break;
-            case RE::TokenType::NotWhitespaceChar:
+            case TokenType::NotWhitespaceChar:
                 stream << "~Whitespace"; break;
         }
     }
 };
+
+inline void PrintTo(const Token & token, std::ostream & stream)
+{
+    token.PrintTo(stream);
+}
 
 using TokenList = std::vector<Token>;
 
@@ -196,18 +216,28 @@ inline std::ostream & operator << (std::ostream & stream, const RE::TokenType & 
             stream << "-"; break;
         case RE::TokenType::Or:
             stream << "|"; break;
-        case RE::TokenType::Whitespace:
+        case RE::TokenType::Caret:
+            stream << "^"; break;
+        case RE::TokenType::Space:
             stream << "Whitespace"; break;
+        case RE::TokenType::Tab:
+            stream << "Tab"; break;
         case RE::TokenType::NewLine:
             stream << "Newline"; break;
+        case RE::TokenType::Return:
+            stream << "Return"; break;
         case RE::TokenType::Digit:
             stream << "Digit"; break;
         case RE::TokenType::NotDigit:
             stream << "~Digit"; break;
         case RE::TokenType::WordChar:
-            stream << "Worchar"; break;
+            stream << "Wordchar"; break;
         case RE::TokenType::NotWordChar:
-            stream << "~Worchar"; break;
+            stream << "~Wordchar"; break;
+        case RE::TokenType::AlphaChar:
+            stream << "AlphaChar"; break;
+        case RE::TokenType::NotAlphaChar:
+            stream << "~AlphaChar"; break;
         case RE::TokenType::WhitespaceChar:
             stream << "Whitespace"; break;
         case RE::TokenType::NotWhitespaceChar:
@@ -222,3 +252,11 @@ inline std::ostream & operator << (std::ostream & stream, const RE::Token & toke
     return stream;
 }
 
+namespace RE {
+
+inline void PrintTo(const TokenType & type, std::ostream & stream)
+{
+    stream << type;
+}
+
+} // namespace RE

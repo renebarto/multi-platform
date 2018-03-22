@@ -33,26 +33,29 @@ TEST_FIXTURE(TokenizerTest, Punctuations)
     ASSERT_TRUE(tokenizer.Tokenize());
 
     auto & tokens = tokenizer.GetTokens();
-    ASSERT_EQ(size_t {16}, tokens.size());
+    ASSERT_EQ(size_t {19}, tokens.size());
 
     size_t index {};
 
-    ASSERT_EQ(Token(TokenType::SquareBracketOpen), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::SquareBracketClose), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::CurlyBraceOpen), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::CurlyBraceClose), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::ParenthesisOpen), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::ParenthesisClose), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Asterisk), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Plus), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::QuestionMark), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Dash), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Dot), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Or), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Whitespace), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::NewLine), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Whitespace), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::NewLine), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::SquareBracketOpen, '['), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::SquareBracketClose, ']'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::CurlyBraceOpen, '{'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::CurlyBraceClose, '}'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::ParenthesisOpen, '('), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::ParenthesisClose, ')'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Asterisk, '*'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Plus, '+'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::QuestionMark, '?'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Dash, '-'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Dot, '.'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Or, '|'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Space, ' '), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Tab, '\t'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::NewLine, '\n'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Return, '\r'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Space, ' '), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Return, '\r'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::NewLine, '\n'), tokens[index++]);
 }
 
 TEST_FIXTURE(TokenizerTest, LiteralChars)
@@ -146,7 +149,7 @@ TEST_FIXTURE(TokenizerTest, EscapeChars)
 
     size_t index {};
 
-    ASSERT_EQ(Token(TokenType::Literal, 'a'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::AlphaChar), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'b'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'c'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Digit), tokens[index++]);
@@ -172,7 +175,7 @@ TEST_FIXTURE(TokenizerTest, EscapeChars)
     ASSERT_EQ(Token(TokenType::Literal, 'x'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'y'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'z'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'A'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::NotAlphaChar), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'B'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'C'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::NotDigit), tokens[index++]);
