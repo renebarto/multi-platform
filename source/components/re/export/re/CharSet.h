@@ -4,6 +4,6 @@
 
 namespace RE {
 
-using CharSet = ValueSet<char>;
+using CharSet = ValueSet<char, int>;
 
 } // namespace RE

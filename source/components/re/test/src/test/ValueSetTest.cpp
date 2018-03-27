@@ -9,32 +9,34 @@ using namespace std;
 namespace RE {
 namespace Test {
 
-class InputSetTest : public UnitTestCpp::TestFixture
+class ValueSetTest : public UnitTestCpp::TestFixture
 {
 };
 
+using CharValueSet = ValueSet<char, int>;
+
 TEST_SUITE(re) {
 
-TEST_FIXTURE(InputSetTest, Empty)
+TEST_FIXTURE(ValueSetTest, Empty)
 {
-    ValueSet<char> target;
-    ValueSet<char> expected = ValueSet<char>::Empty;
+    CharValueSet target;
+    CharValueSet expected = CharValueSet::Empty;
 
     EXPECT_EQ(expected, target);
 }
 
-TEST_FIXTURE(InputSetTest, Full)
+TEST_FIXTURE(ValueSetTest, Full)
 {
-    ValueSet<char> target;
+    CharValueSet target;
     target.Fill();
-    ValueSet<char> expected = ValueSet<char>::All;
+    CharValueSet expected = CharValueSet::All;
 
     EXPECT_EQ(expected, target);
 }
 
-TEST_FIXTURE(InputSetTest, ConstructDefault)
+TEST_FIXTURE(ValueSetTest, ConstructDefault)
 {
-    ValueSet<char> inputSet;
+    CharValueSet inputSet;
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         EXPECT_FALSE(inputSet.Contains(ch));
@@ -42,10 +44,10 @@ TEST_FIXTURE(InputSetTest, ConstructDefault)
     EXPECT_EQ(size_t{0}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, ConstructSingleChar)
+TEST_FIXTURE(ValueSetTest, ConstructSingleChar)
 {
     char singleChar = 'a';
-    ValueSet<char> inputSet(singleChar);
+    CharValueSet inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -56,10 +58,10 @@ TEST_FIXTURE(InputSetTest, ConstructSingleChar)
     EXPECT_EQ(size_t{1}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, ConstructRange)
+TEST_FIXTURE(ValueSetTest, ConstructRange)
 {
-    ValueSet<char>::Range range('a', 'c');
-    ValueSet<char> inputSet(range);
+    CharValueSet::Range range('a', 'c');
+    CharValueSet inputSet(range);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
@@ -70,11 +72,11 @@ TEST_FIXTURE(InputSetTest, ConstructRange)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, ConstructCopy)
+TEST_FIXTURE(ValueSetTest, ConstructCopy)
 {
-    ValueSet<char>::Range range('a', 'c');
-    ValueSet<char> other(range);
-    ValueSet<char> inputSet(other);
+    CharValueSet::Range range('a', 'c');
+    CharValueSet other(range);
+    CharValueSet inputSet(other);
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         if ((range.from <= ch) && (range.to >= ch))
@@ -93,11 +95,11 @@ TEST_FIXTURE(InputSetTest, ConstructCopy)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, ConstructMove)
+TEST_FIXTURE(ValueSetTest, ConstructMove)
 {
-    ValueSet<char>::Range range('a', 'c');
-    ValueSet<char> other(range);
-    ValueSet<char> inputSet(std::move(other));
+    CharValueSet::Range range('a', 'c');
+    CharValueSet other(range);
+    CharValueSet inputSet(std::move(other));
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
         EXPECT_FALSE(other.Contains(ch));
@@ -113,11 +115,11 @@ TEST_FIXTURE(InputSetTest, ConstructMove)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, Assign)
+TEST_FIXTURE(ValueSetTest, Assign)
 {
-    ValueSet<char>::Range range('a', 'c');
-    ValueSet<char> other(range);
-    ValueSet<char> inputSet;
+    CharValueSet::Range range('a', 'c');
+    CharValueSet other(range);
+    CharValueSet inputSet;
     inputSet = other;
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
@@ -137,11 +139,11 @@ TEST_FIXTURE(InputSetTest, Assign)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, AssignMove)
+TEST_FIXTURE(ValueSetTest, AssignMove)
 {
-    ValueSet<char>::Range range('a', 'c');
-    ValueSet<char> other(range);
-    ValueSet<char> inputSet;
+    CharValueSet::Range range('a', 'c');
+    CharValueSet other(range);
+    CharValueSet inputSet;
     inputSet = std::move(other);
     for (char ch = 0; ch < other.MaxValue; ++ch)
     {
@@ -158,12 +160,12 @@ TEST_FIXTURE(InputSetTest, AssignMove)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, AddSingleChar)
+TEST_FIXTURE(ValueSetTest, AddSingleChar)
 {
     char singleChar = 'a';
     char secondChar = 'b';
     char otherChar = 'd';
-    ValueSet<char> inputSet;
+    CharValueSet inputSet;
     inputSet.Add(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
@@ -186,17 +188,17 @@ TEST_FIXTURE(InputSetTest, AddSingleChar)
     EXPECT_EQ(size_t{3}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, AddRange)
+TEST_FIXTURE(ValueSetTest, AddRange)
 {
-    ValueSet<char>::Range firstRange('g', 'i');
-    ValueSet<char>::Range nonOverlappingBefore('d', 'e');
-    ValueSet<char>::Range nonOverlappingAfter('k', 'l');
-    ValueSet<char>::Range connectingBefore('d', 'f');
-    ValueSet<char>::Range connectingAfter('j', 'l');
-    ValueSet<char>::Range overlappingSub('g', 'h');
-    ValueSet<char>::Range overlappingExtending('a', 'z');
-    ValueSet<char>::Range otherRange('A', 'Z');
-    ValueSet<char> inputSet;
+    CharValueSet::Range firstRange('g', 'i');
+    CharValueSet::Range nonOverlappingBefore('d', 'e');
+    CharValueSet::Range nonOverlappingAfter('k', 'l');
+    CharValueSet::Range connectingBefore('d', 'f');
+    CharValueSet::Range connectingAfter('j', 'l');
+    CharValueSet::Range overlappingSub('g', 'h');
+    CharValueSet::Range overlappingExtending('a', 'z');
+    CharValueSet::Range otherRange('A', 'Z');
+    CharValueSet inputSet;
     inputSet.Add(firstRange);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
@@ -288,10 +290,10 @@ TEST_FIXTURE(InputSetTest, AddRange)
     EXPECT_EQ(size_t{52}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, Clear)
+TEST_FIXTURE(ValueSetTest, Clear)
 {
     char singleChar = 'a';
-    ValueSet<char> inputSet(singleChar);
+    CharValueSet inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -308,10 +310,10 @@ TEST_FIXTURE(InputSetTest, Clear)
     EXPECT_EQ(size_t{0}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, Fill)
+TEST_FIXTURE(ValueSetTest, Fill)
 {
     char singleChar = 'a';
-    ValueSet<char> inputSet(singleChar);
+    CharValueSet inputSet(singleChar);
     for (char ch = 0; ch < inputSet.MaxValue; ++ch)
     {
         if (ch == singleChar)
@@ -328,13 +330,13 @@ TEST_FIXTURE(InputSetTest, Fill)
     EXPECT_EQ(size_t{128}, inputSet.Count());
 }
 
-TEST_FIXTURE(InputSetTest, Iterator)
+TEST_FIXTURE(ValueSetTest, Iterator)
 {
     char firstChar = 'a';
     char lastChar = 'c';
     char firstCharSecondRange = 'd';
     char lastCharSecondRange = 'f';
-    ValueSet<char> inputSet(firstChar);
+    CharValueSet inputSet(firstChar);
     auto it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -346,7 +348,7 @@ TEST_FIXTURE(InputSetTest, Iterator)
     it = inputSet.begin();
     EXPECT_TRUE(it == inputSet.end());
 
-    inputSet.Add(ValueSet<char>::Range(firstChar, lastChar));
+    inputSet.Add(CharValueSet::Range(firstChar, lastChar));
     it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -354,7 +356,7 @@ TEST_FIXTURE(InputSetTest, Iterator)
     ++it;
     EXPECT_TRUE(it == inputSet.end());
 
-    inputSet.Add(ValueSet<char>::Range(firstCharSecondRange, lastCharSecondRange));
+    inputSet.Add(CharValueSet::Range(firstCharSecondRange, lastCharSecondRange));
     it = inputSet.begin();
     EXPECT_FALSE(it == inputSet.end());
     EXPECT_EQ(firstChar, it->from);
@@ -363,16 +365,16 @@ TEST_FIXTURE(InputSetTest, Iterator)
     EXPECT_TRUE(it == inputSet.end());
 }
 
-TEST_FIXTURE(InputSetTest, Includes)
+TEST_FIXTURE(ValueSetTest, Includes)
 {
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Includes(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Includes(connectingBefore));
@@ -382,16 +384,16 @@ TEST_FIXTURE(InputSetTest, Includes)
     EXPECT_FALSE(firstRange.Includes(otherRange));
 }
 
-TEST_FIXTURE(InputSetTest, Overlaps)
+TEST_FIXTURE(ValueSetTest, Overlaps)
 {
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingBefore));
     EXPECT_FALSE(firstRange.Overlaps(nonOverlappingAfter));
     EXPECT_FALSE(firstRange.Overlaps(connectingBefore));
@@ -401,17 +403,17 @@ TEST_FIXTURE(InputSetTest, Overlaps)
     EXPECT_FALSE(firstRange.Overlaps(otherRange));
 }
 
-TEST_FIXTURE(InputSetTest, OperatorEquals)
+TEST_FIXTURE(ValueSetTest, OperatorEquals)
 {
-    ValueSet<char> target(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target(CharValueSet::Range('g', 'i'));
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     EXPECT_TRUE(target == firstRange);
     EXPECT_FALSE(target == nonOverlappingBefore);
     EXPECT_FALSE(target == nonOverlappingAfter);
@@ -422,17 +424,17 @@ TEST_FIXTURE(InputSetTest, OperatorEquals)
     EXPECT_FALSE(target == otherRange);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorNotEquals)
+TEST_FIXTURE(ValueSetTest, OperatorNotEquals)
 {
-    ValueSet<char> target(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target(CharValueSet::Range('g', 'i'));
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     EXPECT_FALSE(target != firstRange);
     EXPECT_TRUE(target != nonOverlappingBefore);
     EXPECT_TRUE(target != nonOverlappingAfter);
@@ -443,94 +445,94 @@ TEST_FIXTURE(InputSetTest, OperatorNotEquals)
     EXPECT_TRUE(target != otherRange);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorAnd)
+TEST_FIXTURE(ValueSetTest, OperatorAnd)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     target = firstRange & firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange & nonOverlappingBefore;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange & nonOverlappingAfter;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange & connectingBefore;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange & connectingAfter;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange & overlappingSub;
     EXPECT_EQ(overlappingSub, target);
     target = firstRange & overlappingExtending;
     EXPECT_EQ(firstRange, target);
     target = firstRange & otherRange;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorOr)
+TEST_FIXTURE(ValueSetTest, OperatorOr)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
 
-    ValueSet<char> expected;
+    CharValueSet expected;
     EXPECT_EQ(expected, target);
     target = firstRange | firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange | nonOverlappingBefore;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('d', 'e'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange | nonOverlappingAfter;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('k', 'l'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingBefore;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('d', 'f'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange | connectingAfter;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('j', 'l'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingSub;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('g', 'h'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange | overlappingExtending;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('a', 'z'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange | otherRange;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('A', 'Z'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorMinus)
+TEST_FIXTURE(ValueSetTest, OperatorMinus)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     target = firstRange - firstRange;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange - nonOverlappingBefore;
     EXPECT_EQ(firstRange, target);
     target = firstRange - nonOverlappingAfter;
@@ -539,50 +541,50 @@ TEST_FIXTURE(InputSetTest, OperatorMinus)
     EXPECT_EQ(firstRange, target);
     target = firstRange - connectingAfter;
     EXPECT_EQ(firstRange, target);
-    ValueSet<char> expected('i');
+    CharValueSet expected('i');
     target = firstRange - overlappingSub;
     EXPECT_EQ(expected, target);
     target = firstRange - overlappingExtending;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange - otherRange;
     EXPECT_EQ(firstRange, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorNot)
+TEST_FIXTURE(ValueSetTest, OperatorNot)
 {
-    ValueSet<char> other(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> target = ~other;
-    ValueSet<char> expected = ValueSet<char>::All - other;
+    CharValueSet other(CharValueSet::Range('a', 'z'));
+    CharValueSet target = ~other;
+    CharValueSet expected = CharValueSet::All - other;
 
     EXPECT_EQ(expected, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorAndEquals)
+TEST_FIXTURE(ValueSetTest, OperatorAndEquals)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     target = firstRange;
     target &= firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target &= nonOverlappingBefore;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target &= nonOverlappingAfter;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target &= connectingBefore;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target &= connectingAfter;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target &= overlappingSub;
     EXPECT_EQ(overlappingSub, target);
@@ -591,77 +593,77 @@ TEST_FIXTURE(InputSetTest, OperatorAndEquals)
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target &= otherRange;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorOrEquals)
+TEST_FIXTURE(ValueSetTest, OperatorOrEquals)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
 
-    ValueSet<char> expected;
+    CharValueSet expected;
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= firstRange;
     EXPECT_EQ(firstRange, target);
     target = firstRange;
     target |= nonOverlappingBefore;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('d', 'e'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('d', 'e'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= nonOverlappingAfter;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('k', 'l'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('k', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingBefore;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('d', 'f'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('d', 'f'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= connectingAfter;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('j', 'l'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('j', 'l'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingSub;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('g', 'h'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('g', 'h'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= overlappingExtending;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('a', 'z'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('a', 'z'));
     EXPECT_EQ(expected, target);
     target = firstRange;
     target |= otherRange;
-    expected = ValueSet<char>(firstRange);
-    expected.Add(ValueSet<char>::Range('A', 'Z'));
+    expected = CharValueSet(firstRange);
+    expected.Add(CharValueSet::Range('A', 'Z'));
     EXPECT_EQ(expected, target);
 }
 
-TEST_FIXTURE(InputSetTest, OperatorMinusEquals)
+TEST_FIXTURE(ValueSetTest, OperatorMinusEquals)
 {
-    ValueSet<char> target;
-    ValueSet<char> firstRange(ValueSet<char>::Range('g', 'i'));
-    ValueSet<char> nonOverlappingBefore(ValueSet<char>::Range('d', 'e'));
-    ValueSet<char> nonOverlappingAfter(ValueSet<char>::Range('k', 'l'));
-    ValueSet<char> connectingBefore(ValueSet<char>::Range('d', 'f'));
-    ValueSet<char> connectingAfter(ValueSet<char>::Range('j', 'l'));
-    ValueSet<char> overlappingSub(ValueSet<char>::Range('g', 'h'));
-    ValueSet<char> overlappingExtending(ValueSet<char>::Range('a', 'z'));
-    ValueSet<char> otherRange(ValueSet<char>::Range('A', 'Z'));
+    CharValueSet target;
+    CharValueSet firstRange(CharValueSet::Range('g', 'i'));
+    CharValueSet nonOverlappingBefore(CharValueSet::Range('d', 'e'));
+    CharValueSet nonOverlappingAfter(CharValueSet::Range('k', 'l'));
+    CharValueSet connectingBefore(CharValueSet::Range('d', 'f'));
+    CharValueSet connectingAfter(CharValueSet::Range('j', 'l'));
+    CharValueSet overlappingSub(CharValueSet::Range('g', 'h'));
+    CharValueSet overlappingExtending(CharValueSet::Range('a', 'z'));
+    CharValueSet otherRange(CharValueSet::Range('A', 'Z'));
     target = firstRange;
     target -= firstRange;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target -= nonOverlappingBefore;
     EXPECT_EQ(firstRange, target);
@@ -674,44 +676,44 @@ TEST_FIXTURE(InputSetTest, OperatorMinusEquals)
     target = firstRange;
     target -= connectingAfter;
     EXPECT_EQ(firstRange, target);
-    ValueSet<char> expected('i');
+    CharValueSet expected('i');
     target = firstRange;
     target -= overlappingSub;
     EXPECT_EQ(expected, target);
     target = firstRange;
     target -= overlappingExtending;
-    EXPECT_EQ(ValueSet<char>::Empty, target);
+    EXPECT_EQ(CharValueSet::Empty, target);
     target = firstRange;
     target -= otherRange;
     EXPECT_EQ(firstRange, target);
 }
 
-TEST_FIXTURE(InputSetTest, PrintSingleChar)
+TEST_FIXTURE(ValueSetTest, PrintSingleChar)
 {
     ostringstream stream;
 
-    ValueSet<char> inputSet('a');
+    CharValueSet inputSet('a');
     stream << inputSet;
     string expected = "a";
     EXPECT_EQ(expected, stream.str());
 }
 
-TEST_FIXTURE(InputSetTest, PrintRange)
+TEST_FIXTURE(ValueSetTest, PrintRange)
 {
     ostringstream stream;
 
-    ValueSet<char> inputSet(ValueSet<char>::Range('g', 'i'));
+    CharValueSet inputSet(CharValueSet::Range('g', 'i'));
     stream << inputSet;
     string expected = "g-i";
     EXPECT_EQ(expected, stream.str());
 }
 
-TEST_FIXTURE(InputSetTest, Print)
+TEST_FIXTURE(ValueSetTest, Print)
 {
     ostringstream stream;
 
-    ValueSet<char> inputSet(ValueSet<char>::Range('g', 'i'));
-    inputSet |= ValueSet<char>::Range('k', 'l');
+    CharValueSet inputSet(CharValueSet::Range('g', 'i'));
+    inputSet |= CharValueSet::Range('k', 'l');
     stream << inputSet;
     string expected = "g-i,k-l";
     EXPECT_EQ(expected, stream.str());

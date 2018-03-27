@@ -6,7 +6,7 @@
 
 namespace RE {
 
-template<class Type>
+template<class Type, class UnderlyingType>
 class ValueSet
 {
 public:
@@ -18,13 +18,13 @@ public:
     class Range
     {
     public:
-        Type from;
-        Type to;
+        UnderlyingType from;
+        UnderlyingType to;
 
-        Range(Type from, Type to)
+        Range(UnderlyingType from, UnderlyingType to)
             : from(from), to(to)
         {}
-        Range(Type value)
+        Range(UnderlyingType value)
             : from(value), to(value)
         {}
 
@@ -48,11 +48,10 @@ public:
 
     ValueSet & operator = (ValueSet && other);
 
-    Type First() const;
-    
     size_t Count() const;
 
     bool Contains(Type value) const;
+    bool IsEmpty() const;
 
     void Add(Type value);
     void Add(Range range);
@@ -83,28 +82,28 @@ public:
 
     friend ValueSet operator &(ValueSet const & lhs, ValueSet const & rhs)
     {
-        ValueSet<Type> result(lhs);
+        ValueSet<Type, UnderlyingType> result(lhs);
         result.And(rhs);
         return result;
     }
 
     friend ValueSet operator |(ValueSet const & lhs, ValueSet const & rhs)
     {
-        ValueSet<Type> result(lhs);
+        ValueSet<Type, UnderlyingType> result(lhs);
         result.Or(rhs);
         return result;
     }
 
     friend ValueSet operator -(ValueSet const & lhs, ValueSet const & rhs)
     {
-        ValueSet<Type> result(lhs);
+        ValueSet<Type, UnderlyingType> result(lhs);
         result.Subtract(rhs);
         return result;
     }
 
     friend ValueSet operator ~(ValueSet const & other)
     {
-        ValueSet<Type> result;
+        ValueSet<Type, UnderlyingType> result;
         result.Fill();
         result -= other;
         return result;
@@ -138,9 +137,9 @@ public:
                 stream << ",";
             }
             if (range.from == range.to)
-                stream << range.from;
+                stream << static_cast<Type>(range.from);
             else
-                stream << range.from << "-" << range.to;
+                stream << static_cast<Type>(range.from) << "-" << static_cast<Type>(range.to);
             firstElement = false;
         }
     }
@@ -161,14 +160,14 @@ private:
     void MergeRanges(Iterator left, Iterator right);
 };
 
-template<class Type>
-ValueSet<Type>::ValueSet()
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::ValueSet()
     : _ranges()
 {
 }
 
-template<class Type>
-ValueSet<Type>::ValueSet(ValueSet const & other)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::ValueSet(ValueSet const & other)
     : _ranges()
 {
     for (auto & range : other)
@@ -178,37 +177,37 @@ ValueSet<Type>::ValueSet(ValueSet const & other)
     }
 }
 
-template<class Type>
-ValueSet<Type>::ValueSet(ValueSet && other)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::ValueSet(ValueSet && other)
     : _ranges()
 {
     this->_ranges = std::move(other._ranges);
     other._ranges = {};
 }
 
-template<class Type>
-ValueSet<Type>::ValueSet(Type value)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::ValueSet(Type value)
     : _ranges()
 {
     Add(value);
 }
 
-template<class Type>
-ValueSet<Type>::ValueSet(Range range)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::ValueSet(Range range)
     : _ranges()
 {
     Add(range);
 }
 
 
-template<class Type>
-ValueSet<Type>::~ValueSet()
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType>::~ValueSet()
 {
     Clear();
 }
 
-template<class Type>
-ValueSet<Type> & ValueSet<Type>::operator =(ValueSet<Type> const & other)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType> & ValueSet<Type, UnderlyingType>::operator =(ValueSet<Type, UnderlyingType> const & other)
 {
     if (this != &other)
     {
@@ -221,37 +220,45 @@ ValueSet<Type> & ValueSet<Type>::operator =(ValueSet<Type> const & other)
     return *this;
 }
 
-template<class Type>
-ValueSet<Type> & ValueSet<Type>::operator =(ValueSet && other)
+template<class Type, class UnderlyingType>
+ValueSet<Type, UnderlyingType> & ValueSet<Type, UnderlyingType>::operator =(ValueSet && other)
 {
     this->_ranges = std::move(other._ranges);
     other._ranges = {};
     return *this;
 }
 
-template<class Type>
-bool ValueSet<Type>::Contains(Type value) const
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::Contains(Type value) const
 {
+    auto underlyingValue = static_cast<UnderlyingType>(value);
     for (auto & range : _ranges)
     {
-        if (value < range.from)
+        if (underlyingValue < range.from)
             return false;
-        else if (value <= range.to)
+        else if (underlyingValue <= range.to)
             return true; // p.from <= i <= p.to
     }
     return false;
 }
 
-template<class Type>
-void ValueSet<Type>::Add(Type value)
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::IsEmpty() const
 {
+    return _ranges.empty();
+}
+
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Add(Type value)
+{
+    auto underlyingValue = static_cast<UnderlyingType>(value);
     Iterator cur = _ranges.begin();
-    while (cur != _ranges.end() && value >= cur->from - 1)
+    while (cur != _ranges.end() && underlyingValue >= cur->from - 1)
     {
-        if (value <= cur->to + 1)
+        if (underlyingValue <= cur->to + 1)
         {
-            if (value == cur->from - 1) cur->from--;
-            else if (value == cur->to + 1)
+            if (underlyingValue == cur->from - 1) cur->from--;
+            else if (underlyingValue == cur->to + 1)
             {
                 cur->to++;
                 Iterator next = cur + 1;
@@ -264,12 +271,12 @@ void ValueSet<Type>::Add(Type value)
         }
         ++cur;
     }
-    Range n(value, value);
+    Range n(underlyingValue, underlyingValue);
     _ranges.insert(cur, n);
 }
 
-template<class Type>
-void ValueSet<Type>::Add(Range range)
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Add(Range range)
 {
     Iterator cur = _ranges.begin();
     while (cur != _ranges.end() && range.to >= cur->from - 1)
@@ -290,8 +297,8 @@ void ValueSet<Type>::Add(Range range)
     _ranges.insert(cur, range);
 }
 
-template<class Type>
-bool ValueSet<Type>::Equals(ValueSet const & s) const
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::Equals(ValueSet const & s) const
 {
     ConstIterator p = _ranges.begin(), q = s._ranges.begin();
     while (p != _ranges.end() && q != s._ranges.end())
@@ -304,16 +311,8 @@ bool ValueSet<Type>::Equals(ValueSet const & s) const
     return (p == _ranges.end()) && (q == s._ranges.end());
 }
 
-template<class Type>
-Type ValueSet<Type>::First() const
-{
-    if (_ranges.begin() != _ranges.end())
-        return _ranges.begin()->from;
-    return MaxValue;
-}
-
-template<class Type>
-size_t ValueSet<Type>::Count() const
+template<class Type, class UnderlyingType>
+size_t ValueSet<Type, UnderlyingType>::Count() const
 {
     size_t n = 0;
     for (auto & range : _ranges)
@@ -321,107 +320,122 @@ size_t ValueSet<Type>::Count() const
     return n;
 }
 
-template<class Type>
-void ValueSet<Type>::Or(ValueSet const & s)
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Or(ValueSet const & s)
 {
     for (auto & range : s._ranges)
-        for (Type i = range.from; i <= range.to; i++)
-            Add(i);
+        for (auto i = range.from; i <= range.to; i++)
+        {
+            auto u = static_cast<Type>(i);
+            Add(u);
+        }
 }
 
-template<class Type>
-void ValueSet<Type>::And(ValueSet const & s)
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::And(ValueSet const & s)
 {
     ValueSet newSet;
     for (auto & range : _ranges)
     {
-        for (Type i = range.from; i <= range.to; i++)
-            if (s.Contains(i))
-                newSet.Add(i);
+        for (auto i = range.from; i <= range.to; i++)
+        {
+            auto u = static_cast<Type>(i);
+            if (s.Contains(u))
+                newSet.Add(u);
+        }
     }
     _ranges = std::move(newSet._ranges);
     newSet._ranges = {};
 }
 
-template<class Type>
-void ValueSet<Type>::Subtract(ValueSet const & s)
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Subtract(ValueSet const & s)
 {
     ValueSet newSet;
     for (auto & range : _ranges)
     {
-        for (Type i = range.from; (i <= range.to) && (i >= range.from); i++)
-            if (!s.Contains(i))
-                newSet.Add(i);
+        for (auto i = range.from; (i <= range.to) && (i >= range.from); i++)
+        {
+            auto u = static_cast<Type>(i);
+            if (!s.Contains(u))
+                newSet.Add(u);
+        }
     }
     _ranges = std::move(newSet._ranges);
     newSet._ranges = {};
 }
 
-template<class Type>
-bool ValueSet<Type>::Includes(ValueSet const & s) const
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::Includes(ValueSet const & s) const
 {
     for (auto & range : s._ranges)
-        for (int i = range.from; i <= range.to; i++)
-            if (!Contains(i))
+        for (auto i = range.from; i <= range.to; i++)
+        {
+            auto u = static_cast<Type>(i);
+            if (!Contains(u))
                 return false;
+        }
     return true;
 }
 
-template<class Type>
-bool ValueSet<Type>::Overlaps(ValueSet const & s) const
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::Overlaps(ValueSet const & s) const
 {
     for (auto & range : s._ranges)
-        for (int i = range.from; i <= range.to; i++)
-            if (Contains(i))
+        for (auto i = range.from; i <= range.to; i++)
+        {
+            auto u = static_cast<Type>(i);
+            if (Contains(u))
                 return true;
+        }
     return false;
 }
 
-template<class Type>
-void ValueSet<Type>::Clear()
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Clear()
 {
     _ranges.clear();
 }
 
-template<class Type>
-void ValueSet<Type>::Fill()
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::Fill()
 {
     Clear();
     _ranges.push_back(Range(0, MaxValue));
 }
 
-template<class Type>
-bool
-ValueSet<Type>::RangesTouch(typename ValueSet<Type>::Iterator left, typename ValueSet<Type>::Iterator right)
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::RangesTouch(typename ValueSet<Type, UnderlyingType>::Iterator left,
+                                                 typename ValueSet<Type, UnderlyingType>::Iterator right)
 {
     return (right != _ranges.end() && left->to >= right->from - 1);
 }
 
-template<class Type>
-void
-ValueSet<Type>::MergeRanges(typename ValueSet<Type>::Iterator left, typename ValueSet<Type>::Iterator right)
+template<class Type, class UnderlyingType>
+void ValueSet<Type, UnderlyingType>::MergeRanges(typename ValueSet<Type, UnderlyingType>::Iterator left,
+                                                 typename ValueSet<Type, UnderlyingType>::Iterator right)
 {
     left->to = right->to;
     _ranges.erase(right);
 }
 
 // This contant is only defined for integral values to guard against incorrect usage
-template<class Type>
-const
-typename std::enable_if<std::is_integral<Type>::value, Type>::type
-ValueSet<Type>::MaxValue = std::numeric_limits<Type>::max();
+template<class Type, class UnderlyingType>
+const typename std::enable_if<std::is_integral<Type>::value, Type>::type
+ValueSet<Type, UnderlyingType>::MaxValue = std::numeric_limits<Type>::max();
 
-template<class Type>
-const ValueSet<Type> ValueSet<Type>::Empty = ValueSet<Type>();
+template<class Type, class UnderlyingType>
+const ValueSet<Type, UnderlyingType> ValueSet<Type, UnderlyingType>::Empty = ValueSet<Type, UnderlyingType>();
 
 // Only support positive _ranges
-template<class Type>
-const ValueSet<Type> ValueSet<Type>::All = ValueSet<Type>(ValueSet<Type>::Range(0, std::numeric_limits<Type>::max()));
+template<class Type, class UnderlyingType>
+const ValueSet<Type, UnderlyingType> ValueSet<Type, UnderlyingType>::All =
+    ValueSet<Type, UnderlyingType>(ValueSet<Type, UnderlyingType>::Range(0, std::numeric_limits<Type>::max()));
 
 } // namespace RE
 
-template<class Type>
-inline std::ostream & operator << (std::ostream & stream, const RE::ValueSet<Type> & inputSet)
+template<class Type, class UnderlyingType>
+inline std::ostream & operator << (std::ostream & stream, const RE::ValueSet<Type, UnderlyingType> & inputSet)
 {
     inputSet.PrintTo(stream);
     return stream;

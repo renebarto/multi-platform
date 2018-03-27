@@ -8,7 +8,7 @@
 
 namespace RE {
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class DFARule
 {
 public:
@@ -69,26 +69,20 @@ public:
     }
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
-using DFARuleSet = std::vector<DFARule<State, InputValue, InputSpecifier>>;
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
+using DFARuleSet = std::vector<DFARule<State, InputValue, UnderlyingType, InputSpecifier>>;
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class DFA
 {
 public:
-    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules)
-        : _rules(rules)
-        , _initialState()
-        , _finalState(_initialState)
-        , _currentState(_initialState)
-    {}
-    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState)
-        : _rules(rules)
+    DFA(State initialState, State finalState)
+        : _rules()
         , _initialState(initialState)
-        , _finalState(_initialState)
+        , _finalState(finalState)
         , _currentState(_initialState)
     {}
-    DFA(const DFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState, State finalState)
+    DFA(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules, State initialState, State finalState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(finalState)
@@ -130,6 +124,10 @@ public:
         return *this;
     }
 
+    void AddRule(const DFARule<State, InputValue, UnderlyingType, InputSpecifier> & rule)
+    {
+        _rules.push_back(rule);
+    }
     bool Validate() const;
     void Reset() { _currentState = _initialState; }
     bool HandleInput(InputValue input)
@@ -147,14 +145,30 @@ public:
     State CurrentState() const { return _currentState; }
     bool IsFinalState() const { return _currentState == _finalState; }
 
+    void ExportToDot(std::ostream & stream) const
+    {
+        stream << "digraph {" << std::endl;
+        stream << _initialState << " [penwidth=2.0]" << std::endl;
+        stream << _finalState << " [peripheries=2]" << std::endl;
+        for (auto const & rule : _rules)
+        {
+            stream << rule.ExpectedState() << " -> " << rule.NextState() << " [label=\"" << rule.ExpectedInput() << "\"];" << std::endl;
+        }
+        stream << "}" << std::endl;
+    }
+    void PrintTo(std::ostream & stream) const
+    {
+        ExportToDot(stream);
+    }
+
 protected:
-    const DFARuleSet<State, InputValue, InputSpecifier> & _rules;
+    DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> _rules;
     State _initialState;
     State _finalState;
     State _currentState;
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class DFAValidator
 {
 public:
@@ -162,7 +176,7 @@ public:
         : _map()
     {}
 
-    bool Validate(const DFARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
                   const std::set<State> & states, State finalState) const
     {
         _map.clear();
@@ -173,7 +187,7 @@ public:
         }
         return true;
     }
-    bool Validate(const DFARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
                   State from, State to) const
     {
         auto it = _map.find(from);
@@ -207,10 +221,10 @@ protected:
     mutable std::map<State, bool> _map;
 };
 
-template<typename State, typename InputValue, typename InputSpecifier>
-bool DFA<State, InputValue, InputSpecifier>::Validate() const
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+bool DFA<State, InputValue, UnderlyingType, InputSpecifier>::Validate() const
 {
-    DFAValidator<State, InputValue, InputSpecifier> validator;
+    DFAValidator<State, InputValue, UnderlyingType, InputSpecifier> validator;
     std::set<State> states({_initialState});
     for (auto const & rule : _rules)
     {
@@ -223,5 +237,18 @@ bool DFA<State, InputValue, InputSpecifier>::Validate() const
     return validator.Validate(_rules, states, _finalState);
 }
 
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+inline void PrintTo(const DFA<State, InputValue, UnderlyingType, InputSpecifier> & term, std::ostream & stream)
+{
+    term.PrintTo(stream);
+}
 
 } // namespace RE
+
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+inline std::ostream & operator << (std::ostream & stream, const RE::DFA<State, InputValue, UnderlyingType, InputSpecifier> & term)
+{
+    term.PrintTo(stream);
+    return stream;
+}
+

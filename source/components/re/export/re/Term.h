@@ -19,6 +19,8 @@ public:
         NotDigit,       // \D
         WordChar,       // \w
         NotWordChar,    // \W
+        AlphaChar,      // \a
+        NotAlphaChar,   // \A
         Whitespace,     // \s
         NotWhitespace,  // \S
     };
@@ -59,6 +61,9 @@ public:
         , _maxCount(maxCount)
     {}
     Type GetType() const { return _type; }
+    CharSet GetCharSet() const { return _charSet; }
+    int GetMinCount() const { return _minCount; }
+    int GetMaxCount() const { return _maxCount; }
     void SetMinMaxCount(int minCount, int maxCount)
     {
         _minCount = minCount;
@@ -96,6 +101,10 @@ public:
                 stream << "WordChar " << _charSet; break;
             case NotWordChar:
                 stream << "NotWordChar " << _charSet; break;
+            case AlphaChar:
+                stream << "AlphaChar " << _charSet; break;
+            case NotAlphaChar:
+                stream << "NotAlphaChar " << _charSet; break;
             case Whitespace:
                 stream << "Whitespace " << _charSet; break;
             case NotWhitespace:

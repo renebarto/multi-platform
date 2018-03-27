@@ -31,24 +31,6 @@ static DFARuleSet<int> RulesCharSet
     DFARule<int>::Create(CharSet::Range('a', 'c'), 1, 2),
 };
 
-TEST_FIXTURE(DFATest, ConstructRules)
-{
-    DFA<int> finiteStateAutomaton(EmptyRules);
-    EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
-    EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
-    EXPECT_TRUE(finiteStateAutomaton.Validate());
-}
-
-TEST_FIXTURE(DFATest, ConstructRulesInitialState)
-{
-    DFA<int> finiteStateAutomaton(Rules, 0);
-    EXPECT_EQ(0, finiteStateAutomaton.CurrentState());
-    EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
-    // Initial state: 0, Final state: 0, Rules 0->1
-    // We cannot get from 1 to final state
-    EXPECT_FALSE(finiteStateAutomaton.Validate());
-}
-
 TEST_FIXTURE(DFATest, ConstructRulesInitialAndFinalState)
 {
     DFA<int> finiteStateAutomaton(Rules, 0, 1);
@@ -61,7 +43,7 @@ TEST_FIXTURE(DFATest, ConstructRulesInitialAndFinalState)
 
 TEST_FIXTURE(DFATest, HandleInputEmptyRules)
 {
-    DFA<int> finiteStateAutomaton(EmptyRules, 123);
+    DFA<int> finiteStateAutomaton(EmptyRules, 123, 123);
     EXPECT_FALSE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(123, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
@@ -185,6 +167,36 @@ TEST_FIXTURE(DFATest, HandleInputCharSetComplexIncorrect)
     // Initial state: 0, Final state: 2, Rules 0->1, 0->3, 1->2, 3->2, 3->4
     // We cannot get from 4 to final state
     EXPECT_FALSE(finiteStateAutomaton.Validate());
+}
+
+TEST_FIXTURE(DFATest, PrintToMethod)
+{
+    ostringstream stream;
+    DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2);
+    finiteStateAutomaton.PrintTo(stream);
+    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DFATest, PrintToNonMethod)
+{
+    ostringstream stream;
+    DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2);
+    PrintTo(finiteStateAutomaton, stream);
+    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(DFATest, OutputOperator)
+{
+    ostringstream stream;
+    DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2);
+    stream << finiteStateAutomaton;
+    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string actual = stream.str();
+    EXPECT_EQ(expected, actual);
 }
 
 } // TEST_SUITE(re)

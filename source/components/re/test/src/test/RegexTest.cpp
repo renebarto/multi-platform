@@ -18,7 +18,6 @@ TEST_SUITE(re) {
 TEST_FIXTURE(RegexTest, Empty)
 {
     Regex regex("");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_TRUE(ast.IsEmpty());
 }
@@ -26,7 +25,6 @@ TEST_FIXTURE(RegexTest, Empty)
 TEST_FIXTURE(RegexTest, SingleLiteral)
 {
     Regex regex("a");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -50,7 +48,6 @@ TEST_FIXTURE(RegexTest, SingleLiteral)
 TEST_FIXTURE(RegexTest, AlternativesOfSingleLiterals)
 {
     Regex regex("a|b");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -82,7 +79,6 @@ TEST_FIXTURE(RegexTest, AlternativesOfSingleLiterals)
 TEST_FIXTURE(RegexTest, MultipleAlternativesOfSingleLiterals)
 {
     Regex regex("a|b|c");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -123,7 +119,6 @@ TEST_FIXTURE(RegexTest, MultipleAlternativesOfSingleLiterals)
 TEST_FIXTURE(RegexTest, EmptyLeftAlternative)
 {
     Regex regex("|a");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -151,7 +146,6 @@ TEST_FIXTURE(RegexTest, EmptyLeftAlternative)
 TEST_FIXTURE(RegexTest, EmptyRightAlternative)
 {
     Regex regex("a|");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -179,7 +173,6 @@ TEST_FIXTURE(RegexTest, EmptyRightAlternative)
 TEST_FIXTURE(RegexTest, Concatenation)
 {
     Regex regex("ab");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -194,19 +187,20 @@ TEST_FIXTURE(RegexTest, Concatenation)
     auto const & concatNodes = alternativeNodes[0]->GetNodes();
     ASSERT_EQ(size_t{2}, concatNodes.size());
 
-    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
-    ASSERT_TRUE(concatNodes[0]->GetNodes().empty());
-    EXPECT_EQ(Term(Term::Type::Literal, 'a'), concatNodes[0]->GetTerm());
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    ASSERT_TRUE(concatNodes[index]->GetNodes().empty());
+    EXPECT_EQ(Term(Term::Type::Literal, 'a'), concatNodes[index]->GetTerm());
 
-    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[1]->GetOperation());
-    ASSERT_TRUE(concatNodes[1]->GetNodes().empty());
-    EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodes[1]->GetTerm());
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    ASSERT_TRUE(concatNodes[index]->GetNodes().empty());
+    EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodes[index]->GetTerm());
 }
 
 TEST_FIXTURE(RegexTest, MultipleConcatenation)
 {
     Regex regex("abc");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -221,23 +215,25 @@ TEST_FIXTURE(RegexTest, MultipleConcatenation)
     auto const & concatNodes = alternativeNodes[0]->GetNodes();
     ASSERT_EQ(size_t{3}, concatNodes.size());
 
-    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
-    ASSERT_TRUE(concatNodes[0]->GetNodes().empty());
-    EXPECT_EQ(Term(Term::Type::Literal, 'a'), concatNodes[0]->GetTerm());
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    ASSERT_TRUE(concatNodes[index]->GetNodes().empty());
+    EXPECT_EQ(Term(Term::Type::Literal, 'a'), concatNodes[index]->GetTerm());
 
-    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[1]->GetOperation());
-    ASSERT_TRUE(concatNodes[1]->GetNodes().empty());
-    EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodes[1]->GetTerm());
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    ASSERT_TRUE(concatNodes[index]->GetNodes().empty());
+    EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodes[index]->GetTerm());
 
-    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[2]->GetOperation());
-    ASSERT_TRUE(concatNodes[2]->GetNodes().empty());
-    EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodes[2]->GetTerm());
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    ASSERT_TRUE(concatNodes[index]->GetNodes().empty());
+    EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodes[index]->GetTerm());
 }
 
 TEST_FIXTURE(RegexTest, OrWithMultipleTerms1)
 {
     Regex regex("a|bc");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -273,7 +269,6 @@ TEST_FIXTURE(RegexTest, OrWithMultipleTerms1)
 TEST_FIXTURE(RegexTest, OrWithMultipleTerms2)
 {
     Regex regex("ab|c");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -309,7 +304,6 @@ TEST_FIXTURE(RegexTest, OrWithMultipleTerms2)
 TEST_FIXTURE(RegexTest, SingleLiteralPlus)
 {
     Regex regex("a+");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -333,7 +327,6 @@ TEST_FIXTURE(RegexTest, SingleLiteralPlus)
 TEST_FIXTURE(RegexTest, SingleLiteralAsterisk)
 {
     Regex regex("a*");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -357,7 +350,6 @@ TEST_FIXTURE(RegexTest, SingleLiteralAsterisk)
 TEST_FIXTURE(RegexTest, SingleLiteralOptional)
 {
     Regex regex("a?");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -381,7 +373,6 @@ TEST_FIXTURE(RegexTest, SingleLiteralOptional)
 TEST_FIXTURE(RegexTest, OneOfSet)
 {
     Regex regex("[abcd]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -405,7 +396,6 @@ TEST_FIXTURE(RegexTest, OneOfSet)
 TEST_FIXTURE(RegexTest, OneOfSetRange)
 {
     Regex regex("[a-b]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -426,10 +416,55 @@ TEST_FIXTURE(RegexTest, OneOfSetRange)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
+TEST_FIXTURE(RegexTest, OneOfSetMultipleRange)
+{
+    Regex regex("[a-bp-q]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    EXPECT_EQ(Term(Term::Type::Set, CharSet(CharSet::Range('a', 'b') | CharSet::Range('p', 'q')), 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, OneOfNotSetRange)
+{
+    Regex regex("[^a-b]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    EXPECT_EQ(Term(Term::Type::NotSet, CharSet(CharSet::Range('a', 'b')), 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
 TEST_FIXTURE(RegexTest, OneOfSetDigit)
 {
     Regex regex("[\\d]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -451,10 +486,33 @@ TEST_FIXTURE(RegexTest, OneOfSetDigit)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
+TEST_FIXTURE(RegexTest, OneOfSetNotDigit)
+{
+    Regex regex("[\\D]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    CharSet charSet(CharSet::Range('0', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, ~charSet, 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
 TEST_FIXTURE(RegexTest, OneOfSetAlphaChar)
 {
     Regex regex("[\\a]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -479,10 +537,36 @@ TEST_FIXTURE(RegexTest, OneOfSetAlphaChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
+TEST_FIXTURE(RegexTest, OneOfSetNotAlphaChar)
+{
+    Regex regex("[\\A]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    CharSet charSet;
+    charSet |= CharSet::Range('A', 'Z');
+    charSet |= CharSet::Range('a', 'z');
+    charSet |= '_';
+    EXPECT_EQ(Term(Term::Type::Set, ~charSet, 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
 TEST_FIXTURE(RegexTest, OneOfSetWordChar)
 {
     Regex regex("[\\w]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -508,12 +592,37 @@ TEST_FIXTURE(RegexTest, OneOfSetWordChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
+TEST_FIXTURE(RegexTest, OneOfSetNotWordChar)
+{
+    Regex regex("[\\W]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    CharSet charSet;
+    charSet |= CharSet::Range('0', '9');
+    charSet |= CharSet::Range('A', 'Z');
+    charSet |= CharSet::Range('a', 'z');
+    charSet |= '_';
+    EXPECT_EQ(Term(Term::Type::Set, ~charSet, 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
 TEST_FIXTURE(RegexTest, OneOfSetWhitespaceChar)
 {
-//    Regex regex("[\\d\\w\\s\\D\\W\\S]");
-    // Whitespace is [' ', '\t', '\f', '\r', '\n']
     Regex regex("[\\s]");
-    cout << regex;
     auto const & ast = regex.GetAST();
     EXPECT_FALSE(ast.IsEmpty());
     auto rootNode = ast.Root();
@@ -540,113 +649,550 @@ TEST_FIXTURE(RegexTest, OneOfSetWhitespaceChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-//TEST_FIXTURE(RegexTest, ConstructDefault)
-//{
-//    Regex regex;
-//    EXPECT_FALSE(regex.Match(""));
-//    EXPECT_TRUE(regex.PartialMatch(""));
-//    EXPECT_FALSE(regex.Match("abc"));
-//    EXPECT_TRUE(regex.PartialMatch("abc"));
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteral)
-//{
-//    Regex regex("abc");
-//    cout << regex;
-//    ASSERT_EQ(size_t{3}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 1, 1), elements[2]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralWithRange)
-//{
-//    Regex regex("abc[de]");
-//    cout << regex;
-//    ASSERT_EQ(size_t{4}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 1, 1), elements[2]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Set, CharSet(CharSet::Range('d', 'e')), 1, 1), elements[3]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralWithEscapes)
-//{
-//    Regex regex("\\.\\*\\+\\?\\$\\^\\/\\\\\\[\\]\\{\\}\\(\\)\\a");
-//    cout << regex;
-//    ASSERT_EQ(size_t{15}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements0 = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '.', 1, 1), elements0[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '*', 1, 1), elements0[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '+', 1, 1), elements0[2]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '?', 1, 1), elements0[3]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '$', 1, 1), elements0[4]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '^', 1, 1), elements0[5]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '/', 1, 1), elements0[6]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '\\', 1, 1), elements0[7]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '[', 1, 1), elements0[8]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, ']', 1, 1), elements0[9]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '{', 1, 1), elements0[10]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '}', 1, 1), elements0[11]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, '(', 1, 1), elements0[12]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, ')', 1, 1), elements0[13]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements0[14]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralWithStartEnd)
-//{
-//    Regex regex("$abc^");
-//    cout << regex;
-//    ASSERT_EQ(size_t{5}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements0 = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::LineBegin, CharSet(), 1, 1), elements0[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements0[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements0[2]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 1, 1), elements0[3]);
-//    EXPECT_EQ(TermElement(TermElement::Type::LineEnd, CharSet(), 1, 1), elements0[4]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralQuestionMark)
-//{
-//    Regex regex("abc?");
-//    cout << regex;
-//    ASSERT_EQ(size_t{3}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements0 = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements0[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements0[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 0, 1), elements0[2]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralAsterisk)
-//{
-//    Regex regex("abc*");
-//    cout << regex;
-//    ASSERT_EQ(size_t{3}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements0 = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements0[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements0[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 0, -1), elements0[2]);
-//}
-//
-//TEST_FIXTURE(RegexTest, ConstructStringLiteralPlus)
-//{
-//    Regex regex("abc+");
-//    cout << regex;
-//    ASSERT_EQ(size_t{3}, regex.GetElements().size());
-//    ASSERT_EQ(size_t{0}, regex.GetTerms().size());
-//    auto const & elements0 = regex.GetElements();
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'a', 1, 1), elements0[0]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'b', 1, 1), elements0[1]);
-//    EXPECT_EQ(TermElement(TermElement::Type::Literal, 'c', 1, -1), elements0[2]);
-//}
+TEST_FIXTURE(RegexTest, OneOfSetNotWhitespaceChar)
+{
+    Regex regex("[\\S]");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    CharSet charSet;
+    charSet |= ' ';
+    charSet |= '\t';
+    charSet |= '\r';
+    charSet |= '\n';
+    charSet |= '\f';
+    EXPECT_EQ(Term(Term::Type::Set, ~charSet, 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, Dot)
+{
+    Regex regex(".");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
+    CharSet charSet = CharSet::All;
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[0]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
+
+}
+
+TEST_FIXTURE(RegexTest, ComplexLiteralsAndSets)
+{
+    Regex regex("ab[c-e][f-h]ijk");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{7}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet('a');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('b');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('c', 'e'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('f', 'h'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('i');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('j');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('k');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, ComplexWithMultiplicities)
+{
+    Regex regex("a*b+[c-e][f-h]ij?k.*");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{8}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet('a');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 0, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('b');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('c', 'e'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('f', 'h'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('i');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('j');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 0, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('k');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet::All;
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 0, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, StringLiteralWithEscapes)
+{
+    Regex regex("\\.\\*\\+\\?\\$\\^\\/\\\\\\[\\]\\{\\}\\(\\)\\a\\b");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{16}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet('.');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('*');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('+');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('?');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('$');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('^');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('/');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('\\');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('[');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(']');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('{');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('}');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('(');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(')');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('a', 'z')) | CharSet(CharSet::Range('A', 'Z')) | CharSet('_');
+    EXPECT_EQ(Term(Term::Type::AlphaChar, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('b');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, DecimalNumber)
+{
+    Regex regex("[1-9][0-9]*");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{2}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet(CharSet::Range('1', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 0, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, OctalNumber)
+{
+    Regex regex("[0-7]*");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet(CharSet::Range('0', '7'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 0, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, HexaDecimalNumber)
+{
+    Regex regex("0[xX][0-9a-fA-F]+");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{3}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet('0');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet('x') | CharSet('X');
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9')) | CharSet(CharSet::Range('a', 'f')) | CharSet(CharSet::Range('A', 'F'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, AnyNumber)
+{
+    Regex regex("[1-9][0-9]*|[0-7]*|0[xX][0-9a-fA-F]+");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{3}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes0 = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{2}, concatNodes0.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes0[index]->GetOperation());
+    CharSet charSet(CharSet::Range('1', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes0[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes0[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes0[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 0, Term::Any), concatNodes0[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes0[index]->GetNodes().size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[1]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes1 = alternativeNodes[1]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes1.size());
+
+    index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes1[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '7'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 0, Term::Any), concatNodes1[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes1[index]->GetNodes().size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[2]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes2 = alternativeNodes[2]->GetNodes();
+    ASSERT_EQ(size_t{3}, concatNodes2.size());
+
+    index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet('0');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet('x') | CharSet('X');
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9')) | CharSet(CharSet::Range('a', 'f')) | CharSet(CharSet::Range('A', 'F'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, Term::Any), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, AnyNumberShort)
+{
+    Regex regex("[1-9]\\d*|[0-7]*|0[xX][\\da-fA-F]+");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{3}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes0 = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{2}, concatNodes0.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes0[index]->GetOperation());
+    CharSet charSet(CharSet::Range('1', '9'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes0[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes0[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes0[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9'));
+    EXPECT_EQ(Term(Term::Type::Digit, charSet, 0, Term::Any), concatNodes0[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes0[index]->GetNodes().size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[1]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes1 = alternativeNodes[1]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes1.size());
+
+    index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes1[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '7'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 0, Term::Any), concatNodes1[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes1[index]->GetNodes().size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[2]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes2 = alternativeNodes[2]->GetNodes();
+    ASSERT_EQ(size_t{3}, concatNodes2.size());
+
+    index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet('0');
+    EXPECT_EQ(Term(Term::Type::Literal, charSet, 1, 1), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet('x') | CharSet('X');
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, 1), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+
+    ++index;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes2[index]->GetOperation());
+    charSet = CharSet(CharSet::Range('0', '9')) | CharSet(CharSet::Range('a', 'f')) | CharSet(CharSet::Range('A', 'F'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, Term::Any), concatNodes2[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
+}
+
+TEST_FIXTURE(RegexTest, Word)
+{
+    Regex regex("[a-zA-Z]+");
+    auto const & ast = regex.GetAST();
+    EXPECT_FALSE(ast.IsEmpty());
+    auto rootNode = ast.Root();
+    ASSERT_NOT_NULL(rootNode);
+    EXPECT_EQ(ASTNode::Operation::Or, rootNode->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+
+    auto const & alternativeNodes = rootNode->GetNodes();
+    ASSERT_EQ(size_t{1}, alternativeNodes.size());
+
+    EXPECT_EQ(ASTNode::Operation::Concat, alternativeNodes[0]->GetOperation());
+    EXPECT_EQ(Term(), rootNode->GetTerm());
+    auto const & concatNodes = alternativeNodes[0]->GetNodes();
+    ASSERT_EQ(size_t{1}, concatNodes.size());
+
+    size_t index = 0;
+    EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[index]->GetOperation());
+    CharSet charSet(CharSet::Range('a', 'z') | CharSet::Range('A', 'Z'));
+    EXPECT_EQ(Term(Term::Type::Set, charSet, 1, Term::Any), concatNodes[index]->GetTerm());
+    ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
+}
 
 } // TEST_SUITE(re)
 

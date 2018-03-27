@@ -3,12 +3,13 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <memory>
 #include <vector>
 #include "ValueSet.h"
 
 namespace RE {
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class NFARule
 {
 public:
@@ -38,6 +39,10 @@ public:
     bool Match(InputValue input) const
     {
         return _expectedInput.Contains(input);
+    }
+    bool IsEpsilon() const
+    {
+        return _expectedInput.IsEmpty();
     }
 
 protected:
@@ -69,27 +74,15 @@ public:
     }
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
-using NFARuleSet = std::vector<NFARule<State, InputValue, InputSpecifier>>;
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
+using NFARuleSet = std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>>;
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class NFA
 {
 public:
-    NFA(const NFARuleSet<State, InputValue, InputSpecifier> & rules)
-        : _rules(rules)
-        , _initialState()
-        , _finalState(_initialState)
-        , _currentState(_initialState)
-    {}
-    NFA(const NFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState)
-        : _rules(rules)
-        , _initialState(initialState)
-        , _finalState(_initialState)
-        , _currentState(_initialState)
-    {}
-    NFA(const NFARuleSet<State, InputValue, InputSpecifier> & rules, State initialState, State finalState)
-        : _rules(rules)
+    NFA(State initialState, State finalState)
+        : _rules()
         , _initialState(initialState)
         , _finalState(finalState)
         , _currentState(_initialState)
@@ -130,31 +123,73 @@ public:
         return *this;
     }
 
+    void AddRule(const NFARule<State, InputValue, UnderlyingType, InputSpecifier> & rule)
+    {
+        _rules.push_back(rule);
+    }
     bool Validate() const;
     void Reset() { _currentState = _initialState; }
     bool HandleInput(InputValue input)
     {
+        std::vector<NFARule<int>> alternatives;
         for (auto const & rule : _rules)
         {
             if (rule.Match(input) && _currentState == rule.ExpectedState())
             {
-                _currentState = rule.NextState();
-                return true;
+                alternatives.push_back(rule);
             }
         }
-        return false;
+        if (alternatives.empty())
+            return false;
+        srand(time(nullptr));
+        int randomNumber = rand();
+        int option = randomNumber / (RAND_MAX / alternatives.size());
+        _currentState = alternatives[option].NextState();
+        return true;
+    }
+    bool HandleEpsilon()
+    {
+        std::vector<NFARule<int>> alternatives;
+        for (auto const & rule : _rules)
+        {
+            if (rule.IsEpsilon() && _currentState == rule.ExpectedState())
+            {
+                alternatives.push_back(rule);
+            }
+        }
+        if (alternatives.empty())
+            return false;
+        srand(time(nullptr));
+        int option = rand() / (RAND_MAX / alternatives.size());
+        _currentState = alternatives[option].NextState();
+        return true;
     }
     State CurrentState() const { return _currentState; }
     bool IsFinalState() const { return _currentState == _finalState; }
+    void ExportToDot(std::ostream & stream) const
+    {
+        stream << "digraph {" << std::endl;
+        stream << _initialState << " [penwidth=2.0]" << std::endl;
+        stream << _finalState << " [peripheries=2]" << std::endl;
+        for (auto const & rule : _rules)
+        {
+            stream << rule.ExpectedState() << " -> " << rule.NextState() << " [label=\"" << rule.ExpectedInput() << "\"];" << std::endl;
+        }
+        stream << "}" << std::endl;
+    }
+    void PrintTo(std::ostream & stream) const
+    {
+        ExportToDot(stream);
+    }
 
 protected:
-    const NFARuleSet<State, InputValue, InputSpecifier> & _rules;
+    NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> _rules;
     State _initialState;
     State _finalState;
     State _currentState;
 };
 
-template<typename State, typename InputValue = char, typename InputSpecifier = ValueSet<InputValue>>
+template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class NFAValidator
 {
 public:
@@ -162,7 +197,7 @@ public:
         : _map()
     {}
 
-    bool Validate(const NFARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
                   const std::set<State> & states, State finalState) const
     {
         _map.clear();
@@ -173,7 +208,7 @@ public:
         }
         return true;
     }
-    bool Validate(const NFARuleSet<State, InputValue, InputSpecifier> & rules,
+    bool Validate(const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
                   State from, State to) const
     {
         auto it = _map.find(from);
@@ -207,10 +242,10 @@ protected:
     mutable std::map<State, bool> _map;
 };
 
-template<typename State, typename InputValue, typename InputSpecifier>
-bool NFA<State, InputValue, InputSpecifier>::Validate() const
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+bool NFA<State, InputValue, UnderlyingType, InputSpecifier>::Validate() const
 {
-    NFAValidator<State, InputValue, InputSpecifier> validator;
+    NFAValidator<State, InputValue, UnderlyingType, InputSpecifier> validator;
     std::set<State> states({_initialState});
     for (auto const & rule : _rules)
     {
@@ -223,5 +258,18 @@ bool NFA<State, InputValue, InputSpecifier>::Validate() const
     return validator.Validate(_rules, states, _finalState);
 }
 
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+inline void PrintTo(const NFA<State, InputValue, UnderlyingType, InputSpecifier> & term, std::ostream & stream)
+{
+    term.PrintTo(stream);
+}
 
 } // namespace RE
+
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+inline std::ostream & operator << (std::ostream & stream, const RE::NFA<State, InputValue, UnderlyingType, InputSpecifier> & term)
+{
+    term.PrintTo(stream);
+    return stream;
+}
+
