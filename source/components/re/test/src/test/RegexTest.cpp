@@ -458,7 +458,7 @@ TEST_FIXTURE(RegexTest, OneOfNotSetRange)
     ASSERT_EQ(size_t{1}, concatNodes.size());
 
     EXPECT_EQ(ASTNode::Operation::Leaf, concatNodes[0]->GetOperation());
-    EXPECT_EQ(Term(Term::Type::NotSet, CharSet(CharSet::Range('a', 'b')), 1, 1), concatNodes[0]->GetTerm());
+    EXPECT_EQ(Term(Term::Type::Set, ~CharSet(CharSet::Range('a', 'b')), 1, 1), concatNodes[0]->GetTerm());
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 

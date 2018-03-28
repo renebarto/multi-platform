@@ -311,41 +311,6 @@ TEST_FIXTURE(CharSetTest, Fill)
     EXPECT_EQ(size_t{128}, charSet.Count());
 }
 
-TEST_FIXTURE(CharSetTest, Iterator)
-{
-    char firstChar = 'a';
-    char lastChar = 'c';
-    char firstCharSecondRange = 'd';
-    char lastCharSecondRange = 'f';
-    CharSet charSet(firstChar);
-    auto it = charSet.begin();
-    EXPECT_FALSE(it == charSet.end());
-    EXPECT_EQ(firstChar, it->from);
-    EXPECT_EQ(firstChar, it->to);
-    ++it;
-    EXPECT_TRUE(it == charSet.end());
-
-    charSet.Clear();
-    it = charSet.begin();
-    EXPECT_TRUE(it == charSet.end());
-
-    charSet.Add(CharSet::Range(firstChar, lastChar));
-    it = charSet.begin();
-    EXPECT_FALSE(it == charSet.end());
-    EXPECT_EQ(firstChar, it->from);
-    EXPECT_EQ(lastChar, it->to);
-    ++it;
-    EXPECT_TRUE(it == charSet.end());
-
-    charSet.Add(CharSet::Range(firstCharSecondRange, lastCharSecondRange));
-    it = charSet.begin();
-    EXPECT_FALSE(it == charSet.end());
-    EXPECT_EQ(firstChar, it->from);
-    EXPECT_EQ(lastCharSecondRange, it->to);
-    ++it;
-    EXPECT_TRUE(it == charSet.end());
-}
-
 TEST_FIXTURE(CharSetTest, Includes)
 {
     CharSet firstRange(CharSet::Range('g', 'i'));

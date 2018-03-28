@@ -18,7 +18,11 @@ void InternalAssertionHandler(bool expression, const char * expressionText, cons
         if (currentAssertHandler)
             currentAssertHandler(expression, expressionText, file, line, func);
         else
+        {
+#ifdef _DEBUG
             __assert_fail(expressionText, file, line, func);
+#endif
+        }
     }
 }
 

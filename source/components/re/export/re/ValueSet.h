@@ -121,13 +121,7 @@ public:
     using Iterator = typename Container::iterator;
     using ConstIterator = typename Container::const_iterator;
 
-    ConstIterator begin() const
-    { return _ranges.begin(); }
-
-    ConstIterator end() const
-    { return _ranges.end(); }
-
-    void PrintTo(std::ostream & stream) const
+    virtual void PrintTo(std::ostream & stream) const
     {
         bool firstElement = true;
         for (auto const & range : _ranges)
@@ -144,20 +138,22 @@ public:
         }
     }
 
+protected:
+    bool Equals(ValueSet const & s) const;
+    void Or(ValueSet const & s);
+    void And(ValueSet const & s);
+    void Subtract(ValueSet const & s);
+    bool RangesTouch(Iterator left, Iterator right);
+    void MergeRanges(Iterator left, Iterator right);
+
+    ConstIterator begin() const
+    { return _ranges.begin(); }
+
+    ConstIterator end() const
+    { return _ranges.end(); }
+
 private:
     Container _ranges;
-
-    bool Equals(ValueSet const & s) const;
-
-    void Or(ValueSet const & s);
-
-    void And(ValueSet const & s);
-
-    void Subtract(ValueSet const & s);
-
-    bool RangesTouch(Iterator left, Iterator right);
-
-    void MergeRanges(Iterator left, Iterator right);
 };
 
 template<class Type, class UnderlyingType>
@@ -432,6 +428,12 @@ template<class Type, class UnderlyingType>
 const ValueSet<Type, UnderlyingType> ValueSet<Type, UnderlyingType>::All =
     ValueSet<Type, UnderlyingType>(ValueSet<Type, UnderlyingType>::Range(0, std::numeric_limits<Type>::max()));
 
+template<class Type, class UnderlyingType>
+inline void PrintTo(const ValueSet<Type, UnderlyingType> & inputSet, std::ostream & stream)
+{
+    inputSet.PrintTo(stream);
+}
+
 } // namespace RE
 
 template<class Type, class UnderlyingType>
@@ -440,4 +442,3 @@ inline std::ostream & operator << (std::ostream & stream, const RE::ValueSet<Typ
     inputSet.PrintTo(stream);
     return stream;
 }
-

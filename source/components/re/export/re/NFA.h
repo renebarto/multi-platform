@@ -131,7 +131,7 @@ public:
     void Reset() { _currentState = _initialState; }
     bool HandleInput(InputValue input)
     {
-        std::vector<NFARule<int>> alternatives;
+        std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>> alternatives;
         for (auto const & rule : _rules)
         {
             if (rule.Match(input) && _currentState == rule.ExpectedState())
@@ -149,7 +149,7 @@ public:
     }
     bool HandleEpsilon()
     {
-        std::vector<NFARule<int>> alternatives;
+        std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>> alternatives;
         for (auto const & rule : _rules)
         {
             if (rule.IsEpsilon() && _currentState == rule.ExpectedState())
