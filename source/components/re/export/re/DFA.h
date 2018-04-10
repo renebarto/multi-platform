@@ -70,34 +70,38 @@ public:
 };
 
 template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
-using DFARuleSet = std::vector<DFARule<State, InputValue, UnderlyingType, InputSpecifier>>;
-
-template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class DFA
 {
 public:
-    DFA(State initialState, State finalState)
+    using Rule = DFARule<State, InputValue, UnderlyingType, InputSpecifier>;
+    using RuleSet = std::vector<Rule>;
+
+    DFA(State initialState, State finalState, State errorState)
         : _rules()
         , _initialState(initialState)
         , _finalState(finalState)
+        , _errorState(errorState)
         , _currentState(_initialState)
     {}
-    DFA(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules, State initialState, State finalState)
+    DFA(const RuleSet & rules, State initialState, State finalState, State errorState)
         : _rules(rules)
         , _initialState(initialState)
         , _finalState(finalState)
+        , _errorState(errorState)
         , _currentState(_initialState)
     {}
     DFA(const DFA & other)
         : _rules(other._rules)
         , _initialState(other._initialState)
         , _finalState(other._finalState)
+        , _errorState(other._errorState)
         , _currentState(other._currentState)
     {}
     DFA(DFA && other)
         : _rules(std::move(other._rules))
         , _initialState(other._initialState)
         , _finalState(other._finalState)
+        , _errorState(other._errorState)
         , _currentState(other._currentState)
     {}
 
@@ -108,6 +112,7 @@ public:
             _rules = other._rules;
             _initialState = other._initialState;
             _finalState = other._finalState;
+            _errorState= other._errorState;
             _currentState = other._currentState;
         }
         return *this;
@@ -119,31 +124,74 @@ public:
             _rules = std::move(other._rules);
             _initialState = other._initialState;
             _finalState = other._finalState;
+            _errorState= other._errorState;
             _currentState = other._currentState;
         }
         return *this;
     }
 
-    void AddRule(const DFARule<State, InputValue, UnderlyingType, InputSpecifier> & rule)
+    void AddRule(const Rule & rule)
     {
         _rules.push_back(rule);
     }
+    RuleSet & GetRules() { return _rules; }
+    const RuleSet & GetRules() const { return _rules; }
+    bool FindRuleFromStateForChar(State startState, char ch, Rule *& rule)
+    {
+        for (auto & currentRule : GetRules())
+        {
+            if (currentRule.ExpectedState() == startState)
+            {
+                if (currentRule.ExpectedInput().Contains(ch))
+                {
+                    rule = &currentRule;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool FindRuleToStateForChar(State endState, char ch, Rule *& rule)
+    {
+        for (auto & currentRule : GetRules())
+        {
+            if (currentRule.NextState() == endState)
+            {
+                if (currentRule.ExpectedInput().Contains(ch))
+                {
+                    rule = &currentRule;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void MakeComplete();
+
     bool Validate() const;
     void Reset() { _currentState = _initialState; }
     bool HandleInput(InputValue input)
     {
+        if (IsFinalState())
+        {
+            _currentState = _errorState;
+            return false;
+        }
         for (auto const & rule : _rules)
         {
             if (rule.Match(input) && _currentState == rule.ExpectedState())
             {
                 _currentState = rule.NextState();
-                return true;
+                return (_currentState != _errorState);
             }
         }
         return false;
     }
     State CurrentState() const { return _currentState; }
     bool IsFinalState() const { return _currentState == _finalState; }
+    bool IsErrorState() const { return _currentState == _errorState; }
 
     void ExportToDot(std::ostream & stream) const
     {
@@ -162,33 +210,38 @@ public:
     }
 
 protected:
-    DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> _rules;
+    RuleSet _rules;
     State _initialState;
     State _finalState;
     State _currentState;
+    State _errorState;
+
 };
 
 template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class DFAValidator
 {
 public:
+    using Rule = DFARule<State, InputValue, UnderlyingType, InputSpecifier>;
+    using RuleSet = std::vector<Rule>;
+
     DFAValidator()
         : _map()
     {}
 
-    bool Validate(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
-                  const std::set<State> & states, State finalState) const
+    bool Validate(const RuleSet & rules,
+                  const std::set<State> & states, State finalState, State errorState) const
     {
         _map.clear();
         for (auto state : states)
         {
-            if (!Validate(rules, state, finalState))
+            if (!Validate(rules, state, finalState, errorState))
                 return false;
         }
         return true;
     }
-    bool Validate(const DFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
-                  State from, State to) const
+    bool Validate(const RuleSet & rules,
+                  State from, State to, State errorState) const
     {
         auto it = _map.find(from);
         if (it != _map.end())
@@ -196,7 +249,7 @@ public:
             return it->second;
         }
         _map.insert(Pair(from, false));
-        if (from == to)
+        if ((from == to) || (from == errorState))
         {
             _map[from] = true;
             return true;
@@ -206,14 +259,24 @@ public:
         {
             if (rule.ExpectedState() == from)
             {
-                if (Validate(rules, rule.NextState(), to))
+                if (Validate(rules, rule.NextState(), to, errorState))
                 {
                     _map[from] = true;
                     ok = true;
                 }
             }
         }
-        return ok;
+        if (!ok)
+            return false;
+        InputSpecifier coveredSet;
+        for (auto const & rule : rules)
+        {
+            if (rule.ExpectedState() == from)
+            {
+                coveredSet |= rule.ExpectedInput();
+            }
+        }
+        return coveredSet.IsFull();
     }
 
 protected:
@@ -234,7 +297,38 @@ bool DFA<State, InputValue, UnderlyingType, InputSpecifier>::Validate() const
             states.insert(rule.NextState());
     }
 
-    return validator.Validate(_rules, states, _finalState);
+    return validator.Validate(_rules, states, _finalState, _errorState);
+}
+
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+void DFA<State, InputValue, UnderlyingType, InputSpecifier>::MakeComplete()
+{
+    std::set<State> states({_initialState});
+    for (auto const & rule : _rules)
+    {
+        if (states.find(rule.ExpectedState()) == states.end())
+            states.insert(rule.ExpectedState());
+        if (states.find(rule.NextState()) == states.end())
+            states.insert(rule.NextState());
+    }
+
+    for (auto state : states)
+    {
+        if (state == _finalState)
+            continue;
+        InputSpecifier missingAlphabet = InputSpecifier::All;
+        for (auto const & rule : _rules)
+        {
+            if (rule.ExpectedState() == state)
+            {
+                missingAlphabet -= rule.ExpectedInput();
+            }
+        }
+        if (!missingAlphabet.IsEmpty())
+        {
+            AddRule(Rule::Create(missingAlphabet, state, _errorState));
+        }
+    }
 }
 
 template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>

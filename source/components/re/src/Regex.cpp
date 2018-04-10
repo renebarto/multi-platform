@@ -24,14 +24,14 @@ Regex::Regex(const std::string & pattern)
     , _tokenizer(_reader)
     , _ast()
     , _nfa(StartState, EndState)
-    , _dfa(StartState, EndState)
+    , _dfa(DFAStartState, DFAEndState, DFAErrorState)
 {
     if (!ParseRegex())
         throw invalid_argument("Invalid regular expression");
     if (!ConvertASTToNFA())
         throw invalid_argument("Invalid regular expression");
-    if (!ConvertNFAToDFA())
-        throw invalid_argument("Invalid regular expression");
+//    if (!ConvertNFAToDFA())
+//        throw invalid_argument("Invalid regular expression");
 }
 
 bool Regex::Match(const std::string & text)
@@ -51,21 +51,8 @@ bool Regex::ParseRegex()
     auto it = _tokenizer.GetTokenIterator();
     if (it.AtEnd())
         return true;
-    ASTNode::Ptr rootNode = ASTOrOperation::Create();
+    ASTNode::Ptr rootNode = ParseExpression(it, TokenTypeSet());
     _ast.Root(rootNode);
-    while (!it.AtEnd())
-    {
-        auto node = ParseAlternative(it);
-        rootNode->Insert(node);
-        if (it.AtEnd())
-            return true;
-        if (!Expect(it, TokenType::Or))
-            return false;
-        if (it.AtEnd())
-        {
-            rootNode->Insert(ASTConcatOperation::Create());
-        }
-    }
     return (rootNode != nullptr);
 }
 
@@ -79,6 +66,27 @@ bool Regex::Expect(TokenIterator & it, TokenType type)
     return false;
 }
 
+bool Regex::Expect(TokenIterator & it, const TokenTypeSet & types)
+{
+    if (Have(it, types))
+    {
+        ++it;
+        return true;
+    }
+    return false;
+}
+
+
+bool Regex::Have(const TokenIterator & it, const TokenTypeSet & types)
+{
+    for (auto type : types)
+    {
+        if (!it.AtEnd() && (it->type == type))
+            return true;
+    }
+    return false;
+}
+
 bool Regex::Have(const TokenIterator & it, TokenType type)
 {
     return !it.AtEnd() && (it->type == type);
@@ -87,7 +95,6 @@ bool Regex::Have(const TokenIterator & it, TokenType type)
 void Regex::AddNodeAndCheckMultiplicity(TokenIterator & it, ASTNode::Ptr & root, const ASTNode::Ptr & node)
 {
     root->Insert(node);
-    ++it;
     if (Have(it, TokenType::Plus))
     {
         node->UpdateTerm(1, Term::Any);
@@ -103,7 +110,33 @@ void Regex::AddNodeAndCheckMultiplicity(TokenIterator & it, ASTNode::Ptr & root,
     }
 }
 
-ASTNode::Ptr Regex::ParseAlternative(TokenIterator & it)
+ASTNode::Ptr Regex::ParseExpression(TokenIterator & it, const TokenTypeSet & terminators)
+{
+    ASTNode::Ptr rootNode = ASTOrOperation::Create();
+    auto extendedTerminators = terminators;
+    extendedTerminators.insert(TokenType::Or);
+    while (!it.AtEnd())
+    {
+        auto node = ParseAlternative(it, extendedTerminators);
+        rootNode->Insert(node);
+        if (Have(it, terminators) || (terminators.empty() && it.AtEnd()))
+        {
+            Expect(it, terminators);
+            return rootNode;
+        }
+        if (!Expect(it, TokenType::Or))
+            return nullptr;
+        if (Have(it, terminators) || (terminators.empty() && it.AtEnd()))
+        {
+            rootNode->Insert(ASTConcatOperation::Create());
+            Expect(it, terminators);
+            return rootNode;
+        }
+    }
+    return nullptr;
+}
+
+ASTNode::Ptr Regex::ParseAlternative(TokenIterator & it, const TokenTypeSet & terminators)
 {
     ASTNode::Ptr rootNode = ASTConcatOperation::Create();
     while (!it.AtEnd())
@@ -113,60 +146,70 @@ ASTNode::Ptr Regex::ParseAlternative(TokenIterator & it)
             case TokenType::Digit:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateDigitElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::NotDigit:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateNotDigitElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::WordChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateWordCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::NotWordChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateNotWordCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::AlphaChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateAlphaCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::NotAlphaChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateNotAlphaCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::WhitespaceChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateWhitespaceCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::NotWhitespaceChar:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateNotWhitespaceCharElement()));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::Literal:
                 {
                     ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
+                    ++it;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             case TokenType::Dot:
             {
                 ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(CharSet::All)));
+                ++it;
                 AddNodeAndCheckMultiplicity(it, rootNode, node);
             }
                 break;
@@ -182,17 +225,22 @@ ASTNode::Ptr Regex::ParseAlternative(TokenIterator & it)
                 {
                     ++it;
                     ASTNode::Ptr node = ParseRange(it);
-                    if (!Have(it, TokenType::SquareBracketClose))
+                    if (!Expect(it, TokenType::SquareBracketClose))
                         return nullptr;
                     AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
-            case TokenType::Or:
+            case TokenType::ParenthesisOpen:
                 {
-                    return rootNode;
+                    ++it;
+                    ASTNode::Ptr expression = ParseExpression(it, TokenTypeSet {TokenType::ParenthesisClose});
+                    ASTNode::Ptr node = ASTExpression::Create(expression);
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
                 }
                 break;
             default:
+                if (Have(it, terminators))
+                    return rootNode;
                 return nullptr;
         }
     }
@@ -317,15 +365,18 @@ Term Regex::CreateNotWhitespaceCharElement()
     return Term(Term::Type::NotWhitespace, ~WhitespaceSet);
 }
 
-using NonDeterministicFSARule = NFARule<Regex::State, char, int, CharSet>;
+using NonDeterministicFSARule = NFARule<Regex::NFAState, char, int, CharSet>;
 
 bool Regex::ConvertASTToNFA()
 {
     auto root = _ast.Root();
     if (root == nullptr)
+    {
+        _nfa = NonDeterministicFSA(StartState, StartState);
         return true;
+    }
     assert(root->GetOperation() == ASTNode::Operation::Or);
-    State state = StartState;
+    NFAState state = StartState;
     for (auto alternative : root->GetNodes())
     {
         assert(alternative->GetOperation() == ASTNode::Operation::Concat);
@@ -333,28 +384,32 @@ bool Regex::ConvertASTToNFA()
         ++state;
         for (auto term : alternative->GetNodes())
         {
-            assert(term->GetOperation() == ASTNode::Operation::Leaf);
-            if (term->GetTerm().GetMinCount() == 0)
+            assert((term->GetOperation() == ASTNode::Operation::Leaf) ||
+                   (term->GetOperation() == ASTNode::Operation::Expression));
+            if (term->GetOperation() == ASTNode::Operation::Leaf)
             {
-                if (term->GetTerm().GetMaxCount() == Term::Any) // *
+                if (term->GetTerm().GetMinCount() == 0)
                 {
-                    _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state));
+                    if (term->GetTerm().GetMaxCount() == Term::Any) // *
+                    {
+                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state));
+                    }
+                    else // ?
+                    {
+                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state + 1));
+                        _nfa.AddRule(NonDeterministicFSARule(CharSet(), state, state + 1));
+                        ++state;
+                    }
                 }
-                else // ?
+                else
                 {
                     _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state + 1));
-                    _nfa.AddRule(NonDeterministicFSARule(CharSet(), state, state + 1));
+                    if (term->GetTerm().GetMaxCount() == Term::Any) // +
+                    {
+                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state + 1, state + 1));
+                    }
                     ++state;
                 }
-            }
-            else
-            {
-                _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state + 1));
-                if (term->GetTerm().GetMaxCount() == Term::Any) // +
-                {
-                    _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state + 1, state + 1));
-                }
-                ++state;
             }
         }
         _nfa.AddRule(NonDeterministicFSARule(CharSet(), state, EndState));
@@ -363,8 +418,154 @@ bool Regex::ConvertASTToNFA()
     return true;
 }
 
+using DeterministicFSARule = DFARule<Regex::DFAState, char, int, CharSet>;
+
+bool Regex::NFARuleOverlaps(NFAState startState, char ch)
+{
+    for (auto const & currentRule : _nfa.GetRules())
+    {
+        if (currentRule.ExpectedState() == startState)
+        {
+            if (currentRule.ExpectedInput().Contains(ch))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool Regex::ConvertNFAToDFA()
 {
+    DFAState state = DFAStartState;
+    if (_nfa.GetRules().empty())
+    {
+        _dfa = DeterministicFSA(DFAStartState, DFAStartState, DFAErrorState);
+        _dfa.MakeComplete();
+        return true;
+    }
+    using StateSet = std::set<NFAState>;
+    using StateSetFromState = std::map<NFAState, StateSet>;
+    using StateSetToState = std::map<NFAState, StateSet>;
+    using StateSetMap = std::map<NFAState, DFAState>;
+    StateSetFromState startStateSet;
+    StateSetToState finalStateSet;
+    StateSetMap stateSetMapDFA;
+    _nfa.PrintTo(cout);
+    for (int ch = 0; ch < std::numeric_limits<char>::max(); ++ch)
+    {
+        if (stateSetMapDFA.find(StartState) == stateSetMapDFA.end())
+        {
+            stateSetMapDFA.insert(std::pair<NFAState, DFAState>(StartState, DFAStartState));
+            cout << "State mapping" << endl;
+            for (auto item : stateSetMapDFA)
+            {
+                cout << item.first << " -> " << item.second << endl;
+            }
+        }
+
+        if (stateSetMapDFA.find(EndState) == stateSetMapDFA.end())
+        {
+            stateSetMapDFA.insert(std::pair<NFAState, DFAState>(EndState, DFAEndState));
+            cout << "State mapping" << endl;
+            for (auto item : stateSetMapDFA)
+            {
+                cout << item.first << " -> " << item.second << endl;
+            }
+        }
+
+        NFAState currentState = StartState;
+
+        const NonDeterministicFSARule * rule;
+        if (_nfa.FindRuleFromStateForChar(currentState, ch, rule))
+        {
+            _dfa.AddRule(DeterministicFSARule::Create(ch, currentState, ++state));
+            if (startStateSet.find(currentState) != startStateSet.end())
+            {
+                startStateSet[currentState].insert(rule->NextState());
+            }
+            else
+            {
+                startStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{rule->NextState()}));
+            }
+            if (stateSetMapDFA.find(rule->NextState()) == stateSetMapDFA.end())
+            {
+                stateSetMapDFA.insert(std::pair<NFAState, DFAState>(rule->NextState(), state));
+                cout << "State mapping" << endl;
+                for (auto item : stateSetMapDFA)
+                {
+                    cout << item.first << " -> " << item.second << endl;
+                }
+            }
+            ++state;
+        }
+        currentState = EndState;
+        if (_nfa.FindRuleToStateForChar(currentState, ch, rule))
+        {
+            if (!NFARuleOverlaps(rule->ExpectedState(), ch))
+            {
+                _dfa.AddRule(DeterministicFSARule::Create(ch, state, currentState));
+                if (finalStateSet.find(currentState) != finalStateSet.end())
+                {
+                    finalStateSet[currentState].insert(rule->ExpectedState());
+                }
+                else
+                {
+                    finalStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{rule->ExpectedState()}));
+                }
+                if (stateSetMapDFA.find(rule->ExpectedState()) == stateSetMapDFA.end())
+                {
+                    stateSetMapDFA.insert(std::pair<NFAState, DFAState>(rule->ExpectedState(), state));
+                    cout << "State mapping" << endl;
+                    for (auto item : stateSetMapDFA)
+                    {
+                        cout << item.first << " -> " << item.second << endl;
+                    }
+                }
+                ++state;
+            }
+            else
+            {
+                DeterministicFSARule * foundRule {};
+                if (!_dfa.FindRuleFromStateForChar(stateSetMapDFA[rule->ExpectedState()], ch, foundRule) &&
+                    !_dfa.FindRuleToStateForChar(stateSetMapDFA[rule->NextState()], ch, foundRule))
+                {
+                    cout << "Panic!" << endl;
+                }
+                foundRule->NextState(currentState);
+                if (finalStateSet.find(currentState) != finalStateSet.end())
+                {
+                    finalStateSet[currentState].insert(foundRule->ExpectedState());
+                }
+                else
+                {
+                    finalStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{foundRule->ExpectedState()}));
+                }
+            }
+        }
+    }
+    cout << "Start states" << endl;
+    for (auto item : startStateSet)
+    {
+        cout << item.first << endl;
+        for (auto nextState : item.second)
+        {
+            cout << " -> " << nextState << endl;
+        }
+    }
+    cout << "End states" << endl;
+    for (auto item : finalStateSet)
+    {
+        cout << item.first << endl;
+        for (auto nextState : item.second)
+        {
+            cout << " <- " << nextState << endl;
+        }
+    }
+
+    _dfa.MakeComplete();
+    _dfa.PrintTo(cout);
+
     return true;
 }
 

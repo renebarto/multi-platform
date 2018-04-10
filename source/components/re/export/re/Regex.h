@@ -15,12 +15,15 @@ namespace RE {
 class Regex
 {
 public:
-    using State = int;
-    using NonDeterministicFSA = NFA<State, char, int, CharSet>;
-    using DeterministicFSA = DFA<State, char, int, CharSet>;
-    const State StartState = 1;
-    const State EndState = 0;
-    const State ErrorState = -1;
+    using NFAState = int;
+    using DFAState = int;
+    using NonDeterministicFSA = NFA<NFAState, char, int, CharSet>;
+    using DeterministicFSA = DFA<DFAState, char, int, CharSet>;
+    const NFAState StartState = 1;
+    const NFAState EndState = 0;
+    const DFAState DFAStartState = 1;
+    const DFAState DFAEndState = 0;
+    const DFAState DFAErrorState = -1;
     explicit Regex(const std::string & pattern);
     bool Match(const std::string & text);
     bool PartialMatch(const std::string & text);
@@ -44,9 +47,12 @@ protected:
     bool ConvertASTToNFA();
     bool ConvertNFAToDFA();
     bool Have(const TokenIterator & it, TokenType type);
+    bool Have(const TokenIterator & it, const TokenTypeSet & types);
     bool Expect(TokenIterator & it, TokenType type);
+    bool Expect(TokenIterator & it, const TokenTypeSet & types);
     void AddNodeAndCheckMultiplicity(TokenIterator & it, ASTNode::Ptr & root, const ASTNode::Ptr & node);
-    ASTNode::Ptr ParseAlternative(TokenIterator & it);
+    ASTNode::Ptr ParseExpression(TokenIterator & it, const TokenTypeSet & terminators);
+    ASTNode::Ptr ParseAlternative(TokenIterator & it, const TokenTypeSet & terminators);
     ASTNode::Ptr ParseRange(TokenIterator & it);
     Term CreateDigitElement();
     Term CreateNotDigitElement();
@@ -59,6 +65,8 @@ protected:
     Term CreateLiteralElement(char ch);
     Term CreateLiteralElement(CharSet charSet);
     bool Match(const std::string & text, size_t & index);
+
+    bool NFARuleOverlaps(NFAState startState, char ch);
 };
 
 } // namespace RE

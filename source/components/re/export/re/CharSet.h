@@ -43,6 +43,15 @@ public:
         return *this;
     }
 
+    char First() const
+    {
+        ConstIterator it = begin();
+        if (it != end())
+        {
+            return static_cast<char>(it->from);
+        }
+        return '\0';
+    }
     void PrintTo(std::ostream & stream) const override
     {
         bool firstElement = true;

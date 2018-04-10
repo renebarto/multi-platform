@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 #include "re/InputReader.h"
@@ -39,6 +40,7 @@ enum class TokenType
     WhitespaceChar, // ' ', '\t', '\f', '\r', '\n'
     NotWhitespaceChar,
 };
+using TokenTypeSet = std::set<TokenType>;
 
 struct Token
 {

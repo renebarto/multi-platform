@@ -52,6 +52,7 @@ public:
 
     bool Contains(Type value) const;
     bool IsEmpty() const;
+    bool IsFull() const;
 
     void Add(Type value);
     void Add(Range range);
@@ -242,6 +243,14 @@ template<class Type, class UnderlyingType>
 bool ValueSet<Type, UnderlyingType>::IsEmpty() const
 {
     return _ranges.empty();
+}
+
+template<class Type, class UnderlyingType>
+bool ValueSet<Type, UnderlyingType>::IsFull() const
+{
+    return (_ranges.size() == size_t{1}) &&
+           (_ranges[0].from == 0) &&
+           (_ranges[0].to == std::numeric_limits<Type>::max());
 }
 
 template<class Type, class UnderlyingType>

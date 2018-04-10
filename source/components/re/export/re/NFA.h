@@ -127,6 +127,49 @@ public:
     {
         _rules.push_back(rule);
     }
+    const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & GetRules() const { return _rules; }
+    bool FindRuleFromStateForChar(State initialState, char ch, NFARule<State, InputValue, UnderlyingType, InputSpecifier> const *& rule)
+    {
+        for (auto const & currentRule : GetRules())
+        {
+            if (currentRule.ExpectedState() == initialState)
+            {
+                if (currentRule.ExpectedInput().Contains(ch))
+                {
+                    rule = &currentRule;
+                    return true;
+                }
+                else if (currentRule.ExpectedInput().IsEmpty())
+                {
+                    return FindRuleFromStateForChar(currentRule.NextState(), ch, rule);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool FindRuleToStateForChar(State finalState, char ch, NFARule<State, InputValue, UnderlyingType, InputSpecifier> const *& rule)
+    {
+        for (auto const & currentRule : GetRules())
+        {
+            if (currentRule.NextState() == finalState)
+            {
+                if (currentRule.ExpectedInput().Contains(ch))
+                {
+                    rule = &currentRule;
+                    return true;
+                }
+                else if (currentRule.ExpectedInput().IsEmpty())
+                {
+                    return FindRuleToStateForChar(currentRule.ExpectedState(), ch, rule);
+                }
+            }
+        }
+
+        return false;
+    }
+
     bool Validate() const;
     void Reset() { _currentState = _initialState; }
     bool HandleInput(InputValue input)

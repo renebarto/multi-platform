@@ -15,6 +15,7 @@ public:
         Leaf,
         Or,
         Concat,
+        Expression,
     };
 
     Operation GetOperation() const { return _operation; }
@@ -72,6 +73,8 @@ inline std::ostream & operator << (std::ostream & stream, RE::ASTNode::Operation
             stream << "|"; break;
         case RE::ASTNode::Operation::Concat:
             stream << "."; break;
+        case RE::ASTNode::Operation::Expression:
+            stream << "()"; break;
         default:
             stream << "?"; break;
     }
@@ -111,7 +114,6 @@ public:
         return std::make_shared<ASTOrOperation>();
     }
 
-protected:
     void PrintTo(std::ostream & stream, int indent = 0) const override
     {
         stream << std::string((indent + 1) * 4, ' ') << "Operation " << _operation << std::endl;
@@ -134,7 +136,6 @@ public:
         return std::make_shared<ASTConcatOperation>();
     }
 
-protected:
     void PrintTo(std::ostream & stream, int indent = 0) const override
     {
         stream << std::string((indent + 1) * 4, ' ') << "Operation " << _operation << std::endl;
@@ -143,6 +144,33 @@ protected:
             node->PrintTo(stream, indent + 1);
         }
     }
+};
+
+class ASTExpression : public ASTNode
+{
+public:
+    ASTExpression(Ptr subExpression)
+        : ASTNode(Operation::Expression, Term())
+    {
+        Insert(subExpression);
+    }
+
+    static ASTNode::Ptr Create(Ptr subExpression)
+    {
+        return std::make_shared<ASTExpression>(subExpression);
+    }
+    void PrintTo(std::ostream & stream, int indent = 0) const override
+    {
+        stream << std::string((indent + 1) * 4, ' ') << "(" << std::endl;
+        for (auto const & node : _nodes)
+        {
+            node->PrintTo(stream, indent + 1);
+        }
+        stream << std::string((indent + 1) * 4, ' ') << ")" << std::endl;
+    }
+
+private:
+    Ptr _subExpression;
 };
 
 class AST
