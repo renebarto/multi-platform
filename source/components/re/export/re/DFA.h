@@ -78,6 +78,8 @@ public:
 
     DFA(State initialState, State finalState, State errorState)
         : _rules()
+        , _startStateMap()
+        , _endStateMap()
         , _initialState(initialState)
         , _finalState(finalState)
         , _errorState(errorState)
@@ -85,13 +87,19 @@ public:
     {}
     DFA(const RuleSet & rules, State initialState, State finalState, State errorState)
         : _rules(rules)
+        , _startStateMap()
+        , _endStateMap()
         , _initialState(initialState)
         , _finalState(finalState)
         , _errorState(errorState)
         , _currentState(_initialState)
-    {}
+    {
+        UpdateStateMap();
+    }
     DFA(const DFA & other)
         : _rules(other._rules)
+        , _startStateMap(other._startStateMap)
+        , _endStateMap(other._endStateMap)
         , _initialState(other._initialState)
         , _finalState(other._finalState)
         , _errorState(other._errorState)
@@ -99,6 +107,8 @@ public:
     {}
     DFA(DFA && other)
         : _rules(std::move(other._rules))
+        , _startStateMap(std::move(other._startStateMap))
+        , _endStateMap(std::move(other._endStateMap))
         , _initialState(other._initialState)
         , _finalState(other._finalState)
         , _errorState(other._errorState)
@@ -110,9 +120,11 @@ public:
         if (this != &other)
         {
             _rules = other._rules;
+            _startStateMap = other._startStateMap;
+            _endStateMap = other._endStateMap;
             _initialState = other._initialState;
             _finalState = other._finalState;
-            _errorState= other._errorState;
+            _errorState = other._errorState;
             _currentState = other._currentState;
         }
         return *this;
@@ -122,9 +134,11 @@ public:
         if (this != &other)
         {
             _rules = std::move(other._rules);
+            _startStateMap = std::move(other._startStateMap);
+            _endStateMap = std::move(other._endStateMap);
             _initialState = other._initialState;
             _finalState = other._finalState;
-            _errorState= other._errorState;
+            _errorState = other._errorState;
             _currentState = other._currentState;
         }
         return *this;
@@ -133,42 +147,38 @@ public:
     void AddRule(const Rule & rule)
     {
         _rules.push_back(rule);
+        UpdateStateMap();
     }
-    RuleSet & GetRules() { return _rules; }
+
     const RuleSet & GetRules() const { return _rules; }
-    bool FindRuleFromStateForChar(State startState, char ch, Rule *& rule)
+    bool FindRuleFromStateForChar(State startState, char ch, Rule *& foundRule)
     {
-        for (auto & currentRule : GetRules())
+        for (auto rule : _startStateMap[startState])
         {
-            if (currentRule.ExpectedState() == startState)
+            if (rule->ExpectedInput().Contains(ch))
             {
-                if (currentRule.ExpectedInput().Contains(ch))
-                {
-                    rule = &currentRule;
-                    return true;
-                }
+                foundRule = rule;
+                return true;
             }
         }
         return false;
     }
 
-    bool FindRuleToStateForChar(State endState, char ch, Rule *& rule)
+    bool FindRuleToStateForChar(State endState, char ch, Rule *& foundRule)
     {
-        for (auto & currentRule : GetRules())
+        for (auto rule : _endStateMap[endState])
         {
-            if (currentRule.NextState() == endState)
+            if (rule->ExpectedInput().Contains(ch))
             {
-                if (currentRule.ExpectedInput().Contains(ch))
-                {
-                    rule = &currentRule;
-                    return true;
-                }
+                foundRule = rule;
+                return true;
             }
         }
         return false;
     }
 
     void MakeComplete();
+    void UpdateStateMap();
 
     bool Validate() const;
     void Reset() { _currentState = _initialState; }
@@ -179,11 +189,11 @@ public:
             _currentState = _errorState;
             return false;
         }
-        for (auto const & rule : _rules)
+        for (auto rule : _startStateMap[_currentState])
         {
-            if (rule.Match(input) && _currentState == rule.ExpectedState())
+            if (rule->Match(input))
             {
-                _currentState = rule.NextState();
+                _currentState = rule->NextState();
                 return (_currentState != _errorState);
             }
         }
@@ -206,16 +216,25 @@ public:
     }
     void PrintTo(std::ostream & stream) const
     {
-        ExportToDot(stream);
+        for (auto state : _startStateMap)
+        {
+            for (auto rule : state.second)
+            {
+                stream << state.first << " (" << rule->ExpectedInput() << ")-> " << rule->NextState() << std::endl;
+            }
+        }
     }
 
 protected:
+    using StateRules = std::vector<Rule *>;
+    using StateMap = std::map<State, StateRules>;
     RuleSet _rules;
+    StateMap _startStateMap;
+    StateMap _endStateMap;
     State _initialState;
     State _finalState;
-    State _currentState;
     State _errorState;
-
+    State _currentState;
 };
 
 template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
@@ -317,16 +336,39 @@ void DFA<State, InputValue, UnderlyingType, InputSpecifier>::MakeComplete()
         if (state == _finalState)
             continue;
         InputSpecifier missingAlphabet = InputSpecifier::All;
-        for (auto const & rule : _rules)
+        for (auto rule : _startStateMap[state])
         {
-            if (rule.ExpectedState() == state)
-            {
-                missingAlphabet -= rule.ExpectedInput();
-            }
+            missingAlphabet -= rule->ExpectedInput();
         }
         if (!missingAlphabet.IsEmpty())
         {
             AddRule(Rule::Create(missingAlphabet, state, _errorState));
+        }
+    }
+}
+
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+void DFA<State, InputValue, UnderlyingType, InputSpecifier>::UpdateStateMap()
+{
+    _startStateMap.clear();
+    _endStateMap.clear();
+    for (auto & rule : _rules)
+    {
+        if (_startStateMap.find(rule.ExpectedState()) != _startStateMap.end())
+        {
+            _startStateMap[rule.ExpectedState()].push_back(&rule);
+        }
+        else
+        {
+            _startStateMap.insert(std::pair<State, StateRules>(rule.ExpectedState(), StateRules {&rule}));
+        }
+        if (_endStateMap.find(rule.NextState()) != _startStateMap.end())
+        {
+            _endStateMap[rule.NextState()].push_back(&rule);
+        }
+        else
+        {
+            _endStateMap.insert(std::pair<State, StateRules>(rule.NextState(), StateRules {&rule}));
         }
     }
 }

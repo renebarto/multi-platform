@@ -23,25 +23,22 @@ Regex::Regex(const std::string & pattern)
     : _reader(pattern)
     , _tokenizer(_reader)
     , _ast()
-    , _nfa(StartState, EndState)
-    , _dfa(DFAStartState, DFAEndState, DFAErrorState)
+    , _nfa(StartState, EndState, ErrorState)
 {
     if (!ParseRegex())
         throw invalid_argument("Invalid regular expression");
     if (!ConvertASTToNFA())
         throw invalid_argument("Invalid regular expression");
-//    if (!ConvertNFAToDFA())
-//        throw invalid_argument("Invalid regular expression");
 }
 
 bool Regex::Match(const std::string & text)
 {
-    return false;
+    return _nfa.Match(text);
 }
 
 bool Regex::PartialMatch(const std::string & text)
 {
-    return false;
+    return _nfa.PartialMatch(text);
 }
 
 bool Regex::ParseRegex()
@@ -365,22 +362,22 @@ Term Regex::CreateNotWhitespaceCharElement()
     return Term(Term::Type::NotWhitespace, ~WhitespaceSet);
 }
 
-using NonDeterministicFSARule = NFARule<Regex::NFAState, char, int, CharSet>;
+using FSARule = NFARule<StringMatch::State, char, int, CharSet>;
 
 bool Regex::ConvertASTToNFA()
 {
     auto root = _ast.Root();
     if (root == nullptr)
     {
-        _nfa = NonDeterministicFSA(StartState, StartState);
+        _nfa = StringMatch(StartState, StartState, ErrorState);
         return true;
     }
     assert(root->GetOperation() == ASTNode::Operation::Or);
-    NFAState state = StartState;
+    State state = StartState;
     for (auto alternative : root->GetNodes())
     {
         assert(alternative->GetOperation() == ASTNode::Operation::Concat);
-        _nfa.AddRule(NonDeterministicFSARule(CharSet(), StartState, state + 1));
+        _nfa.AddRule(FSARule(CharSet(), StartState, state + 1));
         ++state;
         for (auto term : alternative->GetNodes())
         {
@@ -392,185 +389,29 @@ bool Regex::ConvertASTToNFA()
                 {
                     if (term->GetTerm().GetMaxCount() == Term::Any) // *
                     {
-                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state));
+                        _nfa.AddRule(FSARule(term->GetTerm().GetCharSet(), state, state));
                     }
                     else // ?
                     {
-                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state + 1));
-                        _nfa.AddRule(NonDeterministicFSARule(CharSet(), state, state + 1));
+                        _nfa.AddRule(FSARule(term->GetTerm().GetCharSet(), state, state + 1));
+                        _nfa.AddRule(FSARule(CharSet(), state, state + 1));
                         ++state;
                     }
                 }
                 else
                 {
-                    _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state, state + 1));
+                    _nfa.AddRule(FSARule(term->GetTerm().GetCharSet(), state, state + 1));
                     if (term->GetTerm().GetMaxCount() == Term::Any) // +
                     {
-                        _nfa.AddRule(NonDeterministicFSARule(term->GetTerm().GetCharSet(), state + 1, state + 1));
+                        _nfa.AddRule(FSARule(term->GetTerm().GetCharSet(), state + 1, state + 1));
                     }
                     ++state;
                 }
             }
         }
-        _nfa.AddRule(NonDeterministicFSARule(CharSet(), state, EndState));
+        _nfa.AddRule(FSARule(CharSet(), state, EndState));
     }
     cout << _nfa;
-    return true;
-}
-
-using DeterministicFSARule = DFARule<Regex::DFAState, char, int, CharSet>;
-
-bool Regex::NFARuleOverlaps(NFAState startState, char ch)
-{
-    for (auto const & currentRule : _nfa.GetRules())
-    {
-        if (currentRule.ExpectedState() == startState)
-        {
-            if (currentRule.ExpectedInput().Contains(ch))
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool Regex::ConvertNFAToDFA()
-{
-    DFAState state = DFAStartState;
-    if (_nfa.GetRules().empty())
-    {
-        _dfa = DeterministicFSA(DFAStartState, DFAStartState, DFAErrorState);
-        _dfa.MakeComplete();
-        return true;
-    }
-    using StateSet = std::set<NFAState>;
-    using StateSetFromState = std::map<NFAState, StateSet>;
-    using StateSetToState = std::map<NFAState, StateSet>;
-    using StateSetMap = std::map<NFAState, DFAState>;
-    StateSetFromState startStateSet;
-    StateSetToState finalStateSet;
-    StateSetMap stateSetMapDFA;
-    _nfa.PrintTo(cout);
-    for (int ch = 0; ch < std::numeric_limits<char>::max(); ++ch)
-    {
-        if (stateSetMapDFA.find(StartState) == stateSetMapDFA.end())
-        {
-            stateSetMapDFA.insert(std::pair<NFAState, DFAState>(StartState, DFAStartState));
-            cout << "State mapping" << endl;
-            for (auto item : stateSetMapDFA)
-            {
-                cout << item.first << " -> " << item.second << endl;
-            }
-        }
-
-        if (stateSetMapDFA.find(EndState) == stateSetMapDFA.end())
-        {
-            stateSetMapDFA.insert(std::pair<NFAState, DFAState>(EndState, DFAEndState));
-            cout << "State mapping" << endl;
-            for (auto item : stateSetMapDFA)
-            {
-                cout << item.first << " -> " << item.second << endl;
-            }
-        }
-
-        NFAState currentState = StartState;
-
-        const NonDeterministicFSARule * rule;
-        if (_nfa.FindRuleFromStateForChar(currentState, ch, rule))
-        {
-            _dfa.AddRule(DeterministicFSARule::Create(ch, currentState, ++state));
-            if (startStateSet.find(currentState) != startStateSet.end())
-            {
-                startStateSet[currentState].insert(rule->NextState());
-            }
-            else
-            {
-                startStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{rule->NextState()}));
-            }
-            if (stateSetMapDFA.find(rule->NextState()) == stateSetMapDFA.end())
-            {
-                stateSetMapDFA.insert(std::pair<NFAState, DFAState>(rule->NextState(), state));
-                cout << "State mapping" << endl;
-                for (auto item : stateSetMapDFA)
-                {
-                    cout << item.first << " -> " << item.second << endl;
-                }
-            }
-            ++state;
-        }
-        currentState = EndState;
-        if (_nfa.FindRuleToStateForChar(currentState, ch, rule))
-        {
-            if (!NFARuleOverlaps(rule->ExpectedState(), ch))
-            {
-                _dfa.AddRule(DeterministicFSARule::Create(ch, state, currentState));
-                if (finalStateSet.find(currentState) != finalStateSet.end())
-                {
-                    finalStateSet[currentState].insert(rule->ExpectedState());
-                }
-                else
-                {
-                    finalStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{rule->ExpectedState()}));
-                }
-                if (stateSetMapDFA.find(rule->ExpectedState()) == stateSetMapDFA.end())
-                {
-                    stateSetMapDFA.insert(std::pair<NFAState, DFAState>(rule->ExpectedState(), state));
-                    cout << "State mapping" << endl;
-                    for (auto item : stateSetMapDFA)
-                    {
-                        cout << item.first << " -> " << item.second << endl;
-                    }
-                }
-                ++state;
-            }
-            else
-            {
-                DeterministicFSARule * foundRule {};
-                if (!_dfa.FindRuleFromStateForChar(stateSetMapDFA[rule->ExpectedState()], ch, foundRule) &&
-                    !_dfa.FindRuleToStateForChar(stateSetMapDFA[rule->NextState()], ch, foundRule))
-                {
-                    cout << "Panic!" << endl;
-                }
-                foundRule->NextState(currentState);
-                if (finalStateSet.find(currentState) != finalStateSet.end())
-                {
-                    finalStateSet[currentState].insert(foundRule->ExpectedState());
-                }
-                else
-                {
-                    finalStateSet.insert(std::pair<NFAState, StateSet>(currentState, StateSet{foundRule->ExpectedState()}));
-                }
-            }
-        }
-    }
-    cout << "Start states" << endl;
-    for (auto item : startStateSet)
-    {
-        cout << item.first << endl;
-        for (auto nextState : item.second)
-        {
-            cout << " -> " << nextState << endl;
-        }
-    }
-    cout << "End states" << endl;
-    for (auto item : finalStateSet)
-    {
-        cout << item.first << endl;
-        for (auto nextState : item.second)
-        {
-            cout << " <- " << nextState << endl;
-        }
-    }
-
-    _dfa.MakeComplete();
-    _dfa.PrintTo(cout);
-
-    return true;
-}
-
-bool Regex::Match(const std::string & text, size_t & index)
-{
     return true;
 }
 

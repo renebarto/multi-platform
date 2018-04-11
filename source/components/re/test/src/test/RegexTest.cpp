@@ -22,8 +22,6 @@ TEST_FIXTURE(RegexTest, Empty)
     EXPECT_TRUE(ast.IsEmpty());
     auto const & nfa = regex.GetNFA();
     EXPECT_TRUE(nfa.GetRules().empty());
-    auto const & dfa = regex.GetDFA();
-    EXPECT_TRUE(dfa.GetRules().empty());
 }
 
 TEST_FIXTURE(RegexTest, SingleLiteral)
@@ -61,13 +59,6 @@ TEST_FIXTURE(RegexTest, SingleLiteral)
     EXPECT_EQ(CharSet(), nfa.GetRules()[2].ExpectedInput());
     EXPECT_EQ(3, nfa.GetRules()[2].ExpectedState());
     EXPECT_EQ(0, nfa.GetRules()[2].NextState());
-
-//    auto const & dfa = regex.GetDFA();
-//    ASSERT_EQ(size_t {1}, dfa.GetRules().size());
-//
-//    EXPECT_EQ(CharSet('a'), dfa.GetRules()[0].ExpectedInput());
-//    EXPECT_EQ(1, dfa.GetRules()[0].ExpectedState());
-//    EXPECT_EQ(0, dfa.GetRules()[0].NextState());
 }
 
 TEST_FIXTURE(RegexTest, AlternativesOfSingleLiterals)
@@ -1274,6 +1265,19 @@ TEST_FIXTURE(RegexTest, SubExpression)
     EXPECT_EQ(Term(Term::Type::Literal, 'a', 1, 1), concatNodes[index]->GetTerm());
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
+
+//TEST_FIXTURE(RegexTest, Match)
+//{
+//    Regex regex("a(bb)+a");
+//    EXPECT_FALSE(regex.Match("a"));
+//    EXPECT_FALSE(regex.Match("ab"));
+//    EXPECT_FALSE(regex.Match("abb"));
+//    EXPECT_TRUE(regex.Match("abba"));
+//    EXPECT_TRUE(regex.PartialMatch("a"));
+//    EXPECT_TRUE(regex.PartialMatch("ab"));
+//    EXPECT_TRUE(regex.PartialMatch("abb"));
+//    EXPECT_TRUE(regex.PartialMatch("abba"));
+//}
 
 } // TEST_SUITE(re)
 

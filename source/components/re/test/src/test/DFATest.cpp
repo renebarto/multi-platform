@@ -224,53 +224,56 @@ TEST_FIXTURE(DFATest, HandleInputRussCoxExample)
 {
     DFA<int> finiteStateAutomaton(RulesRossCoxExample, 0, 4, -1);
     finiteStateAutomaton.MakeComplete();
-    cout << "State 0" << endl;
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(1, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input a, State " << finiteStateAutomaton.CurrentState() << endl;
 
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('b'));
     EXPECT_EQ(2, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input b, State " << finiteStateAutomaton.CurrentState() << endl;
 
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('b'));
     EXPECT_EQ(3, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input b, State " << finiteStateAutomaton.CurrentState() << endl;
 
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('b'));
     EXPECT_EQ(2, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input b, State " << finiteStateAutomaton.CurrentState() << endl;
 
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('b'));
     EXPECT_EQ(3, finiteStateAutomaton.CurrentState());
     EXPECT_FALSE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input b, State " << finiteStateAutomaton.CurrentState() << endl;
 
     EXPECT_TRUE(finiteStateAutomaton.HandleInput('a'));
     EXPECT_EQ(4, finiteStateAutomaton.CurrentState());
     EXPECT_TRUE(finiteStateAutomaton.IsFinalState());
     EXPECT_FALSE(finiteStateAutomaton.IsErrorState());
-    cout << "Input a, State " << finiteStateAutomaton.CurrentState() << endl;
 
     // We can get to final state from all states
     EXPECT_TRUE(finiteStateAutomaton.Validate());
+}
+
+TEST_FIXTURE(DFATest, ExportToDot)
+{
+    ostringstream stream;
+    DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2, -1);
+    finiteStateAutomaton.ExportToDot(stream);
+    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string actual = stream.str();
+    EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(DFATest, PrintToMethod)
 {
     ostringstream stream;
     DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2, -1);
-    finiteStateAutomaton.PrintTo(stream);
-    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    PrintTo(finiteStateAutomaton, stream);
+    string expected = "0 (a)-> 1\n0 (b)-> 3\n1 (c)-> 2\n3 (d)-> 2\n3 (e)-> 0\n";
     string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
@@ -280,7 +283,7 @@ TEST_FIXTURE(DFATest, PrintToNonMethod)
     ostringstream stream;
     DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2, -1);
     PrintTo(finiteStateAutomaton, stream);
-    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string expected = "0 (a)-> 1\n0 (b)-> 3\n1 (c)-> 2\n3 (d)-> 2\n3 (e)-> 0\n";
     string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
@@ -290,7 +293,7 @@ TEST_FIXTURE(DFATest, OutputOperator)
     ostringstream stream;
     DFA<int> finiteStateAutomaton(RulesCharSetComplex, 0, 2, -1);
     stream << finiteStateAutomaton;
-    string expected = "digraph {\n0 [penwidth=2.0]\n2 [peripheries=2]\n0 -> 1 [label=\"a\"];\n0 -> 3 [label=\"b\"];\n1 -> 2 [label=\"c\"];\n3 -> 2 [label=\"d\"];\n3 -> 0 [label=\"e\"];\n}\n";
+    string expected = "0 (a)-> 1\n0 (b)-> 3\n1 (c)-> 2\n3 (d)-> 2\n3 (e)-> 0\n";
     string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }

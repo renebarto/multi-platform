@@ -12,25 +12,52 @@
 
 namespace RE {
 
+class StringMatch : public NFA<int, char, int, CharSet>
+{
+public:
+    using State = int;
+
+    StringMatch(State startState, State endState, State errorState)
+        : NFA(startState, endState, errorState)
+    {}
+    StringMatch(const RuleSet & rules, State startState, State endState, State errorState)
+        : NFA(rules, startState, endState, errorState)
+    {}
+
+    bool Match(const std::string & input)
+    {
+        Reset();
+        for (auto ch : input)
+        {
+            HandleInput(ch);
+        }
+        return HasFinalState();
+    }
+    bool PartialMatch(const std::string & input)
+    {
+        Reset();
+        for (auto ch : input)
+        {
+            HandleInput(ch);
+        }
+        return CurrentStates() != StringMatch::StateSet {_errorState};
+    }
+};
+
 class Regex
 {
 public:
-    using NFAState = int;
-    using DFAState = int;
-    using NonDeterministicFSA = NFA<NFAState, char, int, CharSet>;
-    using DeterministicFSA = DFA<DFAState, char, int, CharSet>;
-    const NFAState StartState = 1;
-    const NFAState EndState = 0;
-    const DFAState DFAStartState = 1;
-    const DFAState DFAEndState = 0;
-    const DFAState DFAErrorState = -1;
+    using State = StringMatch::State;
+    static constexpr State StartState = 1;
+    static constexpr State EndState = 0;
+    static constexpr State ErrorState = -1;
+
     explicit Regex(const std::string & pattern);
     bool Match(const std::string & text);
     bool PartialMatch(const std::string & text);
 
     const AST & GetAST() const { return _ast; }
-    const NonDeterministicFSA  & GetNFA() const { return _nfa; }
-    const DeterministicFSA  & GetDFA() const { return _dfa; }
+    const StringMatch & GetNFA() const { return _nfa; }
     void PrintTo(std::ostream & stream, size_t indent = 0) const
     {
         _ast.PrintTo(stream, indent);
@@ -40,12 +67,10 @@ protected:
     InputReader _reader;
     Tokenizer _tokenizer;
     AST _ast;
-    NonDeterministicFSA _nfa;
-    DeterministicFSA _dfa;
+    StringMatch _nfa;
 
     bool ParseRegex();
     bool ConvertASTToNFA();
-    bool ConvertNFAToDFA();
     bool Have(const TokenIterator & it, TokenType type);
     bool Have(const TokenIterator & it, const TokenTypeSet & types);
     bool Expect(TokenIterator & it, TokenType type);
@@ -64,9 +89,6 @@ protected:
     Term CreateNotWhitespaceCharElement();
     Term CreateLiteralElement(char ch);
     Term CreateLiteralElement(CharSet charSet);
-    bool Match(const std::string & text, size_t & index);
-
-    bool NFARuleOverlaps(NFAState startState, char ch);
 };
 
 } // namespace RE

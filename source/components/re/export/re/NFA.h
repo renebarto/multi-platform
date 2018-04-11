@@ -75,29 +75,50 @@ public:
 };
 
 template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
-using NFARuleSet = std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>>;
-
-template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class NFA
 {
 public:
-    NFA(State initialState, State finalState)
+    using Rule = NFARule<State, InputValue, UnderlyingType, InputSpecifier>;
+    using RuleSet = std::vector<Rule>;
+    using StateSet = std::set<State>;
+
+    NFA(State initialState, State finalState, State errorState)
         : _rules()
+        , _startStateMap()
+        , _endStateMap()
         , _initialState(initialState)
         , _finalState(finalState)
-        , _currentState(_initialState)
+        , _errorState(errorState)
+        , _currentStates({_initialState})
     {}
+    NFA(const RuleSet & rules, State initialState, State finalState, State errorState)
+        : _rules(rules)
+        , _startStateMap()
+        , _endStateMap()
+        , _initialState(initialState)
+        , _finalState(finalState)
+        , _errorState(errorState)
+        , _currentStates({_initialState})
+    {
+        UpdateStateMap();
+    }
     NFA(const NFA & other)
         : _rules(other._rules)
+        , _startStateMap(other._startStateMap)
+        , _endStateMap(other._endStateMap)
         , _initialState(other._initialState)
         , _finalState(other._finalState)
-        , _currentState(other._currentState)
+        , _errorState(other._errorState)
+        , _currentStates(other._currentStates)
     {}
     NFA(NFA && other)
         : _rules(std::move(other._rules))
+        , _startStateMap(std::move(other._startStateMap))
+        , _endStateMap(std::move(other._endStateMap))
         , _initialState(other._initialState)
         , _finalState(other._finalState)
-        , _currentState(other._currentState)
+        , _errorState(other._errorState)
+        , _currentStates(other._currentStates)
     {}
 
     NFA & operator = (const NFA & other)
@@ -105,9 +126,12 @@ public:
         if (this != &other)
         {
             _rules = other._rules;
+            _startStateMap = other._startStateMap;
+            _endStateMap = other._endStateMap;
             _initialState = other._initialState;
             _finalState = other._finalState;
-            _currentState = other._currentState;
+            _errorState= other._errorState;
+            _currentStates = other._currentStates;
         }
         return *this;
     }
@@ -116,9 +140,12 @@ public:
         if (this != &other)
         {
             _rules = std::move(other._rules);
+            _startStateMap = std::move(other._startStateMap);
+            _endStateMap = std::move(other._endStateMap);
             _initialState = other._initialState;
             _finalState = other._finalState;
-            _currentState = other._currentState;
+            _errorState= other._errorState;
+            _currentStates = other._currentStates;
         }
         return *this;
     }
@@ -126,9 +153,10 @@ public:
     void AddRule(const NFARule<State, InputValue, UnderlyingType, InputSpecifier> & rule)
     {
         _rules.push_back(rule);
+        UpdateStateMap();
     }
-    const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & GetRules() const { return _rules; }
-    bool FindRuleFromStateForChar(State initialState, char ch, NFARule<State, InputValue, UnderlyingType, InputSpecifier> const *& rule)
+    const RuleSet & GetRules() const { return _rules; }
+    bool FindRuleFromStateForChar(State initialState, char ch, Rule const *& rule)
     {
         for (auto const & currentRule : GetRules())
         {
@@ -149,7 +177,7 @@ public:
         return false;
     }
 
-    bool FindRuleToStateForChar(State finalState, char ch, NFARule<State, InputValue, UnderlyingType, InputSpecifier> const *& rule)
+    bool FindRuleToStateForChar(State finalState, char ch, Rule const *& rule)
     {
         for (auto const & currentRule : GetRules())
         {
@@ -170,45 +198,51 @@ public:
         return false;
     }
 
+    void UpdateStateMap();
+
     bool Validate() const;
-    void Reset() { _currentState = _initialState; }
+    void Reset() { _currentStates = {_initialState}; }
     bool HandleInput(InputValue input)
     {
-        std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>> alternatives;
-        for (auto const & rule : _rules)
+        StateSet startStates = _currentStates;
+        // First add all states reachable by epsilon transition
+        for (auto state : _currentStates)
         {
-            if (rule.Match(input) && _currentState == rule.ExpectedState())
+            for (auto rule : _startStateMap[state])
             {
-                alternatives.push_back(rule);
+                if (rule->IsEpsilon())
+                    startStates.insert(rule->NextState());
             }
         }
-        if (alternatives.empty())
-            return false;
-        srand(time(nullptr));
-        int randomNumber = rand();
-        int option = randomNumber / (RAND_MAX / alternatives.size());
-        _currentState = alternatives[option].NextState();
-        return true;
-    }
-    bool HandleEpsilon()
-    {
-        std::vector<NFARule<State, InputValue, UnderlyingType, InputSpecifier>> alternatives;
-        for (auto const & rule : _rules)
+        StateSet endStates;
+        for (auto state : startStates)
         {
-            if (rule.IsEpsilon() && _currentState == rule.ExpectedState())
+            for (auto rule : _startStateMap[state])
             {
-                alternatives.push_back(rule);
+                if (rule->Match(input))
+                    endStates.insert(rule->NextState());
             }
         }
-        if (alternatives.empty())
+        StateSet reachableStates = endStates;
+        for (auto state : endStates)
+        {
+            for (auto rule : _startStateMap[state])
+            {
+                if (rule->IsEpsilon())
+                    reachableStates.insert(rule->NextState());
+            }
+        }
+        if (reachableStates.empty())
+        {
+            _currentStates = { _errorState };
             return false;
-        srand(time(nullptr));
-        int option = rand() / (RAND_MAX / alternatives.size());
-        _currentState = alternatives[option].NextState();
+        }
+        _currentStates = reachableStates;
         return true;
     }
-    State CurrentState() const { return _currentState; }
-    bool IsFinalState() const { return _currentState == _finalState; }
+    StateSet CurrentStates() const { return _currentStates; }
+    bool CurrentStateContains(State state) const { return _currentStates.find(state) != _currentStates.end(); }
+    bool HasFinalState() const { return CurrentStateContains(_finalState); }
     void ExportToDot(std::ostream & stream) const
     {
         stream << "digraph {" << std::endl;
@@ -222,25 +256,39 @@ public:
     }
     void PrintTo(std::ostream & stream) const
     {
-        ExportToDot(stream);
+        for (auto state : _startStateMap)
+        {
+            for (auto rule : state.second)
+            {
+                stream << state.first << " (" << rule->ExpectedInput() << ")-> " << rule->NextState() << std::endl;
+            }
+        }
     }
 
 protected:
-    NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> _rules;
+    using StateRules = std::vector<Rule *>;
+    using StateMap = std::map<State, StateRules>;
+    RuleSet _rules;
+    StateMap _startStateMap;
+    StateMap _endStateMap;
     State _initialState;
     State _finalState;
-    State _currentState;
+    State _errorState;
+    StateSet _currentStates;
 };
 
 template<typename State, typename InputValue = char, typename UnderlyingType = int, typename InputSpecifier = ValueSet<InputValue, UnderlyingType>>
 class NFAValidator
 {
 public:
+    using Rule = NFARule<State, InputValue, UnderlyingType, InputSpecifier>;
+    using RuleSet = std::vector<Rule>;
+
     NFAValidator()
         : _map()
     {}
 
-    bool Validate(const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
+    bool Validate(const RuleSet & rules,
                   const std::set<State> & states, State finalState) const
     {
         _map.clear();
@@ -251,7 +299,7 @@ public:
         }
         return true;
     }
-    bool Validate(const NFARuleSet<State, InputValue, UnderlyingType, InputSpecifier> & rules,
+    bool Validate(const RuleSet & rules,
                   State from, State to) const
     {
         auto it = _map.find(from);
@@ -299,6 +347,32 @@ bool NFA<State, InputValue, UnderlyingType, InputSpecifier>::Validate() const
     }
 
     return validator.Validate(_rules, states, _finalState);
+}
+
+template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
+void NFA<State, InputValue, UnderlyingType, InputSpecifier>::UpdateStateMap()
+{
+    _startStateMap.clear();
+    _endStateMap.clear();
+    for (auto & rule : _rules)
+    {
+        if (_startStateMap.find(rule.ExpectedState()) != _startStateMap.end())
+        {
+            _startStateMap[rule.ExpectedState()].push_back(&rule);
+        }
+        else
+        {
+            _startStateMap.insert(std::pair<State, StateRules>(rule.ExpectedState(), StateRules {&rule}));
+        }
+        if (_endStateMap.find(rule.NextState()) != _startStateMap.end())
+        {
+            _endStateMap[rule.NextState()].push_back(&rule);
+        }
+        else
+        {
+            _endStateMap.insert(std::pair<State, StateRules>(rule.NextState(), StateRules {&rule}));
+        }
+    }
 }
 
 template<typename State, typename InputValue, typename UnderlyingType, typename InputSpecifier>
