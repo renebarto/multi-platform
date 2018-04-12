@@ -43,7 +43,7 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
-    re
+    regex
     parser
 #    crypto
 #    network
@@ -69,8 +69,8 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
 
-file(GLOB PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/re/test/src/test/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/re/test/include/re/*.h)
+file(GLOB PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/include/regex/*.h)
 
 file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/include/parser/*.h)
@@ -125,7 +125,7 @@ set(PACKAGE_INCLUDES_PUBLIC_PRIVATE
 list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/osal/test/include
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
-    ${CMAKE_SOURCE_DIR}/source/components/re/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/regex/test/include
     ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
