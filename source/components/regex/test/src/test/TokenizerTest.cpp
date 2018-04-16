@@ -27,13 +27,13 @@ TEST_FIXTURE(TokenizerTest, Empty)
 
 TEST_FIXTURE(TokenizerTest, Punctuations)
 {
-    InputReader reader("[]{}()*+?-.| \t\n\r \r\n");
+    InputReader reader("[]{}()*+?-.^| \t\n\r \r\n");
     Tokenizer tokenizer(reader);
 
     ASSERT_TRUE(tokenizer.Tokenize());
 
     auto & tokens = tokenizer.GetTokens();
-    ASSERT_EQ(size_t {19}, tokens.size());
+    ASSERT_EQ(size_t {20}, tokens.size());
 
     size_t index {};
 
@@ -48,6 +48,7 @@ TEST_FIXTURE(TokenizerTest, Punctuations)
     ASSERT_EQ(Token(TokenType::QuestionMark, '?'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Dash, '-'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Dot, '.'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Caret, '^'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Or, '|'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Space, ' '), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Tab, '\t'), tokens[index++]);
@@ -58,44 +59,56 @@ TEST_FIXTURE(TokenizerTest, Punctuations)
     ASSERT_EQ(Token(TokenType::NewLine, '\n'), tokens[index++]);
 }
 
+TEST_FIXTURE(TokenizerTest, Invalid)
+{
+    InputReader reader("\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F"
+                       "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"
+                       "\x7F");
+    Tokenizer tokenizer(reader);
+
+    ASSERT_FALSE(tokenizer.Tokenize());
+
+    auto & tokens = tokenizer.GetTokens();
+    ASSERT_EQ(size_t {0}, tokens.size());
+}
+
 TEST_FIXTURE(TokenizerTest, LiteralChars)
 {
-    InputReader reader("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
+    InputReader reader("!\"#$%&',/0123456789:;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ_`abcdefghijklmnopqrstuvwxyz~");
     Tokenizer tokenizer(reader);
 
     ASSERT_TRUE(tokenizer.Tokenize());
 
     auto & tokens = tokenizer.GetTokens();
-    ASSERT_EQ(size_t {63}, tokens.size());
+    ASSERT_EQ(size_t {80}, tokens.size());
 
     size_t index {};
 
-    ASSERT_EQ(Token(TokenType::Literal, 'a'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'b'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'c'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'd'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'e'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'f'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'g'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'h'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'i'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'j'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'k'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'l'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'm'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'n'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'o'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'p'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'q'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'r'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 's'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 't'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'u'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'v'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'w'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'x'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'y'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, 'z'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '!'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '"'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '#'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '$'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '%'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '&'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '\''), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, ','), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '/'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '0'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '1'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '2'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '3'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '4'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '5'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '6'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '7'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '8'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '9'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, ':'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, ';'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '<'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '='), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '>'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '@'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'A'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'B'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'C'), tokens[index++]);
@@ -122,17 +135,35 @@ TEST_FIXTURE(TokenizerTest, LiteralChars)
     ASSERT_EQ(Token(TokenType::Literal, 'X'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'Y'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, 'Z'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '0'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '1'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '2'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '3'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '4'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '5'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '6'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '7'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '8'), tokens[index++]);
-    ASSERT_EQ(Token(TokenType::Literal, '9'), tokens[index++]);
     ASSERT_EQ(Token(TokenType::Literal, '_'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '`'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'a'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'b'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'c'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'd'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'e'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'f'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'g'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'h'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'i'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'j'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'k'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'l'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'm'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'n'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'o'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'p'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'q'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'r'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 's'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 't'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'u'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'v'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'w'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'x'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'y'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, 'z'), tokens[index++]);
+    ASSERT_EQ(Token(TokenType::Literal, '~'), tokens[index++]);
 }
 
 TEST_FIXTURE(TokenizerTest, EscapeChars)

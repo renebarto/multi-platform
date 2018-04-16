@@ -67,7 +67,7 @@ public:
                 stream << static_cast<char>(range.from);
             } else
             {
-                stream << "\\x" << std::hex << std::setw(2) << std::setfill('0') << range.from;
+                stream << "\\x" << std::hex << std::setw(2) << std::setfill('0') << std::dec << range.from;
             }
             if (range.from != range.to)
             {
@@ -77,7 +77,7 @@ public:
                     stream << static_cast<char>(range.to);
                 } else
                 {
-                    stream << "\\x" << std::hex << std::setw(2) << std::setfill('0') << range.to;
+                    stream << "\\x" << std::hex << std::setw(2) << std::setfill('0') << std::dec << range.to;
                 }
             }
             firstElement = false;

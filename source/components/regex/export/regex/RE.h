@@ -54,8 +54,11 @@ public:
     static constexpr State ErrorState = -1;
 
     explicit RE(const std::string & pattern);
-    bool Match(const std::string & text);
-    bool PartialMatch(const std::string & text);
+    RE(const RE & other);
+    RE & operator = (const RE & other);
+
+    bool Match(const std::string & text) const;
+    bool PartialMatch(const std::string & text) const;
 
     const AST & GetAST() const { return _ast; }
     const StringMatch & GetNFA() const { return _nfa; }
@@ -65,10 +68,11 @@ public:
     }
 
 protected:
+    std::string _pattern;
     InputReader _reader;
     Tokenizer _tokenizer;
     AST _ast;
-    StringMatch _nfa;
+    mutable StringMatch _nfa;
 
     bool ParseRegex();
     bool ConvertASTToNFA();

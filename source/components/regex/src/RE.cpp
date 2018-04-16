@@ -1,4 +1,4 @@
-#include "regex/Regex.h"
+#include "regex/RE.h"
 
 #include <cassert>
 #include <iostream>
@@ -20,7 +20,8 @@ static const CharSet::Range VTab('\f');
 static const CharSet WhitespaceSet(Cr | Lf | Space | Tab | VTab);
 
 RE::RE(const std::string & pattern)
-    : _reader(pattern)
+    : _pattern(pattern)
+    , _reader(_pattern)
     , _tokenizer(_reader)
     , _ast()
     , _nfa(StartState, EndState, ErrorState)
@@ -31,12 +32,58 @@ RE::RE(const std::string & pattern)
         throw invalid_argument("Invalid regular expression");
 }
 
-bool RE::Match(const std::string & text)
+RE::RE(const RE & other)
+    : _pattern(other._pattern)
+    , _reader(_pattern)
+    , _tokenizer(_reader)
+    , _ast()
+    , _nfa(StartState, EndState, ErrorState)
+{
+    if (!ParseRegex())
+        throw invalid_argument("Invalid regular expression");
+    if (!ConvertASTToNFA())
+        throw invalid_argument("Invalid regular expression");
+}
+
+//RE::RE(RE && other)
+//    : _reader(std::move(other._reader))
+//    , _tokenizer(std::move(other._tokenizer))
+//    , _ast(std::move(other._ast))
+//    , _nfa(std::move(other._nfa))
+//{
+//}
+
+RE & RE::operator = (const RE & other)
+{
+    if (this != &other)
+    {
+        _pattern = other._pattern;
+        _reader = InputReader(_pattern);
+        _tokenizer = Tokenizer(_reader);
+        _ast = AST();
+        _nfa = StringMatch(StartState, EndState, ErrorState);
+    }
+    return *this;
+}
+
+//RE & RE::operator = (RE && other)
+//{
+//    if (this != &other)
+//    {
+//        _reader = std::move(other._reader);
+//        _tokenizer = std::move(other._tokenizer);
+//        _ast = std::move(other._ast);
+//        _nfa = std::move(other._nfa);
+//    }
+//    return *this;
+//}
+
+bool RE::Match(const std::string & text) const
 {
     return _nfa.Match(text);
 }
 
-bool RE::PartialMatch(const std::string & text)
+bool RE::PartialMatch(const std::string & text) const
 {
     return _nfa.PartialMatch(text);
 }
@@ -204,18 +251,33 @@ ASTNode::Ptr RE::ParseAlternative(TokenIterator & it, const TokenTypeSet & termi
                 }
                 break;
             case TokenType::Dot:
-            {
-                ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(CharSet::All)));
-                ++it;
-                AddNodeAndCheckMultiplicity(it, rootNode, node);
-            }
+                {
+                    ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(CharSet::All)));
+                    ++it;
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                }
                 break;
             case TokenType::Space:
-                ++it; break;
+                {
+                    ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
+                    ++it;
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                }
+                break;
             case TokenType::Tab:
-                ++it; break;
+                {
+                    ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
+                    ++it;
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                }
+                break;
             case TokenType::NewLine:
-                ++it; break;
+                {
+                    ASTNode::Ptr node = ASTLeaf::Create(Term(CreateLiteralElement(it->value)));
+                    ++it;
+                    AddNodeAndCheckMultiplicity(it, rootNode, node);
+                }
+                break;
             case TokenType::Return:
                 ++it; break;
             case TokenType::SquareBracketOpen:
@@ -290,7 +352,7 @@ ASTNode::Ptr RE::ParseRange(TokenIterator & it)
                 if (Have(it, TokenType::Dash))
                 {
                     ++it;
-                    if (it->type == TokenType::Literal)
+                    if ((it->type == TokenType::Literal))
                     {
                         char charEnd = it->value;
                         charSet |= CharSet::Range(charStart, charEnd);

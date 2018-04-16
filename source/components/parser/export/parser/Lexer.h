@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include "parser/InputReader.h"
+#include "regex/RE.h"
 
 namespace Parser {
-
 
 struct LexerToken
 {
@@ -58,249 +58,59 @@ struct LexerToken
     SourceLocation location;
 };
 
-enum LexerState
-{
-    Any = 0,
-    LineComment,
-    BlockComment,
-    Whitespace,
-    Identifier,
-    HexNumber,
-    OctNumber,
-    DecNumber,
-    String,
-};
-
 class LexerRule
 {
 public:
     LexerRule() = delete;
 
-    static LexerRule CreateSingleChar(const char * inCharSet,
-                                      LexerToken::Type type)
+    static LexerRule Create(Regex::RE && regex, LexerToken::Type type)
     {
-        return LexerRule(inCharSet, nullptr, nullptr, nullptr,
-                         LexerState::Any, LexerState::Any, LexerState::Any, type,
-                         true, true, false);
-    }
-    static LexerRule CreateStartCharSet(const char * inCharSet,
-                                        LexerState nextState,
-                                        bool storeInput)
-    {
-        return LexerRule(inCharSet, nullptr, nullptr, nullptr, 
-                         LexerState::Any, nextState, nextState, LexerToken::Type::None,
-                         storeInput, false, false);
-    }
-    static LexerRule CreateContinueCharSet(const char * inCharSet,
-                                           LexerState currentState,
-                                           LexerToken::Type type,
-                                           bool storeInput)
-    {
-        return LexerRule(inCharSet, nullptr, nullptr, nullptr,
-                         currentState, currentState, LexerState::Any, type,
-                         storeInput, false, true);
-    }
-    static LexerRule CreateEndCharSet(const char * endCharSet,
-                                      LexerState currentState,
-                                      LexerToken::Type type,
-                                      bool storeInput)
-    {
-        return LexerRule(nullptr, endCharSet, nullptr, nullptr, 
-                         currentState, currentState, LexerState::Any, type,
-                         storeInput, false, true);
-    }
-    static LexerRule CreateStartLiteral(const char * literal,
-                                        LexerState nextState,
-                                        bool storeInput)
-    {
-        return LexerRule(nullptr, nullptr, literal, nullptr,
-                         LexerState::Any, nextState, nextState, LexerToken::Type::None,
-                         storeInput, false, false);
-    }
-    static LexerRule CreateEndLiteral(const char * literal,
-                                      LexerState currentState,
-                                      LexerToken::Type type,
-                                      bool storeInput)
-    {
-        return LexerRule(nullptr, nullptr, nullptr, literal,
-                         currentState, currentState, LexerState::Any, type,
-                         storeInput, false, true);
+        return LexerRule(std::move(regex), type);
     }
 
-    static LexerRule CreateEndLiteral(const char * endLiteral,
-                                      LexerState currentState, LexerState foundState, LexerState lostState,
-                                      LexerToken::Type type,
-                                      bool storeInput, bool emitWhenFound, bool emitWhenLost)
+    bool Match(const std::string & value) const
     {
-        return LexerRule(nullptr, nullptr, nullptr, endLiteral, 
-                         currentState, foundState, lostState, type, 
-                         storeInput, emitWhenFound, emitWhenLost);
+        return _regex.Match(value);
     }
-
-    bool MatchesChar(char ch, LexerState state) const
+    bool PartialMatch(const std::string & value) const
     {
-        if (state != _currentState)
-            return false;
-        if (_inCharSet != nullptr)
-        {
-            if (strchr(_inCharSet, ch) != nullptr)
-                return true;
-        }
-        return false;
-    }
-    bool MatchesEndChar(char ch, LexerState state) const
-    {
-        if (state != _currentState)
-            return false;
-        if (_endCharSet != nullptr)
-        {
-            if (strchr(_endCharSet, ch) == nullptr)
-                return true;
-        }
-        return false;
-    }
-    bool MatchesLiteral(const std::string & literal, LexerState state) const
-    {
-        if (state != _currentState)
-            return false;
-        if (_literal != nullptr)
-        {
-            if (strcmp(_literal, literal.c_str()) == 0)
-                return true;
-        }
-        return false;
-    }
-    bool MatchesEndLiteral(const std::string & literal, LexerState state) const
-    {
-        if (state != _currentState)
-            return false;
-        if (_endLiteral != nullptr)
-        {
-            if (strcmp(_endLiteral, literal.c_str()) != 0)
-                return true;
-        }
-        return false;
-    }
-    LexerState StartState() const
-    {
-        return _currentState;
-    }
-    LexerState FoundState() const
-    {
-        return _foundState;
-    }
-    LexerState LostState() const
-    {
-        return _lostState;
-    }
-    bool StoreInput() const
-    {
-        return _storeInput;
-    }
-    bool EmitOnFound() const
-    {
-        return (_type != LexerToken::Type::None) && _emitWhenFound;
-    }
-    bool EmitOnLost() const
-    {
-        return (_type != LexerToken::Type::None) && _emitWhenLost;
+        return _regex.PartialMatch(value);
     }
     LexerToken::Type Type() const
     {
         return _type;
     }
-    bool IsLiteral() const
-    {
-        return (_literal != nullptr);
-    }
-    bool IsEndLiteral() const
-    {
-        return (_endLiteral != nullptr);
-    }
-    size_t LiteralSize() const
-    {
-        return (_literal != nullptr) ? strlen(_literal) : 0;
-    }
-    size_t EndLiteralSize() const
-    {
-        return (_endLiteral != nullptr) ? strlen(_endLiteral) : 0;
-    }
-    const char * MatchChars() const
-    {
-        return _inCharSet;
-    }
-    const char * EndMatchChars() const
-    {
-        return _endCharSet;
-    }
-    const char * Literal() const
-    {
-        return _literal;
-    }
-    const char * EndLiteral() const
-    {
-        return _endLiteral;
-    }
+    const Regex::RE & Regex() const { return _regex; }
 
 protected:
-    const char * _inCharSet;
-    const char * _endCharSet;
-    const char * _literal;
-    const char * _endLiteral;
-    LexerState _currentState;
-    LexerState _foundState;
-    LexerState _lostState;
+    Regex::RE _regex;
     LexerToken::Type _type;
-    bool _storeInput;
-    bool _emitWhenFound;
-    bool _emitWhenLost;
 
 public:
-    LexerRule(const char * inCharSet, const char * endCharSet, const char * literal, const char * endLiteral,
-              LexerState currentState, LexerState foundState, LexerState lostState,
-              LexerToken::Type type,
-              bool storeInput, bool emitWhenFound, bool emitWhenLost)
-        : _inCharSet(inCharSet)
-        , _endCharSet(endCharSet)
-        , _literal(literal)
-        , _endLiteral(endLiteral)
-        , _currentState(currentState)
-        , _foundState(foundState)
-        , _lostState(lostState)
+    LexerRule(Regex::RE && regex, LexerToken::Type type)
+        : _regex(std::move(regex))
         , _type(type)
-        , _storeInput(storeInput)
-        , _emitWhenFound(emitWhenFound)
-        , _emitWhenLost(emitWhenLost)
     {}
     LexerRule(const LexerRule & other)
-        : _inCharSet(other._inCharSet)
-        , _endCharSet(other._endCharSet)
-        , _literal(other._literal)
-        , _endLiteral(other._endLiteral)
-        , _currentState(other._currentState)
-        , _foundState(other._foundState)
-        , _lostState(other._lostState)
+        : _regex(other._regex)
         , _type(other._type)
-        , _storeInput(other._storeInput)
-        , _emitWhenFound(other._emitWhenFound)
-        , _emitWhenLost(other._emitWhenLost)
     {
     }
     LexerRule & operator = (const LexerRule & other)
     {
         if (this != &other)
         {
-            _inCharSet = other._inCharSet;
-            _endCharSet = other._endCharSet;
-            _literal = other._literal;
-            _endLiteral = other._endLiteral;
-            _currentState = other._currentState;
-            _foundState = other._foundState;
-            _lostState = other._lostState;
+            _regex = other._regex;
             _type = other._type;
-            _storeInput = other._storeInput;
-            _emitWhenFound = other._emitWhenFound;
-            _emitWhenLost = other._emitWhenLost;
+        }
+        return *this;
+    }
+    LexerRule & operator = (LexerRule && other)
+    {
+        if (this != &other)
+        {
+            _regex = std::move(other._regex);
+            _type = other._type;
         }
         return *this;
     }
@@ -321,42 +131,14 @@ public:
 protected:
     InputReader & _reader;
     LexerRuleSet _rules;
-    const LexerRule * _activeRule;
     std::deque<LexerToken> _pushbackQueue;
 
-    const LexerRule * FindMatchingRule(char ch, const LexerState & state, std::string & value);
-    bool ActiveRuleMatches(char ch, const LexerState & state, std::string & value);
+    bool FullMatch(const std::string & value, const LexerRule *& activeRule);
+    bool PartialMatch(const std::string & value);
 };
 
 } // namespace Parser
 
-inline std::ostream & operator << (std::ostream & stream, const Parser::LexerState & state)
-{
-    switch (state)
-    {
-        case Parser::LexerState::Any:
-            stream << "Any"; break;
-        case Parser::LexerState::LineComment:
-            stream << "LineComment"; break;
-        case Parser::LexerState::BlockComment:
-            stream << "BlockComment"; break;
-        case Parser::LexerState::Whitespace:
-            stream << "Whitespace"; break;
-        case Parser::LexerState::Identifier:
-            stream << "Identifier"; break;
-        case Parser::LexerState::HexNumber:
-            stream << "HexNumber"; break;
-        case Parser::LexerState::OctNumber:
-            stream << "OctNumber"; break;
-        case Parser::LexerState::DecNumber:
-            stream << "DecNumber"; break;
-        case Parser::LexerState::String:
-            stream << "String"; break;
-        default:
-            stream << "Unknown state";
-    }
-    return stream;
-}
 inline std::ostream & operator << (std::ostream & stream, const Parser::LexerToken::Type & type)
 {
     switch (type)
@@ -464,18 +246,7 @@ inline std::ostream & operator << (std::ostream & stream, const Parser::LexerTok
 }
 inline std::ostream & operator << (std::ostream & stream, const Parser::LexerRule & rule)
 {
-    if (rule.MatchChars() != nullptr)
-        stream << "Match      " << rule.MatchChars() << std::endl;
-    if (rule.EndMatchChars() != nullptr)
-        stream << "EndMatch   " << rule.EndMatchChars() << std::endl;
-    if (rule.Literal() != nullptr)
-        stream << "Literal    " << rule.Literal() << std::endl;
-    if (rule.EndLiteral() != nullptr)
-        stream << "EndLiteral " << rule.EndLiteral() << std::endl;
-    stream << rule.StartState() << " -> " << rule.FoundState() << " / " << rule.LostState() << std::endl;
-    stream << "Type:      " << rule.Type() << std::endl;
-    stream << "StoreInput:" << rule.StoreInput() << std::endl;
-    stream << "Emit found:" << rule.EmitOnFound() << std::endl;
-    stream << "Emit lost: " << rule.EmitOnLost() << std::endl;
+    stream << "Regex    " << rule.Regex() << std::endl;
+    stream << "Type:    " << rule.Type() << std::endl;
     return stream;
 }

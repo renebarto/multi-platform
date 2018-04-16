@@ -1,7 +1,7 @@
 #include "unittest-cpp/UnitTestC++.h"
 
 #include <fstream>
-#include "regex/Regex.h"
+#include "regex/RE.h"
 #include "regex/TestData.h"
 
 using namespace std;
@@ -9,13 +9,13 @@ using namespace std;
 namespace Regex {
 namespace Test {
 
-class RegexTest : public UnitTestCpp::TestFixture
+class RETest : public UnitTestCpp::TestFixture
 {
 };
 
 TEST_SUITE(regex) {
 
-TEST_FIXTURE(RegexTest, Empty)
+TEST_FIXTURE(RETest, Empty)
 {
     RE regex("");
     auto const & ast = regex.GetAST();
@@ -24,7 +24,7 @@ TEST_FIXTURE(RegexTest, Empty)
     EXPECT_TRUE(nfa.GetRules().empty());
 }
 
-TEST_FIXTURE(RegexTest, SingleLiteral)
+TEST_FIXTURE(RETest, SingleLiteral)
 {
     RE regex("a");
     auto const & ast = regex.GetAST();
@@ -61,7 +61,7 @@ TEST_FIXTURE(RegexTest, SingleLiteral)
     EXPECT_EQ(0, nfa.GetRules()[2].NextState());
 }
 
-TEST_FIXTURE(RegexTest, AlternativesOfSingleLiterals)
+TEST_FIXTURE(RETest, AlternativesOfSingleLiterals)
 {
     RE regex("a|b");
     auto const & ast = regex.GetAST();
@@ -92,7 +92,7 @@ TEST_FIXTURE(RegexTest, AlternativesOfSingleLiterals)
     EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodesB[0]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, MultipleAlternativesOfSingleLiterals)
+TEST_FIXTURE(RETest, MultipleAlternativesOfSingleLiterals)
 {
     RE regex("a|b|c");
     auto const & ast = regex.GetAST();
@@ -132,7 +132,7 @@ TEST_FIXTURE(RegexTest, MultipleAlternativesOfSingleLiterals)
     EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodesC[0]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, EmptyLeftAlternative)
+TEST_FIXTURE(RETest, EmptyLeftAlternative)
 {
     RE regex("|a");
     auto const & ast = regex.GetAST();
@@ -159,7 +159,7 @@ TEST_FIXTURE(RegexTest, EmptyLeftAlternative)
     EXPECT_EQ(Term(Term::Type::Literal, 'a'), concatNodesB[0]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, EmptyRightAlternative)
+TEST_FIXTURE(RETest, EmptyRightAlternative)
 {
     RE regex("a|");
     auto const & ast = regex.GetAST();
@@ -186,7 +186,7 @@ TEST_FIXTURE(RegexTest, EmptyRightAlternative)
     ASSERT_EQ(size_t{0}, concatNodesB.size());
 }
 
-TEST_FIXTURE(RegexTest, Concatenation)
+TEST_FIXTURE(RETest, Concatenation)
 {
     RE regex("ab");
     auto const & ast = regex.GetAST();
@@ -214,7 +214,7 @@ TEST_FIXTURE(RegexTest, Concatenation)
     EXPECT_EQ(Term(Term::Type::Literal, 'b'), concatNodes[index]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, MultipleConcatenation)
+TEST_FIXTURE(RETest, MultipleConcatenation)
 {
     RE regex("abc");
     auto const & ast = regex.GetAST();
@@ -247,7 +247,7 @@ TEST_FIXTURE(RegexTest, MultipleConcatenation)
     EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodes[index]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, OrWithMultipleTerms1)
+TEST_FIXTURE(RETest, OrWithMultipleTerms1)
 {
     RE regex("a|bc");
     auto const & ast = regex.GetAST();
@@ -282,7 +282,7 @@ TEST_FIXTURE(RegexTest, OrWithMultipleTerms1)
     EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodesB[1]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, OrWithMultipleTerms2)
+TEST_FIXTURE(RETest, OrWithMultipleTerms2)
 {
     RE regex("ab|c");
     auto const & ast = regex.GetAST();
@@ -317,7 +317,7 @@ TEST_FIXTURE(RegexTest, OrWithMultipleTerms2)
     EXPECT_EQ(Term(Term::Type::Literal, 'c'), concatNodesB[0]->GetTerm());
 }
 
-TEST_FIXTURE(RegexTest, SingleLiteralPlus)
+TEST_FIXTURE(RETest, SingleLiteralPlus)
 {
     RE regex("a+");
     auto const & ast = regex.GetAST();
@@ -340,7 +340,7 @@ TEST_FIXTURE(RegexTest, SingleLiteralPlus)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, SingleLiteralAsterisk)
+TEST_FIXTURE(RETest, SingleLiteralAsterisk)
 {
     RE regex("a*");
     auto const & ast = regex.GetAST();
@@ -363,7 +363,7 @@ TEST_FIXTURE(RegexTest, SingleLiteralAsterisk)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, SingleLiteralOptional)
+TEST_FIXTURE(RETest, SingleLiteralOptional)
 {
     RE regex("a?");
     auto const & ast = regex.GetAST();
@@ -386,7 +386,7 @@ TEST_FIXTURE(RegexTest, SingleLiteralOptional)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSet)
+TEST_FIXTURE(RETest, OneOfSet)
 {
     RE regex("[abcd]");
     auto const & ast = regex.GetAST();
@@ -409,7 +409,7 @@ TEST_FIXTURE(RegexTest, OneOfSet)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetRange)
+TEST_FIXTURE(RETest, OneOfSetRange)
 {
     RE regex("[a-b]");
     auto const & ast = regex.GetAST();
@@ -432,7 +432,7 @@ TEST_FIXTURE(RegexTest, OneOfSetRange)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetMultipleRange)
+TEST_FIXTURE(RETest, OneOfSetMultipleRange)
 {
     RE regex("[a-bp-q]");
     auto const & ast = regex.GetAST();
@@ -455,7 +455,7 @@ TEST_FIXTURE(RegexTest, OneOfSetMultipleRange)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfNotSetRange)
+TEST_FIXTURE(RETest, OneOfNotSetRange)
 {
     RE regex("[^a-b]");
     auto const & ast = regex.GetAST();
@@ -478,7 +478,7 @@ TEST_FIXTURE(RegexTest, OneOfNotSetRange)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetDigit)
+TEST_FIXTURE(RETest, OneOfSetDigit)
 {
     RE regex("[\\d]");
     auto const & ast = regex.GetAST();
@@ -502,7 +502,7 @@ TEST_FIXTURE(RegexTest, OneOfSetDigit)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetNotDigit)
+TEST_FIXTURE(RETest, OneOfSetNotDigit)
 {
     RE regex("[\\D]");
     auto const & ast = regex.GetAST();
@@ -526,7 +526,7 @@ TEST_FIXTURE(RegexTest, OneOfSetNotDigit)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetAlphaChar)
+TEST_FIXTURE(RETest, OneOfSetAlphaChar)
 {
     RE regex("[\\a]");
     auto const & ast = regex.GetAST();
@@ -553,7 +553,7 @@ TEST_FIXTURE(RegexTest, OneOfSetAlphaChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetNotAlphaChar)
+TEST_FIXTURE(RETest, OneOfSetNotAlphaChar)
 {
     RE regex("[\\A]");
     auto const & ast = regex.GetAST();
@@ -580,7 +580,7 @@ TEST_FIXTURE(RegexTest, OneOfSetNotAlphaChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetWordChar)
+TEST_FIXTURE(RETest, OneOfSetWordChar)
 {
     RE regex("[\\w]");
     auto const & ast = regex.GetAST();
@@ -608,7 +608,7 @@ TEST_FIXTURE(RegexTest, OneOfSetWordChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetNotWordChar)
+TEST_FIXTURE(RETest, OneOfSetNotWordChar)
 {
     RE regex("[\\W]");
     auto const & ast = regex.GetAST();
@@ -636,7 +636,7 @@ TEST_FIXTURE(RegexTest, OneOfSetNotWordChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetWhitespaceChar)
+TEST_FIXTURE(RETest, OneOfSetWhitespaceChar)
 {
     RE regex("[\\s]");
     auto const & ast = regex.GetAST();
@@ -665,7 +665,7 @@ TEST_FIXTURE(RegexTest, OneOfSetWhitespaceChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OneOfSetNotWhitespaceChar)
+TEST_FIXTURE(RETest, OneOfSetNotWhitespaceChar)
 {
     RE regex("[\\S]");
     auto const & ast = regex.GetAST();
@@ -694,7 +694,7 @@ TEST_FIXTURE(RegexTest, OneOfSetNotWhitespaceChar)
     ASSERT_EQ(size_t{0}, concatNodes[0]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, Dot)
+TEST_FIXTURE(RETest, Dot)
 {
     RE regex(".");
     auto const & ast = regex.GetAST();
@@ -719,7 +719,7 @@ TEST_FIXTURE(RegexTest, Dot)
 
 }
 
-TEST_FIXTURE(RegexTest, ComplexLiteralsAndSets)
+TEST_FIXTURE(RETest, ComplexLiteralsAndSets)
 {
     RE regex("ab[c-e][f-h]ijk");
     auto const & ast = regex.GetAST();
@@ -780,7 +780,7 @@ TEST_FIXTURE(RegexTest, ComplexLiteralsAndSets)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, ComplexWithMultiplicities)
+TEST_FIXTURE(RETest, ComplexWithMultiplicities)
 {
     RE regex("a*b+[c-e][f-h]ij?k.*");
     auto const & ast = regex.GetAST();
@@ -847,7 +847,7 @@ TEST_FIXTURE(RegexTest, ComplexWithMultiplicities)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, StringLiteralWithEscapes)
+TEST_FIXTURE(RETest, StringLiteralWithEscapes)
 {
     RE regex("\\.\\*\\+\\?\\$\\^\\/\\\\\\[\\]\\{\\}\\(\\)\\a\\b");
     auto const & ast = regex.GetAST();
@@ -962,7 +962,7 @@ TEST_FIXTURE(RegexTest, StringLiteralWithEscapes)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, DecimalNumber)
+TEST_FIXTURE(RETest, DecimalNumber)
 {
     RE regex("[1-9][0-9]*");
     auto const & ast = regex.GetAST();
@@ -993,7 +993,7 @@ TEST_FIXTURE(RegexTest, DecimalNumber)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, OctalNumber)
+TEST_FIXTURE(RETest, OctalNumber)
 {
     RE regex("[0-7]*");
     auto const & ast = regex.GetAST();
@@ -1018,7 +1018,7 @@ TEST_FIXTURE(RegexTest, OctalNumber)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, HexaDecimalNumber)
+TEST_FIXTURE(RETest, HexaDecimalNumber)
 {
     RE regex("0[xX][0-9a-fA-F]+");
     auto const & ast = regex.GetAST();
@@ -1055,7 +1055,7 @@ TEST_FIXTURE(RegexTest, HexaDecimalNumber)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, AnyNumber)
+TEST_FIXTURE(RETest, AnyNumber)
 {
     RE regex("[1-9][0-9]*|[0-7]*|0[xX][0-9a-fA-F]+");
     auto const & ast = regex.GetAST();
@@ -1120,7 +1120,7 @@ TEST_FIXTURE(RegexTest, AnyNumber)
     ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, AnyNumberShort)
+TEST_FIXTURE(RETest, AnyNumberShort)
 {
     RE regex("[1-9]\\d*|[0-7]*|0[xX][\\da-fA-F]+");
     auto const & ast = regex.GetAST();
@@ -1185,7 +1185,7 @@ TEST_FIXTURE(RegexTest, AnyNumberShort)
     ASSERT_EQ(size_t{0}, concatNodes2[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, Word)
+TEST_FIXTURE(RETest, Word)
 {
     RE regex("[a-zA-Z]+");
     auto const & ast = regex.GetAST();
@@ -1210,7 +1210,7 @@ TEST_FIXTURE(RegexTest, Word)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, SubExpression)
+TEST_FIXTURE(RETest, SubExpression)
 {
     RE regex("a(bb)+a");
     auto const & ast = regex.GetAST();
@@ -1266,7 +1266,7 @@ TEST_FIXTURE(RegexTest, SubExpression)
     ASSERT_EQ(size_t{0}, concatNodes[index]->GetNodes().size());
 }
 
-TEST_FIXTURE(RegexTest, Match)
+TEST_FIXTURE(RETest, Match)
 {
     RE regex("a(bb)+a");
     EXPECT_TRUE(regex.Match("abba"));
@@ -1287,7 +1287,7 @@ TEST_FIXTURE(RegexTest, Match)
     EXPECT_TRUE(regex.PartialMatch("abbb"));
 }
 
-TEST_FIXTURE(RegexTest, MatchHexadecimalNumber)
+TEST_FIXTURE(RETest, MatchHexadecimalNumber)
 {
     RE regex("0[xX][0-9a-fA-F]+");
     EXPECT_FALSE(regex.Match(""));
@@ -1311,7 +1311,7 @@ TEST_FIXTURE(RegexTest, MatchHexadecimalNumber)
     EXPECT_FALSE(regex.PartialMatch("0xx"));
 }
 
-TEST_FIXTURE(RegexTest, MatchDecimalNumber)
+TEST_FIXTURE(RETest, MatchDecimalNumber)
 {
     RE regex("[1-9][0-9]*|0");
     EXPECT_FALSE(regex.Match(""));
@@ -1335,6 +1335,48 @@ TEST_FIXTURE(RegexTest, MatchDecimalNumber)
     EXPECT_TRUE(regex.PartialMatch("1234567"));
     EXPECT_FALSE(regex.PartialMatch("0x"));
     EXPECT_FALSE(regex.PartialMatch("0A"));
+}
+
+TEST_FIXTURE(RETest, LineComment)
+{
+    RE regex("\\/\\/.*");
+
+    EXPECT_FALSE(regex.Match(""));
+    EXPECT_FALSE(regex.Match("/"));
+    EXPECT_TRUE(regex.Match("//"));
+    EXPECT_TRUE(regex.Match("//abcd"));
+}
+
+TEST_FIXTURE(RETest, BlockComment)
+{
+    RE regex("\\/\\*[^/\\*]*\\*\\/");
+
+    EXPECT_FALSE(regex.Match(""));
+    EXPECT_FALSE(regex.Match("/*"));
+    EXPECT_TRUE(regex.Match("/**/"));
+    EXPECT_TRUE(regex.Match("/*abcd*/"));
+}
+
+TEST_FIXTURE(RETest, NewLine)
+{
+    RE regex("\n");
+
+    EXPECT_FALSE(regex.Match(""));
+    EXPECT_TRUE(regex.Match("\n"));
+}
+
+TEST_FIXTURE(RETest, String)
+{
+    RE regex("\\\"[^\\\"]*\\\"");
+
+    EXPECT_FALSE(regex.Match(""));
+    EXPECT_FALSE(regex.Match("\""));
+    EXPECT_TRUE(regex.PartialMatch("\""));
+    EXPECT_TRUE(regex.Match("\"\""));
+    EXPECT_TRUE(regex.Match("\"a\""));
+    EXPECT_TRUE(regex.PartialMatch("\"a\""));
+    EXPECT_FALSE(regex.Match("\"a\"a"));
+    EXPECT_FALSE(regex.PartialMatch("\"a\"a"));
 }
 
 } // TEST_SUITE(regex)

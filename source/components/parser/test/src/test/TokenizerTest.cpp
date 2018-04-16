@@ -16,36 +16,27 @@ class TokenizerTest : public UnitTestCpp::TestFixture
 TEST_SUITE(parser) {
 
 LexerRuleSet LexerRules({
-    LexerRule::CreateStartLiteral("//", LexerState::LineComment, false),
-    LexerRule::CreateEndCharSet("\n", LexerState::LineComment, LexerToken::Type::LineComment, true),
-    LexerRule::CreateStartLiteral("/*", LexerState::BlockComment, false),
-    LexerRule::CreateEndLiteral("*/", LexerState::BlockComment, LexerToken::Type::BlockComment, true),
-    LexerRule::CreateContinueCharSet(" \t", LexerState::Any, LexerToken::Type::Whitespace, true),
-    LexerRule::CreateSingleChar("\n", LexerToken::Type::NewLine),
-    LexerRule::CreateSingleChar("[", LexerToken::Type::SquareBracketOpen),
-    LexerRule::CreateSingleChar("]", LexerToken::Type::SquareBracketClose),
-    LexerRule::CreateSingleChar("{", LexerToken::Type::CurlyBraceOpen),
-    LexerRule::CreateSingleChar("}", LexerToken::Type::CurlyBraceClose),
-    LexerRule::CreateSingleChar("(", LexerToken::Type::ParenthesisOpen),
-    LexerRule::CreateSingleChar(")", LexerToken::Type::ParenthesisClose),
-    LexerRule::CreateSingleChar("*", LexerToken::Type::Asterisk),
-    LexerRule::CreateSingleChar(";", LexerToken::Type::Semicolon),
-    LexerRule::CreateSingleChar(":", LexerToken::Type::Colon),
-    LexerRule::CreateSingleChar("&", LexerToken::Type::Ampersand),
-    LexerRule::CreateSingleChar(",", LexerToken::Type::Comma),
-    LexerRule::CreateStartCharSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_", LexerState::Identifier, true),
-    LexerRule::CreateContinueCharSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789",
-                                    LexerState::Identifier, LexerToken::Type::Identifier, true),
-    LexerRule::CreateStartLiteral("0x", LexerState::HexNumber, true),
-    LexerRule::CreateStartLiteral("0X", LexerState::HexNumber, true),
-    LexerRule::CreateContinueCharSet("0123456789abcdefABCDEF", LexerState::HexNumber, LexerToken::Type::HexNumber, true),
-    LexerRule::CreateStartCharSet("0", LexerState::OctNumber, true),
-    LexerRule::CreateContinueCharSet("01234567", LexerState::OctNumber, LexerToken::Type::OctNumber, true),
-    LexerRule::CreateStartCharSet("123456789", LexerState::DecNumber, true),
-    LexerRule::CreateContinueCharSet("0123456789", LexerState::DecNumber, LexerToken::Type::DecNumber, true),
-    LexerRule::CreateStartLiteral("\"", LexerState::String, false),
-    LexerRule::CreateEndLiteral("\"", LexerState::String, LexerToken::Type::String, true),
-    });
+    LexerRule::Create(Regex::RE("\\/\\/[^\n]*"), LexerToken::Type::LineComment),
+    LexerRule::Create(Regex::RE("\\/\\*[^/\\*]*\\*\\/"), LexerToken::Type::BlockComment),
+    LexerRule::Create(Regex::RE("[ \t]+"), LexerToken::Type::Whitespace),
+    LexerRule::Create(Regex::RE("\n"), LexerToken::Type::NewLine),
+    LexerRule::Create(Regex::RE("\\["), LexerToken::Type::SquareBracketOpen),
+    LexerRule::Create(Regex::RE("\\]"), LexerToken::Type::SquareBracketClose),
+    LexerRule::Create(Regex::RE("\\{"), LexerToken::Type::CurlyBraceOpen),
+    LexerRule::Create(Regex::RE("\\}"), LexerToken::Type::CurlyBraceClose),
+    LexerRule::Create(Regex::RE("\\("), LexerToken::Type::ParenthesisOpen),
+    LexerRule::Create(Regex::RE("\\)"), LexerToken::Type::ParenthesisClose),
+    LexerRule::Create(Regex::RE("\\*"), LexerToken::Type::Asterisk),
+    LexerRule::Create(Regex::RE(";"), LexerToken::Type::Semicolon),
+    LexerRule::Create(Regex::RE(":"), LexerToken::Type::Colon),
+    LexerRule::Create(Regex::RE("&"), LexerToken::Type::Ampersand),
+    LexerRule::Create(Regex::RE(","), LexerToken::Type::Comma),
+    LexerRule::Create(Regex::RE("\\a(\\w)*"), LexerToken::Type::Identifier),
+    LexerRule::Create(Regex::RE("0[xX][\\dabcdefABCDEF]+"), LexerToken::Type::HexNumber),
+    LexerRule::Create(Regex::RE("0[01234567]+"), LexerToken::Type::OctNumber),
+    LexerRule::Create(Regex::RE("0|[123456789](\\d)*"), LexerToken::Type::DecNumber),
+    LexerRule::Create(Regex::RE("\"[^\\\"]*\""), LexerToken::Type::String),
+});
 
 static TokenizerRuleSet TokenizerRules
 {
@@ -135,7 +126,7 @@ TEST_FIXTURE(TokenizerTest, SingleNamespace)
     ASSERT_EQ(TokenType::CurlyBraceClose, tokens[index++].type);
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace WPEFramework"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace WPEFramework"), tokens[index++].value);
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 }
 
@@ -318,13 +309,13 @@ TEST_FIXTURE(TokenizerTest, IPlugin)
     ASSERT_EQ(TokenType::CurlyBraceClose, tokens[index++].type);
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace PluginHost"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace PluginHost"), tokens[index++].value);
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 
     ASSERT_EQ(TokenType::CurlyBraceClose, tokens[index++].type);
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace WPEFramework"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace WPEFramework"), tokens[index++].value);
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
@@ -497,13 +488,13 @@ TEST_FIXTURE(TokenizerTest, IChannel)
     ASSERT_EQ(TokenType::CurlyBraceClose, tokens[index++].type);
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace PluginHost"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace PluginHost"), tokens[index++].value);
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 
     ASSERT_EQ(TokenType::CurlyBraceClose, tokens[index++].type);
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace WPEFramework"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace WPEFramework"), tokens[index++].value);
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
@@ -1201,7 +1192,7 @@ TEST_FIXTURE(TokenizerTest, IOCDM)
     ASSERT_EQ(TokenType::Whitespace, tokens[index++].type);
 
     ASSERT_EQ(TokenType::LineComment, tokens[index].type);
-    ASSERT_EQ(string(" namespace OCDM"), tokens[index++].value);
+    ASSERT_EQ(string("// namespace OCDM"), tokens[index++].value);
 
     ASSERT_EQ(TokenType::NewLine, tokens[index++].type);
 }

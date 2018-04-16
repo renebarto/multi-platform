@@ -8,7 +8,6 @@ using namespace Parser;
 Lexer::Lexer(InputReader & reader)
     : _reader(reader)
     , _rules()
-    , _activeRule()
     , _pushbackQueue()
 {
 }
@@ -28,44 +27,36 @@ LexerToken Lexer::ReadToken()
     }
     SourceLocation location = _reader.Location();
     string value;
-    LexerState state {};
-    _activeRule = nullptr;
+    const LexerRule * lastMatch {};
     while (!_reader.IsEOF())
     {
         char ch = _reader.ReadAheadChar();
 
-        if (ActiveRuleMatches(ch, state, value))
-            continue;
-        auto savedActiveRule = _activeRule;
-        _activeRule = nullptr;
-        if (savedActiveRule)
-        {
-            state = savedActiveRule->LostState();
-            if (savedActiveRule->EmitOnLost())
-                return LexerToken(savedActiveRule->Type(), value, location);
-        }
+        const LexerRule * rule;
 
-        const LexerRule * currentRule = FindMatchingRule(ch, state, value);
-        if (currentRule)
+        string newValue = value + ch;
+        if (PartialMatch(newValue))
         {
-            state = currentRule->FoundState();
-            if (currentRule->EmitOnFound())
+            value = newValue;
+            _reader.ReadChar();
+            if (FullMatch(value, rule))
             {
-                return LexerToken(currentRule->Type(), value, location);
+                lastMatch = rule;
             }
-            _activeRule = currentRule;
             continue;
         }
-        else
+        if (!lastMatch)
+        {
             cerr << location << ": No rule matching " << ch << endl;
-        value += ch;
-        _reader.ReadChar();
-        return LexerToken(LexerToken::Type::None, value, location);
+            value = newValue;
+            _reader.ReadChar();
+            return LexerToken(LexerToken::Type::None, value, location);
+        }
+        return LexerToken(lastMatch->Type(), value, location);
     }
-    if (_activeRule)
+    if (lastMatch)
     {
-        if (_activeRule->EmitOnLost())
-            return LexerToken(_activeRule->Type(), value, location);
+        return LexerToken(lastMatch->Type(), value, location);
     }
     return LexerToken(LexerToken::Type::Eof, location);
 }
@@ -81,101 +72,29 @@ LexerToken Lexer::ReadAheadToken()
     return token;
 }
 
-bool Lexer::ActiveRuleMatches(char ch, const LexerState & state, std::string & value)
+bool Lexer::FullMatch(const std::string & value, const LexerRule *& activeRule)
 {
-    if (!_activeRule)
-        return false;
-    if (_activeRule->MatchesChar(ch, state)) {
-//        cout << _reader.Location() << ": Match: " << *_activeRule;
-        if (_activeRule->StoreInput())
-            value += ch;
-        _reader.ReadChar();
-        return true;
-    } else if (_activeRule->MatchesEndChar(ch, state))
+    activeRule = nullptr;
+    for (auto const & rule : _rules)
     {
-//        cout << _reader.Location() << ": Match: " << *_activeRule;
-        if (_activeRule->StoreInput())
-            value += ch;
-        _reader.ReadChar();
-        return true;
-    } else if (_activeRule->IsLiteral())
-    {
-        string literal;
-        literal = _reader.ReadAheadChars(_activeRule->LiteralSize());
-        if (_activeRule->MatchesLiteral(literal, state))
+        if (rule.Match(value))
         {
-            if (_activeRule->StoreInput())
-                value += literal;
-            _reader.ReadChars(_activeRule->LiteralSize());
-//            cout << _reader.Location() << ": Match: " << *_activeRule;
+            activeRule = &rule;
             return true;
-        }
-    }
-    else if (_activeRule->IsEndLiteral())
-    {
-        string literal;
-        literal = _reader.ReadAheadChars(_activeRule->EndLiteralSize());
-        if (_activeRule->MatchesEndLiteral(literal, state))
-        {
-            if (_activeRule->StoreInput())
-                value += ch;
-            _reader.ReadChar();
-//            cout << _reader.Location() << ": Match: " << *_activeRule;
-            return true;
-        }
-        else
-        {
-            // We found the ending literal, eat it
-            _reader.ReadChars(_activeRule->EndLiteralSize());
         }
     }
     return false;
 }
 
-const LexerRule * Lexer::FindMatchingRule(char ch, const LexerState & state, std::string & value)
+bool Lexer::PartialMatch(const std::string & value)
 {
     for (auto const & rule : _rules)
     {
-        if (rule.MatchesChar(ch, state))
+        if (rule.PartialMatch(value))
         {
-//            cout << _reader.Location() << ": Match: " << rule;
-            if (rule.StoreInput())
-                value += ch;
-            _reader.ReadChar();
-            return &rule;
-        } else if (rule.MatchesEndChar(ch, state))
-        {
-//            cout << _reader.Location() << ": Match: " << rule;
-            if (rule.StoreInput())
-                value += ch;
-            _reader.ReadChar();
-            return &rule;
-        } else if (rule.IsLiteral())
-        {
-            string literal;
-            literal = _reader.ReadAheadChars(rule.LiteralSize());
-            if (rule.MatchesLiteral(literal, state))
-            {
-                if (rule.StoreInput())
-                    value += literal;
-                _reader.ReadChars(rule.LiteralSize());
-//                cout << _reader.Location() << ": Match: " << rule;
-                return &rule;
-            }
-        }
-        else if (rule.IsEndLiteral())
-        {
-            string literal;
-            literal = _reader.ReadAheadChars(rule.EndLiteralSize());
-            if (rule.MatchesEndLiteral(literal, state))
-            {
-                if (rule.StoreInput())
-                    value += ch;
-                _reader.ReadChar();
-//                cout << _reader.Location() << ": Match: " << rule;
-                return &rule;
-            }
+            return true;
         }
     }
-    return nullptr;
+    return false;
 }
+

@@ -179,6 +179,28 @@ public:
     AST()
         : _tree()
     {}
+//    AST(const AST & other)
+//        : _tree(other._tree)
+//    {}
+//    AST(AST && other)
+//        : _tree(std::move(other._tree))
+//    {}
+//    AST & operator = (const AST & other)
+//    {
+//        if (this != &other)
+//        {
+//            _tree = other._tree;
+//        }
+//        return *this;
+//    }
+//    AST & operator = (AST && other)
+//    {
+//        if (this != &other)
+//        {
+//            _tree = std::move(other._tree);
+//        }
+//        return *this;
+//    }
 
     bool IsEmpty() const { return Root() == nullptr; }
     ASTNode::Ptr Root() const

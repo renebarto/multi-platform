@@ -48,6 +48,10 @@ struct Token
         : type()
         , value()
     {}
+    Token(const Token & other)
+        : type(other.type)
+        , value(other.value)
+    {}
     Token(TokenType aType)
         : type(aType)
         , value()
@@ -58,6 +62,25 @@ struct Token
     {}
     TokenType type;
     char value;
+
+    Token & operator = (const Token & other)
+    {
+        if (this != &other)
+        {
+            type = other.type;
+            value = other.value;
+        }
+        return *this;
+    }
+    Token & operator = (Token && other)
+    {
+        if (this != &other)
+        {
+            type = std::move(other.type);
+            value = std::move(other.value);
+        }
+        return *this;
+    }
 
     friend bool operator == (const Token & lhs, const Token & rhs)
     {
@@ -172,6 +195,19 @@ class Tokenizer
 {
 public:
     Tokenizer(InputReader & reader);
+    Tokenizer(Tokenizer && other)
+        : _tokens(std::move(other._tokens))
+        , _reader(std::move(other._reader))
+    {}
+    Tokenizer & operator = (const Tokenizer & other)
+    {
+        if (this != &other)
+        {
+            _tokens = other._tokens;
+            _reader = other._reader;
+        }
+        return *this;
+    }
 
     bool Tokenize();
     const TokenList & GetTokens() const { return _tokens; }
@@ -179,7 +215,7 @@ public:
 
 protected:
     TokenList _tokens;
-    InputReader & _reader;
+    InputReader * _reader;
 
     bool ReadToken(Token & token);
 };

@@ -103,53 +103,6 @@ public:
     {
         UpdateStateMap();
     }
-    NFA(const NFA & other)
-        : _rules(other._rules)
-        , _startStateMap(other._startStateMap)
-        , _endStateMap(other._endStateMap)
-        , _initialState(other._initialState)
-        , _finalState(other._finalState)
-        , _errorState(other._errorState)
-        , _currentStates(other._currentStates)
-    {}
-    NFA(NFA && other)
-        : _rules(std::move(other._rules))
-        , _startStateMap(std::move(other._startStateMap))
-        , _endStateMap(std::move(other._endStateMap))
-        , _initialState(other._initialState)
-        , _finalState(other._finalState)
-        , _errorState(other._errorState)
-        , _currentStates(other._currentStates)
-    {}
-
-    NFA & operator = (const NFA & other)
-    {
-        if (this != &other)
-        {
-            _rules = other._rules;
-            _startStateMap = other._startStateMap;
-            _endStateMap = other._endStateMap;
-            _initialState = other._initialState;
-            _finalState = other._finalState;
-            _errorState= other._errorState;
-            _currentStates = other._currentStates;
-        }
-        return *this;
-    }
-    NFA & operator = (NFA && other)
-    {
-        if (this != &other)
-        {
-            _rules = std::move(other._rules);
-            _startStateMap = std::move(other._startStateMap);
-            _endStateMap = std::move(other._endStateMap);
-            _initialState = other._initialState;
-            _finalState = other._finalState;
-            _errorState= other._errorState;
-            _currentStates = other._currentStates;
-        }
-        return *this;
-    }
 
     void AddRule(const NFARule<State, InputValue, UnderlyingType, InputSpecifier> & rule)
     {
@@ -175,7 +128,12 @@ public:
             for (auto rule : _startStateMap[state])
             {
                 if (rule->IsEpsilon())
-                    startStates.insert(rule->NextState());
+                {
+                    if (startStates.find(rule->NextState()) == startStates.end())
+                    {
+                        startStates.insert(rule->NextState());
+                    }
+                }
             }
         }
         StateSet endStates;
@@ -184,7 +142,12 @@ public:
             for (auto rule : _startStateMap[state])
             {
                 if (rule->Match(input))
-                    endStates.insert(rule->NextState());
+                {
+                    if (endStates.find(rule->NextState()) == endStates.end())
+                    {
+                        endStates.insert(rule->NextState());
+                    }
+                }
             }
         }
         StateSet reachableStates = endStates;

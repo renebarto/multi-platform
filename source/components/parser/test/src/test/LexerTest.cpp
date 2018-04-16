@@ -16,35 +16,26 @@ class LexerTest : public UnitTestCpp::TestFixture
 TEST_SUITE(parser) {
 
 LexerRuleSet Rules({
-    LexerRule::CreateStartLiteral("//", LexerState::LineComment, false),
-    LexerRule::CreateEndCharSet("\n", LexerState::LineComment, LexerToken::Type::LineComment, true),
-    LexerRule::CreateStartLiteral("/*", LexerState::BlockComment, false),
-    LexerRule::CreateEndLiteral("*/", LexerState::BlockComment, LexerToken::Type::BlockComment, true),
-    LexerRule::CreateContinueCharSet(" \t", LexerState::Any, LexerToken::Type::Whitespace, true),
-    LexerRule::CreateSingleChar("\n", LexerToken::Type::NewLine),
-    LexerRule::CreateSingleChar("[", LexerToken::Type::SquareBracketOpen),
-    LexerRule::CreateSingleChar("]", LexerToken::Type::SquareBracketClose),
-    LexerRule::CreateSingleChar("{", LexerToken::Type::CurlyBraceOpen),
-    LexerRule::CreateSingleChar("}", LexerToken::Type::CurlyBraceClose),
-    LexerRule::CreateSingleChar("(", LexerToken::Type::ParenthesisOpen),
-    LexerRule::CreateSingleChar(")", LexerToken::Type::ParenthesisClose),
-    LexerRule::CreateSingleChar("*", LexerToken::Type::Asterisk),
-    LexerRule::CreateSingleChar(";", LexerToken::Type::Semicolon),
-    LexerRule::CreateSingleChar(":", LexerToken::Type::Colon),
-    LexerRule::CreateSingleChar("&", LexerToken::Type::Ampersand),
-    LexerRule::CreateSingleChar(",", LexerToken::Type::Comma),
-    LexerRule::CreateStartCharSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_", LexerState::Identifier, true),
-    LexerRule::CreateContinueCharSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789",
-                                     LexerState::Identifier, LexerToken::Type::Identifier, true),
-    LexerRule::CreateStartLiteral("0x", LexerState::HexNumber, true),
-    LexerRule::CreateStartLiteral("0X", LexerState::HexNumber, true),
-    LexerRule::CreateContinueCharSet("0123456789abcdefABCDEF", LexerState::HexNumber, LexerToken::Type::HexNumber, true),
-    LexerRule::CreateStartCharSet("0", LexerState::OctNumber, true),
-    LexerRule::CreateContinueCharSet("01234567", LexerState::OctNumber, LexerToken::Type::OctNumber, true),
-    LexerRule::CreateStartCharSet("123456789", LexerState::DecNumber, true),
-    LexerRule::CreateContinueCharSet("0123456789", LexerState::DecNumber, LexerToken::Type::DecNumber, true),
-    LexerRule::CreateStartLiteral("\"", LexerState::String, false),
-    LexerRule::CreateEndLiteral("\"", LexerState::String, LexerToken::Type::String, true),
+    LexerRule::Create(Regex::RE("\\/\\/[^\n]*"), LexerToken::Type::LineComment),
+    LexerRule::Create(Regex::RE("\\/\\*[^/\\*]*\\*\\/"), LexerToken::Type::BlockComment),
+    LexerRule::Create(Regex::RE("[ \t]+"), LexerToken::Type::Whitespace),
+    LexerRule::Create(Regex::RE("\n"), LexerToken::Type::NewLine),
+    LexerRule::Create(Regex::RE("\\["), LexerToken::Type::SquareBracketOpen),
+    LexerRule::Create(Regex::RE("\\]"), LexerToken::Type::SquareBracketClose),
+    LexerRule::Create(Regex::RE("\\{"), LexerToken::Type::CurlyBraceOpen),
+    LexerRule::Create(Regex::RE("\\}"), LexerToken::Type::CurlyBraceClose),
+    LexerRule::Create(Regex::RE("\\("), LexerToken::Type::ParenthesisOpen),
+    LexerRule::Create(Regex::RE("\\)"), LexerToken::Type::ParenthesisClose),
+    LexerRule::Create(Regex::RE("\\*"), LexerToken::Type::Asterisk),
+    LexerRule::Create(Regex::RE(";"), LexerToken::Type::Semicolon),
+    LexerRule::Create(Regex::RE(":"), LexerToken::Type::Colon),
+    LexerRule::Create(Regex::RE("&"), LexerToken::Type::Ampersand),
+    LexerRule::Create(Regex::RE(","), LexerToken::Type::Comma),
+    LexerRule::Create(Regex::RE("\\a(\\w)*"), LexerToken::Type::Identifier),
+    LexerRule::Create(Regex::RE("0[xX][\\dabcdefABCDEF]+"), LexerToken::Type::HexNumber),
+    LexerRule::Create(Regex::RE("0[01234567]+"), LexerToken::Type::OctNumber),
+    LexerRule::Create(Regex::RE("0|[123456789](\\d)*"), LexerToken::Type::DecNumber),
+    LexerRule::Create(Regex::RE("\"[^\\\"]*\""), LexerToken::Type::String),
 });
 
 TEST_FIXTURE(LexerTest, Empty)
@@ -108,7 +99,7 @@ TEST_FIXTURE(LexerTest, SimpleTest)
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::LineComment, token.type);
-    EXPECT_EQ(" Line comment", token.value);
+    EXPECT_EQ("// Line comment", token.value);
     EXPECT_TRUE(SourceLocation(path, 1, 7, 6) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
@@ -157,7 +148,7 @@ TEST_FIXTURE(LexerTest, SimpleTest)
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::BlockComment, token.type);
-    EXPECT_EQ(" Block comment ", token.value);
+    EXPECT_EQ("/* Block comment */", token.value);
     EXPECT_TRUE(SourceLocation(path, 2, 7, 28) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
@@ -248,7 +239,7 @@ TEST_FIXTURE(LexerTest, SimpleTest)
     token = lexer.ReadToken();
 
     EXPECT_EQ(LexerToken::Type::String, token.type);
-    EXPECT_EQ("Hello!$#", token.value);
+    EXPECT_EQ("\"Hello!$#\"", token.value);
     EXPECT_TRUE(SourceLocation(path, 8, 1, 95) == token.location);
     EXPECT_FALSE(reader.IsEOF());
 
