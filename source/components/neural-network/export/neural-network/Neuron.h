@@ -56,28 +56,27 @@ public:
     {}
     bool Load(const std::string & text)
     {
-
+        return false;
     }
-    bool Save(std::string & text);
+    bool Save(std::string & text)
+    {
+        return false;
+    }
 
 private:
     std::vector<ValueType> _weightFactors;
 };
-
-template<typename ValueType = double>
-using OutputFunction = std::function<ValueType(ValueType value)>;
-template<typename ValueType = double>
-using ErrorGradientFunction = std::function<ValueType(ValueType expected, ValueType actual)>;
-
-static const OutputFunction Sigmoid;
-static const ErrorGradientFunction ErrorGradientSigmoid;
-static const OutputFunction MinusOne;
 
 
 template<typename ValueType = double>
 class Neuron
 {
 public:
+    using OutputFunction = std::function<ValueType(ValueType value)>;
+    using ErrorGradientFunction = std::function<ValueType(ValueType expected, ValueType actual)>;
+    static const OutputFunction Sigmoid;
+    static const ErrorGradientFunction ErrorGradientSigmoid;
+    static const OutputFunction MinusOne;
 
     Neuron(const OutputFunction & outputFunction = Sigmoid,
            const ErrorGradientFunction & errorGradientFunction = ErrorGradientSigmoid)
@@ -87,18 +86,18 @@ public:
         , _errorGradientFunction(errorGradientFunction)
     {}
 
-    Neuron(const OutputFunction & outputFunction = Sigmoid,
-           const ErrorGradientFunction & errorGradientFunction = ErrorGradientSigmoid,
-           const std::vector<ValueType> & weightFactors)
+    Neuron(const std::vector<ValueType> & weightFactors,
+           const OutputFunction & outputFunction = Sigmoid,
+           const ErrorGradientFunction & errorGradientFunction = ErrorGradientSigmoid)
         : _inputs()
         , _output()
         , _outputFunction(outputFunction)
         , _errorGradientFunction(errorGradientFunction)
     {}
 
-    Neuron(const OutputFunction & outputFunction = Sigmoid,
-           const ErrorGradientFunction & errorGradientFunction = ErrorGradientSigmoid,
-           size_t numInputs)
+    Neuron(size_t numInputs,
+           const OutputFunction & outputFunction = Sigmoid,
+           const ErrorGradientFunction & errorGradientFunction = ErrorGradientSigmoid)
         : _inputs()
         , _output()
         , _outputFunction(outputFunction)
@@ -133,7 +132,7 @@ protected:
     std::vector<Connection<ValueType>> _inputs;
     ValueType _output;
     const OutputFunction & _outputFunction;
-    const ErrorGradientFunction  & _errorGradientFunction;
+    const ErrorGradientFunction & _errorGradientFunction;
 };
 
 template<typename ValueType>
