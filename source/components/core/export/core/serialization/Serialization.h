@@ -15,7 +15,7 @@ public:
     virtual ~IStringDeserializer()
     {}
 
-    virtual bool Deserialize(const std::string &text, T &result) = 0;
+    virtual bool Deserialize(const std::string & text, T & result) = 0;
 };
 
 template<class T>
@@ -28,7 +28,7 @@ public:
     virtual ~IStringSerializer()
     {}
 
-    virtual void Serialize(std::string &text, const T &result) = 0;
+    virtual void Serialize(std::string & text, const T & result) = 0;
 };
 
 template<typename EnumType>

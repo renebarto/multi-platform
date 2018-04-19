@@ -45,10 +45,10 @@ set(PACKAGE_DEPENDENCIES
     osal
     regex
     parser
+    json
 #    crypto
 #    network
 #    xml
-#    json
 #    parse-c++
 #    staruml
     )

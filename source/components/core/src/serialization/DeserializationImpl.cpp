@@ -218,7 +218,7 @@ bool Core::Deserialize(const string & text, float & value)
         return false;
 
     long double tmp;
-    std::basic_istringstream<char> stream(text);
+    std::istringstream stream(text);
     stream >> tmp;
     if ((std::abs(tmp) < FLT_MIN) || (std::abs(tmp) > FLT_MAX))
         return false;
@@ -234,7 +234,7 @@ bool Core::Deserialize(const string & text, double & value)
         return false;
 
     long double tmp;
-    std::basic_istringstream<char> stream(text);
+    std::istringstream stream(text);
     stream >> tmp;
     if ((std::abs(tmp) < DBL_MIN) || (std::abs(tmp) > DBL_MAX))
         return false;
@@ -249,7 +249,7 @@ bool Core::Deserialize(const string & text, long double & value)
     if (!HasValidCharactersFloatingPoint(text))
         return false;
 
-    std::basic_istringstream<char> stream(text);
+    std::istringstream stream(text);
     stream >> value;
 
     return true;

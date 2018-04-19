@@ -12,7 +12,7 @@ class TokenizerTest : public UnitTestCpp::TestFixture
 {
 };
 
-TEST_SUITE(parser) {
+TEST_SUITE(regex) {
 
 TEST_FIXTURE(TokenizerTest, Empty)
 {
@@ -259,7 +259,7 @@ TEST_FIXTURE(TokenizerTest, EscapeChars)
     ASSERT_EQ(Token(TokenType::Literal, '|'), tokens[index++]);
 }
 
-} // TEST_SUITE(parser)
+} // TEST_SUITE(regex)
 
 } // namespace Test
 } // namespace Regex

@@ -3,7 +3,7 @@
 #include <string>
 #include "osal/Path.h"
 
-namespace Regex {
+namespace Parser {
 namespace Test {
 
 extern std::string BuildLogPath(const std::string & componentName, const std::string & fileName);
@@ -14,7 +14,7 @@ public:
     static std::string _applicationName;
     static void ApplicationName(const std::string & applicationName) { _applicationName = applicationName; }
     static std::string ApplicationName();
-    static const std::string ProjectName() { return "regex"; }
+    static const std::string ProjectName() { return "neural-network"; }
 
     static std::string TestDirectory()
     {
@@ -36,5 +36,5 @@ public:
 };
 
 } // namespace Test
-} // namespace Regex
+} // namespace Parser
 
