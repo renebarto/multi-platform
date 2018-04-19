@@ -39,7 +39,7 @@ set(PACKAGE_LINK_OPTIONS
 
 set(PACKAGE_DEPENDENCIES
     osal
-    regex)
+    core)
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
