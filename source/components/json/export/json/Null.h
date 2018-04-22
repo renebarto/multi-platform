@@ -15,6 +15,12 @@ public:
 
     virtual ValueType Type() const override { return ValueType::Null; }
 
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return true;
+    }
 private:
 };
 

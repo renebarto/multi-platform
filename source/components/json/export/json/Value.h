@@ -27,6 +27,16 @@ public:
 
     virtual ValueType Type() const = 0;
 
+    virtual bool Equal(const Value & other) const = 0;
+
+    bool operator == (const Value & other) const
+    {
+        return Equal(other);
+    }
+    bool operator != (const Value & other) const
+    {
+        return !Equal(other);
+    }
 private:
 };
 using ValuePtr = std::shared_ptr<Value>;

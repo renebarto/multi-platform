@@ -18,6 +18,13 @@ public:
     const std::string & GetValue() const { return _value; }
     void SetValue(const std::string & value) { _value = value; }
 
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return (GetValue() == dynamic_cast<const String &>(other).GetValue());
+    }
+
 private:
     std::string _value;
 };

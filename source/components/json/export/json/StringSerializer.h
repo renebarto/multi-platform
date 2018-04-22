@@ -1,5 +1,9 @@
 #pragma once
 
+#include <sstream>
+#include "core/serialization/Serialization.h"
+#include "json/Boolean.h"
+
 namespace JSON {
 
 template<class T>
@@ -12,10 +16,11 @@ public:
     }
 };
 
+template <>
 class StringSerializer<bool> : public Core::IStringSerializer<bool>
 {
 public:
-    void Serialize(std::string & text, const T & result) override
+    void Serialize(std::string & text, const bool & result) override
     {
         Boolean value(result);
         std::ostringstream stream;

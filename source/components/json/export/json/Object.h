@@ -125,6 +125,14 @@ public:
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }
 
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return true;
+//        return (GetValue() == dynamic_cast<const Number &>(other).GetValue());
+    }
+
 private:
     KVList _elements;
 };

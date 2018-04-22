@@ -105,6 +105,31 @@ public:
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }
 
+    bool operator == (const Array & other) const
+    {
+        if (&other == this)
+            return true;
+        if (Size() != other.Size())
+            return false;
+        for (size_t i = 0; i < Size(); ++i)
+        {
+            if (*(_elements[i]) != *(other._elements[i]))
+                return false;
+        }
+        return true;
+    }
+    bool operator != (const Array & other) const
+    {
+        return ! operator == (other);
+    }
+
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return (operator == (dynamic_cast<const Array &>(other)));
+    }
+
 private:
     ValueList _elements;
 };

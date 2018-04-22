@@ -51,6 +51,13 @@ public:
     void SetValue(double value);
     void SetValue(long double value);
 
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return (GetValue() == dynamic_cast<const Number &>(other).GetValue());
+    }
+
 private:
     std::string _value;
 };

@@ -103,7 +103,6 @@ ValuePtr Object::Find(const std::string & name)
 
 bool Object::Deserialize(std::istream & stream)
 {
-    std::string key;
     Token token = GetToken(stream);
     if (token.type != TokenType::CurlyBraceOpen)
         return false;

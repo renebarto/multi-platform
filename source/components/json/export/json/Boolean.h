@@ -18,6 +18,13 @@ public:
     bool GetValue() const { return _value; }
     void SetValue(bool value) { _value = value; }
 
+    bool Equal(const Value & other) const override
+    {
+        if (Type() != other.Type())
+            return false;
+        return (GetValue() == dynamic_cast<const Boolean &>(other).GetValue());
+    }
+
 private:
     bool _value;
 };
