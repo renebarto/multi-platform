@@ -337,13 +337,13 @@ TEST_FIXTURE(SerializerTest, SerializeNumberLongDouble)
     EXPECT_EQ(expected, serialized);
 
     expected = "3.362103143112094e-4932";
-    value = std::numeric_limits<long double>::min();
+    value = 3.362103143112094e-4932L;
 
     serializer.Serialize(serialized, value);
     EXPECT_EQ(expected, serialized);
 
-    expected = "1.189731495357232e+4932";
-    value = std::numeric_limits<long double>::max();
+    expected = "1.189731495357231e+4932";
+    value = 1.189731495357231e+4932L;
 
     serializer.Serialize(serialized, value);
     EXPECT_EQ(expected, serialized);
