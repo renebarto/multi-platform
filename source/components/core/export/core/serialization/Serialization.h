@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "osal/ByteArray.h"
 
 namespace Core {
 
@@ -29,6 +30,32 @@ public:
     {}
 
     virtual void Serialize(std::string & text, const T & result) = 0;
+};
+
+template<class T>
+class IBinaryDeserializer
+{
+public:
+    IBinaryDeserializer()
+    {}
+
+    virtual ~IBinaryDeserializer()
+    {}
+
+    virtual bool Deserialize(const OSAL::ByteArray & text, T & result) = 0;
+};
+
+template<class T>
+class IBinarySerializer
+{
+public:
+    IBinarySerializer()
+    {}
+
+    virtual ~IBinarySerializer()
+    {}
+
+    virtual void Serialize(OSAL::ByteArray & text, const T & result) = 0;
 };
 
 template<typename EnumType>

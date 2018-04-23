@@ -20,21 +20,6 @@ public:
 };
 
 template<>
-class StringDeserializer<bool> : public Core::IStringDeserializer<bool>
-{
-public:
-    bool Deserialize(const std::string & text, bool & result) override
-    {
-        Boolean value;
-        std::istringstream stream(text);
-        if (!value.Deserialize(stream))
-            return false;
-        result = value.GetValue();
-        return true;
-    }
-};
-
-template<>
 class StringDeserializer<std::string> : public Core::IStringDeserializer<std::string>
 {
 public:
@@ -60,6 +45,21 @@ public:
         if (!value.Deserialize(stream))
             return false;
         result = value;
+        return true;
+    }
+};
+
+template<>
+class StringDeserializer<bool> : public Core::IStringDeserializer<bool>
+{
+public:
+    bool Deserialize(const std::string & text, bool & result) override
+    {
+        Boolean value;
+        std::istringstream stream(text);
+        if (!value.Deserialize(stream))
+            return false;
+        result = value.GetValue();
         return true;
     }
 };
