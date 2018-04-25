@@ -19,19 +19,19 @@ CORE_EXPORT std::string Serialize(float value, int precision = 16);
 CORE_EXPORT std::string Serialize(double value, int precision = 16);
 CORE_EXPORT std::string Serialize(long double value, int precision = 16);
 CORE_EXPORT std::string Serialize(std::string value, bool quote = true);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, bool value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, int8_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, uint8_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, int16_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, uint16_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, int32_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, uint32_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, int64_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, uint64_t value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, float value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, double value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, long double value);
-CORE_EXPORT void Serialize (OSAL::ByteArray & result, std::string value);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, bool value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, int8_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint8_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, int16_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint16_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, int32_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint32_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, int64_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint64_t value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, float value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, double value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, long double value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::ByteArray & result, std::string value, Endianness endianness = Endianness::LittleEndian);
 
 template<typename EnumType>
 std::string Serialize(const EnumType & value)

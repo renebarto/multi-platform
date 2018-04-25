@@ -336,14 +336,14 @@ TEST_FIXTURE(SerializerTest, SerializeNumberLongDouble)
     serializer.Serialize(serialized, value);
     EXPECT_EQ(expected, serialized);
 
-    expected = "3.362103143112094e-4932";
-    value = 3.362103143112094e-4932L;
+    expected = "3.362103143112094e-1000";
+    value = 3.362103143112094e-1000L;
 
     serializer.Serialize(serialized, value);
     EXPECT_EQ(expected, serialized);
 
-    expected = "1.189731495357231e+4932";
-    value = 1.189731495357231e+4932L;
+    expected = "1.189731495357231e+1000";
+    value = 1.189731495357231e+1000L;
 
     serializer.Serialize(serialized, value);
     EXPECT_EQ(expected, serialized);

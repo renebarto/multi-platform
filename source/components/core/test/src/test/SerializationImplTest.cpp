@@ -138,6 +138,348 @@ TEST_FIXTURE(SerializationImplTest, SerializeLongDouble)
     EXPECT_EQ("1e-200", Serialize(value, 2));
 }
 
+TEST_FIXTURE(SerializationImplTest, SerializeBoolBinary)
+{
+    bool value = true;
+    OSAL::ByteArray expected {0x01};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+
+    value = false;
+    expected = {0x00};
+    actual.Clear();
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeBoolBinaryLittleEndian)
+{
+    bool value = true;
+    OSAL::ByteArray expected {0x01};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+
+    value = false;
+    expected = {0x00};
+    actual.Clear();
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeBoolBinaryBigEndian)
+{
+    bool value = true;
+    OSAL::ByteArray expected {0x01};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+
+    value = false;
+    expected = {0x00};
+    actual.Clear();
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt8Binary)
+{
+    int8_t value = 0x55;
+    OSAL::ByteArray expected {0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt8BinaryLittleEndian)
+{
+    int8_t value = 0x55;
+    OSAL::ByteArray expected {0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt8BinaryBigEndian)
+{
+    int8_t value = 0x55;
+    OSAL::ByteArray expected {0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt8Binary)
+{
+    uint8_t value = 0xAA;
+    OSAL::ByteArray expected {0xAA};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt8BinaryLittleEndian)
+{
+    uint8_t value = 0xAA;
+    OSAL::ByteArray expected {0xAA};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt8BinaryBigEndian)
+{
+    uint8_t value = 0xAA;
+    OSAL::ByteArray expected {0xAA};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt16Binary)
+{
+    int16_t value = 0x5556;
+    OSAL::ByteArray expected {0x56, 0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt16BinaryLittleEndian)
+{
+    int16_t value = 0x5556;
+    OSAL::ByteArray expected {0x56, 0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt16BinaryBigEndian)
+{
+    int16_t value = 0x5556;
+    OSAL::ByteArray expected {0x55, 0x56};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt16Binary)
+{
+    uint16_t value = 0x5556;
+    OSAL::ByteArray expected {0x56, 0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt16BinaryLittleEndian)
+{
+    uint16_t value = 0x5556;
+    OSAL::ByteArray expected {0x56, 0x55};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt16BinaryBigEndian)
+{
+    uint16_t value = 0x5556;
+    OSAL::ByteArray expected {0x55, 0x56};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt32Binary)
+{
+    int32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt32BinaryLittleEndian)
+{
+    int32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt32BinaryBigEndian)
+{
+    int32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x12, 0x34, 0x56, 0x78};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt32Binary)
+{
+    uint32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt32BinaryLittleEndian)
+{
+    uint32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt32BinaryBigEndian)
+{
+    uint32_t value = 0x12345678;
+    OSAL::ByteArray expected {0x12, 0x34, 0x56, 0x78};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt64Binary)
+{
+    int64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt64BinaryLittleEndian)
+{
+    int64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeInt64BinaryBigEndian)
+{
+    int64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt64Binary)
+{
+    uint64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt64BinaryLittleEndian)
+{
+    uint64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeUInt64BinaryBigEndian)
+{
+    uint64_t value = 0x123456789ABCDEF0;
+    OSAL::ByteArray expected {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeFloatBinary)
+{
+    float value = 1.0002e4F;
+    OSAL::ByteArray expected {0x00, 0x48, 0x1C, 0x46};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeFloatBinaryLittleEndian)
+{
+    float value = 1.0002e4F;
+    OSAL::ByteArray expected {0x00, 0x48, 0x1C, 0x46};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeFloatBinaryBigEndian)
+{
+    float value = 1.0002e4F;
+    OSAL::ByteArray expected {0x46, 0x1C, 0x48, 0x00};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeDoubleBinary)
+{
+    double value = 1.00002E05;
+    OSAL::ByteArray expected {0x00, 0x00, 0x00, 0x00, 0x20, 0x6A, 0xF8, 0x40};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeDoubleBinaryLittleEndian)
+{
+    double value = 1.00002E05;
+    OSAL::ByteArray expected {0x00, 0x00, 0x00, 0x00, 0x20, 0x6A, 0xF8, 0x40};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeDoubleBinaryBigEndian)
+{
+    double value = 1.00002E05;
+    OSAL::ByteArray expected {0x40, 0xF8, 0x6A, 0x20, 0x00, 0x00, 0x00, 0x00};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeLongDoubleBinary)
+{
+    long double value = 1.00002E05L;
+    OSAL::ByteArray expected {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x51, 0xC3, 0x0F, 0x40};
+    OSAL::ByteArray actual;
+    Serialize(actual, value);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeLongDoubleBinaryLittleEndian)
+{
+    long double value = 1.00002E05L;
+    OSAL::ByteArray expected {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x51, 0xC3, 0x0F, 0x40};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::LittleEndian);
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(SerializationImplTest, SerializeLongDoubleBinaryBigEndian)
+{
+    long double value = 1.00002E05L;
+    OSAL::ByteArray expected {0x40, 0x0F, 0xC3, 0x51, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    OSAL::ByteArray actual;
+    Serialize(actual, value, Endianness::BigEndian);
+    EXPECT_EQ(expected, actual);
+}
+
 } // TEST_SUITE(core)
 
 } // namespace Test

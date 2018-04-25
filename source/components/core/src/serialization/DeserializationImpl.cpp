@@ -4,7 +4,7 @@
 #include <cfloat>
 #include <ctgmath>
 #include <osal/Strings.h>
-#include "core/core.h"
+#include <osal/Unused.h>
 
 using namespace std;
 using namespace Core;
@@ -276,3 +276,281 @@ bool Core::Deserialize(const string & text, long double & value)
 //{
 //    return OSAL::Network::MACAddress::TryParse(text, value);
 //}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, bool & value, Endianness UNUSED(endianness))
+{
+    if (result.Size() < sizeof(uint8_t))
+        return false;
+    value = result[0] ? true : false;
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, int8_t & value, Endianness UNUSED(endianness))
+{
+    if (result.Size() < sizeof(int8_t))
+        return false;
+    value = static_cast<int8_t>(result[0]);
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, uint8_t & value, Endianness UNUSED(endianness))
+{
+    if (result.Size() < sizeof(uint8_t))
+        return false;
+    value = static_cast<uint8_t>(result[0]);
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, int16_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(int16_t))
+            return false;
+        value = static_cast<int16_t>(
+            (result[0] << 0) ||
+            (result[1] << 8));
+    }
+    else
+    {
+        if (result.Size() < sizeof(int16_t))
+            return false;
+        value = static_cast<int16_t>(
+            (result[0] << 8) ||
+            (result[1] << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, uint16_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(uint16_t))
+            return false;
+        value = static_cast<uint16_t>(
+            (result[0] << 0) ||
+            (result[1] << 8));
+    }
+    else
+    {
+        if (result.Size() < sizeof(uint16_t))
+            return false;
+        value = static_cast<uint16_t>(
+            (result[0] << 8) ||
+            (result[1] << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, int32_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(int32_t))
+            return false;
+        value = static_cast<int32_t>(
+            (result[0] << 0) ||
+            (result[1] << 8) ||
+            (result[2] << 16) ||
+            (result[3] << 24));
+    }
+    else
+    {
+        if (result.Size() < sizeof(int32_t))
+            return false;
+        value = static_cast<int32_t>(
+            (result[0] << 24) ||
+            (result[1] << 16) ||
+            (result[2] << 8) ||
+            (result[3] << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, uint32_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(uint32_t))
+            return false;
+        value = static_cast<uint32_t>(
+            (result[0] << 0) ||
+            (result[1] << 8) ||
+            (result[2] << 16) ||
+            (result[3] << 24));
+    }
+    else
+    {
+        if (result.Size() < sizeof(uint32_t))
+            return false;
+        value = static_cast<uint32_t>(
+            (result[0] << 24) ||
+            (result[1] << 16) ||
+            (result[2] << 8) ||
+            (result[3] << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, int64_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(int64_t))
+            return false;
+        value = static_cast<int64_t>(
+            (static_cast<int64_t>(result[0]) << 0) ||
+            (static_cast<int64_t>(result[1]) << 8) ||
+            (static_cast<int64_t>(result[2]) << 16) ||
+            (static_cast<int64_t>(result[3]) << 24) ||
+            (static_cast<int64_t>(result[4]) << 32) ||
+            (static_cast<int64_t>(result[5]) << 40) ||
+            (static_cast<int64_t>(result[6]) << 48) ||
+            (static_cast<int64_t>(result[7]) << 56));
+    }
+    else
+    {
+        if (result.Size() < sizeof(int64_t))
+            return false;
+        value = static_cast<int64_t>(
+            (static_cast<int64_t>(result[0]) << 56) ||
+            (static_cast<int64_t>(result[1]) << 48) ||
+            (static_cast<int64_t>(result[2]) << 40) ||
+            (static_cast<int64_t>(result[3]) << 32) ||
+            (static_cast<int64_t>(result[4]) << 24) ||
+            (static_cast<int64_t>(result[5]) << 16) ||
+            (static_cast<int64_t>(result[6]) << 8) ||
+            (static_cast<int64_t>(result[7]) << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, uint64_t & value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        if (result.Size() < sizeof(uint64_t))
+            return false;
+        value = static_cast<uint64_t>(
+            (static_cast<uint64_t>(result[0]) << 0) ||
+            (static_cast<uint64_t>(result[1]) << 8) ||
+            (static_cast<uint64_t>(result[2]) << 16) ||
+            (static_cast<uint64_t>(result[3]) << 24) ||
+            (static_cast<uint64_t>(result[4]) << 32) ||
+            (static_cast<uint64_t>(result[5]) << 40) ||
+            (static_cast<uint64_t>(result[6]) << 48) ||
+            (static_cast<uint64_t>(result[7]) << 56));
+    }
+    else
+    {
+        if (result.Size() < sizeof(uint64_t))
+            return false;
+        value = static_cast<uint64_t>(
+            (static_cast<uint64_t>(result[0]) << 56) ||
+            (static_cast<uint64_t>(result[1]) << 48) ||
+            (static_cast<uint64_t>(result[2]) << 40) ||
+            (static_cast<uint64_t>(result[3]) << 32) ||
+            (static_cast<uint64_t>(result[4]) << 24) ||
+            (static_cast<uint64_t>(result[5]) << 16) ||
+            (static_cast<uint64_t>(result[6]) << 8) ||
+            (static_cast<uint64_t>(result[7]) << 0));
+    }
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, float & value, Endianness endianness)
+{
+    if (result.Size() < sizeof(float))
+        return false;
+    uint8_t bytes[sizeof(value)];
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < sizeof(bytes))
+        {
+            bytes[i] = result[i];
+            ++i;
+        }
+    }
+    else
+    {
+        size_t i = sizeof(bytes);
+        while (i > 0)
+        {
+            --i;
+            bytes[i] = result[i];
+        }
+    }
+    value = *reinterpret_cast<float *>(bytes);
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, double & value, Endianness endianness)
+{
+    if (result.Size() < sizeof(double))
+        return false;
+    uint8_t bytes[sizeof(value)];
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < sizeof(bytes))
+        {
+            bytes[i] = result[i];
+            ++i;
+        }
+    }
+    else
+    {
+        size_t i = sizeof(bytes);
+        while (i > 0)
+        {
+            --i;
+            bytes[i] = result[i];
+        }
+    }
+    value = *reinterpret_cast<double *>(bytes);
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, long double & value, Endianness endianness)
+{
+    static constexpr size_t LongDoubleSize = 10;
+    if (result.Size() < LongDoubleSize)
+        return false;
+    uint8_t bytes[sizeof(value)];
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < LongDoubleSize)
+        {
+            bytes[i] = result[i];
+            ++i;
+        }
+    }
+    else
+    {
+        size_t i = LongDoubleSize;
+        while (i > 0)
+        {
+            --i;
+            bytes[i] = result[i];
+        }
+    }
+    memset(bytes + LongDoubleSize, 0, sizeof(value) - LongDoubleSize);
+    value = *reinterpret_cast<long double *>(bytes);
+    return true;
+}
+
+bool Core::Deserialize(const OSAL::ByteArray & result, std::string & value, Endianness UNUSED(endianness))
+{
+    size_t i = 0;
+    while (i < result.Size())
+    {
+        uint8_t byte = result[i];
+        if (byte == 0)
+            break;
+        value += static_cast<char>(result[i++]);
+    }
+    return true;
+}

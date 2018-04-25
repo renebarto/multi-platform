@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <osal/Unused.h>
 
 using namespace std;
 
@@ -304,3 +305,210 @@ string Core::Serialize(long double value, int precision)
     return stream.str();
 }
 
+void Core::Serialize(OSAL::ByteArray & result, bool value, Endianness UNUSED(endianness))
+{
+    result.Append({static_cast<uint8_t>(value ? 0x01 : 0x00)});
+}
+
+void Core::Serialize(OSAL::ByteArray & result, int8_t value, Endianness UNUSED(endianness))
+{
+    result.Append({static_cast<uint8_t>(value)});
+}
+
+void Core::Serialize(OSAL::ByteArray & result, uint8_t value, Endianness UNUSED(endianness))
+{
+    result.Append({value});
+}
+
+void Core::Serialize(OSAL::ByteArray & result, int16_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, uint16_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, int32_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, uint32_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, int64_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 32) & 0xFF),
+                       static_cast<uint8_t>((value >> 40) & 0xFF),
+                       static_cast<uint8_t>((value >> 48) & 0xFF),
+                       static_cast<uint8_t>((value >> 56) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 56) & 0xFF),
+                       static_cast<uint8_t>((value >> 48) & 0xFF),
+                       static_cast<uint8_t>((value >> 40) & 0xFF),
+                       static_cast<uint8_t>((value >> 32) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, uint64_t value, Endianness endianness)
+{
+    if (endianness == Endianness::LittleEndian)
+    {
+        result.Append({static_cast<uint8_t>((value >> 0) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 32) & 0xFF),
+                       static_cast<uint8_t>((value >> 40) & 0xFF),
+                       static_cast<uint8_t>((value >> 48) & 0xFF),
+                       static_cast<uint8_t>((value >> 56) & 0xFF)});
+    }
+    else
+    {
+        result.Append({static_cast<uint8_t>((value >> 56) & 0xFF),
+                       static_cast<uint8_t>((value >> 48) & 0xFF),
+                       static_cast<uint8_t>((value >> 40) & 0xFF),
+                       static_cast<uint8_t>((value >> 32) & 0xFF),
+                       static_cast<uint8_t>((value >> 24) & 0xFF),
+                       static_cast<uint8_t>((value >> 16) & 0xFF),
+                       static_cast<uint8_t>((value >> 8) & 0xFF),
+                       static_cast<uint8_t>((value >> 0) & 0xFF)});
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, float value, Endianness endianness)
+{
+    uint8_t bytes[sizeof(value)];
+    *reinterpret_cast<float *>(bytes) = value;
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < sizeof(bytes))
+        {
+            result.Append({bytes[i++]});
+        }
+    }
+    else
+    {
+        size_t i = sizeof(bytes);
+        while (i > 0)
+        {
+            result.Append({bytes[--i]});
+        }
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, double value, Endianness endianness)
+{
+    uint8_t bytes[sizeof(value)];
+    *reinterpret_cast<double *>(bytes) = value;
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < sizeof(bytes))
+        {
+            result.Append({bytes[i++]});
+        }
+    }
+    else
+    {
+        size_t i = sizeof(bytes);
+        while (i > 0)
+        {
+            result.Append({bytes[--i]});
+        }
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, long double value, Endianness endianness)
+{
+    static constexpr size_t LongDoubleSize = 10;
+    uint8_t bytes[sizeof(value)];
+    *reinterpret_cast<long double *>(bytes) = value;
+    if (endianness == Endianness::LittleEndian)
+    {
+        size_t i = 0;
+        while (i < LongDoubleSize)
+        {
+            result.Append({bytes[i++]});
+        }
+    }
+    else
+    {
+        size_t i = LongDoubleSize;
+        while (i > 0)
+        {
+            result.Append({bytes[--i]});
+        }
+    }
+}
+
+void Core::Serialize(OSAL::ByteArray & result, std::string value, Endianness UNUSED(endianness))
+{
+    size_t i = 0;
+    while (i < value.length())
+    {
+        result.Append({static_cast<uint8_t>(value[i++])});
+    }
+    result.Append({static_cast<uint8_t>(0x00)});
+}
