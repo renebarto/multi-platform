@@ -49,7 +49,7 @@ struct DirectoryInfo
 {
     using List = vector<DirectoryInfo>;
 
-    DirectoryInfo(const string & path)
+    explicit DirectoryInfo(const string & path)
     {
         struct stat fileInfo;
         if (stat(path.c_str(), &fileInfo) != 0)

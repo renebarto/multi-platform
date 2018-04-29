@@ -37,7 +37,7 @@ public:
     FileSystemInfo() = delete;
 
 protected:
-    FileSystemInfo(const std::string & path);
+    explicit FileSystemInfo(const std::string & path);
 
 public:
     const std::string & FullPath() const { return fullPath; }

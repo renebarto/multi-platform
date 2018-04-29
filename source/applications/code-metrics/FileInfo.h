@@ -35,7 +35,7 @@ public:
     bool IsHiddenFile(const std::string & name) const;
 
 protected:
-    FileInfo(const std::string & path);
+    explicit FileInfo(const std::string & path);
 
     friend class DirectoryInfo;
 };

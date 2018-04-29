@@ -28,7 +28,7 @@ public:
 
     FileFind();
     FileFind(const FileFind &) = delete;
-    FileFind(Options options);
+    explicit FileFind(Options options);
     virtual ~FileFind();
 
     FileFind & operator = (const FileFind &) = delete;

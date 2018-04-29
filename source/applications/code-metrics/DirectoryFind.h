@@ -30,7 +30,7 @@ public:
 
     DirectoryFind();
     DirectoryFind(const DirectoryFind &) = delete;
-    DirectoryFind(Options options);
+    explicit DirectoryFind(Options options);
     virtual ~DirectoryFind();
 
     DirectoryFind & operator = (const DirectoryFind &) = delete;

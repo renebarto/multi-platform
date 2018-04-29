@@ -46,7 +46,7 @@ public:
     static void Delete(const std::string & path);
 
 protected:
-    DirectoryInfo(const std::string & path);
+    explicit DirectoryInfo(const std::string & path);
     void AddSubDirectory(DirectoryInfo & directory) const;
     bool HaveSubDirectory(const std::string & name) const;
     void AddSubDirectory(List & list, DirectoryInfo & directory) const;
