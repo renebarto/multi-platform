@@ -50,12 +50,11 @@ tm::tm(int second, int minute, int hour, int day, int month, int year, bool loca
     _tm.tm_mon  = month - 1;
     _tm.tm_year = year - 1900;
     time_t epochTime = mktime(this);
+    if (!localTime)
+        epochTime -= ActiveLocalTimeOffsetSeconds();
+    else
+        epochTime += ActiveDaylightSavingsTimeOffsetSeconds();
     _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
-    if (_tm.tm_isdst)
-    {
-        epochTime += tm_dstOffset;
-        _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
-    }
 }
 
 void tm::Initialize()

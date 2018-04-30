@@ -22,6 +22,10 @@ public:
             : ::timespec { seconds, nanoSeconds }
     {
     }
+    timespec(const ::timespec & time)
+        : ::timespec(time)
+    {
+    }
 
     inline bool operator == (const timespec & other) const
     {
@@ -95,6 +99,7 @@ struct OSAL_EXPORT tm
     tm & operator=(const ::tm & other);
 
     long ActiveLocalTimeOffsetSeconds() const { return tm_tzOffset + (_tm.tm_isdst ? tm_dstOffset : 0); }
+    long ActiveDaylightSavingsTimeOffsetSeconds() const { return _tm.tm_isdst ? tm_dstOffset : 0; }
     static long LocalTimeOffsetSecondsNonDaylightSavings() { return tm_tzOffset; }
     static long LocalTimeOffsetSecondsDaylightSavings() { return tm_tzOffset + tm_dstOffset; }
     std::string ActiveTimeZoneName() const { return _tm.tm_isdst ? tm_tzNameDst : tm_tzName; };

@@ -513,8 +513,8 @@ TEST_FIXTURE(TimeTest, strftime_gmt)
     stream << setw(4) << setfill('0') << Year << "-"
            << setw(2) << setfill('0') << Month << "-"
            << setw(2) << setfill('0') << Day << " "
-           << setw(2) << setfill('0') << Hour + (time.LocalTimeOffsetSecondsNonDaylightSavings() / 3600) << ":"
-           << setw(2) << setfill('0') << Minute + ((time.LocalTimeOffsetSecondsNonDaylightSavings() % 3600) / 60) << ":"
+           << setw(2) << setfill('0') << Hour << ":"
+           << setw(2) << setfill('0') << Minute << ":"
            << setw(2) << setfill('0') << Second;
     string expected = stream.str();
     string actual = Time::strftime("%F %T", &time);
