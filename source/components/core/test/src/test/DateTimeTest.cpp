@@ -1,4 +1,5 @@
 #include <unittest-cpp/UnitTestC++.h>
+#include <core/core.h>
 
 #include "core/DateTime.h"
 
@@ -65,7 +66,14 @@ TEST_FIXTURE(DateTimeTest, Construction)
     EXPECT_EQ(0, dateTime.Second());
     EXPECT_EQ(0, dateTime.MicroSeconds());
     EXPECT_EQ(1970, dateTime.WeekNumberingYear());
-    EXPECT_EQ(1, dateTime.WeekOfYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("1970-01-01 00:00:00.000000", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(0 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 0),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionCopy)
@@ -94,7 +102,14 @@ TEST_FIXTURE(DateTimeTest, ConstructionCopy)
     EXPECT_EQ(second, dateTime2.Second());
     EXPECT_EQ(microSeconds, dateTime2.MicroSeconds());
     EXPECT_EQ(weekNumberingYear, dateTime2.WeekNumberingYear());
-    EXPECT_EQ(weekOfYear, dateTime2.WeekOfYear());
+    EXPECT_EQ(weekOfYear, dateTime2.WeekOfYearISO8601());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecond)
@@ -123,7 +138,14 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecond)
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
     EXPECT_EQ(weekNumberingYear, dateTime.WeekNumberingYear());
-    EXPECT_EQ(weekOfYear, dateTime.WeekOfYear());
+    EXPECT_EQ(weekOfYear, dateTime.WeekOfYearISO8601());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecondEndOfYear)
@@ -152,7 +174,14 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecondMicroSecondEn
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
     EXPECT_EQ(weekNumberingYear, dateTime.WeekNumberingYear());
-    EXPECT_EQ(weekOfYear, dateTime.WeekOfYear());
+    EXPECT_EQ(weekOfYear, dateTime.WeekOfYearISO8601());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2013-12-31 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1388451723 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecond)
@@ -178,6 +207,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000000", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 0),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecondMicroSecond)
@@ -203,6 +239,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecondMicroSeco
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecond)
@@ -228,6 +271,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionYearMonthNameDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000000", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 0),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionEpoch)
@@ -236,13 +286,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionEpoch)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
+    int hour = 1;
     int minute = 2;
     int second = 3;
     int microSeconds = 0;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    time_t epochTime = 1393372923;
+    time_t epochTime = 1393376523;
     DateTime dateTime(epochTime);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -254,6 +304,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionEpoch)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000000", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 0),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionTimeSpec)
@@ -262,13 +319,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeSpec)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
+    int hour = 1;
     int minute = 2;
     int second = 3;
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    timespec timeSpec = {1393372923, 4000};
+    timespec timeSpec = {1393376523, 4000};
     DateTime dateTime(timeSpec);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -280,6 +337,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeSpec)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, ConstructionTimeVal)
@@ -288,13 +352,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeVal)
     int month = 2;
     int day = 26;
     int yearDay = 57;
-    int hour = 0; // UTC
+    int hour = 1;
     int minute = 2;
     int second = 3;
     int microSeconds = 4;
     MonthType monthName = MonthType::February;
     WeekDayType weekDay = WeekDayType::Wednesday;
-    timeval timeVal = {1393372923, 4};
+    timeval timeVal = {1393376523, 4};
     DateTime dateTime(timeVal);
     EXPECT_EQ(year, dateTime.Year());
     EXPECT_EQ(month, dateTime.Month());
@@ -306,6 +370,13 @@ TEST_FIXTURE(DateTimeTest, ConstructionTimeVal)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, Assignment)
@@ -327,6 +398,13 @@ TEST_FIXTURE(DateTimeTest, Assignment)
     EXPECT_EQ(minute, dateTime2.Minute());
     EXPECT_EQ(second, dateTime2.Second());
     EXPECT_EQ(microSeconds, dateTime2.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_TRUE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, AssignmentEpoch)
@@ -334,11 +412,11 @@ TEST_FIXTURE(DateTimeTest, AssignmentEpoch)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
+    int hourExpected = 1;
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 0;
-    time_t epochTime = 1393372923;
+    time_t epochTime = 1393376523;
     DateTime dateTime;
     dateTime = epochTime;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -348,6 +426,13 @@ TEST_FIXTURE(DateTimeTest, AssignmentEpoch)
     EXPECT_EQ(minuteExpected, dateTime.Minute());
     EXPECT_EQ(secondExpected, dateTime.Second());
     EXPECT_EQ(microSecondsExpected, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000000", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 0),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, AssignmentTimeSpec)
@@ -355,11 +440,11 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeSpec)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
+    int hourExpected = 1;
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 4;
-    timespec timeSpec = {1393372923, 4000};
+    timespec timeSpec = {1393376523, 4000};
     DateTime dateTime;
     dateTime = timeSpec;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -369,6 +454,13 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeSpec)
     EXPECT_EQ(minuteExpected, dateTime.Minute());
     EXPECT_EQ(secondExpected, dateTime.Second());
     EXPECT_EQ(microSecondsExpected, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, AssignmentTimeVal)
@@ -376,11 +468,11 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeVal)
     int yearExpected = 2014;
     int monthExpected = 2;
     int dayExpected = 26;
-    int hourExpected = 0; // UTC
+    int hourExpected = 1;
     int minuteExpected = 2;
     int secondExpected = 3;
     int microSecondsExpected = 4;
-    timeval timeVal = {1393372923, 4};
+    timeval timeVal = {1393376523, 4};
     DateTime dateTime;
     dateTime = timeVal;
     EXPECT_EQ(yearExpected, dateTime.Year());
@@ -390,6 +482,13 @@ TEST_FIXTURE(DateTimeTest, AssignmentTimeVal)
     EXPECT_EQ(minuteExpected, dateTime.Minute());
     EXPECT_EQ(secondExpected, dateTime.Second());
     EXPECT_EQ(microSecondsExpected, dateTime.MicroSeconds());
+    // Check invariant
+    ostringstream stream;
+    dateTime.PrintTo(stream);
+    EXPECT_EQ("2014-02-26 01:02:03.000004", stream.str());
+    EXPECT_EQ(OSAL::Time::timespec(1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000),
+              OSAL::Time::timespec((timespec)dateTime));
+    EXPECT_FALSE(dateTime.IsLocal());
 }
 
 TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromLocalTime)
@@ -402,7 +501,7 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromLocalTime)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    time_t epochExpected = 1393372923;
+    time_t epochExpected = 1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond;
     EXPECT_EQ(epochExpected, time_t(dateTime));
 }
 
@@ -411,12 +510,12 @@ TEST_FIXTURE(DateTimeTest, CastOperatorEpochMicroSecondsFromUTCTime)
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 0;
+    int hour = 1;
     int minute = 2;
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime = DateTime::CreateUTC(year, month, day, hour, minute, second, microSeconds);
-    time_t epochExpected = 1393372923;
+    time_t epochExpected = 1393376523;
     EXPECT_EQ(epochExpected, time_t(dateTime));
 }
 
@@ -430,7 +529,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeSpec)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    timespec timeSpecExpected = {1393372923, 4000};
+    // Check invariant
+    timespec timeSpecExpected = {1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4000};
     timespec timeSpecActual = timespec(dateTime);
     EXPECT_EQ(timeSpecExpected.tv_sec, timeSpecActual.tv_sec);
     EXPECT_EQ(timeSpecExpected.tv_nsec, timeSpecActual.tv_nsec);
@@ -446,7 +546,8 @@ TEST_FIXTURE(DateTimeTest, CastOperatorTimeVal)
     int second = 3;
     int microSeconds = 4;
     DateTime dateTime(year, month, day, hour, minute, second, microSeconds);
-    timeval timeValExpected = {1393372923, 4};
+    // Check invariant
+    timeval timeValExpected = {1393376523 + dateTime.OffsetFromUTC().MilliSeconds() / MilliSecondsPerSecond, 4};
     timeval timeValActual = timeval(dateTime);
     EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
     EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
@@ -478,6 +579,12 @@ TEST_FIXTURE(DateTimeTest, AddAssignment)
     EXPECT_EQ(minuteExpected, dateTime.Minute());
     EXPECT_EQ(secondExpected, dateTime.Second());
     EXPECT_EQ(microSecondsExpected, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523 + 4000000 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 123454};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, SubtractAssignment)
@@ -506,6 +613,12 @@ TEST_FIXTURE(DateTimeTest, SubtractAssignment)
     EXPECT_EQ(minuteExpected, dateTime.Minute());
     EXPECT_EQ(secondExpected, dateTime.Second());
     EXPECT_EQ(microSecondsExpected, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523 - 4000001 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 876554};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, Equals)
@@ -607,6 +720,12 @@ TEST_FIXTURE(DateTimeTest, NowLocal)
     EXPECT_EQ(timeLocal.tm_hour, currentDateTime.Hour());
     EXPECT_EQ(timeLocal.tm_min, currentDateTime.Minute());
     EXPECT_EQ(timeLocal.tm_sec, currentDateTime.Second());
+
+    // Check invariant
+    timeval timeValExpected = {timeVal, currentDateTime.MicroSeconds()};
+    timeval timeValActual = timeval(currentDateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, NowUTC)
@@ -626,6 +745,12 @@ TEST_FIXTURE(DateTimeTest, NowUTC)
     EXPECT_EQ(timeLocal.tm_hour, currentDateTime.Hour());
     EXPECT_EQ(timeLocal.tm_min, currentDateTime.Minute());
     EXPECT_EQ(timeLocal.tm_sec, currentDateTime.Second());
+
+    // Check invariant
+    timeval timeValExpected = {timeVal, currentDateTime.MicroSeconds()};
+    timeval timeValActual = timeval(currentDateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecond)
@@ -645,6 +770,12 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523, 0};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecondMicroSecond)
@@ -664,6 +795,12 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthDayHourMinuteSecondMicroSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523, 4};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecond)
@@ -684,6 +821,12 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523, 0};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecondMicroSecond)
@@ -704,6 +847,12 @@ TEST_FIXTURE(DateTimeTest, CreateUTCYearMonthNameDayHourMinuteSecondMicroSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523, 4};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecond)
@@ -723,6 +872,12 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 0};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecondMicroSecond)
@@ -742,6 +897,12 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthDayHourMinuteSecondMicroSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 4};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecond)
@@ -762,6 +923,12 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecond)
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
+
+    // Check invariant
+    timeval timeValExpected = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 0};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecondMicroSecond)
@@ -782,72 +949,63 @@ TEST_FIXTURE(DateTimeTest, CreateLocalYearMonthNameDayHourMinuteSecondMicroSecon
     EXPECT_EQ(minute, dateTime.Minute());
     EXPECT_EQ(second, dateTime.Second());
     EXPECT_EQ(microSeconds, dateTime.MicroSeconds());
-}
 
-#if defined(__GNUC__)
+    // Check invariant
+    timeval timeValExpected = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 4};
+    timeval timeValActual = timeval(dateTime);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
+}
 
 TEST_FIXTURE(DateTimeTest, OffsetFromUTC)
 {
     DateTime dateTime = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    int64_t expected = -localTime.tm_gmtoff * DateTime::MicroSecondsPerSecond;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    int64_t expected = localTime.LocalTimeOffsetSecondsNonDaylightSavings() * DateTime::MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
-#endif
-
-#if defined(__GNUC__)
 
 TEST_FIXTURE(DateTimeTest, OffsetFromUTC_SummerTime)
 {
     DateTime dateTime = DateTime::CreateLocal(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    int64_t expected = -localTime.tm_gmtoff * DateTime::MicroSecondsPerSecond;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    int64_t expected = localTime.LocalTimeOffsetSecondsDaylightSavings() * DateTime::MicroSecondsPerSecond;
     int64_t actual = dateTime.OffsetFromUTC().MicroSeconds();
     EXPECT_EQ(expected, actual);
 }
-#endif
-
-#if defined(__GNUC__)
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameLocal)
 {
     DateTime dateTime(2014, 02, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    string nameExpected = localTime.tm_zone;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    string nameExpected = localTime.NonDaylightSavingsTimeZoneName();
     string nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
-#endif
-
-#if defined(__GNUC__)
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameLocalSummerTime)
 {
     DateTime dateTime(2014, 06, 26, 1, 2, 3, 567891);
     time_t time = dateTime;
-    tm localTime = *localtime(&time);
-    string nameExpected = localTime.tm_zone;
+    OSAL::Time::tm localTime = *OSAL::Time::localtime(&time);
+    string nameExpected = localTime.DaylightSavingsActiveTimeZoneName();
     string nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
-#endif
 
-#if defined(__GNUC__)
+static const string UTCTimeZoneName = "GMT";
 
 TEST_FIXTURE(DateTimeTest, TimeZoneNameUTC)
 {
     DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3, 567891);
-    time_t time = dateTime;
-    tm localTime = *gmtime(&time);
-    string nameExpected = localTime.tm_zone;
+    string nameExpected = UTCTimeZoneName;
     string nameActual = dateTime.TimeZoneName();
     EXPECT_EQ(nameExpected, nameActual);
 }
-#endif
 
 TEST_FIXTURE(DateTimeTest, IsDayLightSavings)
 {
@@ -859,12 +1017,12 @@ TEST_FIXTURE(DateTimeTest, IsDayLightSavings)
 
 TEST_FIXTURE(DateTimeTest, ConvertToLocalTime)
 {
-    DateTime dateTimeUTC = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTimeUTC = DateTime::CreateUTC(2014, 02, 26, 12, 2, 3, 567891);
     DateTime dateTimeLocal = dateTimeUTC.ConvertToLocalTime();
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 2;
+    int hour = 12 - static_cast<int>(dateTimeLocal.OffsetFromUTCNonDaylightSavings().MicroSeconds() / MicroSecondsPerSecond / SecondsPerHour);
     int minute = 2;
     int second = 3;
     int microSeconds = 567891;
@@ -879,12 +1037,12 @@ TEST_FIXTURE(DateTimeTest, ConvertToLocalTime)
 
 TEST_FIXTURE(DateTimeTest, ConvertToUTCTime)
 {
-    DateTime dateTimeLocal = DateTime::CreateLocal(2014, 02, 26, 1, 2, 3, 567891);
+    DateTime dateTimeLocal = DateTime::CreateLocal(2014, 02, 26, 12, 2, 3, 567891);
     DateTime dateTimeUTC = dateTimeLocal.ConvertToUTCTime();
     int year = 2014;
     int month = 2;
     int day = 26;
-    int hour = 0;
+    int hour = 12 + static_cast<int>(dateTimeLocal.OffsetFromUTCNonDaylightSavings().MicroSeconds() / MicroSecondsPerSecond / SecondsPerHour);
     int minute = 2;
     int second = 3;
     int microSeconds = 567891;
@@ -907,23 +1065,143 @@ TEST_FIXTURE(DateTimeTest, PrintTo)
 
 TEST_FIXTURE(DateTimeTest, PrintToFormatted)
 {
-    DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3);
+    DateTime dateTime = DateTime::CreateUTC(2014, 01, 02, 1, 2, 3);
     ostringstream stream;
     dateTime.PrintTo(stream, "%F %T");
-    EXPECT_EQ("2014-02-26 01:02:03", stream.str());
-#if defined(__GNUC__)
-// TODO: Not working for time zone yet.
-//    stream.str("");
-//    dateTime.PrintTo(stream, "%F %T %Z");
-//    EXPECT_EQ("2014-02-26 01:02:03 GMT", stream.str());
-#endif
+    EXPECT_EQ("2014-01-02 01:02:03", stream.str());
+}
+
+TEST_FIXTURE(DateTimeTest, PrintToFormattedTimeZoneUTC)
+{
+    DateTime dateTime = DateTime::CreateUTC(2014, 01, 02, 1, 2, 3);
+    ostringstream stream;
+    dateTime.PrintTo(stream, "%F %T %Z");
+    EXPECT_EQ("2014-01-02 01:02:03 GMT", stream.str());
+}
+
+TEST_FIXTURE(DateTimeTest, PrintToFormattedTimeZoneLocal)
+{
+    DateTime dateTime = DateTime::CreateLocal(2014, 01, 02, 1, 2, 3);
+    ostringstream stream;
+    dateTime.PrintTo(stream, "%F %T %Z");
+    EXPECT_NE("2014-01-02 01:02:03 GMT", stream.str());
+}
+
+TEST_FIXTURE(DateTimeTest, PrintToFormattedExtensive)
+{
+    DateTime dateTime = DateTime::CreateUTC(2016, 01, 02, 0, 4, 5);
+    ostringstream stream;
+    dateTime.PrintTo(stream, "%a %A %b %B %c %C %d %D %e %F %g %G %h %H "
+        "%I %j %m %M %n %p %r %R %S %t %T %u %U %V %w %W %x %X %y %Y %z %Z %%");
+    EXPECT_EQ("Sat Saturday Jan January Sat Jan 02 00:04:05 2016 20 02 01/02/16  2 2016-01-02 15 2015 Jan 00 12 002 01 04 \n"
+              " AM 12:04:05 AM 00:04 05 \t 00:04:05 6 00 53 6 00 01/02/16 00:04:05 16 2016 +0000 GMT %", stream.str());
+}
+
+TEST_FIXTURE(DateTimeTest, WeekNumbers)
+{
+    DateTime dateTime = DateTime::CreateUTC(2016, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(2015, dateTime.WeekNumberingYear());
+    EXPECT_EQ(WeekDayType::Friday, dateTime.WeekDay());
+    EXPECT_EQ(53, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2016, 01, 02, 0, 4, 5);
+    EXPECT_EQ(2, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Saturday, dateTime.WeekDay());
+    EXPECT_EQ(2015, dateTime.WeekNumberingYear());
+    EXPECT_EQ(53, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2016, 01, 03, 0, 4, 5);
+    EXPECT_EQ(3, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Sunday, dateTime.WeekDay());
+    EXPECT_EQ(2015, dateTime.WeekNumberingYear());
+    EXPECT_EQ(53, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(1, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2016, 01, 04, 0, 4, 5);
+    EXPECT_EQ(4, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Monday, dateTime.WeekDay());
+    EXPECT_EQ(2016, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(1, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(1, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2016, 01, 05, 0, 4, 5);
+    EXPECT_EQ(5, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Tuesday, dateTime.WeekDay());
+    EXPECT_EQ(2016, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(1, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(1, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2011, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Saturday, dateTime.WeekDay());
+    EXPECT_EQ(2010, dateTime.WeekNumberingYear());
+    EXPECT_EQ(52, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2012, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Sunday, dateTime.WeekDay());
+    EXPECT_EQ(2011, dateTime.WeekNumberingYear());
+    EXPECT_EQ(52, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(1, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2013, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Tuesday, dateTime.WeekDay());
+    EXPECT_EQ(2013, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2014, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Wednesday, dateTime.WeekDay());
+    EXPECT_EQ(2014, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2015, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Thursday, dateTime.WeekDay());
+    EXPECT_EQ(2015, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2017, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Sunday, dateTime.WeekDay());
+    EXPECT_EQ(2016, dateTime.WeekNumberingYear());
+    EXPECT_EQ(52, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(1, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(0, dateTime.WeekOfYearMondayBased());
+
+    dateTime = DateTime::CreateUTC(2018, 01, 01, 0, 4, 5);
+    EXPECT_EQ(1, dateTime.YearDay());
+    EXPECT_EQ(WeekDayType::Monday, dateTime.WeekDay());
+    EXPECT_EQ(2018, dateTime.WeekNumberingYear());
+    EXPECT_EQ(1, dateTime.WeekOfYearISO8601());
+    EXPECT_EQ(0, dateTime.WeekOfYearSundayBased());
+    EXPECT_EQ(1, dateTime.WeekOfYearMondayBased());
 }
 
 TEST_FIXTURE(DateTimeTest, PrintToFormattedInvalidFormatString)
 {
     DateTime dateTime = DateTime::CreateUTC(2014, 02, 26, 1, 2, 3);
     ostringstream stream;
-    EXPECT_THROW(dateTime.PrintTo(stream, ""), OSAL::Exception);
+    EXPECT_NOTHROW(dateTime.PrintTo(stream, ""));
+    EXPECT_THROW(dateTime.PrintTo(stream, "%!"), OSAL::Exception);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
@@ -934,47 +1212,89 @@ TEST_FIXTURE(DateTimeTest, OperatorAddTimeSpanDateTime)
     DateTime actual;
     DateTime expected;
 
+    timeval timeValBase = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 567891};
+
     timeSpan = 1000; // One microsecond
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 567892);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeval timeValExpected = {timeValBase.tv_sec, timeValBase.tv_usec + 1};
+    timeval timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 1000000000; // One second
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 4, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 1, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 60000000000ll; // One minute
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 3, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 60, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 3600000000000ll; // One hour
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 2, 26, 2, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 3600, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 86400000000000ll; // One day
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 2, 27, 1, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = (28 + 31 + 30) * 86400000000000ll; // Three months (28 + 31 + 30 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2014, 5, 26, 2, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + (28 + 31 + 30) * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2015, 2, 26, 1, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 365 * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 40000000500000000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = timeSpan + dateTime;
     expected = DateTime::CreateLocal(2015, 6, 4, 1, 8, 44, 67891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 40000000 + 1, (timeValBase.tv_usec + 500000) % 1000000};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorAddDateTimeTimeSpan)
@@ -985,47 +1305,89 @@ TEST_FIXTURE(DateTimeTest, OperatorAddDateTimeTimeSpan)
     DateTime actual;
     DateTime expected;
 
+    timeval timeValBase = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 567891};
+
     timeSpan = 1000; // One microsecond
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 567892);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeval timeValExpected = {timeValBase.tv_sec, timeValBase.tv_usec + 1};
+    timeval timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 1000000000; // One second
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 4, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 1, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 60000000000ll; // One minute
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 3, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 60, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 3600000000000ll; // One hour
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 2, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 3600, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 86400000000000ll; // One day
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 27, 1, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = (28 + 31 + 30) * 86400000000000ll; // Three months (28 + 31 + 30 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2014, 5, 26, 2, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + (28 + 31 + 30) * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2015, 2, 26, 1, 2, 3, 567891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 365 * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 40000000500000000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime + timeSpan;
     expected = DateTime::CreateLocal(2015, 6, 4, 1, 8, 44, 67891);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec + 40000000 + 1, (timeValBase.tv_usec + 500000) % 1000000};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeTimeSpan)
@@ -1036,47 +1398,89 @@ TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeTimeSpan)
     DateTime actual;
     DateTime expected;
 
+    timeval timeValBase = {1393376523 + dateTime.OffsetFromUTCNonDaylightSavings().MilliSeconds() / MilliSecondsPerSecond, 100000};
+
     timeSpan = 1000; // One microsecond
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 3, 99999);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeval timeValExpected = {timeValBase.tv_sec, timeValBase.tv_usec - 1};
+    timeval timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 1000000000; // One second
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 2, 2, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 1, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 60000000000ll; // One minute
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 1, 1, 3, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 60, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 3600000000000ll; // One hour
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 26, 0, 2, 3, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 3600, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 86400000000000ll; // One day
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2014, 2, 25, 1, 2, 3, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = (31 + 31 + 30 + 31 + 30 + 31) * 86400000000000ll; // Six months (31 + 31 + 30 + 31 + 30 + 31 days)
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2013, 8, 26, 2, 2, 3, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - (31 + 31 + 30 + 31 + 30 + 31) * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 365 * 86400000000000ll; // One year (365 days)
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2013, 2, 26, 1, 2, 3, 100000);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 365 * 86400, timeValBase.tv_usec};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 
     timeSpan = 40000000123450000ll;
     // Adds one extra hour due to summer time (CET->CEST)
     actual = dateTime - timeSpan;
     expected = DateTime::CreateLocal(2012, 11, 20, 1, 55, 22, 976550);
     EXPECT_EQ(expected, actual);
+    // Check invariant
+    timeValExpected = {timeValBase.tv_sec - 40000000 - 1, (timeValBase.tv_usec - 123450 + 1000000) % 1000000};
+    timeValActual = timeval(actual);
+    EXPECT_EQ(timeValExpected.tv_sec, timeValActual.tv_sec);
+    EXPECT_EQ(timeValExpected.tv_usec, timeValActual.tv_usec);
 }
 
 TEST_FIXTURE(DateTimeTest, OperatorSubtractDateTimeDateTime)

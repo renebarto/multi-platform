@@ -16,6 +16,33 @@ namespace Core {
 static constexpr int SecondsPerHour = 3600;
 static const string UTCTimeZoneName = "GMT";
 
+static vector<Core::EnumConversion<Core::WeekDayType>> WeekDayNamesShort =
+{
+    {Core::WeekDayType::Monday,    "Mon"},
+    {Core::WeekDayType::Tuesday,   "Tue"},
+    {Core::WeekDayType::Wednesday, "Wed"},
+    {Core::WeekDayType::Thursday,  "Thu"},
+    {Core::WeekDayType::Friday,    "Fri"},
+    {Core::WeekDayType::Saturday,  "Sat"},
+    {Core::WeekDayType::Sunday,    "Sun"},
+};
+
+static vector<Core::EnumConversion<Core::MonthType>> MonthNamesShort =
+{
+    {Core::MonthType::January,   "Jan"},
+    {Core::MonthType::February,  "Feb"},
+    {Core::MonthType::March,     "Mar"},
+    {Core::MonthType::April,     "Apr"},
+    {Core::MonthType::May,       "May"},
+    {Core::MonthType::June,      "Jun"},
+    {Core::MonthType::July,      "Jul"},
+    {Core::MonthType::August,    "Aug"},
+    {Core::MonthType::September, "Sep"},
+    {Core::MonthType::October,   "Oct"},
+    {Core::MonthType::November,  "Nov"},
+    {Core::MonthType::December,  "Dec"},
+};
+
 // Invariant: _dateTime contains actual time (local or UTC)
 //            _time contains timespec (epoch and nanoseconds), irrespective of local or UTC time.
 // So: for example if the date is
@@ -286,6 +313,11 @@ DateTime DateTime::CreateLocal(int year, MonthType month, int day, int hour, int
     return DateTime(year, month, day, hour, minute, second, microSeconds);
 }
 
+bool DateTime::IsLocal() const
+{
+    return _isLocalTime;
+}
+
 int DateTime::Hour() const
 {
     return _dateTime.GetTime().tm_hour;
@@ -321,6 +353,16 @@ MonthType DateTime::MonthName() const
     return ConvertMonth(Month());
 }
 
+string DateTime::MonthNameShort() const
+{
+    for (const auto & item : MonthNamesShort)
+    {
+        if (item.value == MonthName())
+            return item.name;
+    }
+    return std::string{};
+}
+
 int DateTime::MonthDay() const
 {
     return _dateTime.GetTime().tm_mday;
@@ -334,6 +376,16 @@ int DateTime::YearDay() const
 WeekDayType DateTime::WeekDay() const
 {
     return (_dateTime.GetTime().tm_wday == 0) ? WeekDayType::Sunday : ConvertWeekDay(_dateTime.GetTime().tm_wday);
+}
+
+string DateTime::WeekDayNameShort() const
+{
+    for (const auto & item : WeekDayNamesShort)
+    {
+        if (item.value == WeekDay())
+            return item.name;
+    }
+    return std::string{};
 }
 
 int DateTime::WeekNumberingYear() const
@@ -366,7 +418,7 @@ int DateTime::WeekNumberingYear() const
     return year;
 }
 
-int DateTime::WeekOfYear() const
+int DateTime::WeekOfYearISO8601() const
 {
     int calcLeapYearsReference;
     int numLeapYearsSinceAD;
@@ -439,9 +491,30 @@ int DateTime::WeekOfYear() const
     return (correctedDayOfYear / 7) + 1;
 }
 
+int DateTime::WeekOfYearSundayBased() const
+{
+    int yearDay = YearDay();
+    int yearDayCorrection = ((static_cast<int>(WeekDay()) + 364 - yearDay) % 7);
+    int correctedYearDay = yearDay + yearDayCorrection;
+    return (correctedYearDay / 7);
+}
+
+int DateTime::WeekOfYearMondayBased() const
+{
+    int yearDay = YearDay();
+    int yearDayCorrection = ((static_cast<int>(WeekDay()) + 370 - yearDay) % 7);
+    int correctedYearDay = yearDay + yearDayCorrection;
+    return (correctedYearDay / 7);
+}
+
 TimeSpan DateTime::OffsetFromUTC() const
 {
     return TimeSpan(DiffFromUTC() * NanoSecondsPerSecond);
+}
+
+TimeSpan DateTime::OffsetFromUTCNonDaylightSavings() const
+{
+    return TimeSpan(_dateTime.LocalTimeOffsetSecondsNonDaylightSavings() * NanoSecondsPerSecond);
 }
 
 std::string DateTime::TimeZoneName() const
@@ -478,10 +551,122 @@ void DateTime::PrintTo(std::ostream & stream) const
 
 void DateTime::PrintTo(std::ostream & stream, string const & formatString) const
 {
-    char buffer[1000];
-    if (0 == strftime(buffer, sizeof(buffer), formatString.c_str(), &_dateTime.GetTime()))
-        throw OSAL::Exception(__func__, __FILE__, __LINE__, "Invalid format string.");
-    stream << string(buffer);
+    size_t lastIndex = 0;
+    size_t index = formatString.find('%', lastIndex);
+    while (index != string::npos)
+    {
+        stream << formatString.substr(lastIndex, index - lastIndex);
+        ++index;
+        switch (formatString[index])
+        {
+            case 'a':   // Abbreviated weekday name *	Thu
+                stream << WeekDayNameShort(); break;
+            case 'A':   // Full weekday name *	Thursday
+                stream << WeekDay(); break;
+            case 'b':   // Abbreviated month name *	Aug
+                stream << MonthNameShort(); break;
+            case 'B':   // Full month name *	August
+                stream << MonthName(); break;
+            case 'c':   // Date and time representation *	Thu Aug 23 14:55:02 2001
+                stream << WeekDayNameShort() << ' ' << MonthNameShort() << ' '
+                       << dec << setw(2) << setfill('0') << MonthDay() << ' '
+                       << setw(2) << setfill('0') << Hour() << ':'
+                       << setw(2) << setfill('0') << Minute() << ':'
+                       << setw(2) << setfill('0') << Second() << ' '
+                       << setw(4) << setfill('0') << Year(); break;
+            case 'C':   // Year divided by 100 and truncated to integer (00-99)	20
+                stream << dec << setw(2) << setfill('0') << Year() / 100; break;
+            case 'd':   // Day of the month, zero-padded (01-31)	23
+                stream << dec << setw(2) << setfill('0') << MonthDay(); break;
+            case 'D':   // Short MM/DD/YY date, equivalent to %m/%d/%y	08/23/01
+                stream << dec << setw(2) << setfill('0') << Month() << '/'
+                       << setw(2) << setfill('0') << MonthDay() << '/'
+                       << setw(2) << setfill('0') << Year() % 100; break;
+            case 'e':   // Day of the month, space-padded ( 1-31)	23
+                stream << dec << setw(2) << setfill(' ') << MonthDay(); break;
+            case 'F':   // Short YYYY-MM-DD date, equivalent to %Y-%m-%d	2001-08-23
+                stream << dec << setw(4) << setfill('0') << Year() << '-'
+                       << setw(2) << setfill('0') << Month() << '-'
+                       << setw(2) << setfill('0') << MonthDay(); break;
+                break;
+            case 'g':   // Week-based year, last two digits (00-99)	01
+                stream << dec << setw(2) << setfill('0') << WeekNumberingYear() % 100; break;
+            case 'G':   // Week-based year	2001
+                stream << dec << setw(4) << setfill('0') << WeekNumberingYear(); break;
+            case 'h':   // Abbreviated month name * (same as %b)	Aug
+                stream << MonthNameShort(); break;
+            case 'H':   // Hour in 24h format (00-23)	14
+                stream << dec << setw(2) << setfill('0') << Hour(); break;
+            case 'I':   // Hour in 12h format (01-12)	02
+                stream << dec << setw(2) << setfill('0') << ((Hour() + 11) % 12 + 1); break;
+            case 'j':   // Day of the year (001-366)	235
+                stream << dec << setw(3) << setfill('0') << YearDay(); break;
+            case 'm':   // Month as a decimal number (01-12)	08
+                stream << dec << setw(2) << setfill('0') << Month(); break;
+            case 'M':   // Minute (00-59)	55
+                stream << dec << setw(2) << setfill('0') << Minute(); break;
+            case 'n':   // New-line character ('\n')
+                stream << '\n'; break;
+            case 'p':   // AM or PM designation	PM
+                stream << ((Hour() >= 12) ? "PM" : "AM"); break;
+            case 'r':   // 12-hour clock time *	02:55:02 PM
+                stream << setw(2) << setfill('0') << ((Hour() + 11) % 12 + 1) << ':'
+                       << setw(2) << setfill('0') << Minute() << ':'
+                       << setw(2) << setfill('0') << Second() << ' '
+                       << ((Hour() >= 12) ? "PM" : "AM"); break;
+            case 'R':   // 24-hour HH:MM time, equivalent to %H:%M	14:55
+                stream << setw(2) << setfill('0') << Hour() << ':'
+                       << setw(2) << setfill('0') << Minute(); break;
+            case 'S':   // Second (00-61)	02
+                stream << dec << setw(2) << setfill('0') << Second(); break;
+            case 't':   // Horizontal-tab character ('\t')
+                stream << '\t'; break;
+            case 'T':   // ISO 8601 time format (HH:MM:SS), equivalent to %H:%M:%S	14:55:02
+                stream << dec << setw(2) << setfill('0') << Hour() << ':'
+                       << setw(2) << setfill('0') << Minute() << ':'
+                       << setw(2) << setfill('0') << Second(); break;
+            case 'u':   // ISO 8601 weekday as number with Monday as 1 (1-7)	4
+                stream << dec << setw(1) << int(WeekDay()); break;
+            case 'U':   // Week number with the first Sunday as the first day of week one (00-53)	33
+                stream << dec << setw(2) << WeekOfYearSundayBased(); break;
+            case 'V':   // ISO 8601 week number (01-53)	34
+                stream << dec << setw(2) << WeekOfYearISO8601(); break;
+            case 'w':   // Weekday as a decimal number with Sunday as 0 (0-6)	4
+                stream << dec << setw(1) << (int(WeekDay()) % 7); break;
+                break;
+            case 'W':   // Week number with the first Monday as the first day of week one (00-53)	34
+                stream << dec << setw(2) << WeekOfYearMondayBased(); break;
+            case 'x':   // Date representation *	08/23/01
+                stream << dec << setw(2) << setfill('0') << Month() << '/'
+                       << setw(2) << setfill('0') << MonthDay() << '/'
+                       << setw(2) << setfill('0') << Year() % 100; break;
+            case 'X':   // Time representation *	14:55:02
+                stream << dec << setw(2) << setfill('0') << Hour() << ':'
+                       << setw(2) << setfill('0') << Minute() << ':'
+                       << setw(2) << setfill('0') << Second(); break;
+            case 'y':   // Year, last two digits (00-99)	01
+                stream << dec << setw(2) << setfill('0') << Year() % 100; break;
+            case 'Y':   // Year	2001
+                stream << dec << setw(4) << setfill('0') << Year(); break;
+            case 'z':   // ISO 8601 offset from UTC in timezone (1 minute=1, 1 hour=100). If timezone cannot be determined, no characters	+0100
+                stream << ((OffsetFromUTC().Seconds() < 0) ? '-' : '+')
+                       << dec << setw(2) << setfill('0') << (OffsetFromUTC().Hours() % 24)
+                       << setw(2) << setfill('0') << (OffsetFromUTC().Minutes() % 60); break;
+            case 'Z':   // Timezone name or abbreviation. If timezone cannot be determined, no characters	CDT
+                stream << TimeZoneName(); break;
+            case '%':   // A % sign	%
+                stream << '%'; break;
+            default:
+                throw OSAL::Exception(__func__, __FILE__, __LINE__, "Invalid format string.");
+        }
+        ++index;
+        lastIndex = index;
+        index = formatString.find('%', lastIndex);
+    }
+    if (lastIndex != string::npos)
+    {
+        stream << formatString.substr(lastIndex);
+    }
 }
 
 void DateTime::Assign(timespec value, bool localTime)

@@ -112,6 +112,8 @@ public:
     static DateTime CreateLocal(int year, MonthType month, int day, int hour, int minute,
                                 int second, int microSeconds = 0);
 
+    bool IsLocal() const;
+
     int Hour() const;
 
     int Minute() const;
@@ -126,17 +128,27 @@ public:
 
     MonthType MonthName() const;
 
+    std::string MonthNameShort() const;
+
     int MonthDay() const;
 
     int YearDay() const;
 
     WeekDayType WeekDay() const;
 
+    std::string WeekDayNameShort() const;
+
     int WeekNumberingYear() const;
 
-    int WeekOfYear() const;
+    int WeekOfYearISO8601() const;
+
+    int WeekOfYearSundayBased() const;
+
+    int WeekOfYearMondayBased() const;
 
     TimeSpan OffsetFromUTC() const;
+
+    TimeSpan OffsetFromUTCNonDaylightSavings() const;
 
     std::string TimeZoneName() const;
 
