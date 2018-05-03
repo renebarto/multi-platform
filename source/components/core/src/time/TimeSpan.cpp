@@ -1,9 +1,11 @@
+#include "core/time/TimeSpan.h"
+
 #include <iomanip>
 #include <sstream>
-#include "core/TimeSpan.h"
 
 using namespace std;
 using namespace Core;
+using namespace Time;
 
 TimeSpan::TimeSpan()
     : _intervalNanoSeconds(0)
@@ -39,32 +41,32 @@ TimeSpan & TimeSpan::operator = (const TimeSpan & other)
     return *this;
 }
 
-bool Core::operator == (const TimeSpan & lhs, const TimeSpan & rhs)
+bool Core::Time::operator == (const TimeSpan & lhs, const TimeSpan & rhs)
 {
     return lhs._intervalNanoSeconds == rhs._intervalNanoSeconds;
 }
 
-bool Core::operator == (int64_t intervalNanoSeconds, const TimeSpan & rhs)
+bool Core::Time::operator == (int64_t intervalNanoSeconds, const TimeSpan & rhs)
 {
     return intervalNanoSeconds == rhs._intervalNanoSeconds;
 }
 
-bool Core::operator == (const TimeSpan & lhs, int64_t intervalNanoSeconds)
+bool Core::Time::operator == (const TimeSpan & lhs, int64_t intervalNanoSeconds)
 {
     return lhs._intervalNanoSeconds == intervalNanoSeconds;
 }
 
-bool Core::operator != (const TimeSpan & lhs, const TimeSpan & rhs)
+bool Core::Time::operator != (const TimeSpan & lhs, const TimeSpan & rhs)
 {
     return lhs._intervalNanoSeconds != rhs._intervalNanoSeconds;
 }
 
-bool Core::operator != (int64_t intervalNanoSeconds, const TimeSpan & rhs)
+bool Core::Time::operator != (int64_t intervalNanoSeconds, const TimeSpan & rhs)
 {
     return intervalNanoSeconds != rhs._intervalNanoSeconds;
 }
 
-bool Core::operator != (const TimeSpan & lhs, int64_t intervalNanoSeconds)
+bool Core::Time::operator != (const TimeSpan & lhs, int64_t intervalNanoSeconds)
 {
     return lhs._intervalNanoSeconds != intervalNanoSeconds;
 }

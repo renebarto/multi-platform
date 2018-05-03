@@ -3,9 +3,13 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <core/exports.h>
 #include <osal/FlagOperators.h>
+#include <osal/Users.h>
+#include <core/time/DateTime.h>
 
 namespace Core {
+namespace File {
 
 enum class FileAttributes : uint16_t
 {
@@ -27,7 +31,7 @@ enum class FileAttributes : uint16_t
 
 class DirectoryInfo;
 
-class FileSystemInfo
+class CORE_EXPORT FileSystemInfo
 {
 public:
     FileSystemInfo() = delete;
@@ -40,9 +44,9 @@ public:
     const std::string & Name() const { return _name; }
     const std::shared_ptr<DirectoryInfo> Parent() const { return _parent.lock(); }
 
-//    const Core::DateTime & CreationTime() const { return _creationTime; }
-//    const Core::DateTime & LastAccessTime() const { return _lastAccessTime; }
-//    const Core::DateTime & LastWriteTime() const { return _lastWriteTime; }
+    const Time::DateTime & CreationTime() const { return _creationTime; }
+    const Time::DateTime & LastAccessTime() const { return _lastAccessTime; }
+    const Time::DateTime & LastWriteTime() const { return _lastWriteTime; }
     FileAttributes Attributes() const { return _attributes; }
 
     bool IsRegularFile() const;
@@ -53,27 +57,28 @@ public:
     bool IsWritable() const;
     bool IsExecutable() const;
     bool IsReadOnly() const;
+    ssize_t Size() const;
 
 protected:
     std::string _fullPath;
     std::string _name;
-//    Core::DateTime _creationTime;
-//    Core::DateTime _lastAccessTime;
-//    Core::DateTime _lastWriteTime;
+    Time::DateTime _creationTime;
+    Time::DateTime _lastAccessTime;
+    Time::DateTime _lastWriteTime;
     FileAttributes _attributes;
     std::weak_ptr<DirectoryInfo> _parent;
-    uid_t _userID;
-    gid_t _groupID;
-    off_t _length;
+    OSAL::Users::UserID _userID;
+    OSAL::Users::GroupID _groupID;
+    ssize_t _fileSize;
 
     void Parent(std::weak_ptr<DirectoryInfo> value) { _parent = value; }
 };
 
+} // namespace File
 } // namespace Core
 
 template<>
-struct is_flag<Core::FileAttributes>
+struct is_flag<Core::File::FileAttributes>
 {
     static constexpr bool value=true;
 };
-

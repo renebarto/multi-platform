@@ -1,15 +1,12 @@
 #include <unittest-cpp/UnitTestC++.h>
 
-#include "core/TimeSpan.h"
-//#include "core/Util.h"
+#include "core/time/TimeSpan.h"
 
 using namespace std;
 
-namespace Core
-{
-
-namespace Test
-{
+namespace Core {
+namespace Time {
+namespace Test {
 
 class TimeSpanTest : public UnitTestCpp::TestFixture
 {
@@ -185,5 +182,5 @@ TEST_FIXTURE(TimeSpanTest, PrintTo)
 }
 
 } // namespace Test
-
+} // namespace Time
 } // namespace Core

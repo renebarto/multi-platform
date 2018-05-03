@@ -1,15 +1,14 @@
 #include <unittest-cpp/UnitTestC++.h>
 #include <core/core.h>
 
-#include "core/DateTime.h"
+#include "core/time/DateTime.h"
 
 #include "osal/Exception.h"
-#include "core/TimeSpan.h"
 
 using namespace std;
 
 namespace Core {
-
+namespace Time {
 namespace Test {
 
 class DateTimeTest
@@ -2585,5 +2584,5 @@ TEST_FIXTURE(DateTimeTest, OperatorGreaterEqualDateTimeTimeVal)
 }
 
 } // namespace Test
-
+} // namespace Time
 } // namespace Core

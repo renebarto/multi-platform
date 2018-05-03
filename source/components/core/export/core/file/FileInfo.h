@@ -3,9 +3,10 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "core/FileSystemInfo.h"
+#include "FileSystemInfo.h"
 
 namespace Core {
+namespace File {
 
 class DirectoryInfo;
 
@@ -36,4 +37,5 @@ protected:
     explicit FileInfo(const std::string & path);
 };
 
+} // namespace File
 } // namespace Core

@@ -1,4 +1,5 @@
 #include <unittest-cpp/UnitTestC++.h>
+
 #include "core/serialization/DeserializationImpl.h"
 
 using namespace std;

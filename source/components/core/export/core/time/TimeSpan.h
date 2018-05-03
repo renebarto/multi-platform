@@ -1,9 +1,10 @@
 #pragma once
 
+#include <iostream>
 #include "core/exports.h"
 
-namespace Core
-{
+namespace Core {
+namespace Time {
 
 class CORE_EXPORT TimeSpan
 {
@@ -51,4 +52,5 @@ inline void PrintTo(TimeSpan const & timeSpan, std::ostream & stream)
     timeSpan.PrintTo(stream);
 }
 
+} // namespace Time
 } // namespace Core

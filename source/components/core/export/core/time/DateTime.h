@@ -3,9 +3,10 @@
 #include <ctime>
 #include "osal/Time.h"
 #include "core/exports.h"
-#include "core/TimeSpan.h"
+#include "TimeSpan.h"
 
 namespace Core {
+namespace Time {
 
 enum class MonthType
 {
@@ -259,10 +260,9 @@ inline std::ostream & operator <<(std::ostream & stream, DateTime const & dateTi
     return stream;
 }
 
-std::ostream & operator << (std::ostream & stream, Core::WeekDayType value);
+std::ostream & operator << (std::ostream & stream, Core::Time::WeekDayType value);
 
-std::ostream & operator << (std::ostream & stream, Core::MonthType value);
+std::ostream & operator << (std::ostream & stream, Core::Time::MonthType value);
 
+} // namespace Time
 } // namespace Core
-
-

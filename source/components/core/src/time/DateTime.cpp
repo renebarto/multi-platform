@@ -7,40 +7,41 @@
 #include "osal/Assert.h"
 #include "osal/Exception.h"
 #include "core/serialization/Serialization.h"
-#include "core/DateTime.h"
-#include "core/TimeSpan.h"
+#include "core/time/DateTime.h"
+#include "core/time/TimeSpan.h"
 
 using namespace std;
 namespace Core {
+namespace Time {
 
 static constexpr int SecondsPerHour = 3600;
 static const string UTCTimeZoneName = "GMT";
 
-static vector<Core::EnumConversion<Core::WeekDayType>> WeekDayNamesShort =
+static vector<Core::EnumConversion<Core::Time::WeekDayType>> WeekDayNamesShort =
 {
-    {Core::WeekDayType::Monday,    "Mon"},
-    {Core::WeekDayType::Tuesday,   "Tue"},
-    {Core::WeekDayType::Wednesday, "Wed"},
-    {Core::WeekDayType::Thursday,  "Thu"},
-    {Core::WeekDayType::Friday,    "Fri"},
-    {Core::WeekDayType::Saturday,  "Sat"},
-    {Core::WeekDayType::Sunday,    "Sun"},
+    {Core::Time::WeekDayType::Monday,    "Mon"},
+    {Core::Time::WeekDayType::Tuesday,   "Tue"},
+    {Core::Time::WeekDayType::Wednesday, "Wed"},
+    {Core::Time::WeekDayType::Thursday,  "Thu"},
+    {Core::Time::WeekDayType::Friday,    "Fri"},
+    {Core::Time::WeekDayType::Saturday,  "Sat"},
+    {Core::Time::WeekDayType::Sunday,    "Sun"},
 };
 
-static vector<Core::EnumConversion<Core::MonthType>> MonthNamesShort =
+static vector<Core::EnumConversion<Core::Time::MonthType>> MonthNamesShort =
 {
-    {Core::MonthType::January,   "Jan"},
-    {Core::MonthType::February,  "Feb"},
-    {Core::MonthType::March,     "Mar"},
-    {Core::MonthType::April,     "Apr"},
-    {Core::MonthType::May,       "May"},
-    {Core::MonthType::June,      "Jun"},
-    {Core::MonthType::July,      "Jul"},
-    {Core::MonthType::August,    "Aug"},
-    {Core::MonthType::September, "Sep"},
-    {Core::MonthType::October,   "Oct"},
-    {Core::MonthType::November,  "Nov"},
-    {Core::MonthType::December,  "Dec"},
+    {Core::Time::MonthType::January,   "Jan"},
+    {Core::Time::MonthType::February,  "Feb"},
+    {Core::Time::MonthType::March,     "Mar"},
+    {Core::Time::MonthType::April,     "Apr"},
+    {Core::Time::MonthType::May,       "May"},
+    {Core::Time::MonthType::June,      "Jun"},
+    {Core::Time::MonthType::July,      "Jul"},
+    {Core::Time::MonthType::August,    "Aug"},
+    {Core::Time::MonthType::September, "Sep"},
+    {Core::Time::MonthType::October,   "Oct"},
+    {Core::Time::MonthType::November,  "Nov"},
+    {Core::Time::MonthType::December,  "Dec"},
 };
 
 // Invariant: _dateTime contains actual time (local or UTC)
@@ -588,7 +589,6 @@ void DateTime::PrintTo(std::ostream & stream, string const & formatString) const
                 stream << dec << setw(4) << setfill('0') << Year() << '-'
                        << setw(2) << setfill('0') << Month() << '-'
                        << setw(2) << setfill('0') << MonthDay(); break;
-                break;
             case 'g':   // Week-based year, last two digits (00-99)	01
                 stream << dec << setw(2) << setfill('0') << WeekNumberingYear() % 100; break;
             case 'G':   // Week-based year	2001
@@ -633,7 +633,6 @@ void DateTime::PrintTo(std::ostream & stream, string const & formatString) const
                 stream << dec << setw(2) << WeekOfYearISO8601(); break;
             case 'w':   // Weekday as a decimal number with Sunday as 0 (0-6)	4
                 stream << dec << setw(1) << (int(WeekDay()) % 7); break;
-                break;
             case 'W':   // Week number with the first Monday as the first day of week one (00-53)	34
                 stream << dec << setw(2) << WeekOfYearMondayBased(); break;
             case 'x':   // Date representation *	08/23/01
@@ -929,48 +928,49 @@ bool operator >= (const DateTime & lhs, timeval rhs)
     return !(lhs < rhs);
 }
 
+} // namespace Time
 } // namespace Core
 
 WARNING_PUSH
 WARNING_DISABLE(4592)
 template<>
-vector<Core::EnumConversion<Core::WeekDayType>> Core::EnumSerializationInfo<Core::WeekDayType>::Info =
+vector<Core::EnumConversion<Core::Time::WeekDayType>> Core::EnumSerializationInfo<Core::Time::WeekDayType>::Info =
 {
-    {Core::WeekDayType::Monday,    "Monday"},
-    {Core::WeekDayType::Tuesday,   "Tuesday"},
-    {Core::WeekDayType::Wednesday, "Wednesday"},
-    {Core::WeekDayType::Thursday,  "Thursday"},
-    {Core::WeekDayType::Friday,    "Friday"},
-    {Core::WeekDayType::Saturday,  "Saturday"},
-    {Core::WeekDayType::Sunday,    "Sunday"},
+    {Core::Time::WeekDayType::Monday,    "Monday"},
+    {Core::Time::WeekDayType::Tuesday,   "Tuesday"},
+    {Core::Time::WeekDayType::Wednesday, "Wednesday"},
+    {Core::Time::WeekDayType::Thursday,  "Thursday"},
+    {Core::Time::WeekDayType::Friday,    "Friday"},
+    {Core::Time::WeekDayType::Saturday,  "Saturday"},
+    {Core::Time::WeekDayType::Sunday,    "Sunday"},
 };
 
 template<>
-vector<Core::EnumConversion<Core::MonthType>> Core::EnumSerializationInfo<Core::MonthType>::Info =
+vector<Core::EnumConversion<Core::Time::MonthType>> Core::EnumSerializationInfo<Core::Time::MonthType>::Info =
 {
-    {Core::MonthType::January,   "January"},
-    {Core::MonthType::February,  "February"},
-    {Core::MonthType::March,     "March"},
-    {Core::MonthType::April,     "April"},
-    {Core::MonthType::May,       "May"},
-    {Core::MonthType::June,      "June"},
-    {Core::MonthType::July,      "July"},
-    {Core::MonthType::August,    "August"},
-    {Core::MonthType::September, "September"},
-    {Core::MonthType::October,   "October"},
-    {Core::MonthType::November,  "November"},
-    {Core::MonthType::December,  "December"},
+    {Core::Time::MonthType::January,   "January"},
+    {Core::Time::MonthType::February,  "February"},
+    {Core::Time::MonthType::March,     "March"},
+    {Core::Time::MonthType::April,     "April"},
+    {Core::Time::MonthType::May,       "May"},
+    {Core::Time::MonthType::June,      "June"},
+    {Core::Time::MonthType::July,      "July"},
+    {Core::Time::MonthType::August,    "August"},
+    {Core::Time::MonthType::September, "September"},
+    {Core::Time::MonthType::October,   "October"},
+    {Core::Time::MonthType::November,  "November"},
+    {Core::Time::MonthType::December,  "December"},
 };
 WARNING_POP
 
-ostream & Core::operator << (ostream & stream, Core::WeekDayType value)
+ostream & Core::Time::operator << (ostream & stream, Core::Time::WeekDayType value)
 {
-    stream << Core::EnumSerializationInfo<Core::WeekDayType>::Serialize(value);
+    stream << Core::EnumSerializationInfo<Core::Time::WeekDayType>::Serialize(value);
     return stream;
 }
 
-ostream & Core::operator << (ostream & stream, Core::MonthType value)
+ostream & Core::Time::operator << (ostream & stream, Core::Time::MonthType value)
 {
-    stream << Core::EnumSerializationInfo<Core::MonthType>::Serialize(value);
+    stream << Core::EnumSerializationInfo<Core::Time::MonthType>::Serialize(value);
     return stream;
 }
