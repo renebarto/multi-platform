@@ -86,6 +86,42 @@ TEST_FIXTURE(PathTest, StripExtension)
     EXPECT_EQ(expected, Path::StripExtension(path));
 }
 
+TEST_FIXTURE(PathTest, FirstPartOfPath)
+{
+    string path     = Test::Data::RegularFilePath();
+    string expected = Test::Data::FilledDirPath();
+
+    EXPECT_EQ(expected, Path::FirstPartOfPath(path));
+
+    path     = Test::Data::FilledDirPath();
+    expected = Test::Data::TestDirectoryOSAL();
+
+    EXPECT_EQ(expected, Path::FirstPartOfPath(path));
+
+    path     = Test::Data::TestDirectoryOSAL();
+    expected = Test::Data::TestDirectory();
+
+    EXPECT_EQ(expected, Path::FirstPartOfPath(path));
+}
+
+TEST_FIXTURE(PathTest, LastPartOfPath)
+{
+    string path     = Test::Data::RegularFilePath();
+    string expected = Test::Data::RegularFileName();
+
+    EXPECT_EQ(expected, Path::LastPartOfPath(path));
+
+    path     = Test::Data::FilledDirPath();
+    expected = Test::Data::FilledDirName();
+
+    EXPECT_EQ(expected, Path::LastPartOfPath(path));
+
+    path     = Test::Data::TestDirectoryOSAL();
+    expected = Test::Data::ProjectName();
+
+    EXPECT_EQ(expected, Path::LastPartOfPath(path));
+}
+
 TEST_FIXTURE(PathTest, HasNoPath)
 {
     EXPECT_FALSE(Path::HasNoPath(Test::Data::RegularFilePath()));

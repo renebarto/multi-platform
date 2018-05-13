@@ -1,20 +1,18 @@
 #include <unittest-cpp/UnitTestC++.h>
 
-//#include "Core/Exception.h"
-#include "core/file/FileSystemInfo.h"
+#include "core/files/FileSystemInfo.h"
 #include "core/TestData.h"
-//#include "Core/Util.h"
 
 using namespace std;
 
 namespace Core {
-namespace File {
+namespace Files {
 namespace Test {
 
 class FileSystemInfoAccessor : public FileSystemInfo
 {
 public:
-    FileSystemInfoAccessor(const string & path) :
+    explicit FileSystemInfoAccessor(const string & path) :
         FileSystemInfo(path)
     {
     }
@@ -35,7 +33,7 @@ void FileSystemInfoTest::TearDown()
 {
 }
 
-TEST_FIXTURE(FileSystemInfoTest, ConstructExisting)
+TEST_FIXTURE(FileSystemInfoTest, ConstructFileExisting)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
@@ -56,10 +54,9 @@ TEST_FIXTURE(FileSystemInfoTest, ConstructExisting)
     EXPECT_TRUE(info.IsWritable());
     EXPECT_FALSE(info.IsExecutable());
     EXPECT_FALSE(info.IsReadOnly());
-    EXPECT_EQ(ssize_t {0}, info.Size());
 }
 
-TEST_FIXTURE(FileSystemInfoTest, ConstructNonExisting)
+TEST_FIXTURE(FileSystemInfoTest, ConstructFileNonExisting)
 {
     string path = Core::Test::Data::DummyFilePath();
     Core::Time::DateTime dummyTime;
@@ -80,7 +77,29 @@ TEST_FIXTURE(FileSystemInfoTest, ConstructNonExisting)
     EXPECT_FALSE(info.IsWritable());
     EXPECT_FALSE(info.IsExecutable());
     EXPECT_FALSE(info.IsReadOnly());
-    EXPECT_EQ(ssize_t {0}, info.Size());
+}
+
+TEST_FIXTURE(FileSystemInfoTest, ConstructFileHidden)
+{
+    string path = Core::Test::Data::HiddenFilePath();
+    Core::Time::DateTime dummyTime;
+
+    FileSystemInfoAccessor info(path);
+
+    EXPECT_EQ(path, info.FullPath());
+    EXPECT_EQ(Core::Test::Data::HiddenFileName(), info.Name());
+    EXPECT_NE(dummyTime, info.CreationTime());
+    EXPECT_NE(dummyTime, info.LastAccessTime());
+    EXPECT_NE(dummyTime, info.LastWriteTime());
+    EXPECT_TRUE((info.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((info.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(info.IsRegularFile());
+    EXPECT_FALSE(info.IsDirectory());
+    EXPECT_EQ(0x06, info.GetRights());
+    EXPECT_TRUE(info.IsReadable());
+    EXPECT_TRUE(info.IsWritable());
+    EXPECT_FALSE(info.IsExecutable());
+    EXPECT_FALSE(info.IsReadOnly());
 }
 
 TEST_FIXTURE(FileSystemInfoTest, ConstructDirectoryExisting)
@@ -104,8 +123,6 @@ TEST_FIXTURE(FileSystemInfoTest, ConstructDirectoryExisting)
     EXPECT_TRUE(info.IsWritable());
     EXPECT_TRUE(info.IsExecutable());
     EXPECT_FALSE(info.IsReadOnly());
-    // A directory entry has a size
-    EXPECT_NE(ssize_t {0}, info.Size());
 }
 
 TEST_FIXTURE(FileSystemInfoTest, ConstructDirectoryNonExisting)
@@ -129,7 +146,6 @@ TEST_FIXTURE(FileSystemInfoTest, ConstructDirectoryNonExisting)
     EXPECT_FALSE(info.IsWritable());
     EXPECT_FALSE(info.IsExecutable());
     EXPECT_FALSE(info.IsReadOnly());
-    EXPECT_EQ(ssize_t {0}, info.Size());
 }
 
 } // namespace Test

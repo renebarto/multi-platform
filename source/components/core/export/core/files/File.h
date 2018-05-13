@@ -3,8 +3,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "core/files/FileInfo.h"
 
 namespace Core {
+namespace Files {
 
 enum class DesiredAccess
 {
@@ -33,54 +35,66 @@ enum class CreationFlags
     TruncateExisting = 5,
 };
 
-class FileInfo;
-
 class File
+    : public FileInfo
 {
 public:
     File() = delete;
+
     File(const File &);
+
     File(File &&);
+
     explicit File(const std::string & path);
+
     File(const std::string & path, DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
          ShareMode shareMode = ShareMode::ShareReadWrite,
          CreationFlags creationFlags = CreationFlags::OpenExisting);
-    explicit File(const FileInfo & info);
-    explicit File(const FileInfo & info, DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
-        ShareMode shareMode = ShareMode::ShareReadWrite,
-        CreationFlags creationFlags = CreationFlags::OpenExisting);
 
-    File & operator = (const File &);
-    File & operator = (File &&);
+    explicit File(const FileInfo & info);
+
+    explicit File(const FileInfo & info, DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
+                  ShareMode shareMode = ShareMode::ShareReadWrite,
+                  CreationFlags creationFlags = CreationFlags::OpenExisting);
+
+    File & operator =(const File &);
+
+    File & operator =(File &&);
 
     std::iostream * GetStream();
 
     bool Open(DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
               ShareMode shareMode = ShareMode::ShareReadWrite,
               CreationFlags creationFlags = CreationFlags::OpenExisting);
+
     void Close();
+
     bool IsOpen() const;
+
     bool Exists() const;
+
     static bool Exists(const std::string & path);
+
     void Delete();
-    static void Delete(const std::string & path);
-    bool CopyTo(const std::string & destination);
+
+    void CopyTo(const std::string & destination);
+
+    void MoveTo(const std::string & destination);
+
     bool Copy(File & fileDestination);
-    static bool Copy(const std::string & source, const std::string & destination);
-    bool MoveTo(const std::string & destination);
+
     bool Move(File & fileDestination);
-    bool Move(const std::string & source, const std::string & destination);
-    bool IsHiddenFile() const;
-    static bool IsHiddenFile(const std::string & name);
-    std::string const & GetPath() const;
-    std::string GetDirectory() const;
-    std::string GetFilename() const;
-    std::string GetFilenameWithoutExtension() const;
-    std::string GetExtension() const;
+
+    static void Delete(const std::string & path);
+
+    static bool Copy(const std::string & source, const std::string & destination);
+
+    static bool Move(const std::string & source, const std::string & destination);
 
 protected:
     std::shared_ptr<std::iostream> _stream;
     std::string _path;
 };
 
+} // namespace Files
 } // namespace Core

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -9,10 +10,12 @@ namespace Users {
 class UserID
 {
 public:
-    UserID()
-        : _uid()
-    {}
-    UserID(const UserID &) = delete;
+    static const UserID Invalid;
+    UserID();
+    UserID(const UserID & other)
+    {
+        _uid = other._uid;
+    }
     UserID(UserID && other)
     {
         _uid = other._uid;
@@ -20,7 +23,22 @@ public:
     explicit UserID(__uid_t uid)
         : _uid(uid)
     {}
-    UserID & operator = (const UserID &) = delete;
+    UserID & operator = (const UserID & other)
+    {
+        if (&other != this)
+        {
+            _uid = other._uid;
+        }
+        return *this;
+    }
+    UserID & operator = (UserID && other)
+    {
+        if (&other != this)
+        {
+            _uid = other._uid;
+        }
+        return *this;
+    }
     UserID & operator = (__uid_t uid)
     {
         _uid = uid;
@@ -30,21 +48,43 @@ public:
     {
         return _uid == other._uid;
     }
+    bool Equals(const __uid_t & other) const
+    {
+        return _uid == other;
+    }
 
     static UserID GetUserID()
     {
         return UserID(getuid());
     }
 
+    std::string UserName();
+
 private:
     __uid_t _uid;
 };
 
-bool operator == (const UserID & lhs, const UserID & rhs)
+inline bool operator == (const UserID & lhs, const UserID & rhs)
 {
     return lhs.Equals(rhs);
 }
-bool operator != (const UserID & lhs, const UserID & rhs)
+inline bool operator != (const UserID & lhs, const UserID & rhs)
+{
+    return !lhs.Equals(rhs);
+}
+inline bool operator == (const __uid_t & lhs, const UserID & rhs)
+{
+    return rhs.Equals(lhs);
+}
+inline bool operator != (const __uid_t & lhs, const UserID & rhs)
+{
+    return !rhs.Equals(lhs);
+}
+inline bool operator == (const UserID & lhs, const __uid_t & rhs)
+{
+    return lhs.Equals(rhs);
+}
+inline bool operator != (const UserID & lhs, const __uid_t & rhs)
 {
     return !lhs.Equals(rhs);
 }
@@ -52,10 +92,12 @@ bool operator != (const UserID & lhs, const UserID & rhs)
 class GroupID
 {
 public:
-    GroupID()
-        : _gid()
-    {}
-    GroupID(const GroupID &) = delete;
+    static const GroupID Invalid;
+    GroupID();
+    GroupID(const GroupID & other)
+    {
+        _gid = other._gid;
+    }
     GroupID(GroupID && other)
     {
         _gid = other._gid;
@@ -63,7 +105,22 @@ public:
     explicit GroupID(__gid_t gid)
         : _gid(gid)
     {}
-    GroupID & operator = (const GroupID &) = delete;
+    GroupID & operator = (const GroupID & other)
+    {
+        if (&other != this)
+        {
+            _gid = other._gid;
+        }
+        return *this;
+    }
+    GroupID & operator = (GroupID && other)
+    {
+        if (&other != this)
+        {
+            _gid = other._gid;
+        }
+        return *this;
+    }
     GroupID & operator = (__gid_t gid)
     {
         _gid = gid;
@@ -73,21 +130,43 @@ public:
     {
         return _gid == other._gid;
     }
+    bool Equals(const __gid_t & other) const
+    {
+        return _gid == other;
+    }
 
     static GroupID GetGroupID()
     {
         return GroupID(getgid());
     }
 
+    std::string GroupName();
+
 private:
     __gid_t _gid;
 };
 
-bool operator == (const GroupID & lhs, const GroupID & rhs)
+inline bool operator == (const GroupID & lhs, const GroupID & rhs)
 {
     return lhs.Equals(rhs);
 }
-bool operator != (const GroupID & lhs, const GroupID & rhs)
+inline bool operator != (const GroupID & lhs, const GroupID & rhs)
+{
+    return !lhs.Equals(rhs);
+}
+inline bool operator == (const __gid_t & lhs, const GroupID & rhs)
+{
+    return rhs.Equals(lhs);
+}
+inline bool operator != (const __gid_t & lhs, const GroupID & rhs)
+{
+    return !rhs.Equals(lhs);
+}
+inline bool operator == (const GroupID & lhs, const __gid_t & rhs)
+{
+    return lhs.Equals(rhs);
+}
+inline bool operator != (const GroupID & lhs, const __gid_t & rhs)
 {
     return !lhs.Equals(rhs);
 }

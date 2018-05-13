@@ -60,40 +60,40 @@ set(PACKAGE_LIBS
     ${LINKER_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 
-file(GLOB PACKAGE_SOURCES src/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES src/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC include/*.h)
 
-file(GLOB PACKAGE_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/include/osal/*.h)
 
-file(GLOB PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
 
-file(GLOB PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/include/regex/*.h)
 
-file(GLOB PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/parser/test/include/parser/*.h)
 
-file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
 
-file(GLOB PACKAGE_SOURCES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include/crypto/*.h)
 
-file(GLOB PACKAGE_SOURCES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/include/network/*.h)
 
-file(GLOB PACKAGE_SOURCES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_XML ${CMAKE_SOURCE_DIR}/source/components/xml/test/include/xml/*.h)
 
-file(GLOB PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/xml/*.h)
 
-file(GLOB PACKAGE_SOURCES_PARSE_CPP ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_PARSE_CPP ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_PARSE_CPP ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/include/parse-c++/*.h)
 
-file(GLOB PACKAGE_SOURCES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_SOURCES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_STARUML ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include/xml/*.h)
 
 list(APPEND PACKAGE_SOURCES

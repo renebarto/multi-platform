@@ -21,18 +21,28 @@ public:
         return TEST_DATA_ROOT;
     }
 
-    static std::string TestDirectoryOSAL() { return OSAL::Path::CombinePath(TestDirectory(), ProjectName()); }
+    static std::string TestDirectoryCore() { return OSAL::Path::CombinePath(TestDirectory(), ProjectName()); }
 
     static std::string FilledDirName() { return "FilledDir"; }
-    static std::string FilledDirPath() { return OSAL::Path::CombinePath(TestDirectoryOSAL(), FilledDirName()); }
+    static std::string FilledDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), FilledDirName()); }
     static std::string DummyDirName() { return "Dummy"; }
-    static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryOSAL(), DummyDirName()); }
+    static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), DummyDirName()); }
 
     static std::string RegularFileNameNoExtension() { return "a"; }
     static std::string RegularFileExtension() { return ".tst"; }
     static std::string RegularFileName() { return RegularFileNameNoExtension() + RegularFileExtension(); }
     static std::string RegularFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFileName()); }
-    static std::string DummyFileName() { return "dummy.txt"; }
+    static std::string SymlinkFileNameNoExtension() { return "a"; }
+    static std::string SymlinkFileExtension() { return ".link"; }
+    static std::string SymlinkFileName() { return SymlinkFileNameNoExtension() + SymlinkFileExtension(); }
+    static std::string SymlinkFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), SymlinkFileName()); }
+    static std::string HiddenFileNameNoExtension() { return ".hidden"; }
+    static std::string HiddenFileExtension() { return ".txt"; }
+    static std::string HiddenFileName() { return HiddenFileNameNoExtension() + HiddenFileExtension(); }
+    static std::string HiddenFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), HiddenFileName()); }
+    static std::string DummyFileNameNoExtension() { return "dummy"; }
+    static std::string DummyFileExtension() { return ".txt"; }
+    static std::string DummyFileName() { return DummyFileNameNoExtension() + DummyFileExtension(); }
     static std::string DummyFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), DummyFileName()); }
 
 };

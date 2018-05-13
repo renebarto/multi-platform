@@ -28,6 +28,7 @@ OSAL_EXPORT std::string ResolveTilde(const std::string & path);
 OSAL_EXPORT void SplitPath(const std::string & path, std::string & directory, std::string & fileName);
 OSAL_EXPORT std::string Extension(const std::string & path);
 OSAL_EXPORT std::string StripExtension(const std::string & path);
+OSAL_EXPORT std::string FirstPartOfPath(const std::string & path);
 OSAL_EXPORT std::string LastPartOfPath(const std::string & path);
 OSAL_EXPORT bool HasNoPath(const std::string & path);
 OSAL_EXPORT std::string CreatePathWithDefault(const std::string & pathOrFileName, const std::string & defaultPath);

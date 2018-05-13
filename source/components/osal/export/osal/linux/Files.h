@@ -60,7 +60,7 @@ inline int Remove(const char * path)
 
 inline int Stat(const char * path, struct stat * data)
 {
-    return ::stat(path, data);
+    return ::lstat(path, data);
 }
 
 inline mode_t GetFilePermissions(const char * path)

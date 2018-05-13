@@ -9,7 +9,7 @@
 #include <core/time/DateTime.h>
 
 namespace Core {
-namespace File {
+namespace Files {
 
 enum class FileAttributes : uint16_t
 {
@@ -50,6 +50,7 @@ public:
     FileAttributes Attributes() const { return _attributes; }
 
     bool IsRegularFile() const;
+    bool IsSymlink() const;
     bool IsDirectory() const;
 
     uint16_t GetRights() const;
@@ -57,7 +58,6 @@ public:
     bool IsWritable() const;
     bool IsExecutable() const;
     bool IsReadOnly() const;
-    ssize_t Size() const;
 
 protected:
     std::string _fullPath;
@@ -72,13 +72,19 @@ protected:
     ssize_t _fileSize;
 
     void Parent(std::weak_ptr<DirectoryInfo> value) { _parent = value; }
+    FileSystemInfo(const FileSystemInfo &);
+    FileSystemInfo(FileSystemInfo &&);
+    FileSystemInfo & operator = (const FileSystemInfo &);
+    FileSystemInfo & operator = (FileSystemInfo &&);
+    void Copy(const FileSystemInfo &);
+    void Move(FileSystemInfo &&);
 };
 
-} // namespace File
+} // namespace Files
 } // namespace Core
 
 template<>
-struct is_flag<Core::File::FileAttributes>
+struct is_flag<Core::Files::FileAttributes>
 {
     static constexpr bool value=true;
 };

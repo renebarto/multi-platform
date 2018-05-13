@@ -50,12 +50,23 @@ string Extension(const string & path)
 
 string StripExtension(const string & path)
 {
-    size_t lastPathDelimiterPos = path.find_last_of(_Dot);
+    size_t lastDotDelimiterPos = path.find_last_of(_Dot);
+    if (lastDotDelimiterPos != string::npos)
+    {
+        return path.substr(0, lastDotDelimiterPos);
+    }
+    return path;
+}
+
+string FirstPartOfPath(const string & path)
+{
+    string replacedPath = ReplaceWithPathSeparator(path);
+    size_t lastPathDelimiterPos = replacedPath.find_last_of(PathSeparator());
     if (lastPathDelimiterPos != string::npos)
     {
-        return ReplaceWithPathSeparator(path.substr(0, lastPathDelimiterPos));
+        return replacedPath.substr(0, lastPathDelimiterPos);
     }
-    return ReplaceWithPathSeparator(path);
+    return "";
 }
 
 string LastPartOfPath(const string & path)
