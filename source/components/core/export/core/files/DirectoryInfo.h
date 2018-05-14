@@ -10,13 +10,6 @@
 namespace Core {
 namespace Files {
 
-enum class SearchOption : int
-{
-    Normal = 0x00,
-    Recursive = 0x01,
-    IncludeHidden = 0x02,
-};
-
 class FileInfo;
 using FileInfoList = std::vector<FileInfo>;
 
@@ -55,9 +48,3 @@ protected:
 
 } // namespace Files
 } // namespace Core
-
-template<>
-struct is_flag<Core::Files::SearchOption>
-{
-    static constexpr bool value=true;
-};
