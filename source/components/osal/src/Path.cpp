@@ -40,10 +40,10 @@ void SplitPath(const string & path, string & directory, string & fileName)
 
 string Extension(const string & path)
 {
-    size_t lastPathDelimiterPos = path.find_last_of(_Dot);
-    if (lastPathDelimiterPos != string::npos)
+    size_t lastDotDelimiterPos = path.find_last_of(_Dot);
+    if ((lastDotDelimiterPos != 0) && (lastDotDelimiterPos != string::npos))
     {
-        return path.substr(lastPathDelimiterPos);
+        return path.substr(lastDotDelimiterPos);
     }
     return string();
 }
@@ -51,7 +51,7 @@ string Extension(const string & path)
 string StripExtension(const string & path)
 {
     size_t lastDotDelimiterPos = path.find_last_of(_Dot);
-    if (lastDotDelimiterPos != string::npos)
+    if ((lastDotDelimiterPos != 0) && (lastDotDelimiterPos != string::npos))
     {
         return path.substr(0, lastDotDelimiterPos);
     }

@@ -49,45 +49,8 @@ bool FileInfo::Exists() const
     return Exists(FullPath());
 }
 
-bool FileInfo::IsHiddenFile() const
-{
-    return IsHiddenFile(FullPath());
-}
-
 bool FileInfo::Exists(const std::string & path)
 {
     return OSAL::Path::FileExists(path);
-}
-
-bool FileInfo::IsHiddenFile(const string & name)
-{
-    if (name.empty())
-        return false;
-    return name[0] == '.';
-}
-
-std::string const & FileInfo::GetPath() const
-{
-    return FullPath();
-}
-
-string FileInfo::GetDirectoryName() const
-{
-    return OSAL::Path::FirstPartOfPath(FullPath());
-}
-
-std::string FileInfo::GetFilename() const
-{
-    return OSAL::Path::LastPartOfPath(FullPath());
-}
-
-std::string FileInfo::GetFilenameWithoutExtension() const
-{
-    return OSAL::Path::StripExtension(GetFilename());
-}
-
-std::string FileInfo::GetExtension() const
-{
-    return OSAL::Path::Extension(GetFilename());
 }
 

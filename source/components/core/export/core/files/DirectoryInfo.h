@@ -28,51 +28,29 @@ public:
     using List = std::vector<DirectoryInfo>;
 
     DirectoryInfo() = delete;
-    DirectoryInfo(const std::string & path);
+    explicit DirectoryInfo(const std::string & path);
     DirectoryInfo(const DirectoryInfo &);
     DirectoryInfo(DirectoryInfo &&);
     DirectoryInfo & operator = (const DirectoryInfo &);
     DirectoryInfo & operator = (DirectoryInfo &&);
 
+    FileInfoList GetFiles() const { return _files; }
+    List GetDirectories() const { return _subDirectories; }
+
     bool Exists() const;
-    void CreateSubdirectory(const std::string & path);
-    void Create();
-    FileInfoList GetFiles(SearchOption searchOption = SearchOption::Normal) const;
-    FileInfoList GetFiles(const std::string & searchPattern,
-                          SearchOption searchOption = SearchOption::Normal) const;
-    List GetDirectories() const;
-    List GetDirectories(const std::string & searchPattern,
-                        SearchOption searchOption = SearchOption::Normal) const;
-    void MoveTo(const std::string & destination);
-    void Move(const std::string & source, const std::string & destination);
-    void Delete();
 
     static bool Exists(const std::string & path);
-    static void CreateDirectory(const std::string & path);
-    static void Delete(const std::string & path);
-
-    std::string const & GetPath() const;
-    std::string GetDirectoryName() const;
-    std::string GetFilename() const;
-    std::string GetFilenameWithoutExtension() const;
-    std::string GetExtension() const;
-    std::shared_ptr<DirectoryInfo> GetDirectory() const { return Parent(); }
 
 protected:
     void AddSubDirectory(const DirectoryInfo & directory) const;
     bool HaveSubDirectory(const std::string & name) const;
-    static void AddSubDirectory(List & list, const DirectoryInfo & directory);
-    static bool HaveSubDirectory(List & list, const std::string & name);
-    static void GetFilesInCurrentDirectory(FileInfoList & result,
-                                           const std::string & path,
-                                           const std::string & searchPattern,
-                                           SearchOption searchOption);
+    void AddFile(const FileInfo & file) const;
+    bool HaveFile(const std::string & name) const;
 
     mutable List _subDirectories;
+    mutable FileInfoList _files;
 
     friend class FileInfo;
-    friend class FileFind;
-    friend class DirectoryFind;
 };
 
 } // namespace Files

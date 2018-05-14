@@ -27,6 +27,8 @@ public:
     static std::string FilledDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), FilledDirName()); }
     static std::string DummyDirName() { return "Dummy"; }
     static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), DummyDirName()); }
+    static std::string HiddenDirName() { return ".hidden"; }
+    static std::string HiddenDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), HiddenDirName()); }
 
     static std::string RegularFileNameNoExtension() { return "a"; }
     static std::string RegularFileExtension() { return ".tst"; }

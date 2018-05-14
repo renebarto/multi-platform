@@ -17,7 +17,7 @@ public:
     typedef std::vector<FileInfo> List;
 
     FileInfo() = delete;
-    FileInfo(const std::string & path);
+    explicit FileInfo(const std::string & path);
     FileInfo(const FileInfo &);
     FileInfo(FileInfo &&);
     FileInfo & operator = (const FileInfo &);
@@ -25,17 +25,8 @@ public:
 
     ssize_t Size() const { return _fileSize; }
     bool Exists() const;
-    bool IsHiddenFile() const;
 
     static bool Exists(const std::string & path);
-    static bool IsHiddenFile(const std::string & name);
-
-    std::string const & GetPath() const;
-    std::string GetDirectoryName() const;
-    std::string GetFilename() const;
-    std::string GetFilenameWithoutExtension() const;
-    std::string GetExtension() const;
-    std::shared_ptr<DirectoryInfo> GetDirectory() const { return Parent(); }
 
 protected:
     friend class DirectoryInfo;

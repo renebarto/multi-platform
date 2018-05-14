@@ -59,6 +59,16 @@ public:
     bool IsExecutable() const;
     bool IsReadOnly() const;
 
+    std::string const & GetPath() const;
+    std::string GetDirectoryName() const;
+    std::string GetFilename() const;
+    std::string GetFilenameWithoutExtension() const;
+    std::string GetExtension() const;
+    std::shared_ptr<DirectoryInfo> GetDirectory() const { return Parent(); }
+
+    bool IsHidden() const;
+    static bool IsHidden(const std::string & name);
+
 protected:
     std::string _fullPath;
     std::string _name;

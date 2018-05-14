@@ -155,3 +155,41 @@ bool FileSystemInfo::IsReadOnly() const
 {
     return (GetRights() & uint16_t(FileAttributes::ReadOtherRights | FileAttributes::WriteOtherRights)) == FileAttributes::ReadOtherRights;
 }
+
+bool FileSystemInfo::IsHidden() const
+{
+    return IsHidden(Name());
+}
+
+bool FileSystemInfo::IsHidden(const std::string & name)
+{
+    if (name.empty())
+        return false;
+    return name[0] == '.';
+}
+
+std::string const & FileSystemInfo::GetPath() const
+{
+    return FullPath();
+}
+
+std::string FileSystemInfo::GetDirectoryName() const
+{
+    return OSAL::Path::FirstPartOfPath(FullPath());
+}
+
+std::string FileSystemInfo::GetFilename() const
+{
+    return OSAL::Path::LastPartOfPath(FullPath());
+}
+
+std::string FileSystemInfo::GetFilenameWithoutExtension() const
+{
+    return OSAL::Path::StripExtension(GetFilename());
+}
+
+std::string FileSystemInfo::GetExtension() const
+{
+    return OSAL::Path::Extension(GetFilename());
+}
+

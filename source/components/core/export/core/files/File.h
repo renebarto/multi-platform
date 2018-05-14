@@ -35,8 +35,7 @@ enum class CreationFlags
     TruncateExisting = 5,
 };
 
-class File
-    : public FileInfo
+class File : public FileInfo
 {
 public:
     File() = delete;
