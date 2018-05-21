@@ -12,17 +12,7 @@ namespace Test {
 class DirectoryInfoTest : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void DirectoryInfoTest::SetUp()
-{
-}
-
-void DirectoryInfoTest::TearDown()
-{
-}
 
 TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryExisting)
 {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <iostream>
+#include <fstream>
 #include <memory>
 #include <string>
+#include <osal/FlagOperators.h>
 #include "core/files/FileInfo.h"
 
 namespace Core {
@@ -40,27 +41,27 @@ class File : public FileInfo
 public:
     File() = delete;
 
-    File(const File &);
+    explicit File(const FileInfo & info);
 
-    File(File &&);
+    explicit File(const FileInfo & info, DesiredAccess desiredAccess,
+                  ShareMode shareMode = ShareMode::ShareReadWrite,
+                  CreationFlags creationFlags = CreationFlags::OpenExisting);
 
     explicit File(const std::string & path);
 
-    File(const std::string & path, DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
+    File(const std::string & path, DesiredAccess desiredAccess,
          ShareMode shareMode = ShareMode::ShareReadWrite,
          CreationFlags creationFlags = CreationFlags::OpenExisting);
 
-    explicit File(const FileInfo & info);
+    File(const File &);
 
-    explicit File(const FileInfo & info, DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
-                  ShareMode shareMode = ShareMode::ShareReadWrite,
-                  CreationFlags creationFlags = CreationFlags::OpenExisting);
+    File(File &&);
 
     File & operator =(const File &);
 
     File & operator =(File &&);
 
-    std::iostream * GetStream();
+    std::iostream & GetStream();
 
     bool Open(DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
               ShareMode shareMode = ShareMode::ShareReadWrite,
@@ -70,30 +71,28 @@ public:
 
     bool IsOpen() const;
 
-    bool Exists() const;
+    bool Delete();
+    bool CopyTo(const std::string & destination);
+    bool MoveTo(const std::string & destination);
+    bool Copy(const File & fileDestination);
+    bool Move(const File & fileDestination);
 
-    static bool Exists(const std::string & path);
-
-    void Delete();
-
-    void CopyTo(const std::string & destination);
-
-    void MoveTo(const std::string & destination);
-
-    bool Copy(File & fileDestination);
-
-    bool Move(File & fileDestination);
-
-    static void Delete(const std::string & path);
-
+    static bool Delete(const std::string & path);
     static bool Copy(const std::string & source, const std::string & destination);
-
     static bool Move(const std::string & source, const std::string & destination);
 
 protected:
-    std::shared_ptr<std::iostream> _stream;
-    std::string _path;
+    std::fstream _stream;
+    std::ios_base::openmode _openMode;
+
+    bool OpenInternal(std::ios_base::openmode openMode);
 };
 
 } // namespace Files
 } // namespace Core
+
+template<>
+struct is_flag<Core::Files::DesiredAccess>
+{
+    static constexpr bool value=true;
+};

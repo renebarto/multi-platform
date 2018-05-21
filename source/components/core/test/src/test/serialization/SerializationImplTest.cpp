@@ -15,17 +15,7 @@ class SerializationImplTest
     : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void SerializationImplTest::SetUp()
-{
-}
-
-void SerializationImplTest::TearDown()
-{
-}
 
 TEST_FIXTURE(SerializationImplTest, SerializeBool)
 {

@@ -40,6 +40,8 @@ protected:
     explicit FileSystemInfo(const std::string & path);
 
 public:
+    void Stat();
+
     const std::string & FullPath() const { return _fullPath; }
     const std::string & Name() const { return _name; }
     const std::shared_ptr<DirectoryInfo> Parent() const { return _parent.lock(); }

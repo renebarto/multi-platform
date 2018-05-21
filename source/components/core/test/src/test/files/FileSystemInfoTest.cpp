@@ -21,17 +21,7 @@ public:
 class FileSystemInfoTest : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void FileSystemInfoTest::SetUp()
-{
-}
-
-void FileSystemInfoTest::TearDown()
-{
-}
 
 TEST_FIXTURE(FileSystemInfoTest, ConstructFileExisting)
 {

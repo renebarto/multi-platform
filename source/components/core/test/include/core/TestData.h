@@ -34,6 +34,10 @@ public:
     static std::string RegularFileExtension() { return ".tst"; }
     static std::string RegularFileName() { return RegularFileNameNoExtension() + RegularFileExtension(); }
     static std::string RegularFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFileName()); }
+    static std::string RegularFileNonExistingNameNoExtension() { return "z"; }
+    static std::string RegularFileNonExistingExtension() { return ".tst"; }
+    static std::string RegularFileNonExistingName() { return RegularFileNonExistingNameNoExtension() + RegularFileNonExistingExtension(); }
+    static std::string RegularFileNonExistingPath() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFileNonExistingName()); }
     static std::string SymlinkFileNameNoExtension() { return "a"; }
     static std::string SymlinkFileExtension() { return ".link"; }
     static std::string SymlinkFileName() { return SymlinkFileNameNoExtension() + SymlinkFileExtension(); }

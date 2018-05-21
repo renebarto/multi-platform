@@ -16,17 +16,7 @@ class DeserializationImplTest
     : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void DeserializationImplTest::SetUp()
-{
-}
-
-void DeserializationImplTest::TearDown()
-{
-}
 
 TEST_FIXTURE(DeserializationImplTest, DeserializeBool)
 {

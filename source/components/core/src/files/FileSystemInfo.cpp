@@ -18,19 +18,9 @@ FileSystemInfo::FileSystemInfo(const std::string & path)
     , _parent()
     , _userID()
     , _groupID()
+    , _fileSize()
 {
-    struct stat fileInfo;
-    memset(&fileInfo, 0, sizeof(fileInfo));
-    if (OSAL::Files::Stat(path.c_str(), &fileInfo) != 0)
-        memset(&fileInfo, 0, sizeof(fileInfo));
-    _name = OSAL::Path::LastPartOfPath(_fullPath);
-    _creationTime = Time::DateTime(fileInfo.st_ctim);
-    _lastAccessTime = Time::DateTime(fileInfo.st_atim);
-    _lastWriteTime = Time::DateTime(fileInfo.st_mtim);
-    _attributes = FileAttributes(fileInfo.st_mode);
-    _userID = fileInfo.st_uid;
-    _groupID = fileInfo.st_gid;
-    _fileSize = fileInfo.st_size;
+    Stat();
 }
 
 FileSystemInfo::FileSystemInfo(const FileSystemInfo & other)
@@ -43,6 +33,7 @@ FileSystemInfo::FileSystemInfo(const FileSystemInfo & other)
     , _parent(other._parent)
     , _userID(other._userID)
     , _groupID(other._groupID)
+    , _fileSize(other._fileSize)
 {
 }
 
@@ -56,6 +47,7 @@ FileSystemInfo::FileSystemInfo(FileSystemInfo && other)
     , _parent(std::move(other._parent))
     , _userID(std::move(other._userID))
     , _groupID(std::move(other._groupID))
+    , _fileSize(std::move(other._fileSize))
 {
 }
 
@@ -71,6 +63,22 @@ FileSystemInfo & FileSystemInfo::operator = (FileSystemInfo && other)
     return *this;
 }
 
+void FileSystemInfo::Stat()
+{
+    struct stat fileInfo;
+    memset(&fileInfo, 0, sizeof(fileInfo));
+    if (OSAL::Files::Stat(_fullPath.c_str(), &fileInfo) != 0)
+        memset(&fileInfo, 0, sizeof(fileInfo));
+    _name = OSAL::Path::LastPartOfPath(_fullPath);
+    _creationTime = Time::DateTime(fileInfo.st_ctim);
+    _lastAccessTime = Time::DateTime(fileInfo.st_atim);
+    _lastWriteTime = Time::DateTime(fileInfo.st_mtim);
+    _attributes = FileAttributes(fileInfo.st_mode);
+    _userID = fileInfo.st_uid;
+    _groupID = fileInfo.st_gid;
+    _fileSize = fileInfo.st_size;
+}
+
 void FileSystemInfo::Copy(const FileSystemInfo & other)
 {
     if (&other != this)
@@ -84,6 +92,7 @@ void FileSystemInfo::Copy(const FileSystemInfo & other)
         _parent = other._parent;
         _userID = other._userID;
         _groupID = other._groupID;
+        _fileSize = other._fileSize;
     }
 }
 
@@ -100,6 +109,7 @@ void FileSystemInfo::Move(FileSystemInfo && other)
         _parent = std::move(other._parent);
         _userID = std::move(other._userID);
         _groupID = std::move(other._groupID);
+        _fileSize = std::move(other._fileSize);
     }
 }
 

@@ -56,7 +56,8 @@ void OSAL::Path::MakeSureDirectoryExists(const string & path)
         return;
     if (S_ISREG(status.st_mode))
     {
-        unlink(path.c_str());
+        if (unlink(path.c_str()) != 0)
+            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
     }
     CreateDirectory(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
@@ -65,7 +66,8 @@ void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
 {
     if (FileExists(path))
     {
-        unlink(path.c_str());
+        if (unlink(path.c_str()) != 0)
+            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
     }
 }
 

@@ -12,17 +12,7 @@ namespace Test {
 class FileInfoTest : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void FileInfoTest::SetUp()
-{
-}
-
-void FileInfoTest::TearDown()
-{
-}
 
 TEST_FIXTURE(FileInfoTest, ConstructFileExisting)
 {
@@ -46,7 +36,7 @@ TEST_FIXTURE(FileInfoTest, ConstructFileExisting)
     EXPECT_TRUE(info.IsWritable());
     EXPECT_FALSE(info.IsExecutable());
     EXPECT_FALSE(info.IsReadOnly());
-    EXPECT_EQ(size_t{0}, info.Size());
+    EXPECT_EQ(size_t{6}, info.Size());
     EXPECT_FALSE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), info.GetPath());

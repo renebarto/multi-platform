@@ -12,18 +12,7 @@ TEST_SUITE(core) {
 class IteratorTest : public UnitTestCpp::TestFixture
 {
 public:
-    virtual void SetUp();
-    virtual void TearDown();
-
 };
-
-void IteratorTest::SetUp()
-{
-}
-
-void IteratorTest::TearDown()
-{
-}
 
 TEST_FIXTURE(IteratorTest, Construct)
 {
