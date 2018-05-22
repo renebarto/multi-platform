@@ -3,6 +3,7 @@
 #include <fstream>
 #include <osal/Path.h>
 #include <osal/Unused.h>
+#include <core/Util.h>
 #include <limits>
 
 using namespace std;
@@ -170,12 +171,12 @@ bool File::MoveTo(const std::string & destination)
     return Move(FullPath(), destination);
 }
 
-bool File::Copy(const File & file)
+bool File::CopyTo(const File & file)
 {
     return Copy(FullPath(), file.FullPath());
 }
 
-bool File::Move(const File & file)
+bool File::MoveTo(const File & file)
 {
     return Move(FullPath(), file.FullPath());
 }
@@ -184,6 +185,8 @@ bool File::Delete(const std::string & path)
 {
     try
     {
+        if (!Exists(path))
+            return false;
         OSAL::Path::MakeSureFileDoesNotExist(path);
     }
     catch (std::exception & e)
@@ -197,6 +200,8 @@ bool File::Copy(const std::string & source, const std::string & destination)
 {
     try
     {
+        if (!Exists(source))
+            return false;
         std::ifstream streamIn(source, std::ios::binary);
         std::ofstream streamOut(destination, std::ios::binary);
 
@@ -219,6 +224,55 @@ bool File::Move(const std::string & source, const std::string & destination)
 {
     if (rename(source.c_str(), destination.c_str()) != 0)
         return false;
+    return true;
+}
+
+bool File::CompareTo(const std::string & pathOther)
+{
+    return Compare(FullPath(), pathOther);
+}
+
+bool File::CompareTo(const File & other)
+{
+    return CompareTo(other.FullPath());
+}
+
+bool File::Compare(const std::string & source, const std::string & destination)
+{
+    try
+    {
+        if (!Exists(source))
+            return false;
+        if (!Exists(destination))
+            return false;
+        std::ifstream streamSource(source, std::ios::binary);
+        std::ifstream streamDestination(destination, std::ios::binary);
+
+        FileInfo fileSourceInfo(source);
+        FileInfo fileDestinationInfo(destination);
+
+        ssize_t fileSizeSource = fileSourceInfo.Size();
+        ssize_t fileSizeDestination = fileDestinationInfo.Size();
+        if ((fileSizeSource != fileSizeDestination))
+            return false;
+        uint8_t bufferSource[BUFFER_SIZE];
+        uint8_t bufferDestination[BUFFER_SIZE];
+        std::streamsize bytesReadSource { std::numeric_limits<std::streamsize>::max()};
+        std::streamsize bytesReadDestination { std::numeric_limits<std::streamsize>::max()};
+        while (streamSource.good() && streamDestination.good() && (bytesReadSource != 0) && (bytesReadDestination != 0))
+        {
+            bytesReadSource = streamSource.readsome(reinterpret_cast<char *>(bufferSource), sizeof(bufferSource));
+            bytesReadDestination = streamDestination.readsome(reinterpret_cast<char *>(bufferDestination), sizeof(bufferDestination));
+            if (bytesReadSource != bytesReadDestination)
+                return false;
+            if (!Util::Compare(bufferSource, bufferDestination, static_cast<int>(bytesReadSource)))
+                return false;
+        }
+    }
+    catch (...)
+    {
+        return false;
+    }
     return true;
 }
 

@@ -15,10 +15,12 @@ public:
     void SetUp() override
     {
         OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExistingPath());
+        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExisting2Path());
     }
     void TearDown() override
     {
         OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExistingPath());
+        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExisting2Path());
     }
 };
 
@@ -702,7 +704,7 @@ TEST_FIXTURE(FileTest, OpenWriteExisting_Existing)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{6}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteExisting_NonExisting)
@@ -720,7 +722,7 @@ TEST_FIXTURE(FileTest, OpenWriteExisting_NonExisting)
     EXPECT_FALSE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_FALSE(file.Exists(path));
+    EXPECT_FALSE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteCreateNew_Existing)
@@ -739,7 +741,7 @@ TEST_FIXTURE(FileTest, OpenWriteCreateNew_Existing)
     EXPECT_FALSE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{6}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteCreateNew_NonExisting)
@@ -757,7 +759,7 @@ TEST_FIXTURE(FileTest, OpenWriteCreateNew_NonExisting)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_Existing)
@@ -776,7 +778,7 @@ TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_Existing)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{6}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_NonExisting)
@@ -794,7 +796,7 @@ TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_NonExisting)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_Existing)
@@ -813,16 +815,15 @@ TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_Existing)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
     Core::Time::DateTime dummyTime;
-    FileInfo info(path);
 
-    File file(info);
+    File file(path);
 
     EXPECT_FALSE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
@@ -832,7 +833,7 @@ TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_NonExisting)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_Existing)
@@ -840,9 +841,8 @@ TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_Existing)
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
     Core::Time::DateTime dummyTime;
-    FileInfo info(path);
 
-    File file(info);
+    File file(path);
 
     EXPECT_FALSE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
@@ -852,7 +852,7 @@ TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_Existing)
     EXPECT_TRUE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_TRUE(file.Exists(path));
+    EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_NonExisting)
@@ -870,10 +870,407 @@ TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_NonExisting)
     EXPECT_FALSE(file.IsOpen());
     EXPECT_TRUE(file.GetStream().good());
     EXPECT_EQ(size_t{0}, file.Size());
-    EXPECT_FALSE(file.Exists(path));
+    EXPECT_FALSE(file.Exists());
 }
 
-// Todo: Add tests for Copy, Move, Delete
+TEST_FIXTURE(FileTest, DeleteExisting)
+{
+    File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    File file(path);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_TRUE(file.Delete());
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(FileTest, DeleteNonExisting)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    File file(path);
+
+    EXPECT_FALSE(file.Exists());
+    EXPECT_FALSE(file.Delete());
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(FileTest, DeletePathExisting)
+{
+    File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    EXPECT_TRUE(File::Exists(path));
+    EXPECT_TRUE(File::Delete(path));
+    EXPECT_FALSE(File::Exists(path));
+}
+
+TEST_FIXTURE(FileTest, DeletePathNonExisting)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    EXPECT_FALSE(File::Exists(path));
+    EXPECT_FALSE(File::Delete(path));
+    EXPECT_FALSE(File::Exists(path));
+}
+
+TEST_FIXTURE(FileTest, CopyToExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.CopyTo(pathDst));
+    EXPECT_TRUE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CopyToNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CopyTo(pathDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, MoveToExisting)
+{
+    File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.MoveTo(pathDst));
+    EXPECT_TRUE(File::Compare(Core::Test::Data::RegularFilePath(), pathDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, MoveToNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.MoveTo(pathDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CopyToFileExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.CopyTo(fileDst));
+    EXPECT_TRUE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CopyToFileNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CopyTo(fileDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, MoveToFileExisting)
+{
+    File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.MoveTo(fileDst));
+    EXPECT_TRUE(File::Compare(Core::Test::Data::RegularFilePath(), pathDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, MoveToFileNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.MoveTo(fileDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CopyPathToPathExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+    EXPECT_TRUE(File::Copy(pathSrc, pathDst));
+    EXPECT_TRUE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, CopyPathToPathNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+    EXPECT_FALSE(File::Copy(pathSrc, pathDst));
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, MovePathToPathExisting)
+{
+    File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
+
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+    EXPECT_TRUE(File::Move(pathSrc, pathDst));
+    EXPECT_TRUE(File::Compare(Core::Test::Data::RegularFilePath(), pathDst));
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, MovePathToPathNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+    EXPECT_FALSE(File::Move(pathSrc, pathDst));
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, CompareToExistingSourceAndDestinationEqual)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile2Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.CompareTo(pathDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToExistingSourceAndDestinationInequal)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile3Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(pathDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToExistingSourceNonExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToNonExistingSourceExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFilePath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToFileExistingSourceAndDestinationEqual)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile2Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_TRUE(fileSrc.CompareTo(fileDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToFileExistingSourceAndDestinationInequal)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile3Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToFileExistingSourceNonExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
+    EXPECT_TRUE(fileSrc.Exists());
+    EXPECT_FALSE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, CompareToFileNonExistingSourceExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFilePath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
+    EXPECT_FALSE(fileSrc.Exists());
+    EXPECT_TRUE(fileDst.Exists());
+}
+
+TEST_FIXTURE(FileTest, ComparePathToPathExistingSourceAndDestinationEqual)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile2Path();
+
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+    EXPECT_TRUE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, ComparePathToPathExistingSourceAndDestinationInequal)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFile3Path();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+    EXPECT_FALSE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, ComparePathToPathExistingSourceNonExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFilePath();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+    EXPECT_FALSE(File::Compare(pathSrc, pathDst));
+    EXPECT_TRUE(File::Exists(pathSrc));
+    EXPECT_FALSE(File::Exists(pathDst));
+}
+
+TEST_FIXTURE(FileTest, ComparePathToPathNonExistingSourceExistingDestination)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
+    string pathDst = Core::Test::Data::RegularFilePath();
+
+    File fileSrc(pathSrc);
+    File fileDst(pathDst);
+
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+    EXPECT_FALSE(File::Compare(pathSrc, pathDst));
+    EXPECT_FALSE(File::Exists(pathSrc));
+    EXPECT_TRUE(File::Exists(pathDst));
+}
 
 } // namespace Test
 } // namespace File

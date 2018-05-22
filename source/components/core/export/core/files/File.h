@@ -74,12 +74,17 @@ public:
     bool Delete();
     bool CopyTo(const std::string & destination);
     bool MoveTo(const std::string & destination);
-    bool Copy(const File & fileDestination);
-    bool Move(const File & fileDestination);
+    bool CopyTo(const File & fileDestination);
+    bool MoveTo(const File & fileDestination);
 
     static bool Delete(const std::string & path);
     static bool Copy(const std::string & source, const std::string & destination);
     static bool Move(const std::string & source, const std::string & destination);
+
+    bool CompareTo(const std::string & pathOther);
+    bool CompareTo(const File & other);
+
+    static bool Compare(const std::string & source, const std::string & destination);
 
 protected:
     std::fstream _stream;
