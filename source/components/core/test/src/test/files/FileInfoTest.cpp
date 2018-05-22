@@ -40,11 +40,11 @@ TEST_FIXTURE(FileInfoTest, ConstructFileExisting)
     EXPECT_FALSE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), info.GetPath());
-    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), info.GetFilenameWithoutExtension());
     EXPECT_EQ(Core::Test::Data::RegularFileExtension(), info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 TEST_FIXTURE(FileInfoTest, ConstructFileNonExisting)
@@ -73,11 +73,11 @@ TEST_FIXTURE(FileInfoTest, ConstructFileNonExisting)
     EXPECT_FALSE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::DummyFilePath(), info.GetPath());
-    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::DummyFileName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::DummyFileNameNoExtension(), info.GetFilenameWithoutExtension());
     EXPECT_EQ(Core::Test::Data::DummyFileExtension(), info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 TEST_FIXTURE(FileInfoTest, ConstructFileHidden)
@@ -106,11 +106,11 @@ TEST_FIXTURE(FileInfoTest, ConstructFileHidden)
     EXPECT_TRUE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::HiddenFilePath(), info.GetPath());
-    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::HiddenFileName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::HiddenFileNameNoExtension(), info.GetFilenameWithoutExtension());
     EXPECT_EQ(Core::Test::Data::HiddenFileExtension(), info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 TEST_FIXTURE(FileInfoTest, ConstructFileSymlink)
@@ -137,13 +137,13 @@ TEST_FIXTURE(FileInfoTest, ConstructFileSymlink)
     EXPECT_FALSE(info.IsReadOnly());
     EXPECT_EQ(Core::Test::Data::RegularFileName().length(), info.Size());
     EXPECT_EQ(Core::Test::Data::SymlinkFilePath(), info.GetPath());
-    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::SymlinkFileName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::SymlinkFileNameNoExtension(), info.GetFilenameWithoutExtension());
     EXPECT_EQ(Core::Test::Data::SymlinkFileExtension(), info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 } // namespace Test
-} // namespace File
+} // namespace Files
 } // namespace Core

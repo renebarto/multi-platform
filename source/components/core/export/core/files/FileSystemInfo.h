@@ -62,11 +62,11 @@ public:
     bool IsReadOnly() const;
 
     std::string const & GetPath() const;
-    std::string GetDirectoryName() const;
+    std::string GetParentDirectoryPath() const;
     std::string GetFilename() const;
     std::string GetFilenameWithoutExtension() const;
     std::string GetExtension() const;
-    std::shared_ptr<DirectoryInfo> GetDirectory() const { return Parent(); }
+    std::shared_ptr<DirectoryInfo> GetParentDirectory() const { return Parent(); }
 
     bool IsHidden() const;
     static bool IsHidden(const std::string & name);
@@ -83,7 +83,7 @@ protected:
     OSAL::Users::GroupID _groupID;
     ssize_t _fileSize;
 
-    void Parent(std::weak_ptr<DirectoryInfo> value) { _parent = value; }
+    void SetParentDirectory(std::weak_ptr<DirectoryInfo> value) { _parent = value; }
     FileSystemInfo(const FileSystemInfo &);
     FileSystemInfo(FileSystemInfo &&);
     FileSystemInfo & operator = (const FileSystemInfo &);

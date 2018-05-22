@@ -183,7 +183,7 @@ std::string const & FileSystemInfo::GetPath() const
     return FullPath();
 }
 
-std::string FileSystemInfo::GetDirectoryName() const
+std::string FileSystemInfo::GetParentDirectoryPath() const
 {
     return OSAL::Path::FirstPartOfPath(FullPath());
 }

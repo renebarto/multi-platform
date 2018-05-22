@@ -25,6 +25,10 @@ public:
 
     static std::string FilledDirName() { return "FilledDir"; }
     static std::string FilledDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), FilledDirName()); }
+    static std::string SymlinkDirNameNoExtension() { return "FilledDir"; }
+    static std::string SymlinkDirExtension() { return ".link"; }
+    static std::string SymlinkDirName() { return SymlinkDirNameNoExtension() + SymlinkDirExtension(); }
+    static std::string SymlinkDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), SymlinkDirName()); }
     static std::string DummyDirName() { return "Dummy"; }
     static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), DummyDirName()); }
     static std::string HiddenDirName() { return ".hidden"; }

@@ -28,41 +28,32 @@ public:
     using List = std::vector<Directory>;
 
     Directory() = delete;
+    explicit Directory(const DirectoryInfo & info);
     Directory(const std::string & path);
     Directory(const Directory &);
     Directory(Directory &&);
     Directory & operator = (const Directory &);
     Directory & operator = (Directory &&);
 
-    bool Exists() const;
+    FileInfoList ScanForFiles(SearchOption searchOption = SearchOption::Normal) const;
+    FileInfoList ScanForFiles(const std::string & searchPattern,
+                              SearchOption searchOption = SearchOption::Normal) const;
+    List ScanForDirectories() const;
+    List ScanForDirectories(const std::string & searchPattern,
+                            SearchOption searchOption = SearchOption::Normal) const;
     void CreateSubdirectory(const std::string & path);
+    bool Exists() const;
     void Create();
-    FileInfoList GetFiles(SearchOption searchOption = SearchOption::Normal) const;
-    FileInfoList GetFiles(const std::string & searchPattern,
-                          SearchOption searchOption = SearchOption::Normal) const;
-    List GetDirectories() const;
-    List GetDirectories(const std::string & searchPattern,
-                        SearchOption searchOption = SearchOption::Normal) const;
     void MoveTo(const std::string & destination);
-    void Move(const std::string & source, const std::string & destination);
+    void MoveTo(const Directory & destination);
     void Delete();
 
     static bool Exists(const std::string & path);
     static void CreateDirectory(const std::string & path);
+    static void Move(const std::string & source, const std::string & destination);
     static void Delete(const std::string & path);
 
-    std::string const & GetPath() const;
-    std::string GetDirectoryName() const;
-    std::string GetFilename() const;
-    std::string GetFilenameWithoutExtension() const;
-    std::string GetExtension() const;
-    std::shared_ptr<DirectoryInfo> GetDirectory() const { return Parent(); }
-
 protected:
-    void AddSubDirectory(const DirectoryInfo & directory) const;
-    bool HaveSubDirectory(const std::string & name) const;
-    static void AddSubDirectory(List & list, const DirectoryInfo & directory);
-    static bool HaveSubDirectory(List & list, const std::string & name);
     static void GetFilesInCurrentDirectory(FileInfoList & result,
                                            const std::string & path,
                                            const std::string & searchPattern,

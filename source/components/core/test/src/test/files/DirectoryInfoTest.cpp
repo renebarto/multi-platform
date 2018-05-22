@@ -39,11 +39,11 @@ TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryExisting)
     EXPECT_FALSE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(path, info.GetPath());
-    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::FilledDirName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::FilledDirName(), info.GetFilenameWithoutExtension());
     EXPECT_EQ("", info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryNonExisting)
@@ -71,11 +71,11 @@ TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryNonExisting)
     EXPECT_FALSE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(path, info.GetPath());
-    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::DummyDirName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::DummyDirName(), info.GetFilenameWithoutExtension());
     EXPECT_EQ("", info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryHidden)
@@ -103,13 +103,13 @@ TEST_FIXTURE(DirectoryInfoTest, ConstructDirectoryHidden)
     EXPECT_TRUE(info.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(path, info.GetPath());
-    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetDirectoryName());
+    EXPECT_EQ(Core::Test::Data::TestDirectoryCore(), info.GetParentDirectoryPath());
     EXPECT_EQ(Core::Test::Data::HiddenDirName(), info.GetFilename());
     EXPECT_EQ(Core::Test::Data::HiddenDirName(), info.GetFilenameWithoutExtension());
     EXPECT_EQ("", info.GetExtension());
-    EXPECT_EQ(nullptr, info.GetDirectory());
+    EXPECT_EQ(nullptr, info.GetParentDirectory());
 }
 
 } // namespace Test
-} // namespace File
+} // namespace Files
 } // namespace Core
