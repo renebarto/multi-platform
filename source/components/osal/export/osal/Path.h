@@ -22,8 +22,8 @@ OSAL_EXPORT char PathSeparator();
 OSAL_EXPORT std::string AddSeparatorIfNeeded(const std::string & path);
 OSAL_EXPORT bool FileExists(const std::string & path);
 OSAL_EXPORT bool DirectoryExists(const std::string & path);
-OSAL_EXPORT void MakeSureDirectoryExists(const std::string & path);
-OSAL_EXPORT void MakeSureFileDoesNotExist(const std::string & path);
+OSAL_EXPORT bool MakeSureDirectoryExists(const std::string & path);
+OSAL_EXPORT bool MakeSureFileDoesNotExist(const std::string & path);
 OSAL_EXPORT std::string ResolveTilde(const std::string & path);
 OSAL_EXPORT void SplitPath(const std::string & path, std::string & directory, std::string & fileName);
 OSAL_EXPORT std::string Extension(const std::string & path);
@@ -44,15 +44,27 @@ OSAL_EXPORT std::string TempPath();
 OSAL_EXPORT std::string ResolveSymbolicLink(const std::string & path);
 inline int ChangeCurrentDirectory(const std::string & directory)
 {
-    return ChDir(directory.c_str());
+    if (ChDir(directory.c_str()) != 0)
+        return errno;
+    return 0;
 }
 inline int CreateDirectory(const std::string & directory, mode_t mode)
 {
-    return MkDir(directory.c_str(), mode);
+    if (MkDir(directory.c_str(), mode) != 0)
+        return errno;
+    return 0;
+}
+inline int MoveDirectory(const std::string & oldPath, const std::string & newPath)
+{
+    if (MoveDir(oldPath.c_str(), newPath.c_str()) != 0)
+        return errno;
+    return 0;
 }
 inline int RemoveDirectory(const std::string & directory)
 {
-    return RmDir(directory.c_str());
+    if (RmDir(directory.c_str()) != 0)
+        return errno;
+    return 0;
 }
 
 } // namespace Path

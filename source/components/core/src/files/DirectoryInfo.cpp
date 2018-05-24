@@ -60,7 +60,7 @@ bool DirectoryInfo::Exists() const
 
 bool DirectoryInfo::Exists(const std::string & path)
 {
-    return OSAL::Path::FileExists(path);
+    return OSAL::Path::DirectoryExists(path);
 }
 
 void DirectoryInfo::AddSubDirectory(const DirectoryInfo & directory) const

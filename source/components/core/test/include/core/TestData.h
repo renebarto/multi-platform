@@ -31,6 +31,8 @@ public:
     static std::string SymlinkDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), SymlinkDirName()); }
     static std::string DummyDirName() { return "Dummy"; }
     static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), DummyDirName()); }
+    static std::string NonExistingDirName() { return "Dummy2"; }
+    static std::string NonExistingDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), NonExistingDirName()); }
     static std::string HiddenDirName() { return ".hidden"; }
     static std::string HiddenDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), HiddenDirName()); }
 

@@ -55,7 +55,9 @@ inline ssize_t Write(FileDescriptor fd, const void * buf, size_t count)
 
 inline int Remove(const char * path)
 {
-    return ::unlink(path);
+    if (::unlink(path) != 0)
+        return errno;
+    return 0;
 }
 
 inline int Stat(const char * path, struct stat * data)

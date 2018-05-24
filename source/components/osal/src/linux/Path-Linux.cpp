@@ -9,6 +9,7 @@
 
 #include "osal/osal.h"
 #include "osal/Exception.h"
+#include "osal/Files.h"
 #include "osal/Path.h"
 
 using namespace std;
@@ -47,28 +48,29 @@ bool OSAL::Path::DirectoryExists(const string & path)
     return (S_ISDIR(status.st_mode));
 }
 
-void OSAL::Path::MakeSureDirectoryExists(const string & path)
+bool OSAL::Path::MakeSureDirectoryExists(const string & path)
 {
     struct stat status;
     memset(&status, 0, sizeof(status));
     stat(path.c_str(), &status);
     if (S_ISDIR(status.st_mode))
-        return;
+        return true;
     if (S_ISREG(status.st_mode))
     {
-        if (unlink(path.c_str()) != 0)
-            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
+        if (RemoveDirectory(path.c_str()) != 0)
+            return false;
     }
-    CreateDirectory(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    return (CreateDirectory(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0);
 }
 
-void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
+bool OSAL::Path::MakeSureFileDoesNotExist(const string & path)
 {
     if (FileExists(path))
     {
-        if (unlink(path.c_str()) != 0)
-            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
+        if (Files::Remove(path.c_str()) != 0)
+            return false;
     }
+    return true;
 }
 
 string OSAL::Path::FullPath(const string & path)

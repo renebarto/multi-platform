@@ -14,13 +14,13 @@ class DirectoryTest : public UnitTestCpp::TestFixture
 public:
     void SetUp() override
     {
-        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExistingPath());
-        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExisting2Path());
+        Directory::DeleteRecursive(Core::Test::Data::DummyDirPath());
+        Directory::DeleteRecursive(Core::Test::Data::NonExistingDirPath());
     }
     void TearDown() override
     {
-        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExistingPath());
-        OSAL::Path::MakeSureFileDoesNotExist(Core::Test::Data::RegularFileNonExisting2Path());
+        Directory::DeleteRecursive(Core::Test::Data::DummyDirPath());
+        Directory::DeleteRecursive(Core::Test::Data::NonExistingDirPath());
     }
 };
 
@@ -414,404 +414,315 @@ TEST_FIXTURE(DirectoryTest, AssignMoveExisting)
     EXPECT_EQ(nullptr, directory.GetParentDirectory());
 }
 
-//TEST_FIXTURE(DirectoryTest, DeleteExisting)
-//{
-//    Directory::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
-//    string path = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory directory(path);
-//
-//    EXPECT_TRUE(directory.Exists());
-//    EXPECT_TRUE(directory.Delete());
-//    EXPECT_FALSE(directory.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, DeleteNonExisting)
-//{
-//    string path = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory directory(path);
-//
-//    EXPECT_FALSE(directory.Exists());
-//    EXPECT_FALSE(directory.Delete());
-//    EXPECT_FALSE(directory.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, DeletePathExisting)
-//{
-//    Directory::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
-//    string path = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    EXPECT_TRUE(Directory::Exists(path));
-//    EXPECT_TRUE(Directory::Delete(path));
-//    EXPECT_FALSE(Directory::Exists(path));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, DeletePathNonExisting)
-//{
-//    string path = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    EXPECT_FALSE(Directory::Exists(path));
-//    EXPECT_FALSE(Directory::Delete(path));
-//    EXPECT_FALSE(Directory::Exists(path));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyToExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.CopyTo(pathDst));
-//    EXPECT_TRUE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyToNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CopyTo(pathDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MoveToExisting)
-//{
-//    Directory::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.MoveTo(pathDst));
-//    EXPECT_TRUE(Directory::Compare(Core::Test::Data::RegularFilePath(), pathDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MoveToNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.MoveTo(pathDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyToFileExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.CopyTo(fileDst));
-//    EXPECT_TRUE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyToFileNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CopyTo(fileDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MoveToFileExisting)
-//{
-//    Directory::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.MoveTo(fileDst));
-//    EXPECT_TRUE(Directory::Compare(Core::Test::Data::RegularFilePath(), pathDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MoveToFileNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.MoveTo(fileDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyPathToPathExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//    EXPECT_TRUE(Directory::Copy(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CopyPathToPathNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//    EXPECT_FALSE(Directory::Copy(pathSrc, pathDst));
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MovePathToPathExisting)
-//{
-//    Directory::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFileNonExisting2Path();
-//
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//    EXPECT_TRUE(Directory::Move(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Compare(Core::Test::Data::RegularFilePath(), pathDst));
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, MovePathToPathNonExisting)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//    EXPECT_FALSE(Directory::Move(pathSrc, pathDst));
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToExistingSourceAndDestinationEqual)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile2Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.CompareTo(pathDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToExistingSourceAndDestinationInequal)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile3Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(pathDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToExistingSourceNonExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToNonExistingSourceExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFilePath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToFileExistingSourceAndDestinationEqual)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile2Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_TRUE(fileSrc.CompareTo(fileDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToFileExistingSourceAndDestinationInequal)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile3Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToFileExistingSourceNonExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
-//    EXPECT_TRUE(fileSrc.Exists());
-//    EXPECT_FALSE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, CompareToFileNonExistingSourceExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFilePath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//    EXPECT_FALSE(fileSrc.CompareTo(fileDst));
-//    EXPECT_FALSE(fileSrc.Exists());
-//    EXPECT_TRUE(fileDst.Exists());
-//}
-//
-//TEST_FIXTURE(DirectoryTest, ComparePathToPathExistingSourceAndDestinationEqual)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile2Path();
-//
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//    EXPECT_TRUE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, ComparePathToPathExistingSourceAndDestinationInequal)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFile3Path();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//    EXPECT_FALSE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, ComparePathToPathExistingSourceNonExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFilePath();
-//    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//    EXPECT_FALSE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_TRUE(Directory::Exists(pathSrc));
-//    EXPECT_FALSE(Directory::Exists(pathDst));
-//}
-//
-//TEST_FIXTURE(DirectoryTest, ComparePathToPathNonExistingSourceExistingDestination)
-//{
-//    string pathSrc = Core::Test::Data::RegularFileNonExistingPath();
-//    string pathDst = Core::Test::Data::RegularFilePath();
-//
-//    Directory fileSrc(pathSrc);
-//    Directory fileDst(pathDst);
-//
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//    EXPECT_FALSE(Directory::Compare(pathSrc, pathDst));
-//    EXPECT_FALSE(Directory::Exists(pathSrc));
-//    EXPECT_TRUE(Directory::Exists(pathDst));
-//}
+TEST_FIXTURE(DirectoryTest, DeleteExisting)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    Directory::Create(path);
+
+    Directory directory(path);
+
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_TRUE(directory.Delete());
+    EXPECT_FALSE(directory.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, DeleteNonExisting)
+{
+    string path = Core::Test::Data::DummyDirPath();
+
+    Directory directory(path);
+
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directory.Delete());
+    EXPECT_FALSE(directory.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, DeleteFromPathExisting)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    Directory::Create(path);
+
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_TRUE(Directory::Delete(path));
+    EXPECT_FALSE(Directory::Exists(path));
+}
+
+TEST_FIXTURE(DirectoryTest, DeleteFromPathNonExisting)
+{
+    string path = Core::Test::Data::DummyDirPath();
+
+    EXPECT_FALSE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Delete(path));
+    EXPECT_FALSE(Directory::Exists(path));
+}
+
+TEST_FIXTURE(DirectoryTest, MoveToExisting)
+{
+    string pathSrc = Core::Test::Data::DummyDirPath();
+    string pathDst = Core::Test::Data::NonExistingDirPath();
+    Directory::Create(pathSrc);
+
+    Directory directorySrc(pathSrc);
+    Directory directoryDst(pathDst);
+
+    EXPECT_TRUE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+    EXPECT_TRUE(directorySrc.MoveTo(pathDst));
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_TRUE(directoryDst.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, MoveToNonExisting)
+{
+    string pathSrc = Core::Test::Data::DummyDirPath();
+    string pathDst = Core::Test::Data::NonExistingDirPath();
+
+    Directory directorySrc(pathSrc);
+    Directory directoryDst(pathDst);
+
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+    EXPECT_FALSE(directorySrc.MoveTo(pathDst));
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, MoveToDirectoryExisting)
+{
+    string pathSrc = Core::Test::Data::DummyDirPath();
+    string pathDst = Core::Test::Data::NonExistingDirPath();
+    Directory::Create(pathSrc);
+
+    Directory directorySrc(pathSrc);
+    Directory directoryDst(pathDst);
+
+    EXPECT_TRUE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+    EXPECT_TRUE(directorySrc.MoveTo(directoryDst));
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_TRUE(directoryDst.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, MoveToDirectoryNonExisting)
+{
+    string pathSrc = Core::Test::Data::RegularFileNonExisting2Path();
+    string pathDst = Core::Test::Data::RegularFileNonExistingPath();
+
+    Directory directorySrc(pathSrc);
+    Directory directoryDst(pathDst);
+
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+    EXPECT_FALSE(directorySrc.MoveTo(directoryDst));
+    EXPECT_FALSE(directorySrc.Exists());
+    EXPECT_FALSE(directoryDst.Exists());
+}
+
+TEST_FIXTURE(DirectoryTest, MovePathToPathExisting)
+{
+    string pathSrc = Core::Test::Data::DummyDirPath();
+    string pathDst = Core::Test::Data::NonExistingDirPath();
+    Directory::Create(pathSrc);
+
+    EXPECT_TRUE(Directory::Exists(pathSrc));
+    EXPECT_FALSE(Directory::Exists(pathDst));
+    EXPECT_TRUE(Directory::Move(pathSrc, pathDst));
+    EXPECT_FALSE(Directory::Exists(pathSrc));
+    EXPECT_TRUE(Directory::Exists(pathDst));
+}
+
+TEST_FIXTURE(DirectoryTest, MovePathToPathNonExisting)
+{
+    string pathSrc = Core::Test::Data::DummyDirPath();
+    string pathDst = Core::Test::Data::NonExistingDirPath();
+
+    Directory directorySrc(pathSrc);
+    Directory directoryDst(pathDst);
+
+    EXPECT_FALSE(Directory::Exists(pathSrc));
+    EXPECT_FALSE(Directory::Exists(pathDst));
+    EXPECT_FALSE(Directory::Move(pathSrc, pathDst));
+    EXPECT_FALSE(Directory::Exists(pathSrc));
+    EXPECT_FALSE(Directory::Exists(pathDst));
+}
+
+TEST_FIXTURE(DirectoryTest, CreateSubdirectoryExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+    Directory::Create(path);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_TRUE(directory.CreateSubdirectory(subDirectory));
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_TRUE(directoryComplete.Exists());
+    EXPECT_TRUE(directoryComplete.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateSubdirectoryNonExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_FALSE(directory.CreateSubdirectory(subDirectory));
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_FALSE(directoryComplete.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+    Directory::Create(path);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_TRUE(directoryComplete.Create());
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_TRUE(directoryComplete.Exists());
+    EXPECT_TRUE(directoryComplete.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateNonExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_FALSE(directoryComplete.Create());
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_FALSE(directoryComplete.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateRecursiveExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+    Directory::Create(path);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_TRUE(directoryComplete.CreateRecursive());
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_TRUE(directoryComplete.Exists());
+    EXPECT_FALSE(directory.Delete());
+    EXPECT_TRUE(directoryComplete.Delete());
+    EXPECT_TRUE(directory.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateRecursiveNonExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_FALSE(directory.Exists());
+    EXPECT_FALSE(directoryComplete.Exists());
+    EXPECT_TRUE(directoryComplete.CreateRecursive());
+    EXPECT_TRUE(directory.Exists());
+    EXPECT_TRUE(directoryComplete.Exists());
+    EXPECT_FALSE(directory.Delete());
+    EXPECT_TRUE(directoryComplete.Delete());
+    EXPECT_TRUE(directory.Delete());
+}
+
+TEST_FIXTURE(DirectoryTest, CreateFromPathExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+    Directory::Create(path);
+
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Exists(pathComplete));
+    EXPECT_TRUE(Directory::Create(pathComplete));
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_TRUE(Directory::Exists(pathComplete));
+    EXPECT_TRUE(Directory::Delete(pathComplete));
+}
+
+TEST_FIXTURE(DirectoryTest, CreateFromPathNonExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+
+    EXPECT_FALSE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Exists(pathComplete));
+    EXPECT_FALSE(Directory::Create(pathComplete));
+    EXPECT_FALSE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Exists(pathComplete));
+    EXPECT_FALSE(Directory::Delete(pathComplete));
+}
+
+TEST_FIXTURE(DirectoryTest, CreateRecursiveFromPathExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+    Directory::Create(path);
+
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Exists(pathComplete));
+    EXPECT_TRUE(Directory::CreateRecursive(pathComplete));
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_TRUE(Directory::Exists(pathComplete));
+    EXPECT_FALSE(Directory::Delete(path));
+    EXPECT_TRUE(Directory::Delete(pathComplete));
+    EXPECT_TRUE(Directory::Delete(path));
+}
+
+TEST_FIXTURE(DirectoryTest, CreateRecursiveFromPathNonExistingParent)
+{
+    string path = Core::Test::Data::DummyDirPath();
+    string subDirectory = Core::Test::Data::DummyDirName();
+    string pathComplete = OSAL::Path::CombinePath(path, subDirectory);
+
+    Directory directory(path);
+    Directory directoryComplete(pathComplete);
+
+    EXPECT_FALSE(Directory::Exists(path));
+    EXPECT_FALSE(Directory::Exists(pathComplete));
+    EXPECT_TRUE(Directory::CreateRecursive(pathComplete));
+    EXPECT_TRUE(Directory::Exists(path));
+    EXPECT_TRUE(Directory::Exists(pathComplete));
+    EXPECT_FALSE(Directory::Delete(path));
+    EXPECT_TRUE(Directory::Delete(pathComplete));
+    EXPECT_TRUE(Directory::Delete(path));
+}
+
+// TODO: DeleteRecursive tests
+// TODO: ScanForFiles tests
+// TODO: ScanForDirectories tests
 
 } // namespace Test
 } // namespace Files

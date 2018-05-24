@@ -48,21 +48,71 @@ Directory & Directory::operator = (Directory && other)
     return *this;
 }
 
-//bool Directory::Exists() const
-//{
-//    return Exists(FullPath());
-//}
-//
-//void Directory::CreateSubdirectory(const std::string & name)
-//{
-//    return CreateDirectory(OSAL::Path::CombinePath(FullPath(), name));
-//}
-//
-//void Directory::Create()
-//{
-//    CreateDirectory(FullPath());
-//}
-//
+bool Directory::CreateSubdirectory(const std::string & name)
+{
+    return Create(OSAL::Path::CombinePath(FullPath(), name));
+}
+
+bool Directory::Create()
+{
+    return Create(FullPath());
+}
+
+bool Directory::CreateRecursive()
+{
+    return CreateRecursive(FullPath());
+}
+
+bool Directory::MoveTo(const std::string & destination)
+{
+    return Move(FullPath(), destination);
+}
+
+bool Directory::MoveTo(const Directory & destination)
+{
+    return MoveTo(destination.FullPath());
+}
+
+bool Directory::Delete()
+{
+    return Delete(FullPath());
+}
+
+bool Directory::DeleteRecursive()
+{
+    return DeleteRecursive(FullPath());
+}
+
+bool Directory::Create(const std::string & path)
+{
+    return OSAL::Path::MakeSureDirectoryExists(path);
+}
+
+bool Directory::CreateRecursive(const std::string & path)
+{
+    string parentDirectory = OSAL::Path::FirstPartOfPath(path);
+    string subDirectory = OSAL::Path::LastPartOfPath(path);
+    if (!Exists(parentDirectory) && !CreateRecursive(parentDirectory))
+        return false;
+
+    return OSAL::Path::MakeSureDirectoryExists(path);
+}
+
+bool Directory::Move(const std::string & source, const std::string & destination)
+{
+    return (OSAL::Path::MoveDirectory(source, destination) == 0);
+}
+
+bool Directory::Delete(const std::string & path)
+{
+    return (OSAL::Path::RemoveDirectory(path) == 0);
+}
+
+bool Directory::DeleteRecursive(const std::string & path)
+{
+    return (OSAL::Path::RemoveDirectory(path) == 0);
+}
+
 //FileInfo::List Directory::GetFiles(SearchOption searchOption) const
 //{
 //    return GetFiles("*", searchOption);
@@ -137,16 +187,6 @@ Directory & Directory::operator = (Directory && other)
 //    return result;
 //}
 //
-//void Directory::MoveTo(const std::string & destination)
-//{
-//    Move(FullPath(), destination);
-//}
-//
-//void Directory::Delete()
-//{
-//    Delete(FullPath());
-//}
-//
 //void Directory::AddSubDirectory(const Directory & directory) const
 //{
 //    AddSubDirectory(_subDirectories, directory);
@@ -155,27 +195,6 @@ Directory & Directory::operator = (Directory && other)
 //bool Directory::HaveSubDirectory(const std::string & name) const
 //{
 //    return HaveSubDirectory(_subDirectories, name);
-//}
-//
-//bool Directory::Exists(const std::string & path)
-//{
-//    return OSAL::Path::DirectoryExists(path);
-//}
-//
-//void Directory::CreateDirectory(const std::string & path)
-//{
-//    OSAL::Path::MakeSureDirectoryExists(path);
-//}
-//
-//void Directory::Move(const std::string & source, const std::string & destination)
-//{
-//    if (rename(source.c_str(), destination.c_str()) != 0)
-//        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
-//}
-//
-//void Directory::Delete(const std::string & path)
-//{
-//    unlink(path.c_str());
 //}
 //
 //void Directory::AddSubDirectory(Directory::List & list, const Directory & directory)

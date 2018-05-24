@@ -35,24 +35,26 @@ public:
     Directory & operator = (const Directory &);
     Directory & operator = (Directory &&);
 
+    bool CreateSubdirectory(const std::string & path);
+    bool Create();
+    bool CreateRecursive();
+    bool MoveTo(const std::string & destination);
+    bool MoveTo(const Directory & destination);
+    bool Delete();
+    bool DeleteRecursive();
+
+    static bool Create(const std::string & path);
+    static bool CreateRecursive(const std::string & path);
+    static bool Move(const std::string & source, const std::string & destination);
+    static bool Delete(const std::string & path);
+    static bool DeleteRecursive(const std::string & path);
+
     FileInfoList ScanForFiles(SearchOption searchOption = SearchOption::Normal) const;
     FileInfoList ScanForFiles(const std::string & searchPattern,
                               SearchOption searchOption = SearchOption::Normal) const;
     List ScanForDirectories() const;
     List ScanForDirectories(const std::string & searchPattern,
                             SearchOption searchOption = SearchOption::Normal) const;
-    void CreateSubdirectory(const std::string & path);
-    bool Exists() const;
-    void Create();
-    void MoveTo(const std::string & destination);
-    void MoveTo(const Directory & destination);
-    void Delete();
-
-    static bool Exists(const std::string & path);
-    static void CreateDirectory(const std::string & path);
-    static void Move(const std::string & source, const std::string & destination);
-    static void Delete(const std::string & path);
-
 protected:
     static void GetFilesInCurrentDirectory(FileInfoList & result,
                                            const std::string & path,

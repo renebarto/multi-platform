@@ -18,6 +18,9 @@ inline int RmDir(const char * path)
 {
     return ::rmdir(path);
 }
-
+inline int MoveDir(const char * oldPath, const char * newPath)
+{
+    return ::rename(oldPath, newPath);
+}
 } // namespace Path
 } // namespace OSAL
