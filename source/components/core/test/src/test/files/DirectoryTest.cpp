@@ -822,7 +822,7 @@ TEST_FIXTURE(DirectoryTest, ScanForFilesIncludeSymbolicLinks)
     EXPECT_FALSE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, ".hidden.txt")));
 }
 
-TEST_FIXTURE(DirectoryTest, ScanForFilesRecursiveIncludeHiddanAndSymbolicLinks)
+TEST_FIXTURE(DirectoryTest, ScanForFilesRecursiveIncludeHiddenAndSymbolicLinks)
 {
     string path = Core::Test::Data::FilledDirPath();
 
@@ -885,7 +885,7 @@ TEST_FIXTURE(DirectoryTest, ScanForDirectoriesIncludeSymbolicLinks)
     EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(path, ".hidden")));
 }
 
-TEST_FIXTURE(DirectoryTest, ScanForDirectoriesRecursiveIncludeHiddanAndSymbolicLinks)
+TEST_FIXTURE(DirectoryTest, ScanForDirectoriesRecursiveIncludeHiddenAndSymbolicLinks)
 {
     string path = Core::Test::Data::TestDirectoryCore();
 
@@ -911,6 +911,63 @@ TEST_FIXTURE(DirectoryTest, ScanForDirectoriesRecursiveIncludeHiddanAndSymbolicL
                                                                                                                               "FilledDir.link"),
                                                                                                       "TstSubDir"),
                                                                               "TstSubSubDir")));
+}
+
+TEST_FIXTURE(DirectoryTest, ScanForFilesRecursiveIncludeHiddenAndSymbolicLinksWithPattern)
+{
+    string path = Core::Test::Data::FilledDirPath();
+
+    Directory directory(path);
+    FileInfo::List files = directory.ScanForFiles("*.tst",
+                                                  SearchOption::IncludeHidden |
+                                                  SearchOption::IncludeSymbolicLinks |
+                                                  SearchOption::Recursive);
+    EXPECT_EQ(size_t {8}, files.size());
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, "a.tst")));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, "b.tst")));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, "c.tst")));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, "d.tst")));
+    EXPECT_FALSE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, "a.link")));
+    EXPECT_FALSE(Directory::HaveFile(files, OSAL::Path::CombinePath(path, ".hidden.txt")));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path,
+                                                                   OSAL::Path::CombinePath("TstSubDir", "e.tst"))));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path,
+                                                                   OSAL::Path::CombinePath("TstSubDir", "f.tst"))));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path,
+                                                                   OSAL::Path::CombinePath("TstSubDir",
+                                                                                           OSAL::Path::CombinePath("TstSubSubDir", "g.tst")))));
+    EXPECT_TRUE(Directory::HaveFile(files, OSAL::Path::CombinePath(path,
+                                                                   OSAL::Path::CombinePath("TstSubDir",
+                                                                                           OSAL::Path::CombinePath("TstSubSubDir", "h.tst")))));
+}
+
+TEST_FIXTURE(DirectoryTest, ScanForDirectoriesRecursiveIncludeHiddenAndSymbolicLinksWithPatterm)
+{
+    string path = Core::Test::Data::TestDirectoryCore();
+
+    Directory directory(path);
+    DirectoryInfo::List directories = directory.ScanForDirectories("FilledDir*",
+                                                                   SearchOption::IncludeHidden |
+                                                                   SearchOption::IncludeSymbolicLinks |
+                                                                   SearchOption::Recursive);
+    EXPECT_EQ(size_t {2}, directories.size());
+    EXPECT_TRUE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(path, "FilledDir")));
+    EXPECT_TRUE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(path, "FilledDir.link")));
+    EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(path, ".hidden")));
+    EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(OSAL::Path::CombinePath(path,
+                                                                                                       "FilledDir"),
+                                                                               "TstSubDir")));
+    EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(OSAL::Path::CombinePath(OSAL::Path::CombinePath(path,
+                                                                                                                               "FilledDir"),
+                                                                                                       "TstSubDir"),
+                                                                               "TstSubSubDir")));
+    EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(OSAL::Path::CombinePath(path,
+                                                                                                       "FilledDir.link"),
+                                                                               "TstSubDir")));
+    EXPECT_FALSE(Directory::HaveDirectory(directories, OSAL::Path::CombinePath(OSAL::Path::CombinePath(OSAL::Path::CombinePath(path,
+                                                                                                                               "FilledDir.link"),
+                                                                                                       "TstSubDir"),
+                                                                               "TstSubSubDir")));
 }
 
 } // namespace Test

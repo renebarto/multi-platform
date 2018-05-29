@@ -92,7 +92,6 @@ bool Directory::Create(const std::string & path)
 bool Directory::CreateRecursive(const std::string & path)
 {
     string parentDirectory = OSAL::Path::FirstPartOfPath(path);
-    string subDirectory = OSAL::Path::LastPartOfPath(path);
     if (!Exists(parentDirectory) && !CreateRecursive(parentDirectory))
         return false;
 
