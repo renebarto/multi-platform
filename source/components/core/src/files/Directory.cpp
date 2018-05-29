@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "osal/Exception.h"
 #include "osal/Path.h"
+#include "core/files/File.h"
 
 using namespace std;
 using namespace Core;
@@ -110,125 +111,179 @@ bool Directory::Delete(const std::string & path)
 
 bool Directory::DeleteRecursive(const std::string & path)
 {
-    return (OSAL::Path::RemoveDirectory(path) == 0);
+    Directory directory(path);
+    FileInfo::List files = directory.ScanForFiles();
+    for (auto const & file : files)
+    {
+        if (!File::Delete(file.FullPath()))
+            return false;
+    }
+    DirectoryInfo::List directories = directory.ScanForDirectories();
+    for (auto const & directory : directories)
+    {
+        if (!DeleteRecursive(directory.FullPath()))
+        return false;
+    }
+    return Delete(path);
 }
 
-//FileInfo::List Directory::GetFiles(SearchOption searchOption) const
-//{
-//    return GetFiles("*", searchOption);
-//}
-//
-//FileInfo::List Directory::GetFiles(const std::string & searchPattern,
-//                                       SearchOption searchOption) const
-//{
-//    FileInfo::List result;
-//
-//    GetFilesInCurrentDirectory(result, FullPath(), searchPattern, searchOption);
-//
-//    string wildcardSpecifier = OSAL::Path::CombinePath(FullPath(), "*");
-//    glob_t globbuf;
-//
-//    glob(wildcardSpecifier.c_str(), GLOB_PERIOD | GLOB_ONLYDIR, nullptr, &globbuf);
-//
-//    for (size_t i = 0; i < globbuf.gl_pathc; i++)
-//    {
-//        string directoryName = OSAL::Path::LastPartOfPath(globbuf.gl_pathv[i]);
-//        if ((directoryName == ".") || (directoryName == ".."))
-//            continue;
-//        Directory directoryInfo(OSAL::Path::FullPath(globbuf.gl_pathv[i]));
-//
-//        if (!HaveSubDirectory(directoryInfo.Name()))
-//            AddSubDirectory(directoryInfo);
-//        if ((searchOption & SearchOption::Recursive) != 0)
-//        {
-//            FileInfo::List subDirectoryResult = directoryInfo.GetFiles(searchPattern, searchOption);
-//            result.insert(result.end(), subDirectoryResult.begin(), subDirectoryResult.end());
-//        }
-//    }
-//    globfree(&globbuf);
-//
-//    return result;
-//}
-//
-//Directory::List Directory::GetDirectories() const
-//{
-//    return GetDirectories("*", SearchOption::Normal);
-//}
-//
-//Directory::List Directory::GetDirectories(const std::string & searchPattern,
-//                                                  SearchOption searchOption) const
-//{
-//    Directory::List result;
-//
-//    string wildcardSpecifier = OSAL::Path::CombinePath(FullPath(), searchPattern);
-//    glob_t globbuf;
-//
-//    glob(wildcardSpecifier.c_str(), GLOB_PERIOD | GLOB_ONLYDIR, nullptr, &globbuf);
-//
-//    for (size_t i = 0; i < globbuf.gl_pathc; i++)
-//    {
-//        string directoryName = OSAL::Path::LastPartOfPath(globbuf.gl_pathv[i]);
-//        if ((directoryName == ".") || (directoryName == ".."))
-//            continue;
-//        Directory directoryInfo(OSAL::Path::FullPath(globbuf.gl_pathv[i]));
-//        if (!HaveSubDirectory(result, directoryInfo.Name()))
-//            AddSubDirectory(result, directoryInfo);
-//
-//        if (!HaveSubDirectory(directoryInfo.Name()))
-//            AddSubDirectory(directoryInfo);
-//        if ((searchOption & SearchOption::Recursive) != 0)
-//        {
-//            Directory::List subDirectoryResult = directoryInfo.GetDirectories(searchPattern, searchOption);
-//            result.insert(result.end(), subDirectoryResult.begin(), subDirectoryResult.end());
-//        }
-//    }
-//    globfree(&globbuf);
-//
-//    return result;
-//}
-//
-//void Directory::AddSubDirectory(const Directory & directory) const
-//{
-//    AddSubDirectory(_subDirectories, directory);
-//}
-//
-//bool Directory::HaveSubDirectory(const std::string & name) const
-//{
-//    return HaveSubDirectory(_subDirectories, name);
-//}
-//
-//void Directory::AddSubDirectory(Directory::List & list, const Directory & directory)
-//{
-//    list.push_back(directory);
-//}
-//
-//bool Directory::HaveSubDirectory(Directory::List & list, const std::string & name)
-//{
-//    for (auto const & directory : list)
-//    {
-//        if (directory.Name() == name)
-//            return true;
-//    }
-//    return false;
-//}
-//
-//void Directory::GetFilesInCurrentDirectory(FileInfo::List & result,
-//                                               const string & path,
-//                                               const string & searchPattern,
-//                                               SearchOption searchOption)
-//{
-//    string wildcardSpecifier = OSAL::Path::CombinePath(path, searchPattern);
-//    glob_t globbuf;
-//
-//    glob(wildcardSpecifier.c_str(), GLOB_PERIOD, nullptr, &globbuf);
-//
-//    for (size_t i = 0; i < globbuf.gl_pathc; i++)
-//    {
-//        FileInfo fileInfo(OSAL::Path::FullPath(globbuf.gl_pathv[i]));
-//        if (!fileInfo.IsDirectory() &&
-//            (((searchOption & SearchOption::IncludeHidden) != 0) ||
-//             !fileInfo.IsHiddenFile()))
-//            result.push_back(fileInfo);
-//    }
-//    globfree(&globbuf);
-//}
+FileInfo::List Directory::ScanForFiles(SearchOption searchOption) const
+{
+    return ScanForFiles("*", searchOption);
+}
+
+FileInfo::List Directory::ScanForFiles(const std::string & searchPattern,
+                                       SearchOption searchOption) const
+{
+    FileInfo::List result;
+
+    if (!GetFilesInCurrentDirectory(result, FullPath(), searchPattern, searchOption))
+        return {};
+
+    string wildcardSpecifier = OSAL::Path::CombinePath(FullPath(), "*");
+    glob_t globBuffer;
+
+    DirectoryInfo::List subDirectories;
+
+    glob(wildcardSpecifier.c_str(), GLOB_PERIOD | GLOB_ONLYDIR, nullptr, &globBuffer);
+
+    for (size_t i = 0; i < globBuffer.gl_pathc; i++)
+    {
+        string directoryName = OSAL::Path::LastPartOfPath(globBuffer.gl_pathv[i]);
+        if ((directoryName == ".") || (directoryName == ".."))
+            continue;
+        Directory directory(OSAL::Path::FullPath(globBuffer.gl_pathv[i]));
+
+        if (!HaveDirectory(subDirectories, directory.Name()))
+            AddDirectory(subDirectories, directory);
+        if ((searchOption & SearchOption::Recursive) != 0)
+        {
+            FileInfo::List subDirectoryResult = directory.ScanForFiles(searchPattern, searchOption);
+            result.insert(result.end(), subDirectoryResult.begin(), subDirectoryResult.end());
+        }
+    }
+    globfree(&globBuffer);
+
+    return result;
+}
+
+DirectoryInfo::List Directory::ScanForDirectories(const std::string & searchPattern,
+                                                  SearchOption searchOption) const
+{
+    DirectoryInfo::List result;
+
+    string wildcardSpecifier = OSAL::Path::CombinePath(FullPath(), searchPattern);
+    glob_t globBuffer;
+
+    DirectoryInfo::List subDirectories;
+
+    glob(wildcardSpecifier.c_str(), GLOB_PERIOD | GLOB_ONLYDIR, nullptr, &globBuffer);
+
+    for (size_t i = 0; i < globBuffer.gl_pathc; i++)
+    {
+        string directoryName = OSAL::Path::LastPartOfPath(globBuffer.gl_pathv[i]);
+        if ((directoryName == ".") || (directoryName == ".."))
+            continue;
+        string directoryPath = globBuffer.gl_pathv[i];
+        if ((searchOption & SearchOption::IncludeSymbolicLinks) == 0)
+        {
+            // Resolve symbolic link
+            directoryPath = OSAL::Path::FullPath(directoryPath);
+        }
+        else
+        {
+            DirectoryInfo tmp(OSAL::Path::FullPath(directoryPath));
+            if (!tmp.IsDirectory())
+                continue;
+        }
+        Directory directory(directoryPath);
+        if (!HaveDirectory(result, directory.FullPath()) &&
+            (((searchOption & SearchOption::IncludeHidden) != 0) ||
+            !directory.IsHidden()))
+            AddDirectory(result, directory);
+
+        if (!HaveDirectory(subDirectories, directory.Name()))
+            AddDirectory(subDirectories, directory);
+        if ((searchOption & SearchOption::Recursive) != 0)
+        {
+            DirectoryInfo::List subDirectoryResult = directory.ScanForDirectories(searchPattern, searchOption);
+            result.insert(result.end(), subDirectoryResult.begin(), subDirectoryResult.end());
+        }
+    }
+    globfree(&globBuffer);
+
+    return result;
+}
+
+DirectoryInfo::List Directory::ScanForDirectories(SearchOption searchOption) const
+{
+    return ScanForDirectories("*", searchOption);
+}
+
+bool Directory::GetFilesInCurrentDirectory(FileInfo::List & result,
+                                           const string & path,
+                                           const string & searchPattern,
+                                           SearchOption searchOption)
+{
+    string wildcardSpecifier = OSAL::Path::CombinePath(path, searchPattern);
+    glob_t globBuffer;
+
+    glob(wildcardSpecifier.c_str(), GLOB_PERIOD, nullptr, &globBuffer);
+
+    for (size_t i = 0; i < globBuffer.gl_pathc; i++)
+    {
+        string filePath = globBuffer.gl_pathv[i];
+        if ((searchOption & SearchOption::IncludeSymbolicLinks) == 0)
+        {
+            // Resolve symbolic link
+            filePath = OSAL::Path::FullPath(filePath);
+        }
+        else
+        {
+            FileInfo tmp(OSAL::Path::FullPath(filePath));
+            if (!tmp.IsRegularFile())
+                continue;
+        }
+        FileInfo fileInfo(filePath);
+        if (!fileInfo.IsDirectory() &&
+            (((searchOption & SearchOption::IncludeHidden) != 0) ||
+             !fileInfo.IsHidden()))
+        {
+            if (!HaveFile(result, fileInfo.FullPath()))
+                AddFile(result, fileInfo);
+        }
+    }
+    globfree(&globBuffer);
+    return true;
+}
+
+void Directory::AddDirectory(DirectoryInfo::List & directories, const DirectoryInfo & directory)
+{
+    directories.push_back(directory);
+}
+
+bool Directory::HaveDirectory(DirectoryInfo::List & directories, const std::string & name)
+{
+    for (auto const & directory : directories)
+    {
+        if (directory.FullPath() == name)
+            return true;
+    }
+    return false;
+}
+
+void Directory::AddFile(FileInfo::List & files, const FileInfo & file)
+{
+    files.push_back(file);
+}
+
+bool Directory::HaveFile(FileInfo::List & files, const std::string & name)
+{
+    for (auto const & file : files)
+    {
+        if (file.FullPath() == name)
+            return true;
+    }
+    return false;
+}
+

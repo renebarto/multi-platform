@@ -15,6 +15,7 @@ enum class SearchOption : int
     Normal = 0x00,
     Recursive = 0x01,
     IncludeHidden = 0x02,
+    IncludeSymbolicLinks = 0x04,
 };
 
 class FileInfo;
@@ -49,21 +50,22 @@ public:
     static bool Delete(const std::string & path);
     static bool DeleteRecursive(const std::string & path);
 
-    FileInfoList ScanForFiles(SearchOption searchOption = SearchOption::Normal) const;
-    FileInfoList ScanForFiles(const std::string & searchPattern,
-                              SearchOption searchOption = SearchOption::Normal) const;
-    List ScanForDirectories() const;
-    List ScanForDirectories(const std::string & searchPattern,
-                            SearchOption searchOption = SearchOption::Normal) const;
+    FileInfo::List ScanForFiles(SearchOption searchOption = SearchOption::Normal) const;
+    FileInfo::List ScanForFiles(const std::string & searchPattern,
+                                SearchOption searchOption = SearchOption::Normal) const;
+    DirectoryInfo::List ScanForDirectories(SearchOption searchOption = SearchOption::Normal) const;
+    DirectoryInfo::List ScanForDirectories(const std::string & searchPattern,
+                                           SearchOption searchOption = SearchOption::Normal) const;
+    static void AddDirectory(DirectoryInfo::List & directories, const DirectoryInfo & directory);
+    static bool HaveDirectory(DirectoryInfo::List & directories, const std::string & name);
+    static void AddFile(FileInfo::List & files, const FileInfo & file);
+    static bool HaveFile(FileInfo::List & files, const std::string & name);
+
 protected:
-    static void GetFilesInCurrentDirectory(FileInfoList & result,
+    static bool GetFilesInCurrentDirectory(FileInfo::List & result,
                                            const std::string & path,
                                            const std::string & searchPattern,
                                            SearchOption searchOption);
-
-    mutable List _subDirectories;
-
-    friend class FileInfo;
 };
 
 } // namespace Files

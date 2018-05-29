@@ -27,21 +27,11 @@ public:
     DirectoryInfo & operator = (const DirectoryInfo &);
     DirectoryInfo & operator = (DirectoryInfo &&);
 
-    FileInfoList GetFiles() const { return _files; }
-    List GetDirectories() const { return _subDirectories; }
-
     bool Exists() const;
 
     static bool Exists(const std::string & path);
 
 protected:
-    void AddSubDirectory(const DirectoryInfo & directory) const;
-    bool HaveSubDirectory(const std::string & name) const;
-    void AddFile(const FileInfo & file) const;
-    bool HaveFile(const std::string & name) const;
-
-    mutable List _subDirectories;
-    mutable FileInfoList _files;
 
     friend class FileInfo;
 };
