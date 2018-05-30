@@ -21,7 +21,8 @@ set(PACKAGE_VERSION ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_
 
 set(PACKAGE_COMPILER_DEFINITIONS_PRIVATE
     TEST_DATA_ROOT="${TEST_DATA_ROOT}"
-    PLATFORM_NAME="${PLATFORM_NAME}")
+    PLATFORM_NAME="${PLATFORM_NAME}"
+    MYSQLPP_MYSQL_HEADERS_BURIED)
 
 set(PACKAGE_COMPILER_DEFINITIONS
     ${COMPILER_DEFINITIONS}
@@ -46,6 +47,7 @@ set(PACKAGE_DEPENDENCIES
     regex
     parser
     json
+    database
 #    crypto
 #    network
 #    xml
@@ -78,6 +80,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_PARSER ${CMAKE_SOURCE_DIR}/source/components/
 file(GLOB_RECURSE PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
 
+file(GLOB_RECURSE PACKAGE_SOURCES_DATABASE ${CMAKE_SOURCE_DIR}/source/components/database/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_DATABASE ${CMAKE_SOURCE_DIR}/source/components/database/test/include/crypto/*.h)
+
 file(GLOB_RECURSE PACKAGE_SOURCES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_CRYPTO ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include/crypto/*.h)
 
@@ -101,10 +106,11 @@ list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_CORE}
     ${PACKAGE_SOURCES_RE}
     ${PACKAGE_SOURCES_PARSER}
+    ${PACKAGE_SOURCES_JSON}
+    ${PACKAGE_SOURCES_DATABASE}
     ${PACKAGE_SOURCES_CRYPTO}
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_XML}
-    ${PACKAGE_SOURCES_JSON}
     ${PACKAGE_SOURCES_PARSE_CPP}
     ${PACKAGE_SOURCES_STARUML}
     )
@@ -113,10 +119,11 @@ list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_CORE}
     ${PACKAGE_INCLUDES_RE}
     ${PACKAGE_INCLUDES_PARSER}
+    ${PACKAGE_INCLUDES_JSON}
+    ${PACKAGE_INCLUDES_DATABASE}
     ${PACKAGE_INCLUDES_CRYPTO}
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_XML}
-    ${PACKAGE_INCLUDES_JSON}
     ${PACKAGE_INCLUDES_PARSE_CPP}
     ${PACKAGE_INCLUDES_STARUML}
     )
@@ -127,10 +134,11 @@ list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
     ${CMAKE_SOURCE_DIR}/source/components/regex/test/include
     ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/json/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/database/test/include
     ${CMAKE_SOURCE_DIR}/source/components/crypto/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/xml/test/include
-    ${CMAKE_SOURCE_DIR}/source/components/json/test/include
     ${CMAKE_SOURCE_DIR}/source/components/parse-c++/test/include
     ${CMAKE_SOURCE_DIR}/source/components/staruml/test/include
     )
