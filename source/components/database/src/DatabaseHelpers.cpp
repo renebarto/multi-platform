@@ -73,7 +73,7 @@ class MallocBuffer
 public:
     MallocBuffer() = delete;
     MallocBuffer(const MallocBuffer &) = delete;
-    MallocBuffer(size_t size) :
+    explicit MallocBuffer(size_t size) :
         size(size),
         contents(0)
     {

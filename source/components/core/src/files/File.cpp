@@ -28,6 +28,7 @@ File::File(File && other)
     , _stream(std::move(other._stream))
     , _openMode(other._openMode)
 {
+    other.Close();
 }
 
 File::File(const std::string & path)
@@ -85,6 +86,7 @@ File & File::operator = (File && other)
         FileInfo::operator =(std::move(other));
         _stream = std::move(other._stream);
         _openMode = std::move(other._openMode);
+        other.Close();
     }
     return *this;
 }
@@ -92,6 +94,16 @@ File & File::operator = (File && other)
 std::iostream & File::GetStream()
 {
     return _stream;
+}
+
+bool File::Good() const
+{
+    return _stream.good();
+}
+
+bool File::Eof() const
+{
+    return _stream.eof();
 }
 
 bool File::Open(DesiredAccess desiredAccess,
@@ -103,14 +115,19 @@ bool File::Open(DesiredAccess desiredAccess,
     {
         if (!Exists() || ((creationFlags != CreationFlags::OpenExisting)))
             return false;
-        ios_base::openmode openMode = ios_base::in | ios_base::binary;
+        ios_base::openmode openMode = ios_base::in;
+        if ((desiredAccess & DesiredAccess::Binary) != 0)
+            openMode |= ios_base::binary;
+
         return OpenInternal(openMode);
     }
     else
     {
         if ((desiredAccess & (DesiredAccess::WriteOnly | DesiredAccess::ReadOnly)) == 0)
             return false;
-        ios_base::openmode openMode = ios_base::in | ios_base::out | ios_base::binary;
+        ios_base::openmode openMode = ios_base::in | ios_base::out;
+        if ((desiredAccess & DesiredAccess::Binary) != 0)
+            openMode |= ios_base::binary;
         switch(creationFlags)
         {
             case CreationFlags::CreateNew:
@@ -154,6 +171,11 @@ void File::Close()
 bool File::IsOpen() const
 {
     return _stream.is_open();
+}
+
+std::ios_base::openmode File::GetOpenMode() const
+{
+    return _openMode;
 }
 
 bool File::Delete()

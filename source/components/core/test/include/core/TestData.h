@@ -48,6 +48,10 @@ public:
     static std::string RegularFile3Extension() { return ".tst"; }
     static std::string RegularFile3Name() { return RegularFile3NameNoExtension() + RegularFile3Extension(); }
     static std::string RegularFile3Path() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFile3Name()); }
+    static std::string RegularFile4NameNoExtension() { return "d"; }
+    static std::string RegularFile4Extension() { return ".tst"; }
+    static std::string RegularFile4Name() { return RegularFile4NameNoExtension() + RegularFile4Extension(); }
+    static std::string RegularFile4Path() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFile4Name()); }
     static std::string RegularFileNonExistingNameNoExtension() { return "z"; }
     static std::string RegularFileNonExistingExtension() { return ".tst"; }
     static std::string RegularFileNonExistingName() { return RegularFileNonExistingNameNoExtension() + RegularFileNonExistingExtension(); }

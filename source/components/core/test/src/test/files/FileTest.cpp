@@ -5,6 +5,8 @@
 
 using namespace std;
 
+static std::ios::openmode Closed = static_cast<std::ios::openmode>(0);
+
 namespace Core {
 namespace Files {
 namespace Test {
@@ -33,7 +35,8 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoExisting)
     File file(info);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -49,7 +52,7 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -69,7 +72,8 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoNonExisting)
     File file(info);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
     EXPECT_EQ(dummyTime, file.CreationTime());
@@ -105,7 +109,8 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoHidden)
     File file(info);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::HiddenFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -141,7 +146,8 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoSymlink)
     File file(info);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::SymlinkFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -166,16 +172,17 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoSymlink)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersFromFileInfoExisting)
+TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersFromFileInfoExistingBinary)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
     FileInfo info(path);
 
-    File file(info, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File file(info, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -191,7 +198,7 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersFromFileInfoExisti
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -202,16 +209,91 @@ TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersFromFileInfoExisti
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersNonExisting)
+TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersNonExistingBinary)
 {
     string path = Core::Test::Data::DummyFilePath();
     Core::Time::DateTime dummyTime;
     FileInfo info(path);
 
-    File file(info, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File file(info, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
+    EXPECT_EQ(dummyTime, file.CreationTime());
+    EXPECT_EQ(dummyTime, file.LastAccessTime());
+    EXPECT_EQ(dummyTime, file.LastWriteTime());
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_FALSE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x00, file.GetRights());
+    EXPECT_FALSE(file.IsReadable());
+    EXPECT_FALSE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{0}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::DummyFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::DummyFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::DummyFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::DummyFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersFromFileInfoExistingText)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    FileInfo info(path);
+
+    File file(info, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, ConstructFromFileInfoWithOpenParametersNonExistingText)
+{
+    string path = Core::Test::Data::DummyFilePath();
+    Core::Time::DateTime dummyTime;
+    FileInfo info(path);
+
+    File file(info, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    EXPECT_FALSE(file.IsOpen());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
     EXPECT_EQ(dummyTime, file.CreationTime());
@@ -246,7 +328,8 @@ TEST_FIXTURE(FileTest, ConstructFromPathExisting)
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -262,7 +345,7 @@ TEST_FIXTURE(FileTest, ConstructFromPathExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -281,7 +364,8 @@ TEST_FIXTURE(FileTest, ConstructFromPathNonExisting)
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
     EXPECT_EQ(dummyTime, file.CreationTime());
@@ -316,7 +400,8 @@ TEST_FIXTURE(FileTest, ConstructFromPathHidden)
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::HiddenFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -351,7 +436,8 @@ TEST_FIXTURE(FileTest, ConstructFromPathSymlink)
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::SymlinkFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -376,15 +462,16 @@ TEST_FIXTURE(FileTest, ConstructFromPathSymlink)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersFromFileInfoExisting)
+TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersFromFileInfoExistingBinary)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
 
-    File file(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File file(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -400,7 +487,7 @@ TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersFromFileInfoExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -411,15 +498,16 @@ TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersFromFileInfoExisting)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersNonExisting)
+TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersNonExistingBinary)
 {
     string path = Core::Test::Data::DummyFilePath();
     Core::Time::DateTime dummyTime;
 
-    File file(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File file(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
     EXPECT_EQ(dummyTime, file.CreationTime());
@@ -446,17 +534,90 @@ TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersNonExisting)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructCopyExisting)
+TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersFromFileInfoExistingText)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
-    File other(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    File file(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, ConstructFromPathWithOpenParametersNonExistingText)
+{
+    string path = Core::Test::Data::DummyFilePath();
+    Core::Time::DateTime dummyTime;
+
+    File file(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    EXPECT_FALSE(file.IsOpen());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::DummyFileName(), file.Name());
+    EXPECT_EQ(dummyTime, file.CreationTime());
+    EXPECT_EQ(dummyTime, file.LastAccessTime());
+    EXPECT_EQ(dummyTime, file.LastWriteTime());
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_FALSE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x00, file.GetRights());
+    EXPECT_FALSE(file.IsReadable());
+    EXPECT_FALSE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{0}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::DummyFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::DummyFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::DummyFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::DummyFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, ConstructCopyExistingBinary)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     File file(other);
 
     EXPECT_TRUE(other.IsOpen());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -472,7 +633,7 @@ TEST_FIXTURE(FileTest, ConstructCopyExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -483,17 +644,56 @@ TEST_FIXTURE(FileTest, ConstructCopyExisting)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, ConstructMoveExisting)
+TEST_FIXTURE(FileTest, ConstructCopyExistingText)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
-    File other(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    File file(other);
+
+    EXPECT_TRUE(other.IsOpen());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, ConstructMoveExistingBinary)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     File file(std::move(other));
 
     EXPECT_FALSE(other.IsOpen());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -509,7 +709,7 @@ TEST_FIXTURE(FileTest, ConstructMoveExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -520,18 +720,58 @@ TEST_FIXTURE(FileTest, ConstructMoveExisting)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, AssignCopyExisting)
+TEST_FIXTURE(FileTest, ConstructMoveExistingText)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
-    File other(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    File file(std::move(other));
+
+    EXPECT_FALSE(other.IsOpen());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, AssignCopyExistingBinary)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     File file(Core::Test::Data::DummyFilePath());
     file = other;
 
     EXPECT_TRUE(other.IsOpen());
+    EXPECT_EQ(std::ios::in | std::ios::binary, other.GetOpenMode());
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -547,7 +787,7 @@ TEST_FIXTURE(FileTest, AssignCopyExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -558,18 +798,20 @@ TEST_FIXTURE(FileTest, AssignCopyExisting)
     EXPECT_EQ(nullptr, file.GetParentDirectory());
 }
 
-TEST_FIXTURE(FileTest, AssignMoveExisting)
+TEST_FIXTURE(FileTest, AssignCopyExistingText)
 {
     string path = Core::Test::Data::RegularFilePath();
     Core::Time::DateTime dummyTime;
-    File other(path, DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
 
     File file(Core::Test::Data::DummyFilePath());
-    file = std::move(other);
+    file = other;
 
-    EXPECT_FALSE(other.IsOpen());
+    EXPECT_TRUE(other.IsOpen());
+    EXPECT_EQ(std::ios::in, other.GetOpenMode());
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(path, file.FullPath());
     EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
     EXPECT_NE(dummyTime, file.CreationTime());
@@ -585,7 +827,87 @@ TEST_FIXTURE(FileTest, AssignMoveExisting)
     EXPECT_TRUE(file.IsWritable());
     EXPECT_FALSE(file.IsExecutable());
     EXPECT_FALSE(file.IsReadOnly());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, AssignMoveExistingBinary)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    File file(Core::Test::Data::DummyFilePath());
+    file = std::move(other);
+
+    EXPECT_FALSE(other.IsOpen());
+    EXPECT_EQ(Closed, other.GetOpenMode());
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
+    EXPECT_FALSE(file.IsHidden());
+    EXPECT_FALSE(FileSystemInfo::IsHidden(path));
+    EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
+    EXPECT_EQ(Core::Test::Data::FilledDirPath(), file.GetParentDirectoryPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.GetFilename());
+    EXPECT_EQ(Core::Test::Data::RegularFileNameNoExtension(), file.GetFilenameWithoutExtension());
+    EXPECT_EQ(Core::Test::Data::RegularFileExtension(), file.GetExtension());
+    EXPECT_EQ(nullptr, file.GetParentDirectory());
+}
+
+TEST_FIXTURE(FileTest, AssignMoveExistingText)
+{
+    string path = Core::Test::Data::RegularFilePath();
+    Core::Time::DateTime dummyTime;
+    File other(path, DesiredAccess::ReadOnly | DesiredAccess::Text, ShareMode::ShareReadWrite, CreationFlags::OpenExisting);
+
+    File file(Core::Test::Data::DummyFilePath());
+    file = std::move(other);
+
+    EXPECT_FALSE(other.IsOpen());
+    EXPECT_EQ(Closed, other.GetOpenMode());
+    EXPECT_TRUE(file.IsOpen());
+    EXPECT_EQ(std::ios::in, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(path, file.FullPath());
+    EXPECT_EQ(Core::Test::Data::RegularFileName(), file.Name());
+    EXPECT_NE(dummyTime, file.CreationTime());
+    EXPECT_NE(dummyTime, file.LastAccessTime());
+    EXPECT_NE(dummyTime, file.LastWriteTime());
+    EXPECT_TRUE((file.Attributes() & FileAttributes::Normal) != 0);
+    EXPECT_FALSE((file.Attributes() & FileAttributes::Directory) != 0);
+    EXPECT_TRUE(file.IsRegularFile());
+    EXPECT_FALSE(file.IsSymlink());
+    EXPECT_FALSE(file.IsDirectory());
+    EXPECT_EQ(0x06, file.GetRights());
+    EXPECT_TRUE(file.IsReadable());
+    EXPECT_TRUE(file.IsWritable());
+    EXPECT_FALSE(file.IsExecutable());
+    EXPECT_FALSE(file.IsReadOnly());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_FALSE(file.IsHidden());
     EXPECT_FALSE(FileSystemInfo::IsHidden(path));
     EXPECT_EQ(Core::Test::Data::RegularFilePath(), file.GetPath());
@@ -599,128 +921,136 @@ TEST_FIXTURE(FileTest, AssignMoveExisting)
 TEST_FIXTURE(FileTest, OpenReadOpenExisting_Existing)
 {
     string path = Core::Test::Data::RegularFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 }
 
 TEST_FIXTURE(FileTest, OpenReadOpenExisting_NonExisting)
 {
     string path = Core::Test::Data::DummyFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 }
 
 TEST_FIXTURE(FileTest, OpenReadCreateNew_Existing)
 {
     string path = Core::Test::Data::RegularFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 }
 
 TEST_FIXTURE(FileTest, OpenReadCreateOrOverwrite_Existing)
 {
     string path = Core::Test::Data::RegularFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 }
 
 TEST_FIXTURE(FileTest, OpenReadOpenOrCreate_Existing)
 {
     string path = Core::Test::Data::RegularFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(size_t{17}, file.Size());
 }
 
 TEST_FIXTURE(FileTest, OpenReadTruncateExisting_Existing)
 {
     string path = Core::Test::Data::RegularFilePath();
-    Core::Time::DateTime dummyTime;
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadOnly | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(size_t{17}, file.Size());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteExisting_Existing)
 {
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteExisting_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenExisting));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_FALSE(file.Exists());
 }
@@ -729,35 +1059,37 @@ TEST_FIXTURE(FileTest, OpenWriteCreateNew_Existing)
 {
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteCreateNew_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateNew));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
@@ -766,35 +1098,37 @@ TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_Existing)
 {
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
-    EXPECT_EQ(size_t{6}, file.Size());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
+    EXPECT_EQ(size_t{17}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
 
 TEST_FIXTURE(FileTest, OpenWriteOpenOrCreate_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::OpenOrCreate));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
@@ -803,17 +1137,18 @@ TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_Existing)
 {
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
@@ -821,17 +1156,18 @@ TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_Existing)
 TEST_FIXTURE(FileTest, OpenWriteCreateOrOverwrite_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::CreateOrOverwrite));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
@@ -840,17 +1176,18 @@ TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_Existing)
 {
     File::Copy(Core::Test::Data::RegularFilePath(), Core::Test::Data::RegularFileNonExistingPath());
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
 
     EXPECT_TRUE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_TRUE(file.Exists());
 }
@@ -858,17 +1195,18 @@ TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_Existing)
 TEST_FIXTURE(FileTest, OpenWriteTruncateExisting_NonExisting)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
-    Core::Time::DateTime dummyTime;
 
     File file(path);
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
 
-    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
+    EXPECT_FALSE(file.Open(DesiredAccess::ReadWrite | DesiredAccess::Binary, ShareMode::ShareReadWrite, CreationFlags::TruncateExisting));
 
     EXPECT_FALSE(file.IsOpen());
-    EXPECT_TRUE(file.GetStream().good());
+    EXPECT_EQ(Closed, file.GetOpenMode());
+    EXPECT_TRUE(file.Good());
     EXPECT_EQ(size_t{0}, file.Size());
     EXPECT_FALSE(file.Exists());
 }

@@ -12,9 +12,11 @@ namespace Files {
 enum class DesiredAccess
 {
     Closed = 0,
-    ReadOnly = 1,
-    WriteOnly = 2,
-    ReadWrite = 3,
+    ReadOnly = 1 << 0,
+    WriteOnly = 1 << 1,
+    ReadWrite = (1 << 0) | (1 << 1),
+    Binary = 1 << 2,
+    Text = 0 << 2,
 };
 
 enum class ShareMode
@@ -61,6 +63,9 @@ public:
 
     File & operator =(File &&);
 
+    bool Good() const;
+    bool Eof() const;
+
     std::iostream & GetStream();
 
     bool Open(DesiredAccess desiredAccess = DesiredAccess::ReadOnly,
@@ -70,6 +75,7 @@ public:
     void Close();
 
     bool IsOpen() const;
+    std::ios_base::openmode GetOpenMode() const;
 
     bool Delete();
     bool CopyTo(const std::string & destination);
@@ -81,8 +87,8 @@ public:
     static bool Copy(const std::string & source, const std::string & destination);
     static bool Move(const std::string & source, const std::string & destination);
 
-    bool CompareTo(const std::string & pathOther);
-    bool CompareTo(const File & other);
+    virtual bool CompareTo(const std::string & pathOther);
+    virtual bool CompareTo(const File & other);
 
     static bool Compare(const std::string & source, const std::string & destination);
 
