@@ -8,6 +8,7 @@
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
 #include "core/Nullable.h"
+#include "core/Util.h"
 
 namespace Core {
 
@@ -23,19 +24,19 @@ CORE_EXPORT bool Deserialize(const std::string & text, uint64_t & value, int bas
 CORE_EXPORT bool Deserialize(const std::string & text, float & value);
 CORE_EXPORT bool Deserialize(const std::string & text, double & value);
 CORE_EXPORT bool Deserialize(const std::string & text, long double & value);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, bool & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int8_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint8_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int16_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint16_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int32_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint32_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int64_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint64_t & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, float & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, double & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, long double & value, Endianness endianness = Endianness::LittleEndian);
-CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, std::string & value, Endianness endianness = Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, bool & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int8_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint8_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int16_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint16_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int32_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint32_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, int64_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, uint64_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, float & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, double & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, long double & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
+CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, std::string & value, Util::Endianness endianness = Util::Endianness::LittleEndian);
 //#if !defined(WIN_MSVC)
 //CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::DomainSocketAddress & value);
 //CORE_EXPORT bool Deserialize(const OSAL::ByteArray & text, OSAL::Network::DomainSocketAddress & value);

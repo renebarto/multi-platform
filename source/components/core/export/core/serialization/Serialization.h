@@ -6,8 +6,6 @@
 
 namespace Core {
 
-enum class Endianness { LittleEndian, BigEndian };
-
 template<class T>
 class IStringDeserializer
 {

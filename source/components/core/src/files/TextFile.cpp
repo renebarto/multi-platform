@@ -106,6 +106,19 @@ bool TextFile::Compare(const std::string & source, const std::string & destinati
     return true;
 }
 
+char TextFile::ReadChar()
+{
+    char ch;
+    if (!ReadChar(ch))
+        return '\0';
+    return ch;
+}
+
+bool TextFile::ReadChar(char & ch)
+{
+    return _stream.get(ch).good();
+}
+
 std::string TextFile::ReadLine()
 {
     std::string result;
@@ -118,3 +131,17 @@ bool TextFile::ReadLine(std::string & line)
 {
     return getline(_stream, line).good();
 }
+
+bool TextFile::WriteChar(char ch)
+{
+    return _stream.put(ch).good();
+}
+
+bool TextFile::WriteLine(const std::string & line)
+{
+    for (auto ch : line)
+        if (!WriteChar(ch))
+            return false;
+    return WriteChar('\n');
+}
+

@@ -147,6 +147,8 @@ set(PACKAGE_BUILD_REFERENCE ${VERSION})
 
 define_target_executable()
 
+add_dependencies(${PACKAGE_NAME} echotest testlib)
+
 show_target_properties(${PACKAGE_NAME})
 
 if (NOT LOCAL_BUILD)

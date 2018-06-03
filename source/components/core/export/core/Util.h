@@ -8,6 +8,8 @@
 namespace Core {
 namespace Util {
 
+enum class Endianness { LittleEndian, BigEndian };
+
 bool CORE_EXPORT Compare(double expected, double actual, double epsilonAbs, double epsilonRel);
 
 bool CORE_EXPORT Compare(float expected, float actual, float epsilonAbs, float epsilonRel);

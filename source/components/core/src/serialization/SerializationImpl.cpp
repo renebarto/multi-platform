@@ -8,6 +8,8 @@
 #include <osal/Unused.h>
 
 using namespace std;
+using namespace Core;
+using namespace Util;
 
 string Core::Serialize(bool value)
 {

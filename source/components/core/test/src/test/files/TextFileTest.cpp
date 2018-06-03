@@ -702,6 +702,225 @@ TEST_FIXTURE(TextFileTest, ComparePathToPathNonExistingSourceExistingDestination
     EXPECT_TRUE(TextFile::Exists(pathDst));
 }
 
+TEST_FIXTURE(TextFileTest, ReadCharClosedFile)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_EQ('\0', file.ReadChar());
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadChar)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_EQ('H', file.ReadChar());
+    EXPECT_EQ('e', file.ReadChar());
+    EXPECT_EQ('l', file.ReadChar());
+    EXPECT_EQ('l', file.ReadChar());
+    EXPECT_EQ('o', file.ReadChar());
+    EXPECT_EQ('\n', file.ReadChar());
+    EXPECT_EQ('H', file.ReadChar());
+    EXPECT_EQ('e', file.ReadChar());
+    EXPECT_EQ('r', file.ReadChar());
+    EXPECT_EQ('e', file.ReadChar());
+    EXPECT_EQ(' ', file.ReadChar());
+    EXPECT_EQ('I', file.ReadChar());
+    EXPECT_EQ(' ', file.ReadChar());
+    EXPECT_EQ('a', file.ReadChar());
+    EXPECT_EQ('m', file.ReadChar());
+    EXPECT_EQ('\n', file.ReadChar());
+    EXPECT_EQ('\n', file.ReadChar());
+    EXPECT_EQ('\0', file.ReadChar());
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadCharWithBoolResultClosedFile)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    char ch;
+    EXPECT_FALSE(file.ReadChar(ch));
+    EXPECT_EQ('\0', ch);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadCharWithBoolResult)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    char ch;
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('H', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('l', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('l', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('o', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('H', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('r', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ(' ', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('I', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ(' ', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('a', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('m', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_TRUE(file.ReadChar(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_FALSE(file.ReadChar(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadLineClosedFile)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_EQ("", file.ReadLine());
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadLine)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_EQ("Hello", file.ReadLine());
+    EXPECT_EQ("Here I am", file.ReadLine());
+    EXPECT_EQ("", file.ReadLine());
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadLineWithBoolResultClosedFile)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    std::string line;
+    EXPECT_FALSE(file.ReadLine(line));
+    EXPECT_EQ("", line);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, ReadLineWithBoolResult)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    std::string line;
+    EXPECT_TRUE(file.ReadLine(line));
+    EXPECT_EQ("Hello", line);
+    EXPECT_TRUE(file.ReadLine(line));
+    EXPECT_EQ("Here I am", line);
+    EXPECT_TRUE(file.ReadLine(line));
+    EXPECT_EQ("", line);
+    EXPECT_FALSE(file.ReadLine(line));
+    EXPECT_EQ("", line);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, WriteCharClosedFile)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path);
+
+    EXPECT_FALSE(file.Exists());
+    EXPECT_FALSE(file.WriteChar('X'));
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, WriteChar)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path, DesiredAccess::WriteOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_TRUE(file.WriteChar('H'));
+    EXPECT_TRUE(file.WriteChar('e'));
+    EXPECT_TRUE(file.WriteChar('l'));
+    EXPECT_TRUE(file.WriteChar('l'));
+    EXPECT_TRUE(file.WriteChar('o'));
+    EXPECT_TRUE(file.WriteChar('\n'));
+    EXPECT_TRUE(file.WriteChar('H'));
+    EXPECT_TRUE(file.WriteChar('e'));
+    EXPECT_TRUE(file.WriteChar('r'));
+    EXPECT_TRUE(file.WriteChar('e'));
+    EXPECT_TRUE(file.WriteChar(' '));
+    EXPECT_TRUE(file.WriteChar('I'));
+    EXPECT_TRUE(file.WriteChar(' '));
+    EXPECT_TRUE(file.WriteChar('a'));
+    EXPECT_TRUE(file.WriteChar('m'));
+    EXPECT_TRUE(file.WriteChar('\n'));
+    EXPECT_TRUE(file.WriteChar('\n'));
+    file.Close();
+    EXPECT_TRUE(file.CompareTo(Core::Test::Data::RegularFilePath()));
+}
+
+TEST_FIXTURE(TextFileTest, WriteLineClosedFile)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path);
+
+    EXPECT_FALSE(file.Exists());
+    EXPECT_FALSE(file.WriteLine("X"));
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, WriteLine)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path, DesiredAccess::WriteOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_TRUE(file.WriteLine("Hello"));
+    EXPECT_TRUE(file.WriteLine("Here I am"));
+    EXPECT_TRUE(file.WriteLine(""));
+    file.Close();
+    EXPECT_TRUE(file.CompareTo(Core::Test::Data::RegularFilePath()));
+}
+
 } // namespace Test
 } // namespace Files
 } // namespace Core
