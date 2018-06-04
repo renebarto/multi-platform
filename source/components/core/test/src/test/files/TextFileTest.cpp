@@ -748,7 +748,7 @@ TEST_FIXTURE(TextFileTest, ReadCharWithBoolResultClosedFile)
     TextFile file(path);
 
     EXPECT_TRUE(file.Exists());
-    char ch;
+    char ch {};
     EXPECT_FALSE(file.ReadChar(ch));
     EXPECT_EQ('\0', ch);
     EXPECT_TRUE(file.Exists());
