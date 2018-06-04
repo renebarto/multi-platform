@@ -1473,9 +1473,9 @@ TEST_FIXTURE(TextFileTest, Read_Double)
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(double {34567890}, value);
     EXPECT_TRUE(file.Read(value));
-    EXPECT_EQ(double {9.223372036854775807E18}, value);
+    EXPECT_NEAR(double {9.223372036854775807E18}, value, 5E5);
     EXPECT_TRUE(file.Read(value));
-    EXPECT_EQ(double {1.8446744073709551615E19}, value);
+    EXPECT_NEAR(double {1.8446744073709551615E19}, value, 5E5);
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(double {1.0002e4}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1503,9 +1503,9 @@ TEST_FIXTURE(TextFileTest, Read_DoubleLittleEndian)
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(double {34567890}, value);
     EXPECT_TRUE(file.Read(value));
-    EXPECT_EQ(double {9.223372036854775807E18}, value);
+    EXPECT_NEAR(double {9.223372036854775807E18}, value, 5E5);
     EXPECT_TRUE(file.Read(value));
-    EXPECT_EQ(double {1.8446744073709551615E19}, value);
+    EXPECT_NEAR(double {1.8446744073709551615E19}, value, 5E5);
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(double {1.0002e4}, value);
     EXPECT_TRUE(file.Read(value));
