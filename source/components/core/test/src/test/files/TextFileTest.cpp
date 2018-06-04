@@ -741,66 +741,6 @@ TEST_FIXTURE(TextFileTest, ReadChar)
     EXPECT_TRUE(file.Exists());
 }
 
-TEST_FIXTURE(TextFileTest, ReadCharWithBoolResultClosedFile)
-{
-    string path = Core::Test::Data::RegularFilePath();
-
-    TextFile file(path);
-
-    EXPECT_TRUE(file.Exists());
-    char ch {};
-    EXPECT_FALSE(file.ReadChar(ch));
-    EXPECT_EQ('\0', ch);
-    EXPECT_TRUE(file.Exists());
-}
-
-TEST_FIXTURE(TextFileTest, ReadCharWithBoolResult)
-{
-    string path = Core::Test::Data::RegularFilePath();
-
-    TextFile file(path, DesiredAccess::ReadOnly);
-
-    EXPECT_TRUE(file.Exists());
-    char ch;
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('H', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('e', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('l', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('l', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('o', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('\n', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('H', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('e', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('r', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('e', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ(' ', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('I', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ(' ', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('a', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('m', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('\n', ch);
-    EXPECT_TRUE(file.ReadChar(ch));
-    EXPECT_EQ('\n', ch);
-    EXPECT_FALSE(file.ReadChar(ch));
-    EXPECT_EQ('\n', ch);
-    EXPECT_TRUE(file.Exists());
-}
-
 TEST_FIXTURE(TextFileTest, ReadLineClosedFile)
 {
     string path = Core::Test::Data::RegularFilePath();
@@ -857,45 +797,6 @@ TEST_FIXTURE(TextFileTest, ReadLineWithBoolResult)
     EXPECT_TRUE(file.Exists());
 }
 
-TEST_FIXTURE(TextFileTest, WriteCharClosedFile)
-{
-    string path = Core::Test::Data::RegularFileNonExistingPath();
-
-    TextFile file(path);
-
-    EXPECT_FALSE(file.Exists());
-    EXPECT_FALSE(file.WriteChar('X'));
-    EXPECT_FALSE(file.Exists());
-}
-
-TEST_FIXTURE(TextFileTest, WriteChar)
-{
-    string path = Core::Test::Data::RegularFileNonExistingPath();
-
-    TextFile file(path, DesiredAccess::WriteOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew);
-
-    EXPECT_TRUE(file.Exists());
-    EXPECT_TRUE(file.WriteChar('H'));
-    EXPECT_TRUE(file.WriteChar('e'));
-    EXPECT_TRUE(file.WriteChar('l'));
-    EXPECT_TRUE(file.WriteChar('l'));
-    EXPECT_TRUE(file.WriteChar('o'));
-    EXPECT_TRUE(file.WriteChar('\n'));
-    EXPECT_TRUE(file.WriteChar('H'));
-    EXPECT_TRUE(file.WriteChar('e'));
-    EXPECT_TRUE(file.WriteChar('r'));
-    EXPECT_TRUE(file.WriteChar('e'));
-    EXPECT_TRUE(file.WriteChar(' '));
-    EXPECT_TRUE(file.WriteChar('I'));
-    EXPECT_TRUE(file.WriteChar(' '));
-    EXPECT_TRUE(file.WriteChar('a'));
-    EXPECT_TRUE(file.WriteChar('m'));
-    EXPECT_TRUE(file.WriteChar('\n'));
-    EXPECT_TRUE(file.WriteChar('\n'));
-    file.Close();
-    EXPECT_TRUE(file.CompareTo(Core::Test::Data::RegularFilePath()));
-}
-
 TEST_FIXTURE(TextFileTest, WriteLineClosedFile)
 {
     string path = Core::Test::Data::RegularFileNonExistingPath();
@@ -920,6 +821,837 @@ TEST_FIXTURE(TextFileTest, WriteLine)
     file.Close();
     EXPECT_TRUE(file.CompareTo(Core::Test::Data::RegularFilePath()));
 }
+
+TEST_FIXTURE(TextFileTest, ReadString)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    string value;
+    file.ReadString(value, " \n");
+    EXPECT_EQ("Hello", value);
+    file.ReadString(value, " \n");
+    EXPECT_EQ("Here", value);
+    file.ReadString(value, " \n");
+    EXPECT_EQ("I", value);
+    file.ReadString(value, " \n");
+    EXPECT_EQ("am", value);
+    file.ReadString(value, " \n");
+    EXPECT_EQ("", value);
+}
+
+TEST_FIXTURE(TextFileTest, ReadAll)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    string value;
+    file.ReadAll(value);
+    EXPECT_EQ("Hello\nHere I am\n\n", value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_CharClosedFile)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    char ch {};
+    EXPECT_FALSE(file.Read(ch));
+    EXPECT_EQ('\0', ch);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, Read_Char)
+{
+    string path = Core::Test::Data::RegularFilePath();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    char ch;
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('H', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('l', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('l', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('o', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('H', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('r', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('e', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ(' ', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('I', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ(' ', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('a', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('m', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_TRUE(file.Read(ch));
+    EXPECT_EQ('\n', ch);
+    EXPECT_FALSE(file.Read(ch));
+    EXPECT_EQ('\0', ch);
+    EXPECT_TRUE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int8ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    int8_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(int8_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int8)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int8_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int8_t {123}, value);
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(int8_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt8ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    uint8_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(uint8_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt8)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint8_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint8_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint8_t {234}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int16ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    int16_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(int16_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int16)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int16_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int16_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int16_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int16_t {12345}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int16LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int16_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int16_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int16_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int16_t {12345}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int16BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int16_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(int16_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt16ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    uint16_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(uint16_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt16)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint16_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint16_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint16_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint16_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint16_t {34567}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt16LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint16_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint16_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint16_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint16_t {12345}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint16_t {34567}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt16BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint16_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(uint16_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int32ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    int32_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(int32_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int32)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int32_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {12345678}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int32LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int32_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int32_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int32_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int32_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int32_t {12345678}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int32BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int32_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(int32_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt32ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    uint32_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(uint32_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt32)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint32_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {34567890}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt32LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint32_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint32_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint32_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint32_t {12345}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint32_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint32_t {34567890}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt32BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint32_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(uint32_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int64ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    int64_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(int64_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int64)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int64_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {9223372036854775807LL}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int64LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int64_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int64_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int64_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(int64_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(int64_t {9223372036854775807LL}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Int64BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    int64_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(int64_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt64ClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    uint64_t value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(uint64_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt64)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint64_t value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {9223372036854775807LL}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {18446744073709551615ULL}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt64LittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint64_t value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint64_t {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint64_t {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint64_t {12345}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(uint64_t {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {9223372036854775807LL}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(uint64_t {18446744073709551615ULL}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_UInt64BigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    uint64_t value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(uint64_t {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_FloatClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    float value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(float {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Float)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    float value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {3.4567890E7F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {9.223372036854775807E18F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {1.8446744073709551615E19F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {1.0002e4F}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_FloatLittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    float value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(float {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(float {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(float {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {3.4567890E7F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {9.223372036854775807E18F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {1.8446744073709551615E19F}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(float {1.0002e4F}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_FloatBigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    float value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(float {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_DoubleClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    double value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_EQ(double {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_Double)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    double value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {123}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {234}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {9.223372036854775807E18}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.8446744073709551615E19}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.0002e4}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.00002E05}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_DoubleLittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    double value;
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(double {123}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(double {234}, value);
+    EXPECT_TRUE(file.Read(value, Util::Endianness::LittleEndian));
+    EXPECT_EQ(double {12345}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {34567}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {12345678}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {34567890}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {9.223372036854775807E18}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.8446744073709551615E19}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.0002e4}, value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_EQ(double {1.00002E05}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_DoubleBigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    double value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_EQ(double {0}, value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_LongDoubleClosedFile)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    long double value {};
+    EXPECT_FALSE(file.Read(value));
+    EXPECT_TRUE(0.0L == value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_LongDouble)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    long double value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(123L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(234L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(12345L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(34567L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(12345678L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(34567890L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(Util::Compare(9.223372036854775807E18L, value, 0.5L, 1E-16L));
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(Util::Compare(1.8446744073709551615E19L, value, 0.5L, 1E-16L));
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.0002e4L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.00002E05L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.00002E05L == value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_LongDoubleLittleEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    long double value;
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(123L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(234L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(12345L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(34567L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(12345678L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(34567890L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(Util::Compare(9.223372036854775807E18L, value, 0.5L, 1E-16L));
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(Util::Compare(1.8446744073709551615E19L, value, 0.5L, 1E-16L));
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.0002e4L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.00002E05L == value);
+    EXPECT_TRUE(file.Read(value));
+    EXPECT_TRUE(1.00002E05L == value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_LongDoubleBigEndian)
+{
+    string path = Core::Test::Data::RegularFile4Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    long double value;
+    EXPECT_FALSE(file.Read(value, Util::Endianness::BigEndian));
+    EXPECT_TRUE(0.0L == value);
+}
+
+TEST_FIXTURE(TextFileTest, Write_CharClosedFile)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path);
+
+    EXPECT_FALSE(file.Exists());
+    EXPECT_FALSE(file.Write('X'));
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, Write_Char)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path, DesiredAccess::WriteOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew);
+
+    EXPECT_TRUE(file.Exists());
+    EXPECT_TRUE(file.Write('H'));
+    EXPECT_TRUE(file.Write('e'));
+    EXPECT_TRUE(file.Write('l'));
+    EXPECT_TRUE(file.Write('l'));
+    EXPECT_TRUE(file.Write('o'));
+    EXPECT_TRUE(file.Write('\n'));
+    EXPECT_TRUE(file.Write('H'));
+    EXPECT_TRUE(file.Write('e'));
+    EXPECT_TRUE(file.Write('r'));
+    EXPECT_TRUE(file.Write('e'));
+    EXPECT_TRUE(file.Write(' '));
+    EXPECT_TRUE(file.Write('I'));
+    EXPECT_TRUE(file.Write(' '));
+    EXPECT_TRUE(file.Write('a'));
+    EXPECT_TRUE(file.Write('m'));
+    EXPECT_TRUE(file.Write('\n'));
+    EXPECT_TRUE(file.Write('\n'));
+    file.Close();
+    EXPECT_TRUE(file.CompareTo(Core::Test::Data::RegularFilePath()));
+}
+
+// TODO: Write tests for Write and string Read
 
 } // namespace Test
 } // namespace Files

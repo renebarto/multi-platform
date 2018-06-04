@@ -10,7 +10,7 @@
 namespace Core {
 namespace Files {
 
-class TextFile : public File, virtual public ITextStream
+class TextFile : public File, public ITextStream
 {
 public:
     TextFile() = delete;
@@ -41,11 +41,39 @@ public:
     static bool Compare(const std::string & source, const std::string & destination);
 
     char ReadChar() override;
-    bool ReadChar(char & ch) override;
     std::string ReadLine() override;
     bool ReadLine(std::string & line) override;
-    bool WriteChar(char ch) override;
     bool WriteLine(const std::string & line) override;
+    bool ReadString(std::string & value, const std::string & delimiters) override;
+    bool ReadAll(std::string & value) override;
+
+    bool Read(char & ch) override;
+    bool Read(int8_t & value) override;
+    bool Read(uint8_t & value) override;
+    bool Read(int16_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(uint16_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(int32_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(uint32_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(int64_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(uint64_t & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(float & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(double & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(long double & value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Read(std::string & value, size_t numChars) override;
+
+    bool Write(char ch) override;
+    bool Write(int8_t value) override;
+    bool Write(uint8_t value) override;
+    bool Write(int16_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(uint16_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(int32_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(uint32_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(int64_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(uint64_t value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(float value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(double value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(long double value, Util::Endianness endianness = Util::Endianness::LittleEndian) override;
+    bool Write(const std::string & value) override;
 };
 
 } // namespace Files

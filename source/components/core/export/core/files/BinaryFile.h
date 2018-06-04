@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <osal/FlagOperators.h>
-#include "core/ITextStream.h"
+#include "core/IBinaryStream.h"
 #include "core/files/File.h"
 
 namespace Core {

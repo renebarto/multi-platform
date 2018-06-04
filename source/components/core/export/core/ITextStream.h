@@ -1,26 +1,18 @@
 #pragma once
 
-#include <fstream>
-#include <memory>
-#include <string>
-#include <osal/FlagOperators.h>
-#include "core/files/File.h"
+#include "core/IDataStream.h"
 
 namespace Core {
 
-class ITextStream
+class ITextStream : public IDataStream
 {
 public:
-    virtual ~ITextStream() {}
-
     virtual char ReadChar() = 0;
-    virtual bool ReadChar(char & ch) = 0;
     virtual std::string ReadLine() = 0;
     virtual bool ReadLine(std::string & line) = 0;
-    virtual bool WriteChar(char ch) = 0;
     virtual bool WriteLine(const std::string & line) = 0;
-
-    // TODO: Add more methods to interface
+    virtual bool ReadString(std::string & value, const std::string & delimiters) = 0;
+    virtual bool ReadAll(std::string & value) = 0;
 };
 
 } // namespace Core

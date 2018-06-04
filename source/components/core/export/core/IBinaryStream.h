@@ -1,19 +1,12 @@
 #pragma once
 
-#include <fstream>
-#include <memory>
-#include <string>
-#include <osal/FlagOperators.h>
-#include "core/files/File.h"
+#include "core/IDataStream.h"
 
 namespace Core {
 
-class IBinaryStream
+class IBinaryStream : public IDataStream
 {
 public:
-    virtual ~IBinaryStream() {}
-
-    // TODO: Define interface
 };
 
 } // namespace Core
