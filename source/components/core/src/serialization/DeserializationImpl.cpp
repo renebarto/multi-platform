@@ -278,7 +278,7 @@ bool Core::Deserialize(const string & text, long double & value)
 //    return OSAL::Network::MACAddress::TryParse(text, value);
 //}
 
-bool Core::Deserialize(const OSAL::ByteArray & result, bool & value, Endianness UNUSED(endianness))
+bool Core::Deserialize(const OSAL::ByteArray & result, bool & value, OSAL::Endianness UNUSED(endianness))
 {
     if (result.Size() < sizeof(uint8_t))
         return false;
@@ -286,7 +286,7 @@ bool Core::Deserialize(const OSAL::ByteArray & result, bool & value, Endianness 
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, int8_t & value, Endianness UNUSED(endianness))
+bool Core::Deserialize(const OSAL::ByteArray & result, int8_t & value, OSAL::Endianness UNUSED(endianness))
 {
     if (result.Size() < sizeof(int8_t))
         return false;
@@ -294,7 +294,7 @@ bool Core::Deserialize(const OSAL::ByteArray & result, int8_t & value, Endiannes
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, uint8_t & value, Endianness UNUSED(endianness))
+bool Core::Deserialize(const OSAL::ByteArray & result, uint8_t & value, OSAL::Endianness UNUSED(endianness))
 {
     if (result.Size() < sizeof(uint8_t))
         return false;
@@ -302,9 +302,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, uint8_t & value, Endianne
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, int16_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, int16_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(int16_t))
             return false;
@@ -323,9 +323,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, int16_t & value, Endianne
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, uint16_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, uint16_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(uint16_t))
             return false;
@@ -344,9 +344,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, uint16_t & value, Endiann
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, int32_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, int32_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(int32_t))
             return false;
@@ -369,9 +369,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, int32_t & value, Endianne
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, uint32_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, uint32_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(uint32_t))
             return false;
@@ -394,9 +394,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, uint32_t & value, Endiann
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, int64_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, int64_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(int64_t))
             return false;
@@ -427,9 +427,9 @@ bool Core::Deserialize(const OSAL::ByteArray & result, int64_t & value, Endianne
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, uint64_t & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, uint64_t & value, OSAL::Endianness endianness)
 {
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         if (result.Size() < sizeof(uint64_t))
             return false;
@@ -460,12 +460,12 @@ bool Core::Deserialize(const OSAL::ByteArray & result, uint64_t & value, Endiann
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, float & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, float & value, OSAL::Endianness endianness)
 {
     if (result.Size() < sizeof(float))
         return false;
     uint8_t bytes[sizeof(value)];
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         size_t i = 0;
         while (i < sizeof(bytes))
@@ -487,12 +487,12 @@ bool Core::Deserialize(const OSAL::ByteArray & result, float & value, Endianness
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, double & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, double & value, OSAL::Endianness endianness)
 {
     if (result.Size() < sizeof(double))
         return false;
     uint8_t bytes[sizeof(value)];
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         size_t i = 0;
         while (i < sizeof(bytes))
@@ -514,13 +514,13 @@ bool Core::Deserialize(const OSAL::ByteArray & result, double & value, Endiannes
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, long double & value, Endianness endianness)
+bool Core::Deserialize(const OSAL::ByteArray & result, long double & value, OSAL::Endianness endianness)
 {
     static constexpr size_t LongDoubleSize = 10;
     if (result.Size() < LongDoubleSize)
         return false;
     uint8_t bytes[sizeof(value)];
-    if (endianness == Endianness::LittleEndian)
+    if (endianness == OSAL::Endianness::LittleEndian)
     {
         size_t i = 0;
         while (i < LongDoubleSize)
@@ -543,7 +543,7 @@ bool Core::Deserialize(const OSAL::ByteArray & result, long double & value, Endi
     return true;
 }
 
-bool Core::Deserialize(const OSAL::ByteArray & result, std::string & value, Endianness UNUSED(endianness))
+bool Core::Deserialize(const OSAL::ByteArray & result, std::string & value, OSAL::Endianness UNUSED(endianness))
 {
     size_t i = 0;
     while (i < result.Size())

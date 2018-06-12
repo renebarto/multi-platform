@@ -9,6 +9,7 @@
 namespace OSAL {
 namespace System {
 
+OSAL_EXPORT Endianness PlatformEndianness();
 OSAL_EXPORT std::string Name();
 OSAL_EXPORT std::string Variant();
 OSAL_EXPORT std::string Release();

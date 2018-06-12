@@ -7,18 +7,19 @@ using namespace std;
 using namespace Core;
 using namespace Files;
 
-TextFile::TextFile(const TextFile & other)
+TextFile::TextFile(const FileInfo & other)
     : File(other)
 {
-    if ((other._openMode & (ios_base::in | ios_base::out)) != 0)
-    {
-        OpenInternal(other._openMode);
-    }
 }
 
-TextFile::TextFile(TextFile && other)
-    : File(std::move(other))
+TextFile::TextFile(const FileInfo & other, DesiredAccess desiredAccess,
+                   ShareMode shareMode,
+                   CreationFlags creationFlags)
+    : File(other)
 {
+    if ((desiredAccess & DesiredAccess::Binary) != 0)
+        return;
+    Open(desiredAccess | DesiredAccess::Text, shareMode, creationFlags);
 }
 
 TextFile::TextFile(const std::string & path)
@@ -36,19 +37,18 @@ TextFile::TextFile(const std::string & path, DesiredAccess desiredAccess,
     Open(desiredAccess | DesiredAccess::Text, shareMode, creationFlags);
 }
 
-TextFile::TextFile(const FileInfo & other)
+TextFile::TextFile(const TextFile & other)
     : File(other)
 {
+    if ((other._openMode & (ios_base::in | ios_base::out)) != 0)
+    {
+        OpenInternal(other._openMode);
+    }
 }
 
-TextFile::TextFile(const FileInfo & other, DesiredAccess desiredAccess,
-                   ShareMode shareMode,
-                   CreationFlags creationFlags)
-    : File(other)
+TextFile::TextFile(TextFile && other)
+    : File(std::move(other))
 {
-    if ((desiredAccess & DesiredAccess::Binary) != 0)
-        return;
-    Open(desiredAccess | DesiredAccess::Text, shareMode, creationFlags);
 }
 
 TextFile & TextFile::operator = (const TextFile & other)
@@ -184,10 +184,10 @@ bool TextFile::Read(uint8_t & value)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(int16_t & value, Util::Endianness endianness)
+bool TextFile::Read(int16_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -196,10 +196,10 @@ bool TextFile::Read(int16_t & value, Util::Endianness endianness)
      return Deserialize(text, value);
 }
 
-bool TextFile::Read(uint16_t & value, Util::Endianness endianness)
+bool TextFile::Read(uint16_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -208,10 +208,10 @@ bool TextFile::Read(uint16_t & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(int32_t & value, Util::Endianness endianness)
+bool TextFile::Read(int32_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -220,10 +220,10 @@ bool TextFile::Read(int32_t & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(uint32_t & value, Util::Endianness endianness)
+bool TextFile::Read(uint32_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -232,10 +232,10 @@ bool TextFile::Read(uint32_t & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(int64_t & value, Util::Endianness endianness)
+bool TextFile::Read(int64_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -244,10 +244,10 @@ bool TextFile::Read(int64_t & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(uint64_t & value, Util::Endianness endianness)
+bool TextFile::Read(uint64_t & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -256,10 +256,10 @@ bool TextFile::Read(uint64_t & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(float & value, Util::Endianness endianness)
+bool TextFile::Read(float & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -268,10 +268,10 @@ bool TextFile::Read(float & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(double & value, Util::Endianness endianness)
+bool TextFile::Read(double & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -280,10 +280,10 @@ bool TextFile::Read(double & value, Util::Endianness endianness)
     return Deserialize(text, value);
 }
 
-bool TextFile::Read(long double & value, Util::Endianness endianness)
+bool TextFile::Read(long double & value, OSAL::Endianness endianness)
 {
     value = {};
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text;
     _stream >> text;
@@ -324,81 +324,81 @@ bool TextFile::Write(uint8_t value)
     return _stream.good();
 }
 
-bool TextFile::Write(int16_t value, Util::Endianness endianness)
+bool TextFile::Write(int16_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(uint16_t value, Util::Endianness endianness)
+bool TextFile::Write(uint16_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(int32_t value, Util::Endianness endianness)
+bool TextFile::Write(int32_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(uint32_t value, Util::Endianness endianness)
+bool TextFile::Write(uint32_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(int64_t value, Util::Endianness endianness)
+bool TextFile::Write(int64_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(uint64_t value, Util::Endianness endianness)
+bool TextFile::Write(uint64_t value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(float value, Util::Endianness endianness)
+bool TextFile::Write(float value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(double value, Util::Endianness endianness)
+bool TextFile::Write(double value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;
     return _stream.good();
 }
 
-bool TextFile::Write(long double value, Util::Endianness endianness)
+bool TextFile::Write(long double value, OSAL::Endianness endianness)
 {
-    if (endianness != Util::Endianness::LittleEndian)
+    if (endianness != OSAL::Endianness::LittleEndian)
         return false;
     std::string text = Serialize(value);
     _stream << text;

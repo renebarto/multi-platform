@@ -43,6 +43,19 @@ public:
 TEST_SUITE(osal)
 {
 
+TEST_FIXTURE(SystemTest, PlatformEndianness)
+{
+    {
+        Endianness actual   = System::PlatformEndianness();
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        Endianness expected = Endianness::LittleEndian;
+#else
+        Endianness expected = Endianness::BigEndian;
+#endif
+        EXPECT_EQ(expected, actual);
+    }
+}
+
 #if defined(LINUX)
     TEST_FIXTURE(SystemTest, PlatformLinux)
     {

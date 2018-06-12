@@ -454,7 +454,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt16BinaryLittleEndian)
     int16_t expected = 0x5556;
     int16_t actual {};
     OSAL::ByteArray value {0x56, 0x55};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -463,7 +463,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt16BinaryBigEndian)
     int16_t expected = 0x5556;
     int16_t actual {};
     OSAL::ByteArray value {0x55, 0x56};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -481,7 +481,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt16BinaryLittleEndian)
     uint16_t expected = 0x5556;
     uint16_t actual {};
     OSAL::ByteArray value {0x56, 0x55};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -490,7 +490,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt16BinaryBigEndian)
     uint16_t expected = 0x5556;
     uint16_t actual {};
     OSAL::ByteArray value {0x55, 0x56};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -508,7 +508,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt32BinaryLittleEndian)
     int32_t expected = 0x12345678;
     int32_t actual {};
     OSAL::ByteArray value {0x78, 0x56, 0x34, 0x12};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -517,7 +517,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt32BinaryBigEndian)
     uint32_t expected = 0x12345678;
     uint32_t actual {};
     OSAL::ByteArray value {0x12, 0x34, 0x56, 0x78};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -535,7 +535,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt32BinaryLittleEndian)
     uint32_t expected = 0x12345678;
     uint32_t actual {};
     OSAL::ByteArray value {0x78, 0x56, 0x34, 0x12};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -544,7 +544,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt32BinaryBigEndian)
     int32_t expected = 0x12345678;
     int32_t actual {};
     OSAL::ByteArray value {0x12, 0x34, 0x56, 0x78};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -562,7 +562,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt64BinaryLittleEndian)
     int64_t expected = 0x123456789ABCDEF0;
     int64_t actual {};
     OSAL::ByteArray value {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -571,7 +571,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeInt64BinaryBigEndian)
     int64_t expected = 0x123456789ABCDEF0;
     int64_t actual {};
     OSAL::ByteArray value {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -589,7 +589,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt64BinaryLittleEndian)
     uint64_t expected = 0x123456789ABCDEF0;
     uint64_t actual {};
     OSAL::ByteArray value {0xF0, 0xDE, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -598,7 +598,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeUInt64BinaryBigEndian)
     uint64_t expected = 0x123456789ABCDEF0;
     uint64_t actual {};
     OSAL::ByteArray value {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -616,7 +616,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeFloatBinaryLittleEndian)
     float expected = 1.0002e4F;
     float actual {};
     OSAL::ByteArray value {0x00, 0x48, 0x1C, 0x46};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -625,7 +625,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeFloatBinaryBigEndian)
     float expected = 1.0002e4F;
     float actual {};
     OSAL::ByteArray value {0x46, 0x1C, 0x48, 0x00};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -643,7 +643,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeDoubleBinaryLittleEndian)
     double expected = 1.00002E05;
     double actual {};
     OSAL::ByteArray value {0x00, 0x00, 0x00, 0x00, 0x20, 0x6A, 0xF8, 0x40};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -652,7 +652,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeDoubleBinaryBigEndian)
     double expected = 1.00002E05;
     double actual {};
     OSAL::ByteArray value {0x40, 0xF8, 0x6A, 0x20, 0x00, 0x00, 0x00, 0x00};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -670,7 +670,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeLongDoubleBinaryLittleEndian)
     long double expected = 1.00002E05L;
     long double actual {};
     OSAL::ByteArray value {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x51, 0xC3, 0x0F, 0x40};
-    Deserialize(value, actual, Util::Endianness::LittleEndian);
+    Deserialize(value, actual, OSAL::Endianness::LittleEndian);
     EXPECT_EQ(expected, actual);
 }
 
@@ -679,7 +679,7 @@ TEST_FIXTURE(DeserializationImplTest, DeserializeLongDoubleBinaryBigEndian)
     long double expected = 1.00002E05L;
     long double actual {};
     OSAL::ByteArray value {0x40, 0x0F, 0xC3, 0x51, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    Deserialize(value, actual, Util::Endianness::BigEndian);
+    Deserialize(value, actual, OSAL::Endianness::BigEndian);
     EXPECT_EQ(expected, actual);
 }
 

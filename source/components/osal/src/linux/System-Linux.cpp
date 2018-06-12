@@ -2,6 +2,7 @@
 
 #if defined(LINUX)
 
+#include <cstring>
 #include <cxxabi.h>
 #include <ext/stdio_filebuf.h>
 #include <sys/utsname.h>
@@ -17,6 +18,14 @@ namespace System
 
 static utsname NameInfo;
 static bool NameInfoInitialized = false;
+
+Endianness PlatformEndianness()
+{
+    uint16_t value = 0x0001;
+    uint8_t bytes[sizeof(value)];
+    memcpy(bytes, &value, sizeof(value));
+    return (bytes[0] == 0x01) ? Endianness::LittleEndian : Endianness::BigEndian;
+}
 
 string Name()
 {
