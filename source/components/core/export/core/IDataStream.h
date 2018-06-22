@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <osal/ByteArray.h>
 #include <osal/System.h>
 #include "core/Util.h"
 
@@ -24,6 +25,7 @@ public:
     virtual bool Read(double & value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian) = 0;
     virtual bool Read(long double & value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian) = 0;
     virtual bool Read(std::string & value, size_t numChars) = 0;
+    virtual bool Read(OSAL::ByteArray & value, size_t numValues) = 0;
 
     virtual bool Write(char ch) = 0;
     virtual bool Write(int8_t value) = 0;
@@ -38,6 +40,7 @@ public:
     virtual bool Write(double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian) = 0;
     virtual bool Write(long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian) = 0;
     virtual bool Write(const std::string & value) = 0;
+    virtual bool Write(const OSAL::ByteArray & value) = 0;
 };
 
 } // namespace Core

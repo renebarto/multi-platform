@@ -931,7 +931,7 @@ TEST_FIXTURE(TextFileTest, Read_Int8)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int8_t value;
+    int8_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(int8_t {123}, value);
     EXPECT_FALSE(file.Read(value));
@@ -957,7 +957,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt8)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint8_t value;
+    uint8_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(uint8_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -983,7 +983,7 @@ TEST_FIXTURE(TextFileTest, Read_Int16)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int16_t value;
+    int16_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(int16_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -999,7 +999,7 @@ TEST_FIXTURE(TextFileTest, Read_Int16LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int16_t value;
+    int16_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(int16_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1015,7 +1015,7 @@ TEST_FIXTURE(TextFileTest, Read_Int16BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int16_t value;
+    int16_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(int16_t {0}, value);
 }
@@ -1039,7 +1039,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt16)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint16_t value;
+    uint16_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(uint16_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1057,7 +1057,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt16LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint16_t value;
+    uint16_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(uint16_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1075,7 +1075,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt16BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint16_t value;
+    uint16_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(uint16_t {0}, value);
 }
@@ -1099,7 +1099,7 @@ TEST_FIXTURE(TextFileTest, Read_Int32)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int32_t value;
+    int32_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(int32_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1119,7 +1119,7 @@ TEST_FIXTURE(TextFileTest, Read_Int32LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int32_t value;
+    int32_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(int32_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1139,7 +1139,7 @@ TEST_FIXTURE(TextFileTest, Read_Int32BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int32_t value;
+    int32_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(int32_t {0}, value);
 }
@@ -1163,7 +1163,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt32)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint32_t value;
+    uint32_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(uint32_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1185,7 +1185,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt32LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint32_t value;
+    uint32_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(uint32_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1207,7 +1207,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt32BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint32_t value;
+    uint32_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(uint32_t {0}, value);
 }
@@ -1231,7 +1231,7 @@ TEST_FIXTURE(TextFileTest, Read_Int64)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int64_t value;
+    int64_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(int64_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1255,7 +1255,7 @@ TEST_FIXTURE(TextFileTest, Read_Int64LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int64_t value;
+    int64_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(int64_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1279,7 +1279,7 @@ TEST_FIXTURE(TextFileTest, Read_Int64BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    int64_t value;
+    int64_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(int64_t {0}, value);
 }
@@ -1303,7 +1303,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt64)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint64_t value;
+    uint64_t value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(uint64_t {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1329,7 +1329,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt64LittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint64_t value;
+    uint64_t value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(uint64_t {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1355,7 +1355,7 @@ TEST_FIXTURE(TextFileTest, Read_UInt64BigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    uint64_t value;
+    uint64_t value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(uint64_t {0}, value);
 }
@@ -1379,7 +1379,7 @@ TEST_FIXTURE(TextFileTest, Read_Float)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    float value;
+    float value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(float {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1407,7 +1407,7 @@ TEST_FIXTURE(TextFileTest, Read_FloatLittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    float value;
+    float value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(float {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1435,7 +1435,7 @@ TEST_FIXTURE(TextFileTest, Read_FloatBigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    float value;
+    float value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(float {0}, value);
 }
@@ -1459,7 +1459,7 @@ TEST_FIXTURE(TextFileTest, Read_Double)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    double value;
+    double value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_EQ(double {123}, value);
     EXPECT_TRUE(file.Read(value));
@@ -1489,7 +1489,7 @@ TEST_FIXTURE(TextFileTest, Read_DoubleLittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    double value;
+    double value {};
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
     EXPECT_EQ(double {123}, value);
     EXPECT_TRUE(file.Read(value, OSAL::Endianness::LittleEndian));
@@ -1519,7 +1519,7 @@ TEST_FIXTURE(TextFileTest, Read_DoubleBigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    double value;
+    double value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_EQ(double {0}, value);
 }
@@ -1543,7 +1543,7 @@ TEST_FIXTURE(TextFileTest, Read_LongDouble)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    long double value;
+    long double value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_TRUE(123L == value);
     EXPECT_TRUE(file.Read(value));
@@ -1575,7 +1575,7 @@ TEST_FIXTURE(TextFileTest, Read_LongDoubleLittleEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    long double value;
+    long double value {};
     EXPECT_TRUE(file.Read(value));
     EXPECT_TRUE(123L == value);
     EXPECT_TRUE(file.Read(value));
@@ -1607,7 +1607,7 @@ TEST_FIXTURE(TextFileTest, Read_LongDoubleBigEndian)
     TextFile file(path, DesiredAccess::ReadOnly);
 
     EXPECT_TRUE(file.Exists());
-    long double value;
+    long double value {};
     EXPECT_FALSE(file.Read(value, OSAL::Endianness::BigEndian));
     EXPECT_TRUE(0.0L == value);
 }
@@ -1620,7 +1620,7 @@ TEST_FIXTURE(TextFileTest, Read_StringClosedFile)
 
     EXPECT_TRUE(file.Exists());
     string value;
-    EXPECT_FALSE(file.Read(value, 118));
+    EXPECT_FALSE(file.Read(value, 1));
     EXPECT_EQ("", value);
 }
 
@@ -1634,6 +1634,32 @@ TEST_FIXTURE(TextFileTest, Read_String)
     string value;
     EXPECT_TRUE(file.Read(value, 118));
     EXPECT_EQ("123 234 12345 34567 12345678 34567890 9223372036854775807 18446744073709551615 1.0002e4 1.00002E05 1.00002E05 abc def\n", value);
+}
+
+TEST_FIXTURE(TextFileTest, Read_ByteArrayClosedFile)
+{
+    string path = Core::Test::Data::RegularFile6Path();
+
+    TextFile file(path);
+
+    EXPECT_TRUE(file.Exists());
+    OSAL::ByteArray value;
+    EXPECT_FALSE(file.Read(value, 1));
+    EXPECT_EQ(size_t {0}, value.Size());
+}
+
+TEST_FIXTURE(TextFileTest, Read_ByteArray)
+{
+    string path = Core::Test::Data::RegularFile6Path();
+
+    TextFile file(path, DesiredAccess::ReadOnly);
+
+    EXPECT_TRUE(file.Exists());
+    OSAL::ByteArray expected({ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                               0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF });
+    OSAL::ByteArray actual;
+    EXPECT_TRUE(file.Read(actual, 16));
+    EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(TextFileTest, Write_CharClosedFile)
@@ -2297,6 +2323,35 @@ TEST_FIXTURE(TextFileTest, Write_String)
     string text;
     EXPECT_TRUE(file.ReadAll(text));
     EXPECT_EQ("abcdef", text);
+}
+
+TEST_FIXTURE(TextFileTest, Write_ByteArrayClosedFile)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path);
+
+    EXPECT_FALSE(file.Exists());
+    OSAL::ByteArray value({123});
+    EXPECT_FALSE(file.Write(value));
+    EXPECT_FALSE(file.Exists());
+}
+
+TEST_FIXTURE(TextFileTest, Write_ByteArray)
+{
+    string path = Core::Test::Data::RegularFileNonExistingPath();
+
+    TextFile file(path, DesiredAccess::WriteOnly, ShareMode::ShareReadWrite, CreationFlags::CreateNew);
+
+    EXPECT_TRUE(file.Exists());
+    OSAL::ByteArray value({ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                            0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF });
+    EXPECT_TRUE(file.Write(value));
+    file.Close();
+    EXPECT_TRUE(file.Open(DesiredAccess::ReadOnly));
+    string text;
+    EXPECT_TRUE(file.ReadAll(text));
+    EXPECT_EQ("00 01 02 03 04 05 06 07 F8 F9 FA FB FC FD FE FF", text);
 }
 
 } // namespace Test

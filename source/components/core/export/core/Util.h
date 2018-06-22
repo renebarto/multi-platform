@@ -15,14 +15,14 @@ bool CORE_EXPORT Compare(double expected, double actual, double epsilonAbs, doub
 bool CORE_EXPORT Compare(float expected, float actual, float epsilonAbs, float epsilonRel);
 
 template<class T>
-bool Compare(T const * expected, int offsetExpected,
-             T const * actual, int offsetActual, int numSamples)
+bool Compare(T const * expected, size_t offsetExpected,
+             T const * actual, size_t offsetActual, size_t numSamples)
 {
     if ((offsetExpected < 0) || (offsetActual < 0) || (numSamples < 0))
     {
         return false;
     }
-    for (int i = 0; i < numSamples; i++)
+    for (size_t i = 0; i < numSamples; i++)
     {
         if (expected[i + offsetExpected] != actual[i + offsetActual])
             return false;
@@ -31,22 +31,22 @@ bool Compare(T const * expected, int offsetExpected,
 }
 
 template<class T>
-bool Compare(T const * expected, T const * actual, int numSamples)
+bool Compare(T const * expected, T const * actual, size_t numSamples)
 {
     return Compare(expected, 0, actual, 0, numSamples);
 }
 
 template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, bool>::type
-Compare(T const * expected, int offsetExpected,
-        T const * actual, int offsetActual, int numSamples,
+Compare(T const * expected, size_t offsetExpected,
+        T const * actual, size_t offsetActual, size_t numSamples,
         T epsilonAbs, T epsilonRel)
 {
     if ((offsetExpected < 0) || (offsetActual < 0) || (numSamples < 0))
     {
         return false;
     }
-    for (int i = 0; i < numSamples; i++)
+    for (size_t i = 0; i < numSamples; i++)
     {
         if (!Compare(expected[i + offsetExpected],
                      actual[i + offsetActual],
@@ -58,7 +58,7 @@ Compare(T const * expected, int offsetExpected,
 
 template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, bool>::type
-Compare(T const * expected, T const * actual, int numSamples,
+Compare(T const * expected, T const * actual, size_t numSamples,
         T epsilonAbs, T epsilonRel)
 {
     return Compare(expected, 0, actual, 0, numSamples, epsilonAbs, epsilonRel);

@@ -23,6 +23,7 @@ public:
 
     static std::string TestDirectoryCore() { return OSAL::Path::CombinePath(TestDirectory(), ProjectName()); }
 
+    static std::string SubDirName() { return "TstSubDir"; }
     static std::string FilledDirName() { return "FilledDir"; }
     static std::string FilledDirPath() { return OSAL::Path::CombinePath(TestDirectoryCore(), FilledDirName()); }
     static std::string SymlinkDirNameNoExtension() { return "FilledDir"; }
@@ -52,6 +53,14 @@ public:
     static std::string RegularFile4Extension() { return ".tst"; }
     static std::string RegularFile4Name() { return RegularFile4NameNoExtension() + RegularFile4Extension(); }
     static std::string RegularFile4Path() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFile4Name()); }
+    static std::string RegularFile5NameNoExtension() { return "e"; }
+    static std::string RegularFile5Extension() { return ".tst"; }
+    static std::string RegularFile5Name() { return RegularFile5NameNoExtension() + RegularFile5Extension(); }
+    static std::string RegularFile5Path() { return OSAL::Path::CombinePath(FilledDirPath(), OSAL::Path::CombinePath(SubDirName(), RegularFile5Name())); }
+    static std::string RegularFile6NameNoExtension() { return "f"; }
+    static std::string RegularFile6Extension() { return ".tst"; }
+    static std::string RegularFile6Name() { return RegularFile6NameNoExtension() + RegularFile6Extension(); }
+    static std::string RegularFile6Path() { return OSAL::Path::CombinePath(FilledDirPath(), OSAL::Path::CombinePath(SubDirName(), RegularFile6Name())); }
     static std::string RegularFileNonExistingNameNoExtension() { return "z"; }
     static std::string RegularFileNonExistingExtension() { return ".tst"; }
     static std::string RegularFileNonExistingName() { return RegularFileNonExistingNameNoExtension() + RegularFileNonExistingExtension(); }

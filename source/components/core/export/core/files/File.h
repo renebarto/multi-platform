@@ -16,7 +16,7 @@ enum class DesiredAccess
     WriteOnly = 1 << 1,
     ReadWrite = (1 << 0) | (1 << 1),
     Binary = 1 << 2,
-    Text = 0 << 2,
+    Text = 1 << 3,
 };
 
 enum class ShareMode
