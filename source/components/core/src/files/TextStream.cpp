@@ -240,12 +240,17 @@ bool TextStream::Read(OSAL::ByteArray & value, size_t numValues)
     OSAL::ByteArray result(numValues);
     string str;
     size_t index {};
+    bool isEOS {};
     while (index < numValues)
     {
+        if (isEOS)
+            return false;
         char ch;
         if (!Read(ch))
-            return false;
-        if (OSAL::Strings::isspace(ch))
+        {
+            isEOS = true;
+        }
+        if (OSAL::Strings::isspace(ch) || isEOS)
         {
             uint8_t elementValue {};
             if (!Deserialize(str, elementValue, 16))
@@ -258,7 +263,7 @@ bool TextStream::Read(OSAL::ByteArray & value, size_t numValues)
             str += ch;
     }
     value = std::move(result);
-    return _stream->good();
+    return true;
 }
 
 bool TextStream::Write(char ch)
