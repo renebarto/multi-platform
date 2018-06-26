@@ -11,15 +11,20 @@ static const std::streamsize BufferSize = 4096;
 
 TextMemoryStream::TextMemoryStream()
     : TextStream(_stream)
-    , _stream(new MemoryStreamBuf(BufferSize))
+    , _stream(new TextMemoryStreamBuf(BufferSize))
 {
 }
 
 TextMemoryStream::TextMemoryStream(const std::string &value)
     : TextStream(_stream)
-    , _stream(new MemoryStreamBuf(BufferSize))
+    , _stream(new TextMemoryStreamBuf(BufferSize))
 {
     SetContents(value);
+}
+
+TextMemoryStream::~TextMemoryStream()
+{
+    delete _stream.rdbuf();
 }
 
 bool TextMemoryStream::CompareTo(const TextMemoryStream & other) const

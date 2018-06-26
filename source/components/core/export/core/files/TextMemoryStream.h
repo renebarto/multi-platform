@@ -1,30 +1,27 @@
 #pragma once
 
-#include <fstream>
-#include <memory>
+#include <iostream>
 #include <string>
-#include <osal/FlagOperators.h>
 #include "core/files/TextStream.h"
-#include "core/files/File.h"
 
 namespace Core {
 namespace Files {
 
-class MemoryStreamBuf : public std::streambuf
+class TextMemoryStreamBuf : public std::streambuf
 {
 public:
-    MemoryStreamBuf(const std::streamsize bufferSize)
+    TextMemoryStreamBuf(const std::streamsize bufferSize)
         : _stringBuffer()
         , _stringBufferOffset()
         , _buffer()
         , _bufferSize(bufferSize)
     {
         _buffer = new char[_bufferSize];
-//        setg(0, 0, 0);
-//        setp(_bufferData, _bufferData + _bufferSize);
+        setg(0, 0, 0);
+        setp(_buffer, _buffer + _bufferSize);
     }
 
-    virtual ~MemoryStreamBuf()
+    virtual ~TextMemoryStreamBuf()
     {
         sync();
         delete [] _buffer;
@@ -40,7 +37,6 @@ public:
         std::copy(_stringBuffer.data() + _stringBufferOffset,
                   _stringBuffer.data() + _stringBufferOffset + charsRead,
                   _buffer);
-//        std::fill(_buffer + charsRead, _buffer + _bufferSize, 0);
         _stringBufferOffset += charsRead;
 
         setg(_buffer, _buffer, _buffer + charsRead);
@@ -71,7 +67,7 @@ public:
         pubsync();
         return traits_type::eq_int_type(result, traits_type::eof()) ? -1 : 0;
     }
-    std::string GetContents() const { return _stringBuffer; }
+    const std::string & GetContents() const { return _stringBuffer; }
     void SetContents(const std::string & value)
     {
         _stringBuffer = value;
@@ -90,14 +86,15 @@ class TextMemoryStream : virtual public TextStream
 public:
     TextMemoryStream();
     explicit TextMemoryStream(const std::string &value);
+    virtual ~TextMemoryStream();
 
     TextMemoryStream(const TextMemoryStream &) = delete;
     TextMemoryStream(TextMemoryStream &&) = delete;
     TextMemoryStream & operator = (const TextMemoryStream &) = delete;
     TextMemoryStream & operator = (TextMemoryStream &&) = delete;
 
-    std::string GetContents() const { return reinterpret_cast<MemoryStreamBuf *>(_stream.rdbuf())->GetContents(); }
-    void SetContents(const std::string & value) { reinterpret_cast<MemoryStreamBuf *>(_stream.rdbuf())->SetContents(value); }
+    const std::string & GetContents() const { return reinterpret_cast<TextMemoryStreamBuf *>(_stream.rdbuf())->GetContents(); }
+    void SetContents(const std::string & value) { reinterpret_cast<TextMemoryStreamBuf *>(_stream.rdbuf())->SetContents(value); }
     void Flush();
     bool CompareTo(const TextMemoryStream & other) const;
 
