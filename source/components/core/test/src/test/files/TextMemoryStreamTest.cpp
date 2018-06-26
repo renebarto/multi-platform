@@ -24,10 +24,10 @@ public:
     }
 };
 
-const std::string Text = "Hello\nHere I am\n\n";
-const std::string NumString = "123 234 12345 34567 12345678 34567890 9223372036854775807 18446744073709551615 1.0002e4 1.00002E05 1.00002E05 abc def\n";
-const std::string HexStringWithLF = "00 01 02 03 04 05 06 07 F8 F9 Fa fB FC fd fe ff\n";
-const std::string HexString = "00 01 02 03 04 05 06 07 F8 F9 Fa fB FC fd fe ff";
+static const std::string Text = "Hello\nHere I am\n\n";
+static const std::string NumString = "123 234 12345 34567 12345678 34567890 9223372036854775807 18446744073709551615 1.0002e4 1.00002E05 1.00002E05 abc def\n";
+static const std::string HexStringWithLF = "00 01 02 03 04 05 06 07 F8 F9 Fa fB FC fd fe ff\n";
+static const std::string HexString = "00 01 02 03 04 05 06 07 F8 F9 Fa fB FC fd fe ff";
 
 TEST_FIXTURE(TextMemoryStreamTest, ConstructDefault)
 {
@@ -189,7 +189,7 @@ TEST_FIXTURE(TextMemoryStreamTest, Read_Char)
 {
     TextMemoryStream stream(Text);
 
-    char ch;
+    char ch {};
     EXPECT_TRUE(stream.Read(ch));
     EXPECT_EQ('H', ch);
     EXPECT_TRUE(stream.Read(ch));

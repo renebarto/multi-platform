@@ -85,7 +85,7 @@ class TextMemoryStream : virtual public TextStream
 {
 public:
     TextMemoryStream();
-    explicit TextMemoryStream(const std::string &value);
+    explicit TextMemoryStream(const std::string & value);
     virtual ~TextMemoryStream();
 
     TextMemoryStream(const TextMemoryStream &) = delete;

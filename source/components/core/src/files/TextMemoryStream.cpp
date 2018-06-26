@@ -15,7 +15,7 @@ TextMemoryStream::TextMemoryStream()
 {
 }
 
-TextMemoryStream::TextMemoryStream(const std::string &value)
+TextMemoryStream::TextMemoryStream(const std::string & value)
     : TextStream(_stream)
     , _stream(new TextMemoryStreamBuf(BufferSize))
 {
