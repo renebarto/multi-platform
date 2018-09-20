@@ -4,11 +4,7 @@
 
 #include "osal/Strings.h"
 
-WARNING_PUSH
-WARNING_DISABLE(4668)
-#include "windows.h"
-WARNING_POP
-
+using namespace std;
 using namespace OSAL;
 
 WARNING_PUSH

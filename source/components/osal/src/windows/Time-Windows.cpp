@@ -8,8 +8,8 @@ namespace Time {
 
 long tm::tm_tzOffset = 0;
 int tm::tm_dstOffset = 0;
-char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = _("");
-char tm::tm_tzNameDst[MAX_TIME_ZONE_NAME + 1] = _("");
+char tm::tm_tzName[MAX_TIME_ZONE_NAME + 1] = "";
+char tm::tm_tzNameDst[MAX_TIME_ZONE_NAME + 1] = "";
 bool tm::initialized = false;
 static constexpr int SecondsPerMinute = 60;
 
@@ -20,12 +20,24 @@ tm::tm()
         Initialize();
 }
 
+tm::tm(const ::tm & other, bool localTime)
+    : _tm(other)
+{
+    if (!initialized)
+        Initialize();
+    if (!IsEmpty())
+    {
+        time_t epochTime = mktime(this);
+        _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
+    }
+}
+
 tm::tm(const tm & other)
     : _tm(other._tm)
 {
 }
 
-tm::tm(int second, int minute, int hour, int day, int month, int year)
+tm::tm(int second, int minute, int hour, int day, int month, int year, bool localTime)
     : _tm()
 {
     if (!initialized)
@@ -34,8 +46,14 @@ tm::tm(int second, int minute, int hour, int day, int month, int year)
     _tm.tm_min = minute;
     _tm.tm_hour = hour;
     _tm.tm_mday = day;
-    _tm.tm_mon = month;
-    _tm.tm_year = year;
+    _tm.tm_mon = month - 1;
+    _tm.tm_year = year - 1900;
+    time_t epochTime = mktime(this);
+    if (!localTime)
+        epochTime -= ActiveLocalTimeOffsetSeconds();
+    else
+        epochTime += ActiveDaylightSavingsTimeOffsetSeconds();
+    _tm = localTime ? *::localtime(&epochTime) : *::gmtime(&epochTime);
 }
 
 void tm::Initialize()
@@ -44,10 +62,12 @@ void tm::Initialize()
     /* DWORD result = */ GetTimeZoneInformation(&timeZoneInformation);
     tm_tzOffset= SecondsPerMinute * (timeZoneInformation.Bias + timeZoneInformation.StandardBias);
     tm_dstOffset= SecondsPerMinute * timeZoneInformation.DaylightBias;
-    OSAL::Strings::strncpy(tm_tzName, timeZoneInformation.StandardName,
-                           MAX_TIME_ZONE_NAME + 1);
-    OSAL::Strings::strncpy(tm_tzNameDst, timeZoneInformation.DaylightName,
-                           MAX_TIME_ZONE_NAME + 1);
+    std::string tmpName = OSAL::Strings::WStringToString(timeZoneInformation.StandardName);
+    OSAL::Strings::strncpy(tm_tzName, tmpName.c_str(), MAX_TIME_ZONE_NAME + 1);
+    tm_tzName[MAX_TIME_ZONE_NAME] = '\0';
+    tmpName = OSAL::Strings::WStringToString(timeZoneInformation.DaylightName);
+    OSAL::Strings::strncpy(tm_tzNameDst, tmpName.c_str(), MAX_TIME_ZONE_NAME + 1);
+    tm_tzNameDst[MAX_TIME_ZONE_NAME] = '\0';
     initialized = true;
 }
 
@@ -86,7 +106,7 @@ static LARGE_INTEGER GetFileTimeOffset()
     return (t);
 }
 
-int clock_gettime(int X, struct timespec * tv)
+int ClockGetTime(clockid_t clockID, OSAL::Time::timespec * tp)
 {
     LARGE_INTEGER t;
     FILETIME f;
@@ -96,9 +116,9 @@ int clock_gettime(int X, struct timespec * tv)
     static bool initialized{};
     static BOOL usePerformanceCounter{};
 
-    if (!tv)
+    if (!tp)
         return EFAULT;
-    if (X != CLOCK_REALTIME)
+    if (clockID != CLOCK_REALTIME)
         return EINVAL;
     if (!initialized)
     {
@@ -112,7 +132,7 @@ int clock_gettime(int X, struct timespec * tv)
         } else
         {
             offset = GetFileTimeOffset();
-            frequencyToMicroseconds = 10.;
+            frequencyToMicroseconds = 10.0;
         }
     }
     if (usePerformanceCounter)
@@ -128,11 +148,11 @@ int clock_gettime(int X, struct timespec * tv)
     t.QuadPart -= offset.QuadPart;
     microseconds = (double) t.QuadPart / frequencyToMicroseconds;
     t.QuadPart = LONGLONG(microseconds);
-    tv->tv_sec = long(t.QuadPart / 1000000000);
-    tv->tv_nsec = long(t.QuadPart % 1000000000);
+    tp->tv_sec = long(t.QuadPart / 1000000000);
+    tp->tv_nsec = long(t.QuadPart % 1000000000);
     time_t timeSeconds;
     timeSeconds = time(nullptr);
-    tv->tv_sec += long(timeSeconds);
+    tp->tv_sec += long(timeSeconds);
     return (0);
 }
 

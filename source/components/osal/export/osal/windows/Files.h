@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fcntl.h>
-#include <unistd.h>
+#include <osal/windows/unistd.h>
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -43,17 +43,17 @@ inline int Close(FileDescriptor fd)
 
 inline ssize_t Read(FileDescriptor fd, void * buf, size_t count)
 {
-    return ::_read(fd, buf, count);
+    return ::_read(fd, buf, static_cast<unsigned int>(count));
 }
 
 inline ssize_t Write(FileDescriptor fd, const void * buf, size_t count)
 {
-    return ::_write(fd, buf, count);
+    return ::_write(fd, buf, static_cast<unsigned int>(count));
 }
 
 inline int Remove(const char * path)
 {
-    return ::unlink(path);
+    return ::_unlink(path);
 }
 
 inline int Stat(const char * path, struct stat * data)
@@ -75,11 +75,6 @@ inline _off_t GetSize(const char * path)
     if (::stat(path, &data) == -1)
         return 0;
     return data.st_size;
-}
-
-inline int CreatePipe(FileDescriptor fds[2])
-{
-    return ::_pipe(fds, 4096, _O_BINARY);
 }
 
 } // namespace Files

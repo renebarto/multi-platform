@@ -2,7 +2,7 @@
 
 #if defined(WIN_MSVC)
 
-#include "uuid/uuid.h"
+#include "osal/osal.h"
 
 #include "osal/Exception.h"
 #include "osal/GUID.h"
@@ -10,72 +10,64 @@
 using namespace std;
 using namespace OSAL;
 
-const GUID GUID::Null;
+const OSAL::GUID OSAL::GUID::Null;
 
-GUID GUID::Generate()
+OSAL::GUID OSAL::GUID::Generate()
 {
-    GUID guid;
+    OSAL::GUID guid;
 
-    uuid_generate(guid._guid.Data());
+    UuidCreate(reinterpret_cast<UUID *>(guid._guid.Data()));
 
     return guid;
 }
 
-GUID GUID::GenerateRandom()
+OSAL::GUID OSAL::GUID::GenerateRandom()
 {
-    GUID guid;
+    OSAL::GUID guid;
 
-    uuid_generate_random(guid._guid.Data());
+    UuidCreate(reinterpret_cast<UUID *>(guid._guid.Data()));
 
     return guid;
 }
 
-GUID GUID::GenerateTime()
+OSAL::GUID OSAL::GUID::GenerateTime()
 {
-    GUID guid;
+    OSAL::GUID guid;
 
-    uuid_generate_time(guid._guid.Data());
+    UuidCreateSequential(reinterpret_cast<UUID *>(guid._guid.Data()));
 
     return guid;
 }
 
-GUID GUID::GenerateTimeSafe()
+OSAL::GUID OSAL::GUID::GenerateTimeSafe()
 {
-    GUID guid;
+    OSAL::GUID guid;
 
-    uuid_generate_time_safe(guid._guid.Data());
+    UuidCreateSequential(reinterpret_cast<UUID *>(guid._guid.Data()));
 
     return guid;
 }
 
-timeval GUID::GetTime() const
+timeval OSAL::GUID::GetTime() const
 {
-    timeval result;
-    uuid_time(_guid.Data(), &result);
+    timeval result {};
     return result;
 }
 
-GUIDVersion GUID::GetVersion() const
+GUIDVersion OSAL::GUID::GetVersion() const
 {
-    return static_cast<GUIDVersion>(uuid_type(_guid.Data()));
+    return static_cast<GUIDVersion>(static_cast<GUIDVersion>(_guid.Data()[0] >> 4));
 }
 
-int GUID::GetVariant() const
+int OSAL::GUID::GetVariant() const
 {
-    return uuid_variant(_guid.Data());
+    return (((_guid.Data()[0] >> 2) & 0x03) == 0x01) ? 1 : 2;
 }
 
-extern void uuid_generate(uuid_t out);
-extern void uuid_generate_random(uuid_t out);
-extern void uuid_generate_time(uuid_t out);
-extern int uuid_generate_time_safe(uuid_t out);
-extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv);
-extern int uuid_type(const uuid_t uu);
-extern int uuid_variant(const uuid_t uu);
 
-GUID GUID::Parse(const std::string & text)
+OSAL::GUID OSAL::GUID::Parse(const std::string & text)
 {
-    GUID guid;
+    OSAL::GUID guid;
     if (!TryParse(text, guid))
     {
         ostringstream stream;
@@ -85,7 +77,7 @@ GUID GUID::Parse(const std::string & text)
     return guid;
 }
 
-bool GUID::TryParse(const std::string & text, uint8_t & value)
+bool OSAL::GUID::TryParse(const std::string & text, uint8_t & value)
 {
     if (text.length() != 2)
         return false;
@@ -97,11 +89,11 @@ bool GUID::TryParse(const std::string & text, uint8_t & value)
     return true;
 }
 
-bool GUID::TryParse(const std::string & text, GUID & guid)
+bool OSAL::GUID::TryParse(const std::string & text, OSAL::GUID & guid)
 {
     std::string str = text;
     const char delimiter = '-';
-    GUID result;
+    OSAL::GUID result;
 
     if (str.length() != 36)
         return false;
@@ -132,7 +124,7 @@ bool GUID::TryParse(const std::string & text, GUID & guid)
     return true;
 }
 
-GUID & GUID::operator = (const GUID & other)
+OSAL::GUID & OSAL::GUID::operator = (const OSAL::GUID & other)
 {
     if (this != &other)
     {
@@ -141,27 +133,27 @@ GUID & GUID::operator = (const GUID & other)
     return *this;
 }
 
-bool GUID::operator == (const GUID & other) const
+bool OSAL::GUID::operator == (const OSAL::GUID & other) const
 {
     return this->_guid == other._guid;
 }
 
-bool GUID::operator != (const GUID & other) const
+bool OSAL::GUID::operator != (const OSAL::GUID & other) const
 {
     return this->_guid != other._guid;
 }
 
-uint8_t & GUID::operator[] (size_t offset)
+uint8_t & OSAL::GUID::operator[] (size_t offset)
 {
     return this->_guid[offset];
 }
 
-const uint8_t & GUID::operator[] (size_t offset) const
+const uint8_t & OSAL::GUID::operator[] (size_t offset) const
 {
     return this->_guid[offset];
 }
 
-OSAL::ByteArray GUID::GetBytes() const
+OSAL::ByteArray OSAL::GUID::GetBytes() const
 {
     return _guid;
 }
@@ -171,7 +163,7 @@ static void Print(std::ostream & stream, uint8_t value)
     stream << hex << setw(2) << nouppercase << setfill('0') << int(value);
 }
 
-std::ostream & GUID::PrintTo(std::ostream & stream) const
+std::ostream & OSAL::GUID::PrintTo(std::ostream & stream) const
 {
     Print(stream, _guid[0]);
     Print(stream, _guid[1]);

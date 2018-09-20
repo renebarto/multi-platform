@@ -3,7 +3,8 @@
 #if defined(WIN_MSVC)
 
 #include <cassert>
-#include <ext/stdio_filebuf.h>
+#include <fstream>
+#include "osal/osal.h"
 
 #include "osal/Files.h"
 #include "osal/Path.h"
@@ -16,13 +17,14 @@ TemporaryFile::TemporaryFile()
     : _stream()
     , _path()
 {
-    const int MAX_PATH = 4096;
-    char fileMask[MAX_PATH];
-    sprintf(fileMask, "%s/testXXXXXX", P_tmpdir);
-    int fd = mkstemp(fileMask);
-    _path = fileMask;
-    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::out);
-    _stream = std::make_shared<std::iostream>(&filebuf);
+    char directory[MAX_PATH];
+    if (!GetTempPathA(sizeof(directory), directory))
+        return;
+    char filePath[MAX_PATH];
+    if (!GetTempFileNameA(directory, "test", 0, filePath))
+        return;
+    _path = filePath;
+    _stream = std::make_shared<std::fstream>(_path);
 }
 
 TemporaryFile::~TemporaryFile()
@@ -36,10 +38,9 @@ void TemporaryFile::Close()
     _stream = nullptr;
 }
 
-std::iostream & TemporaryFile::GetStream()
+std::iostream * TemporaryFile::GetStream()
 {
-    assert(_stream != nullptr);
-    return *_stream;
+    return _stream.get();
 }
 
 std::string const & TemporaryFile::GetPath() const

@@ -22,6 +22,7 @@ Pipe::~Pipe()
 
 int Pipe::Create()
 {
+    return ::pipe(_fd);
     return Files::CreatePipe(_fd);
 }
 
@@ -47,10 +48,10 @@ void Pipe::CloseWrite()
 
 ssize_t Pipe::Read(void * data, ssize_t numBytes)
 {
-    return Files::Read(_fd[PIPE_READ], data, numBytes);
+    return Files::Read(_fd[PIPE_READ], data, static_cast<size_t>(numBytes));
 }
 
 ssize_t Pipe::Write(void * data, ssize_t numBytes)
 {
-    return Files::Write(_fd[PIPE_WRITE], data, numBytes);
+    return Files::Write(_fd[PIPE_WRITE], data, static_cast<size_t>(numBytes));
 }

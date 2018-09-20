@@ -2,7 +2,12 @@
 
 #if defined(WIN_MSVC)
 
-#include <unistd.h>
+#include "osal/osal.h"
+WARNING_PUSH
+WARNING_DISABLE(4668)
+#include <osal/windows/unistd.h>
+#include <osal/windows/dirent.h>
+WARNING_POP
 #include <sys/stat.h>
 #include <climits>
 #include <cstring>
@@ -10,6 +15,7 @@
 #include "osal/osal.h"
 #include "osal/Exception.h"
 #include "osal/Path.h"
+#include "osal/Strings.h"
 
 using namespace std;
 
@@ -47,48 +53,48 @@ bool OSAL::Path::DirectoryExists(const string & path)
     return (S_ISDIR(status.st_mode));
 }
 
-void OSAL::Path::MakeSureDirectoryExists(const string & path)
+bool OSAL::Path::MakeSureDirectoryExists(const string & path)
 {
     struct stat status;
     memset(&status, 0, sizeof(status));
     stat(path.c_str(), &status);
     if (S_ISDIR(status.st_mode))
-        return;
+        return true;
     if (S_ISREG(status.st_mode))
     {
-        unlink(path.c_str());
+        if (RemoveDirectory(path.c_str()) != 0)
+            return false;
     }
-    mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    MkDir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
-void OSAL::Path::MakeSureFileDoesNotExist(const string & path)
+bool OSAL::Path::MakeSureFileDoesNotExist(const string & path)
 {
     if (FileExists(path))
     {
-        unlink(path.c_str());
+        _unlink(path.c_str());
+        return false;
     }
+    return true;
 }
 
 string OSAL::Path::FullPath(const string & path)
 {
-    char buffer[PATH_MAX];
+    char fullpath[PATH_MAX];
     string resolvedPath = ResolveTilde(path);
-    const char * fullpath = realpath(resolvedPath.c_str(), buffer);
-    if (fullpath == nullptr)
+    if (!GetFullPathNameA(resolvedPath.c_str(), sizeof(fullpath), fullpath, nullptr))
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
-    return string(fullpath);
+    return fullpath;
 }
 
 string OSAL::Path::CurrentDir()
 {
-    char * currentDirectory = get_current_dir_name();
-    if (currentDirectory == nullptr)
+    char currentDirectory[PATH_MAX];
+    if (!GetCurrentDirectoryA(sizeof(currentDirectory), currentDirectory))
     {
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errno);
     }
-    string result(currentDirectory);
-    free(currentDirectory);
-    return FullPath(result);
+    return FullPath(currentDirectory);
 }
 
 string OSAL::Path::RelativePath(const string & path)
@@ -103,7 +109,7 @@ string OSAL::Path::RelativePath(const string & path)
     #if defined(UNICODE) || defined(_UNICODE)
     wchar_t drive[_MAX_DRIVE];
     wchar_t dir[_MAX_DIR];
-    _wsplitpath(fullPath.c_str(), drive, dir, nullptr, nullptr);
+    _wsplitpath(Strings::StringToWString(fullPath).c_str(), drive, dir, nullptr, nullptr);
     bool isAbsolutePath = ((wcslen(drive) != 0) && (index <= wcslen(drive))) ||
                            ((wcslen(dir) != 0) && (dir[0] == _PathSeparator) && (index <= wcslen(drive) + 1));
 #else

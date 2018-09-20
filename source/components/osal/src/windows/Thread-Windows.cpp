@@ -36,12 +36,11 @@ static void RaiseException(THREADNAME_INFO & info)
 
 static void SetThreadName(HANDLE threadHandle, const std::string & threadName)
 {
-    std::string threadNameNarrow = OSAL::ToNarrowString(threadName);
     DWORD threadID = ::GetThreadId(threadHandle);
 
     THREADNAME_INFO info;
     info.dwType = 0x1000;
-    info.szName = threadNameNarrow.c_str();
+    info.szName = threadName.c_str();
     info.dwThreadID = threadID;
     info.dwFlags = 0;
 

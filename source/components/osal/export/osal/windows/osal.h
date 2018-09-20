@@ -14,6 +14,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
+#include <rpc.h>
 #undef min
 #undef max
 #pragma warning(pop)

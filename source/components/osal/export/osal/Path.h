@@ -1,6 +1,7 @@
 #pragma once
 
 #include <osal/exports.h>
+#include <osal/Unused.h>
 
 #include <string>
 

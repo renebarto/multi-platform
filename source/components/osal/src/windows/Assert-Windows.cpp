@@ -4,7 +4,11 @@
 
 #include "osal/Assert.h"
 
+#include <string>
 #include <cassert>
+#define _WIN32_WINNT_WINTHRESHOLD           0x0601
+#define NTDDI_WIN7SP1                       0x0601010
+#include <windows.h>
 
 namespace OSAL
 {
@@ -18,7 +22,12 @@ void InternalAssertionHandler(bool expression, const char * expressionText, cons
         if (currentAssertHandler)
             currentAssertHandler(expression, expressionText, file, line, func);
         else
-            __assert_fail(expressionText, file, line, func);
+        {
+            char lineNumberText[10];
+            _itoa(line, lineNumberText, 10);
+            std::string output = std::string(file) + ": " + lineNumberText + ": " + func + ": " + expressionText;
+            OutputDebugStringA(output.c_str());
+        }
     }
 }
 

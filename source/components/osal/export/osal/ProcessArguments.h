@@ -20,6 +20,7 @@ public:
     ProcessArguments & operator = (const ProcessArguments &) = delete;
 
     char * const * GetArgv();
+    std::string GetFullCommandLine() const;
 
 protected:
     char ** _args;

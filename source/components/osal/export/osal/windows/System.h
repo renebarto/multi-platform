@@ -1,7 +1,5 @@
 #pragma once
 
-#include <semaphore.h>
-#include <unistd.h>
 #include <cstdlib>
 #include <string>
 #include <typeinfo>

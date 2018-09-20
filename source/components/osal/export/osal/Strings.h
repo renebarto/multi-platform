@@ -43,11 +43,18 @@ OSAL_EXPORT std::string UnQuote(const std::string & text);
 inline std::wstring StringToWString(const std::string & value)
 {
 #if defined(WIN_MSVC) || defined(WIN_MINGW)
-    int size = MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length(), nullptr, 0);
-    wchar_t buffer[size + 1];
-
-    MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length(), buffer, size);
-    std::wstring result(buffer, size);
+    uint64_t size = static_cast<uint64_t>(MultiByteToWideChar(CP_UTF8, 0, value.c_str(), static_cast<int>(value.length()), nullptr, int{ 0 }));
+    wchar_t *buffer = new wchar_t[static_cast<size_t>(size) + 1];
+    std::wstring result;
+    try
+    {
+        MultiByteToWideChar(CP_UTF8, 0, value.c_str(), static_cast<int>(value.length()), buffer, static_cast<int>(size));
+        result = std::wstring(buffer, size);
+    }
+    catch (...)
+    {
+    }
+    delete[] buffer;
 
     return result;
 #else
@@ -61,11 +68,18 @@ inline std::wstring StringToWString(const std::string & value)
 inline std::string WStringToString(const std::wstring & value)
 {
 #if defined(WIN_MSVC) || defined(WIN_MINGW)
-    int size = WideCharToMultiByte(CP_UTF8, 0, value.c_str(), value.length(), nullptr, 0, nullptr, nullptr);
-    char buffer[size + 1];
-
-    WideCharToMultiByte(CP_UTF8, 0, value.c_str(), value.length(), buffer, size, nullptr, nullptr);
-    std::string result(buffer, size);
+    uint64_t size = static_cast<uint64_t>(WideCharToMultiByte(CP_UTF8, 0, value.c_str(), static_cast<int>(value.length()), nullptr, 0, nullptr, nullptr));
+    char* buffer = new char[size + 1];
+    std::string result;
+    try
+    {
+        WideCharToMultiByte(CP_UTF8, 0, value.c_str(), static_cast<int>(value.length()), buffer, static_cast<int>(size), nullptr, nullptr);
+        result = std::string(buffer, size);
+    }
+    catch (...)
+    {
+    }
+    delete[] buffer;
 
     return result;
 #else
@@ -89,18 +103,18 @@ inline std::string ToString(const std::wstring & value)
 inline std::wstring ToWideString(const std::string & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return value;
-#else
     return StringToWString(value);
+#else
+    return value;
 #endif
 }
 
 inline std::string ToNarrowString(const std::string & value)
 {
 #if defined(UNICODE) || defined(_UNICODE)
-    return WStringToString(value);
-#else
     return value;
+#else
+    return WStringToString(value);
 #endif
 }
 
