@@ -102,20 +102,22 @@ inline std::string ToString(const std::wstring & value)
 
 inline std::wstring ToWideString(const std::string & value)
 {
-#if defined(UNICODE) || defined(_UNICODE)
     return StringToWString(value);
-#else
+}
+
+inline std::wstring ToWideString(const std::wstring & value)
+{
     return value;
-#endif
 }
 
 inline std::string ToNarrowString(const std::string & value)
 {
-#if defined(UNICODE) || defined(_UNICODE)
     return value;
-#else
+}
+
+inline std::string ToNarrowString(const std::wstring & value)
+{
     return WStringToString(value);
-#endif
 }
 
 } // namespace Strings
