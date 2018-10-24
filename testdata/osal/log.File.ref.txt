@@ -1,5 +1,0 @@
-2014-05-30 09:13:07.728729 - FileLoggerTest:FileLoggerTest: Error: ABC
-2014-05-30 09:13:07.728885 - FileLoggerTest:FileLoggerTest: Warning: ABC
-2014-05-30 09:13:07.728939 - FileLoggerTest:FileLoggerTest: Message: ABC
-2014-05-30 09:13:07.728989 - FileLoggerTest:FileLoggerTest: Info: ABC
-2014-05-30 09:13:07.729038 - FileLoggerTest:FileLoggerTest: Debug: ABC
