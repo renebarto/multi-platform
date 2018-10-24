@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Build'
+                sh 'cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DMEASURE_COVERAGE=ON -DLOCAL_BUILD=ON -DSCRIPTS_DIR=/var/lib/jenkins/jobs/cmake-scripts/workspace'
+                sh 'make clean'
+                sh 'make'
+            }
+        }
+        stage('Test'){
+            steps {
+                echo 'Test'
+                sh 'mkdir -p test-results'
+                sh 'rm -rf test-results/*'
+                sh 'output/debug/bin/run-all-tests --xmloutput test-results/all-tests.test.xml'
+                step([$class: 'XUnitBuilder',
+                    thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
+                    tools: [[$class: 'JUnitType', pattern: 'test-results/**'],
+                           [$class: 'UnitTestJunitHudsonTestType', pattern: 'test-results/**/*.xml']]])
+            }
+        }
+        stage('Coverage'){
+            steps {
+                echo 'Measure coverage'
+                sh 'mkdir -p gcov-results'
+                sh 'rm -rf gcov-results/*'
+                sh 'gcovr --xml --xml-pretty --output=gcov-results/gcovr.xml -r source/'
+                step([$class: 'CoberturaPublisher',
+                     coberturaReportFile: 'gcov-results/gcovr.xml'])
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploy'
+                sh 'tar czf $BUILD_ID.tar.gz -C output/debug bin lib'
+                archiveArtifacts '$BUILD_ID.tar.gz'
+            }
+        }
+    }
+}

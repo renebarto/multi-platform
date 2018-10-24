@@ -1,0 +1,7 @@
+cmake-*/
+.idea/
+build/
+output/
+*.pc
+cppcheck-output.xml
+valgrind.log
