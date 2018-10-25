@@ -15,7 +15,7 @@ pipeline {
                 echo 'Test'
                 sh 'mkdir -p test-results'
                 sh 'rm -rf test-results/*'
-#                sh 'output/debug/bin/run-all-tests --xmloutput test-results/all-tests.test.xml'
+//                sh 'output/debug/bin/run-all-tests --xmloutput test-results/all-tests.test.xml'
                 sh 'output/debug/bin/osal.test --xmloutput test-results/osal.test.xml'
                 step([$class: 'XUnitBuilder',
                     thresholds: [[$class: 'FailedThreshold', unstableThreshold: '1']],
