@@ -13,7 +13,7 @@ namespace Files {
 
 typedef int FileDescriptor; // Non portable file descriptor
 //typedef HANDLE FileHandle; // Portable file handle (descriptor for Linux, HANDLE for Windows)
-constexpr FileHandle InvalidHandle = static_cast<FileHandle>(INVALID_HANDLE_VALUE);
+//constexpr FileHandle InvalidHandle = static_cast<FileHandle>(INVALID_HANDLE_VALUE);
 
 inline FileDescriptor GetFileDescriptor(FILE * file)
 {

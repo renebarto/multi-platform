@@ -57,6 +57,8 @@ TEST_FIXTURE(ConsoleTest, OutputNoColor)
     EXPECT_EQ(expected, stream.str());
 }
 
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+
 TEST_FIXTURE(ConsoleTest, OutputColor)
 {
     ostringstream stream;
@@ -67,9 +69,27 @@ TEST_FIXTURE(ConsoleTest, OutputColor)
             << fgcolor(ConsoleColor::Green | ConsoleColor::Intensity)
             << bgcolor(ConsoleColor::White | ConsoleColor::Intensity) << "green on black\n"
             << fgcolor(ConsoleColor::Default) << bgcolor(ConsoleColor::Default) << "no color\n";
+    string expected("no color\n\033[0;31;1mred\n\033[0;92;1m\033[0;92;1;107;1mgreen on black\n\033[0;107;1m\033[0mno color\n");
+    EXPECT_EQ(expected, stream.str());
+}
+
+#elif defined(LINUX) || defined(DARWIN)
+
+TEST_FIXTURE(ConsoleTest, OutputColor)
+{
+    ostringstream stream;
+    OSAL::Console console(stream);
+    console.ForceUseColor(true);
+    console << "no color\n"
+        << fgcolor(ConsoleColor::Red) << "red\n"
+        << fgcolor(ConsoleColor::Green | ConsoleColor::Intensity)
+        << bgcolor(ConsoleColor::White | ConsoleColor::Intensity) << "green on black\n"
+        << fgcolor(ConsoleColor::Default) << bgcolor(ConsoleColor::Default) << "no color\n";
     string expected("no color\n\033[0;31mred\n\033[0;92m\033[0;92;107mgreen on black\n\033[0;107m\033[0mno color\n");
     EXPECT_EQ(expected, stream.str());
 }
+
+#endif
 
 TEST_FIXTURE(ConsoleTest, SetForegroundColorNoColor)
 {
@@ -133,6 +153,23 @@ TEST_FIXTURE(ConsoleTest, SetResetTerminalColorNoColor)
     EXPECT_EQ(expected, stream.str());
 }
 
+#if defined(WIN_MSVC) || defined(WIN_MINGW)
+
+TEST_FIXTURE(ConsoleTest, SetResetTerminalColorWithColor)
+{
+    ostringstream stream;
+    OSAL::Console console(stream);
+    console.ForceUseColor(true);
+    console.SetTerminalColor(ConsoleColor::Blue | ConsoleColor::Bold, ConsoleColor::Red | ConsoleColor::Intensity);
+    console << "text";
+    console.ResetTerminalColor();
+    console << "text";
+    string expected("\033[0;34;1;101;1mtext\033[0mtext");
+    EXPECT_EQ(expected, stream.str());
+}
+
+#elif defined(LINUX) || defined(DARWIN)
+
 TEST_FIXTURE(ConsoleTest, SetResetTerminalColorWithColor)
 {
     ostringstream stream;
@@ -145,6 +182,8 @@ TEST_FIXTURE(ConsoleTest, SetResetTerminalColorWithColor)
     string expected("\033[0;34;1;101mtext\033[0mtext");
     EXPECT_EQ(expected, stream.str());
 }
+
+#endif
 
 } // TEST_SUITE(osal)
 
