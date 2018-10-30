@@ -1,0 +1,14 @@
+namespace WPEFramework {
+
+namespace PluginHost {
+
+[id(0x00000025)]
+interface IChannel
+{
+    uint32 Inbound([in] const uint32 ID, [in] const uint8 data[], [in] const uint16 length);
+    uint32 Outbound([in] const uint32 ID, [out] uint8 data[], [in] const uint16 length) const;
+}
+
+} // namespace PluginHost
+} // namespace WPEFramework
+

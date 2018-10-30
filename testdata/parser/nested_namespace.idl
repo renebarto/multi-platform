@@ -1,0 +1,5 @@
+namespace WPEFramework {
+namespace PluginHost {
+
+} // namespace PluginHost
+} // namespace WPEFramework

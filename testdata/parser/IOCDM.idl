@@ -1,0 +1,58 @@
+namespace OCDM {
+
+[id(0x00000012)]
+interface ISession
+{
+    sint32 Load();
+    void Update([in] const uint8* keyMessage, [in] const uint16 keyLength);
+    sint32 Remove();
+    sint32 Close();
+}
+
+[id(0x00000013)]
+interface ISession::ICallback
+{
+    void OnKeyMessage(
+        [in] const uint8* keyMessage,
+        [in] const uint16 keyLength,
+        [in] const string URL);
+    void OnKeyReady();
+    void OnKeyError(
+        [in] const sint16 error,
+        [in] const sint32 sysError,
+        [in] const string errorMessage);
+    void OnKeyStatusUpdate([in] const string keyMessage);
+}
+
+[id(0x00000011)]
+interface ISystem
+{
+    sint32 CreateSession(
+        [in] const sint32 licenseType,
+        [in] const string initDataType,
+        [in] const uint8* initData,
+        [in] const uint16 initDataLength,
+        [in] const uint8* CDMData,
+        [in] const uint16 CDMDataLength,
+        [in] ISession::ICallback* callback,
+        [out] string & sessionId,
+        [out] string & bufferId,
+        [out] ISession* & session);
+    sint32 SetServerCertificate(
+        [in] const uint8* serverCertificate,
+        [in] const uint16 serverCertificateLength);
+}
+
+[id(0x00000010)]
+interface IAccessorOCDM
+{
+   sint32 IsTypeSupported(
+        [in] const string keySystem,
+        [in] const string mimeType) const;
+   OCDM::ISystem* KeySystem(
+        [in] const string keySystem);
+   string BufferId(
+        [in] const string sessionId) const;
+}
+
+} // namespace OCDM

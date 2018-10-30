@@ -1,0 +1,25 @@
+namespace WPEFramework {
+
+namespace PluginHost {
+
+[id(0x00000025)]
+interface IChannel
+ {
+    //! @{
+    //! ================================== CALLED ON COMMUNICATION THREAD =====================================
+    //! Whenever a WebSocket is opened with a locator (URL) pointing to this plugin, it is capable of receiving
+    //! raw data for the plugin. Raw data received on this link will be exposed to the plugin via this interface.
+    //! @}
+    uint32 Inbound(const uint32 ID, const uint8 data[], const uint16 length);
+
+    //! @{
+    //! ================================== CALLED ON COMMUNICATION THREAD =====================================
+    //! Whenever a WebSocket is opened with a locator (URL) pointing to this plugin, it is capable of sending
+    //! raw data to the initiator of the websocket.
+    //! @}
+    uint32 Outbound(const uint32 ID, uint8 data[], const uint16 length) const;
+};
+
+} // namespace PluginHost
+} // namespace WPEFramework
+

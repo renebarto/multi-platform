@@ -1,0 +1,8 @@
+[]{}  // Line comment
+()*; 	/* Block comment */
+:,
+abcdefg
+12345678
+01234567
+0x123456789aBcDeF
+"Hello!$#"

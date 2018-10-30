@@ -1,0 +1,47 @@
+namespace WPEFramework {
+
+namespace PluginHost {
+
+[id(0x00000020)]
+interface IPlugin
+{
+    //! @{
+    //! ==================================== CALLED ON THREADPOOL THREAD ======================================
+    //! First time initialization. Whenever a plugin is loaded, it is offered a Service object with relevant
+    //! information and services for this particular plugin. The Service object contains configuration information that
+    //! can be used to initialize the plugin correctly. If Initialization succeeds, return nothing (empty string)
+    //! If there is an error, return a string describing the issue why the initialisation failed.
+    //! The Service object is *NOT* reference counted, lifetime ends if the plugin is deactivated.
+    //! The lifetime of the Service object is guaranteed till the deinitialize method is called.
+    //! @}
+    const string Initialize([in] PluginHost::IShell* shell);
+    //! @{
+    //! ==================================== CALLED ON THREADPOOL THREAD ======================================
+    //! The plugin is unloaded from framework. This is call allows the module to notify clients
+    //! or to persist information if needed. After this call the plugin will unlink from the service path
+    //! and be deactivated. The Service object is the same as passed in during the Initialize.
+    //! After theis call, the lifetime of the Service object ends.
+    //! @}
+    void Deinitialize([in] PluginHost::IShell* shell);
+    //! @{
+    //! ==================================== CALLED ON THREADPOOL THREAD ======================================
+    //! Returns an interface to a JSON struct that can be used to return specific metadata information with respect
+    //! to this plugin. This Metadata can be used by the MetData plugin to publish this information to the ouside world.
+    //! @}
+    string Information() const;
+}
+
+[id(0x00000021)]
+interface IPlugin::INotification
+{
+    //! @{
+    //! ================================== CALLED ON THREADPOOL THREAD =====================================
+    //! Whenever a plugin changes state, this is reported to an observer so proper actions could be taken
+    //! on this state change.
+    //! @}
+    void StateChange([in] PluginHost::IShell* plugin);
+}
+
+} // namespace PluginHost
+} // namespace WPEFramework
+
