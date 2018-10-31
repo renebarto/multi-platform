@@ -14,7 +14,7 @@
 namespace OSAL {
 
 typedef int FileHandle; // Portable file handle (file descriptor for Linux, HANDLE for Windows)
-extern const OSAL_EXPORT FileHandle InvalidHandle;
+extern const FileHandle InvalidHandle;
 
 class Pipe
 {

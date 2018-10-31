@@ -3,6 +3,8 @@
 using namespace std;
 using namespace OSAL;
 
+const FileHandle OSAL::InvalidHandle = -1;
+
 Pipe::Pipe()
 {
     _fd[PIPE_READ] = -1;
