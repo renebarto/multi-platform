@@ -9,7 +9,7 @@ Pipe::Pipe()
     _fd[PIPE_WRITE] = -1;
 }
 
-Pipe::Pipe(Files::FileDescriptor fdRead, Files::FileDescriptor fdWrite)
+Pipe::Pipe(OSAL::FileHandle fdRead, OSAL::FileHandle fdWrite)
 {
     _fd[PIPE_READ] = fdRead;
     _fd[PIPE_WRITE] = fdWrite;
@@ -23,7 +23,6 @@ Pipe::~Pipe()
 int Pipe::Create()
 {
     return ::pipe(_fd);
-    return Files::CreatePipe(_fd);
 }
 
 void Pipe::Close()
