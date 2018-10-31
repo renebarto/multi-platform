@@ -252,6 +252,32 @@ public:
     }
 };
 
+class ArgumentOutOfRangeException : public ArgumentException
+{
+public:
+    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
+        std::string argument)
+        : ArgumentException(functionName, fileName, line, argument)
+    {
+    }
+    ArgumentOutOfRangeException(char const * functionName, char const * fileName, int line,
+        std::string argument, std::string message)
+        : ArgumentException(functionName, fileName, line, argument, message)
+    {
+    }
+    ~ArgumentOutOfRangeException() throw ()
+    {
+    }
+    virtual std::string BuildMessage() const
+    {
+        std::ostringstream stream;
+        stream << Exception::BuildMessage();
+        if (!argument.empty())
+            stream << ": argument out of range: " << argument;
+        return stream.str();
+    }
+};
+
 } // namespace OSAL
 
 #if defined(WIN_MSVC)
