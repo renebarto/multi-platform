@@ -35,7 +35,7 @@ TEST_FIXTURE(PipeTest, Construct)
 #elif defined(WIN_MINGW)
     EXPECT_NE(0, CreatePipe(&fd[0], &fd[1], nullptr, 0));
 #else
-    EXPECT_NE(InvalidHandle, Files::CreatePipe(fd));
+    EXPECT_EQ(0, CreatePipe(fd));
 #endif
     Pipe pipe(fd[0], fd[1]);
     EXPECT_EQ(fd[0], pipe.ReadFD());
