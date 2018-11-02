@@ -45,26 +45,26 @@ inline int strcmp(const char * lhs, const char * rhs, size_t size)
 //    return ::wcsncmp(lhs, rhs, size);
 //}
 //
-//inline int strcasecmp(const char * lhs, const char * rhs)
-//{
-//    return ::_stricmp(lhs, rhs);
-//}
-//
-//inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs)
-//{
-//    return ::_wcsicmp(lhs, rhs);
-//}
-//
-//inline int strcasecmp(const char * lhs, const char * rhs, size_t size)
-//{
-//    return ::_strnicmp(lhs, rhs, size);
-//}
-//
-//inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
-//{
-//    return ::_wcsnicmp(lhs, rhs, size);
-//}
-//
+inline int strcasecmp(const char * lhs, const char * rhs)
+{
+    return ::_stricmp(lhs, rhs);
+}
+
+inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs)
+{
+    return ::_wcsicmp(lhs, rhs);
+}
+
+inline int strcasecmp(const char * lhs, const char * rhs, size_t size)
+{
+    return ::_strnicmp(lhs, rhs, size);
+}
+
+inline int strcasecmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
+{
+    return ::_wcsnicmp(lhs, rhs, size);
+}
+
 inline const char * strchr(const char * str, const char character)
 {
     return ::strchr(str, character);
