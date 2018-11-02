@@ -3,6 +3,7 @@
 #include <sstream>
 #include "osal/Assert.h"
 #include "osal/Exception.h"
+#include "osal/Strings.h"
 
 using namespace std;
 using namespace OSAL;
@@ -12,6 +13,7 @@ IPV4Address const IPV4Address::None = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Any = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
 IPV4Address const IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
+static string LocalHostName = "localhost";
 
 // Todo: merge this with other implementations
 static const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
@@ -20,7 +22,7 @@ static const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
     unsigned long s = static_cast<unsigned long>(size);
 
     ZeroMemory(&ss, sizeof(ss));
-    ss.ss_family = af;
+    ss.ss_family = static_cast<ADDRESS_FAMILY>(af);
 
     switch(af) {
         case AF_INET:
@@ -59,6 +61,11 @@ bool IPV4Address::TryParse(const string & text, IPV4Address & ipAddress)
     int errorCode = inet_pton(AF_INET, text.c_str(), &address);
     if (errorCode == 0)
     {
+        if (0 == Strings::strcasecmp(text.c_str(), LocalHostName.c_str(), std::min(LocalHostName.length(), text.length())))
+        {
+            ipAddress = LocalHost;
+            return true;
+        }
         addrinfo * addressInfo;
         addrinfo hints = { 0, AF_INET, 0, 0, 0, nullptr, nullptr, nullptr };
         errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);

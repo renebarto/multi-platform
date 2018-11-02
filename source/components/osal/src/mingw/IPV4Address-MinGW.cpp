@@ -85,6 +85,11 @@ bool IPV4Address::TryParse(const string & text, IPV4Address & ipAddress)
     int errorCode = inet_pton(AF_INET, text.c_str(), &address);
     if (errorCode == 0)
     {
+        if (0 == Strings::strcasecmp(text.c_str(), LocalHostName.c_str(), std::min(LocalHostName.length(), text.length())))
+        {
+            ipAddress = LocalHost;
+            return true;
+        }
         addrinfo * addressInfo;
         addrinfo hints = { 0, AF_INET, 0, 0, 0, nullptr, nullptr, nullptr };
         errorCode = getaddrinfo(text.c_str(), nullptr, &hints, &addressInfo);
