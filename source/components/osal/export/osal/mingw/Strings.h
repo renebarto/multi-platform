@@ -29,22 +29,22 @@ inline int strcmp(const char * lhs, const char * rhs)
 {
     return ::strcmp(lhs, rhs);
 }
-//
-//inline int strcmp(const wchar_t * lhs, const wchar_t * rhs)
-//{
-//    return ::wcscmp(lhs, rhs);
-//}
-//
+
+inline int strcmp(const wchar_t * lhs, const wchar_t * rhs)
+{
+    return ::wcscmp(lhs, rhs);
+}
+
 inline int strcmp(const char * lhs, const char * rhs, size_t size)
 {
     return ::strncmp(lhs, rhs, size);
 }
 
-//inline int strcmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
-//{
-//    return ::wcsncmp(lhs, rhs, size);
-//}
-//
+inline int strcmp(const wchar_t * lhs, const wchar_t * rhs, size_t size)
+{
+    return ::wcsncmp(lhs, rhs, size);
+}
+
 inline int strcasecmp(const char * lhs, const char * rhs)
 {
     return ::_stricmp(lhs, rhs);
