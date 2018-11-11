@@ -80,7 +80,7 @@ if ("${TEST_DATA_ROOT}" STREQUAL "")
     if (LOCAL_BUILD)
         set(TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}/testdata")
     else()
-        set(TEST_DATA_ROOT "/usr/share/testdata")
+        set(TEST_DATA_ROOT "${CMAKE_INSTALL_PREFIX}/share/testdata")
     endif()
 endif()
 

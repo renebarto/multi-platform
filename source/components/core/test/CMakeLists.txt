@@ -43,7 +43,8 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
-    unittest-cpp)
+#    unittest-cpp
+    )
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}

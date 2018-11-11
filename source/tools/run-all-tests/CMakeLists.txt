@@ -53,8 +53,6 @@ set(PACKAGE_DEPENDENCIES
 #    xml
 #    parse-c++
 #    staruml
-
-    unittest-cpp
     )
 
 set(PACKAGE_LIBS

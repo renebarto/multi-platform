@@ -45,7 +45,8 @@ set(PACKAGE_LINK_OPTIONS
 set(PACKAGE_DEPENDENCIES
     core
     osal
-    unittest-cpp)
+#    unittest-cpp
+    )
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
@@ -76,3 +77,4 @@ if (NOT LOCAL_BUILD)
         DESTINATION ${PKGCONFIG_FILE_BIN_DIR}
         COMPONENT ${PROJECT_NAME})
 endif()
+

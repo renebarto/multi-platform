@@ -57,7 +57,7 @@ if (NOT LOCAL_BUILD)
     add_uninstall_target(${PACKAGE_NAME} uninstall-components)
 
     install(TARGETS ${PROJECT_NAME}
-        RUNTIME
+        LIBRARY
         DESTINATION ${PKGCONFIG_FILE_BIN_DIR}
         COMPONENT ${PROJECT_NAME})
 endif()
