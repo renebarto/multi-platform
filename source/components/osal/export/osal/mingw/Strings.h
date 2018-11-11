@@ -115,16 +115,16 @@ inline size_t strlen(const char * str)
 //    return ::iswspace(c) != 0;
 //}
 //
-//inline bool isdigit(char c)
-//{
-//    return ::isdigit(c) != 0;
-//}
-//
-//inline bool isdigit(wchar_t c)
-//{
-//    return ::iswdigit(c) != 0;
-//}
-//
+inline bool isdigit(char c)
+{
+    return ::isdigit(c) != 0;
+}
+
+inline bool isdigit(wchar_t c)
+{
+    return ::iswdigit(c) != 0;
+}
+
 //inline bool isalpha(char c)
 //{
 //    return ::isalpha(c) != 0;

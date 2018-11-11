@@ -15,30 +15,6 @@ IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
 IPV4Address const IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
 static string LocalHostName = "localhost";
 
-// Todo: merge this with other implementations
-static const char *inet_ntop(int af, const void *src, char *dst, socklen_t size)
-{
-    struct sockaddr_storage ss;
-    unsigned long s = static_cast<unsigned long>(size);
-
-    ZeroMemory(&ss, sizeof(ss));
-    ss.ss_family = static_cast<ADDRESS_FAMILY>(af);
-
-    switch(af) {
-        case AF_INET:
-            ((struct sockaddr_in *)&ss)->sin_addr = *(struct in_addr *)src;
-            break;
-        case AF_INET6:
-            ((struct sockaddr_in6 *)&ss)->sin6_addr = *(struct in6_addr *)src;
-            break;
-        default:
-            return NULL;
-    }
-    /* cannot direclty use &size because of strict aliasing rules */
-    return (WSAAddressToStringA((struct sockaddr *)&ss, sizeof(ss), NULL, dst, &s) == 0)?
-           dst : NULL;
-}
-
 IPV4Address::~IPV4Address()
 {
 }

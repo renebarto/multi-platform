@@ -17,3 +17,8 @@
 #define SL64(x) x##LL
 #define UL64(x) x##ULL
 
+namespace OSAL {
+namespace Network {
+    int inet_pton(int af, const char *src, void *dst);
+}
+}
