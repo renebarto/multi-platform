@@ -62,7 +62,7 @@ UUIDVersion UUID::GetVersion() const
 
 UUIDVariant UUID::GetVariant() const
 {
-    return uuid_variant(_uuid.Data());
+    return static_cast<UUIDVariant>(uuid_variant(_uuid.Data()));
 }
 
 extern void uuid_generate(uuid_t out);
