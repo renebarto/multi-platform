@@ -33,7 +33,7 @@ set(PACKAGE_COMPILER_OPTIONS
     )
 
 set(PACKAGE_INCLUDE_DIRS
-    ${UNITTEST_CPP_INCLUDE_DIRS}
+#    ${UNITTEST_CPP_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include
     )
 
@@ -53,12 +53,13 @@ set(PACKAGE_DEPENDENCIES
 #    xml
 #    parse-c++
 #    staruml
+    unittest-cpp
     )
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIB_CLANG_LIB}
-    ${UNITTEST_CPP_LIBRARIES}
+#    ${UNITTEST_CPP_LIBRARIES}
     ${LINKER_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 
