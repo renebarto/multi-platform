@@ -60,7 +60,7 @@ UUIDVersion UUID::GetVersion() const
     return static_cast<UUIDVersion>(uuid_type(_uuid.Data()));
 }
 
-int UUID::GetVariant() const
+UUIDVariant UUID::GetVariant() const
 {
     return uuid_variant(_uuid.Data());
 }
