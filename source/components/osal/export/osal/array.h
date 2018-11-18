@@ -216,7 +216,7 @@ size_t array<T>::get(size_t offset, T * data, size_t length) const
     ASSERT(offset + length <= size());
     if (offset + length > size())
         return 0;
-    memcpy(data, this->data() + offset, length * sizeof(T));
+    std::copy_n(this->data(), length, data);
     return length;
 }
 
