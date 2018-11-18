@@ -5,6 +5,7 @@
 #include <streambuf>
 #include <string>
 #include "osal/array.h"
+#include "osal/Strings.h"
 
 namespace OSAL
 {
@@ -39,7 +40,7 @@ public:
     explicit bytearray(const char * data)
         : array()
     {
-        set(0, reinterpret_cast<const uint8_t *>(data), strlen(data));
+        set(0, reinterpret_cast<const uint8_t *>(data), OSAL::Strings::strlen(data));
     }
     bytearray(std::string data)
         : array()
