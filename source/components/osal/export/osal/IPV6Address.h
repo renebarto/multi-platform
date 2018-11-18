@@ -22,12 +22,12 @@ public:
         : _ipAddress(other._ipAddress)
     {
     }
-    IPV6Address(const OSAL::ByteArray & ipAddress)
+    IPV6Address(const OSAL::bytearray & ipAddress)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
     }
-    IPV6Address(const OSAL::ByteArray & ipAddress, size_t offset)
+    IPV6Address(const OSAL::bytearray & ipAddress, size_t offset)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
@@ -35,7 +35,7 @@ public:
     IPV6Address(uint8_t ipAddress[16])
         : _ipAddress(AddressSize)
     {
-        SetData(OSAL::ByteArray(ipAddress, 16), 0);
+        SetData(OSAL::bytearray(ipAddress, 16), 0);
     }
 
     virtual ~IPV6Address();
@@ -48,18 +48,18 @@ public:
     uint8_t & operator[] (size_t offset);
     const uint8_t & operator[] (size_t offset) const;
 
-    OSAL::ByteArray GetData() const;
-    void SetData(const OSAL::ByteArray & value);
+    OSAL::bytearray GetData() const;
+    void SetData(const OSAL::bytearray & value);
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const { return AddressSize; }
-    virtual OSAL::ByteArray GetBytes() const;
+    virtual OSAL::bytearray GetBytes() const;
     virtual std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
-    OSAL::ByteArray _ipAddress;
+    OSAL::bytearray _ipAddress;
 
-    void SetData(const OSAL::ByteArray & data, size_t offset);
+    void SetData(const OSAL::bytearray & data, size_t offset);
 };
 
 inline void PrintTo(const IPV6Address & value, std::ostream & stream)

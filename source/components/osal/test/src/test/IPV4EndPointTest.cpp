@@ -204,7 +204,7 @@ TEST_FIXTURE(IPV4EndPointTest, TryParseIPAddressOnly)
 TEST_FIXTURE(IPV4EndPointTest, TryParse)
 {
     const string text = "255.254.253.252:8080";
-    OSAL::ByteArray ipAddress({ 255, 254, 253, 252 });
+    OSAL::bytearray ipAddress({ 255, 254, 253, 252 });
     uint16_t port = 8080;
     IPV4EndPoint actual;
     IPV4EndPoint expected(ipAddress, port);

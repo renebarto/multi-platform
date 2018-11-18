@@ -22,16 +22,16 @@ enum class MyFlags : uint8_t
     ALL = 0xFF,
 };
 
-//DEFINE_FLAG_OPERATORS(MyFlags, uint8_t);
-
 } // namespace Test
-} // namespace OSAL
 
 template<>
-struct is_flag<OSAL::Test::MyFlags>
+struct is_flag<Test::MyFlags>
 {
     static constexpr bool value=true;
 };
+
+} // namespace OSAL
+
 
 WARNING_PUSH
 WARNING_DISABLE(4592)

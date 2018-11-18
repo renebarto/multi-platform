@@ -52,13 +52,13 @@ namespace OSAL {
     };
 #endif
 
-} // namespace OSAL
-
 template<>
 struct is_flag<OSAL::ConsoleColor>
 {
-    static constexpr bool value=true;
+    static constexpr bool value = true;
 };
+
+} // namespace OSAL
 
 OSAL_EXPORT std::ostream & operator << (std::ostream & stream, OSAL::ConsoleColor value);
 

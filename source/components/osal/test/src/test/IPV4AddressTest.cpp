@@ -32,7 +32,7 @@ TEST_SUITE(osal)
 TEST_FIXTURE(IPV4AddressTest, Constructor)
 {
     OSAL::Network::IPV4Address target;
-    OSAL::ByteArray reference({0, 0, 0, 0});
+    OSAL::bytearray reference({0, 0, 0, 0});
     const string expected = "0.0.0.0";
     EXPECT_TRUE(reference == target.GetBytes());
     ostringstream stream;
@@ -53,7 +53,7 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorCopy)
 
 TEST_FIXTURE(IPV4AddressTest, ConstructorByteArray)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
+    OSAL::bytearray ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target({1, 2, 3, 4});
     const string expected = "1.2.3.4";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -64,7 +64,7 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorByteArray)
 
 TEST_FIXTURE(IPV4AddressTest, ConstructorByteArrayOffset)
 {
-    OSAL::ByteArray reference({1, 2, 3, 4});
+    OSAL::bytearray reference({1, 2, 3, 4});
     OSAL::Network::IPV4Address target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1);
     const string expected = "1.2.3.4";
     EXPECT_TRUE(reference == target.GetBytes());
@@ -75,7 +75,7 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorByteArrayOffset)
 
 TEST_FIXTURE(IPV4AddressTest, CreateByteArray)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
+    OSAL::bytearray ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target({1, 2, 3, 4});
     const string expected = "1.2.3.4";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -86,7 +86,7 @@ TEST_FIXTURE(IPV4AddressTest, CreateByteArray)
 
 TEST_FIXTURE(IPV4AddressTest, CreateByteArrayOffset)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
+    OSAL::bytearray ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1);
     const string expected = "1.2.3.4";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -97,15 +97,15 @@ TEST_FIXTURE(IPV4AddressTest, CreateByteArrayOffset)
 
 TEST_FIXTURE(IPV4AddressTest, CreateUInt32)
 {
-    OSAL::ByteArray expected({255, 254, 253, 252});
+    OSAL::bytearray expected({255, 254, 253, 252});
     OSAL::Network::IPV4Address target(0xFCFDFEFF);
-    OSAL::ByteArray actual = target.GetBytes();
+    OSAL::bytearray actual = target.GetBytes();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(IPV4AddressTest, OperatorIndex)
 {
-    OSAL::ByteArray ipAddress({255, 254, 253, 252});
+    OSAL::bytearray ipAddress({255, 254, 253, 252});
     OSAL::Network::IPV4Address target(ipAddress);
     EXPECT_EQ(ipAddress[size_t{0}], target[0]);
     EXPECT_EQ(ipAddress[size_t{1}], target[1]);
@@ -134,7 +134,7 @@ TEST_FIXTURE(IPV4AddressTest, SetUInt32)
 TEST_FIXTURE(IPV4AddressTest, ParseNumeric)
 {
     const string text = "255.254.253.252";
-    OSAL::ByteArray ipAddress({255, 254, 253, 252});
+    OSAL::bytearray ipAddress({255, 254, 253, 252});
     OSAL::Network::IPV4Address expected(ipAddress);
     const OSAL::Network::IPV4Address & actual = OSAL::Network::IPV4Address::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -143,7 +143,7 @@ TEST_FIXTURE(IPV4AddressTest, ParseNumeric)
 TEST_FIXTURE(IPV4AddressTest, ParseHostName)
 {
     const string text = "localhost";
-    OSAL::ByteArray ipAddress({127, 0, 0, 1});
+    OSAL::bytearray ipAddress({127, 0, 0, 1});
     OSAL::Network::IPV4Address expected(ipAddress);
     const OSAL::Network::IPV4Address & actual = OSAL::Network::IPV4Address::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -168,7 +168,7 @@ TEST_FIXTURE(IPV4AddressTest, ParseInvalid)
 TEST_FIXTURE(IPV4AddressTest, TryParse)
 {
     const string text = "255.254.253.252";
-    OSAL::ByteArray ipAddress({255, 254, 253, 252});
+    OSAL::bytearray ipAddress({255, 254, 253, 252});
     OSAL::Network::IPV4Address actual;
     OSAL::Network::IPV4Address expected(ipAddress);
     EXPECT_TRUE(OSAL::Network::IPV4Address::TryParse(text, actual));
@@ -186,7 +186,7 @@ TEST_FIXTURE(IPV4AddressTest, TryParseInvalid)
 
 TEST_FIXTURE(IPV4AddressTest, OperatorEqual)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
+    OSAL::bytearray ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target(ipAddress);
     OSAL::Network::IPV4Address ref1;
     OSAL::Network::IPV4Address ref2({0, 0, 0, 0});
@@ -207,7 +207,7 @@ TEST_FIXTURE(IPV4AddressTest, OperatorEqual)
 
 TEST_FIXTURE(IPV4AddressTest, OperatorNotEqual)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4});
+    OSAL::bytearray ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target(ipAddress);
     OSAL::Network::IPV4Address ref1;
     OSAL::Network::IPV4Address ref2({0, 0, 0, 0});

@@ -52,7 +52,7 @@ TEST_SUITE(osal)
 TEST_FIXTURE(UUIDTest, Constructor)
 {
     OSAL::UUID target;
-    OSAL::ByteArray reference({0, 0, 0, 0, 0, 0, 0, 0,
+    OSAL::bytearray reference({0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0});
     const std::string expected = "00000000-0000-0000-0000-000000000000";
     EXPECT_TRUE(reference == target.GetBytes());
@@ -75,7 +75,7 @@ TEST_FIXTURE(UUIDTest, ConstructorCopy)
 
 TEST_FIXTURE(UUIDTest, ConstructorByteArray)
 {
-    OSAL::ByteArray uuid({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    OSAL::bytearray uuid({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                           0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F});
     OSAL::UUID target(uuid);
     const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
@@ -88,7 +88,7 @@ TEST_FIXTURE(UUIDTest, ConstructorByteArray)
 TEST_FIXTURE(UUIDTest, ConstructorByteArrayTooShort)
 {
     EXPECT_FALSE(_hadAssertion);
-    OSAL::ByteArray uuidTooShort({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    OSAL::bytearray uuidTooShort({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                                   0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E});
     OSAL::UUID target(uuidTooShort);
     const std::string expected = "00010203-0405-0607-0809-0a0b0c0d0e00";
@@ -103,7 +103,7 @@ TEST_FIXTURE(UUIDTest, ConstructorByteArrayTooShort)
 TEST_FIXTURE(UUIDTest, ConstructorByteArrayTooLong)
 {
     EXPECT_FALSE(_hadAssertion);
-    OSAL::ByteArray uuidTooLong({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    OSAL::bytearray uuidTooLong({0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                                  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
                                  0x10});
     OSAL::UUID target(uuidTooLong);
@@ -221,7 +221,7 @@ TEST_FIXTURE(UUIDTest, GenerateRandom)
 TEST_FIXTURE(UUIDTest, Parse)
 {
     const std::string text = "0f0e0d0c-0b0a-0908-0706-050403020100";
-    OSAL::ByteArray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
+    OSAL::bytearray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::UUID expected(uuid);
     const OSAL::UUID & actual = OSAL::UUID::Parse(text);
@@ -250,7 +250,7 @@ TEST_FIXTURE(UUIDTest, ParseInvalid)
 TEST_FIXTURE(UUIDTest, TryParse)
 {
     const std::string text = "0f0e0d0c-0b0a-0908-0706-050403020100";
-    OSAL::ByteArray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
+    OSAL::bytearray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::UUID actual;
     OSAL::UUID expected(uuid);
@@ -279,7 +279,7 @@ TEST_FIXTURE(UUIDTest, TryParseInvalid)
 
 TEST_FIXTURE(UUIDTest, OperatorIndex)
 {
-    OSAL::ByteArray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
+    OSAL::bytearray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::UUID target(uuid);
     EXPECT_EQ(uuid[size_t{0}], target[0]);
@@ -302,7 +302,7 @@ TEST_FIXTURE(UUIDTest, OperatorIndex)
 
 TEST_FIXTURE(UUIDTest, OperatorEqual)
 {
-    OSAL::ByteArray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
+    OSAL::bytearray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::UUID target(uuid);
     OSAL::UUID ref1;
@@ -325,7 +325,7 @@ TEST_FIXTURE(UUIDTest, OperatorEqual)
 
 TEST_FIXTURE(UUIDTest, OperatorNotEqual)
 {
-    OSAL::ByteArray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
+    OSAL::bytearray uuid({0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
                           0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     OSAL::UUID target(uuid);
     OSAL::UUID ref1;

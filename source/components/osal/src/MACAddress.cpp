@@ -134,7 +134,7 @@ uint8_t MACAddress::operator[] (size_t offset) const
     return _macAddress[offset];
 }
 
-OSAL::ByteArray MACAddress::GetBytes() const
+OSAL::bytearray MACAddress::GetBytes() const
 {
     return _macAddress;
 }
@@ -151,10 +151,10 @@ std::ostream & MACAddress::PrintTo(std::ostream & stream) const
     return stream;
 }
 
-void MACAddress::SetData(const OSAL::ByteArray & data, size_t offset)
+void MACAddress::SetData(const OSAL::bytearray & data, size_t offset)
 {
-    ASSERT(data.Size() - offset >= AddressSize);
+    ASSERT(data.size() - offset >= AddressSize);
     size_t safeOffset = std::min(AddressSize, offset);
-    size_t safeCount = std::min(AddressSize, data.Size() - safeOffset);
-    _macAddress.Set(0, data.Data() + safeOffset, safeCount);
+    size_t safeCount = std::min(AddressSize, data.size() - safeOffset);
+    _macAddress.set(0, data.data() + safeOffset, safeCount);
 }

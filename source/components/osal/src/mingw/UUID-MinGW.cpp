@@ -138,7 +138,7 @@ OSAL::UUID OSAL::UUID::Generate()
 
     auto result = CoCreateGuid(&uuid);
     if (result != RPC_S_OK)
-        return ByteArray(sizeof(struct _GUID));
+        return bytearray(sizeof(struct _GUID));
 
     std::array<uint8_t, 16> bytes =
     {
@@ -172,7 +172,7 @@ OSAL::UUID OSAL::UUID::Generate()
     bytes[6] &= 0x4F;
     bytes[6] |= 0x40;
 
-    return ByteArray(bytes.data(), bytes.size());
+    return bytearray(bytes.data(), bytes.size());
 }
 
 OSAL::UUID OSAL::UUID::GenerateRandom()
@@ -186,7 +186,7 @@ OSAL::UUID OSAL::UUID::GenerateTime()
 
     auto result = CoCreateGuid(&uuid);
     if (result != RPC_S_OK)
-        return ByteArray(sizeof(struct _GUID));
+        return bytearray(sizeof(struct _GUID));
 
     std::array<uint8_t, 16> bytes =
     {
@@ -220,7 +220,7 @@ OSAL::UUID OSAL::UUID::GenerateTime()
     bytes[6] &= 0x1F;
     bytes[6] |= 0x10;
 
-    return ByteArray(bytes.data(), bytes.size());
+    return bytearray(bytes.data(), bytes.size());
 }
 
 OSAL::UUID OSAL::UUID::GenerateTimeSafe()
@@ -231,18 +231,18 @@ OSAL::UUID OSAL::UUID::GenerateTimeSafe()
 timeval OSAL::UUID::GetTime() const
 {
     timeval result;
-    uuid_time(_uuid.Data(), &result);
+    uuid_time(_uuid.data(), &result);
     return result;
 }
 
 UUIDVersion OSAL::UUID::GetVersion() const
 {
-    return static_cast<UUIDVersion>(uuid_type(_uuid.Data()));
+    return static_cast<UUIDVersion>(uuid_type(_uuid.data()));
 }
 
 UUIDVariant OSAL::UUID::GetVariant() const
 {
-    return uuid_variant(_uuid.Data());
+    return uuid_variant(_uuid.data());
 }
 
 OSAL::UUID OSAL::UUID::Parse(const std::string & text)
@@ -333,7 +333,7 @@ const uint8_t & OSAL::UUID::operator[] (size_t offset) const
     return this->_uuid[offset];
 }
 
-OSAL::ByteArray OSAL::UUID::GetBytes() const
+OSAL::bytearray OSAL::UUID::GetBytes() const
 {
     return _uuid;
 }

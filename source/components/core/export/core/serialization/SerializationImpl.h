@@ -20,19 +20,19 @@ CORE_EXPORT std::string Serialize(float value, int precision = 16);
 CORE_EXPORT std::string Serialize(double value, int precision = 16);
 CORE_EXPORT std::string Serialize(long double value, int precision = 16);
 CORE_EXPORT std::string Serialize(std::string value, bool quote = true);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, bool value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, int8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, int16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, int32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, int64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, uint64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, float value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-CORE_EXPORT void Serialize(OSAL::ByteArray & result, std::string value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, bool value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, int8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, uint8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, int16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, uint16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, int32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, uint32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, int64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, uint64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, float value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+CORE_EXPORT void Serialize(OSAL::bytearray & result, std::string value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
 
 template<typename EnumType>
 std::string Serialize(const EnumType & value)
@@ -63,7 +63,7 @@ template<class T>
 class BinarySerializer : public IBinarySerializer<T>
 {
 public:
-    virtual void Serialize(OSAL::ByteArray & result, const T &value) override
+    virtual void Serialize(OSAL::bytearray & result, const T &value) override
     {
         Core::Serialize(result, value);
     }

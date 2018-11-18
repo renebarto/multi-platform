@@ -32,7 +32,7 @@ TEST_SUITE(osal)
 TEST_FIXTURE(IPV6AddressTest, Constructor)
 {
     OSAL::Network::IPV6Address target;
-    OSAL::ByteArray reference({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    OSAL::bytearray reference({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     const string expected = "::";
     EXPECT_TRUE(reference == target.GetBytes());
     ostringstream stream;
@@ -53,7 +53,7 @@ TEST_FIXTURE(IPV6AddressTest, ConstructorCopy)
 
 TEST_FIXTURE(IPV6AddressTest, ConstructorByteArray)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -64,7 +64,7 @@ TEST_FIXTURE(IPV6AddressTest, ConstructorByteArray)
 
 TEST_FIXTURE(IPV6AddressTest, ConstructorByteArrayOffset)
 {
-    OSAL::ByteArray reference({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray reference({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}, 1);
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(reference == target.GetBytes());
@@ -75,7 +75,7 @@ TEST_FIXTURE(IPV6AddressTest, ConstructorByteArrayOffset)
 
 TEST_FIXTURE(IPV6AddressTest, CreateByteArray)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -86,7 +86,7 @@ TEST_FIXTURE(IPV6AddressTest, CreateByteArray)
 
 TEST_FIXTURE(IPV6AddressTest, CreateByteArrayOffset)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}, 1);
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(ipAddress == target.GetBytes());
@@ -97,16 +97,16 @@ TEST_FIXTURE(IPV6AddressTest, CreateByteArrayOffset)
 
 TEST_FIXTURE(IPV6AddressTest, CreateUInt8Array)
 {
-    OSAL::ByteArray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     uint8_t address[16] = {255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240};
     OSAL::Network::IPV6Address target(address);
-    OSAL::ByteArray actual = target.GetBytes();
+    OSAL::bytearray actual = target.GetBytes();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(IPV6AddressTest, OperatorIndex)
 {
-    OSAL::ByteArray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     OSAL::Network::IPV6Address target(ipAddress);
     EXPECT_EQ(ipAddress[size_t{0}], target[0]);
     EXPECT_EQ(ipAddress[size_t{1}], target[1]);
@@ -130,24 +130,24 @@ TEST_FIXTURE(IPV6AddressTest, GetData)
 {
     OSAL::Network::IPV6Address ipAddress(
         {255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
-    OSAL::ByteArray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
-    OSAL::ByteArray actual = ipAddress.GetData();
+    OSAL::bytearray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray actual = ipAddress.GetData();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(IPV6AddressTest, SetData)
 {
     OSAL::Network::IPV6Address ipAddress;
-    OSAL::ByteArray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray expected({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     ipAddress.SetData(expected);
-    OSAL::ByteArray actual = ipAddress.GetData();
+    OSAL::bytearray actual = ipAddress.GetData();
     EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(IPV6AddressTest, ParseNumeric)
 {
     const string text = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0";
-    OSAL::ByteArray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     OSAL::Network::IPV6Address expected(ipAddress);
     const OSAL::Network::IPV6Address & actual = OSAL::Network::IPV6Address::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -156,7 +156,7 @@ TEST_FIXTURE(IPV6AddressTest, ParseNumeric)
 TEST_FIXTURE(IPV6AddressTest, ParseHostName)
 {
     const string text = "localhost";
-    OSAL::ByteArray ipAddress({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1});
+    OSAL::bytearray ipAddress({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1});
     OSAL::Network::IPV6Address expected(ipAddress);
     const OSAL::Network::IPV6Address & actual = OSAL::Network::IPV6Address::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -199,7 +199,7 @@ TEST_FIXTURE(IPV6AddressTest, ParseInvalid)
 TEST_FIXTURE(IPV6AddressTest, TryParse)
 {
     const string text = "fffe:fdfc:fbfa:f9f8:f7f6:f5f4:f3f2:f1f0";
-    OSAL::ByteArray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
+    OSAL::bytearray ipAddress({255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 244, 243, 242, 241, 240});
     OSAL::Network::IPV6Address actual;
     OSAL::Network::IPV6Address expected(ipAddress);
     EXPECT_TRUE(OSAL::Network::IPV6Address::TryParse(text, actual));
@@ -217,7 +217,7 @@ TEST_FIXTURE(IPV6AddressTest, TryParseInvalid)
 
 TEST_FIXTURE(IPV6AddressTest, OperatorEqual)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target(ipAddress);
     OSAL::Network::IPV6Address ref1;
     OSAL::Network::IPV6Address ref2({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
@@ -238,7 +238,7 @@ TEST_FIXTURE(IPV6AddressTest, OperatorEqual)
 
 TEST_FIXTURE(IPV6AddressTest, OperatorNotEqual)
 {
-    OSAL::ByteArray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+    OSAL::bytearray ipAddress({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
     OSAL::Network::IPV6Address target(ipAddress);
     OSAL::Network::IPV6Address ref1;
     OSAL::Network::IPV6Address ref2({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});

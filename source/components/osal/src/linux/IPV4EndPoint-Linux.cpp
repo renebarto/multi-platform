@@ -112,9 +112,9 @@ size_t IPV4EndPoint::Size() const
     return sizeof(sockaddr_in);
 }
 
-OSAL::ByteArray IPV4EndPoint::GetBytes() const
+OSAL::bytearray IPV4EndPoint::GetBytes() const
 {
-    OSAL::ByteArray result;
+    OSAL::bytearray result;
     sockaddr_in address {};
     address.sin_family = AF_INET;
     uint32_t ipAddress = _ipAddress.GetUInt32();

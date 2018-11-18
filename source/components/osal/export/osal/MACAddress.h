@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osal/ByteArray.h"
+#include "osal/bytearray.h"
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
@@ -19,12 +19,12 @@ public:
         : _macAddress(other._macAddress)
     {
     }
-    MACAddress(const ByteArray & macAddress)
+    MACAddress(const bytearray & macAddress)
         : _macAddress(AddressSize)
     {
         SetData(macAddress, 0);
     }
-    MACAddress(const ByteArray & macAddress, size_t offset)
+    MACAddress(const bytearray & macAddress, size_t offset)
         : _macAddress(AddressSize)
     {
         SetData(macAddress, offset);
@@ -46,14 +46,14 @@ public:
 
     virtual SocketFamily Family() const override { return SocketFamily::Packet; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual ByteArray GetBytes() const override;
+    virtual bytearray GetBytes() const override;
     virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
-    void SetData(const ByteArray & data, size_t offset);
+    void SetData(const bytearray & data, size_t offset);
     static bool TryParse(const std::string & text, uint8_t & value);
 
-    ByteArray _macAddress;
+    bytearray _macAddress;
 };
 
 } // namespace Network

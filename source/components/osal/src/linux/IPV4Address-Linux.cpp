@@ -84,7 +84,7 @@ void IPV4Address::SetUInt32(uint32_t value)
     _ipAddress.SetUInt32(0, value);
 }
 
-OSAL::ByteArray IPV4Address::GetBytes() const
+OSAL::bytearray IPV4Address::GetBytes() const
 {
     return _ipAddress;
 }
@@ -98,7 +98,7 @@ std::ostream & IPV4Address::PrintTo(std::ostream & stream) const
     return stream;
 }
 
-void IPV4Address::SetData(const OSAL::ByteArray & data, size_t offset)
+void IPV4Address::SetData(const OSAL::bytearray & data, size_t offset)
 {
     ASSERT(offset + AddressSize <= data.Size());
     _ipAddress.Set(0, data.Data() + offset, AddressSize);

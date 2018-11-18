@@ -161,7 +161,7 @@ const uint8_t & UUID::operator[] (size_t offset) const
     return this->_uuid[offset];
 }
 
-OSAL::ByteArray UUID::GetBytes() const
+OSAL::bytearray UUID::GetBytes() const
 {
     return _uuid;
 }

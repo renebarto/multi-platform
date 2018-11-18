@@ -126,7 +126,7 @@ void DomainSocketAddress::SetData(const string & value)
     _address.Set(0, reinterpret_cast<const uint8_t *>(value.c_str()), value.length());
 }
 
-OSAL::ByteArray DomainSocketAddress::GetBytes() const
+OSAL::bytearray DomainSocketAddress::GetBytes() const
 {
     return _address;
 }
@@ -137,7 +137,7 @@ std::ostream & DomainSocketAddress::PrintTo(std::ostream & stream) const
     return stream;
 }
 
-void DomainSocketAddress::SetData(const OSAL::ByteArray & data, size_t offset)
+void DomainSocketAddress::SetData(const OSAL::bytearray & data, size_t offset)
 {
     ASSERT(data.Size() - offset <= AddressSize);
     size_t safeOffset = std::min(AddressSize, offset);

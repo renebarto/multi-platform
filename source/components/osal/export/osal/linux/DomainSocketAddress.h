@@ -23,12 +23,12 @@ public:
         : _address(other._address)
     {
     }
-    DomainSocketAddress(const OSAL::ByteArray & address)
+    DomainSocketAddress(const OSAL::bytearray & address)
         : _address(AddressSize)
     {
         SetData(address, 0);
     }
-    DomainSocketAddress(const OSAL::ByteArray & address, size_t offset)
+    DomainSocketAddress(const OSAL::bytearray & address, size_t offset)
         : _address(AddressSize)
     {
         SetData(address, offset);
@@ -59,13 +59,13 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Unix; }
     virtual size_t Size() const override { return AddressSize; }
-    virtual OSAL::ByteArray GetBytes() const override;
+    virtual OSAL::bytearray GetBytes() const override;
     virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:
-    OSAL::ByteArray _address;
+    OSAL::bytearray _address;
 
-    void SetData(const OSAL::ByteArray & data, size_t offset);
+    void SetData(const OSAL::bytearray & data, size_t offset);
 };
 
 } // namespace Network

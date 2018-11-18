@@ -4,7 +4,7 @@
 
 #include <memory>
 #include "osal/exports.h"
-#include "osal/ByteArray.h"
+#include "osal/bytearray.h"
 
 namespace OSAL {
 namespace Network {
@@ -31,7 +31,7 @@ public:
 
     virtual SocketFamily Family() const = 0;
     virtual size_t Size() const = 0;
-    virtual ByteArray GetBytes() const = 0;
+    virtual bytearray GetBytes() const = 0;
     virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
 };
 using EndPointPtr = std::shared_ptr<EndPoint>;

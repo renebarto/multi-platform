@@ -157,9 +157,9 @@ size_t IPV6EndPoint::Size() const
     return sizeof(sockaddr_in6);
 }
 
-OSAL::ByteArray IPV6EndPoint::GetBytes() const
+OSAL::bytearray IPV6EndPoint::GetBytes() const
 {
-    OSAL::ByteArray result;
+    OSAL::bytearray result;
     sockaddr_in6 address {};
     address.sin6_family = AF_INET6;
     address.sin6_flowinfo = 0;

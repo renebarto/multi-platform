@@ -65,7 +65,7 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const override { return OSAL::Network::SocketFamily::InternetV4; }
     virtual size_t Size() const override;
-    virtual OSAL::ByteArray GetBytes() const override;
+    virtual OSAL::bytearray GetBytes() const override;
     virtual std::ostream & PrintTo(std::ostream & stream) const override;
 
 private:

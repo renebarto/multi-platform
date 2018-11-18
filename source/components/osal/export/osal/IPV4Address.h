@@ -1,6 +1,6 @@
 #pragma once
 
-#include "osal/ByteArray.h"
+#include "osal/bytearray.h"
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
@@ -23,12 +23,12 @@ public:
         : _ipAddress(other._ipAddress)
     {
     }
-    IPV4Address(const OSAL::ByteArray & ipAddress)
+    IPV4Address(const OSAL::bytearray & ipAddress)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
     }
-    IPV4Address(const OSAL::ByteArray & ipAddress, size_t offset)
+    IPV4Address(const OSAL::bytearray & ipAddress, size_t offset)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, offset);
@@ -53,13 +53,13 @@ public:
 
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV4; }
     virtual size_t Size() const { return AddressSize; }
-    virtual OSAL::ByteArray GetBytes() const;
+    virtual OSAL::bytearray GetBytes() const;
     virtual std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
-    OSAL::ByteArray _ipAddress;
+    OSAL::bytearray _ipAddress;
 
-    void SetData(const OSAL::ByteArray & data, size_t offset);
+    void SetData(const OSAL::bytearray & data, size_t offset);
 };
 
 inline void PrintTo(const IPV4Address & value, std::ostream & stream)

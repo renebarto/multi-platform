@@ -1,6 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <iostream>
+#include <iomanip>
 #include <initializer_list>
 #include <vector>
 
@@ -11,12 +13,24 @@
 namespace OSAL
 {
 
+template <class Elem, class Traits, class T>
+typename std::enable_if<!std::is_integral<Elem>::value, void>::type PrintTo(std::basic_ostream<Elem, Traits> & stream, T value)
+{
+    stream << value << " ";
+}
+
+template <class Elem, class Traits, class T>
+typename std::enable_if<std::is_integral<Elem>::value, void>::type PrintTo(std::basic_ostream<Elem, Traits> & s, T value)
+{
+    s << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
+}
+
 template<class T>
 class array
 {
 public:
-    static const size_t ValuesPerRow = 8;
-    static const size_t MaxValuesToDisplay = 128;
+    static const size_t ValuesPerRow;
+    static const size_t MaxValuesToDisplay;
 
     constexpr array();
     explicit array(size_t size);
@@ -65,20 +79,39 @@ public:
     template <class Elem, class Traits>
     std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
     {
-        return s << *this;
+        s << OSAL::System::TypeName(*this)
+          << " Item size: " << sizeof(T) << " Size: " << size() << std::endl;
+        size_t maxValuesToDisplay = std::min(size(), MaxValuesToDisplay);
+        for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
+        {
+            for (size_t i = 0; i < ValuesPerRow; i++)
+            {
+                if (i + offset < maxValuesToDisplay)
+                {
+                    T elementValue = _data[i + offset];
+                    OSAL::PrintTo(s, elementValue);
+                }
+            }
+            s << std::endl;
+        }
+        return s << std::endl << std::flush;
     }
 
     template<class Elem>
-    friend bool operator == (const array<Elem> & lhs, const array<Elem> & rhs);
-    template<class Elem>
-    friend bool operator != (const array<Elem> & lhs, const array<Elem> & rhs);
-    template <class Elem, class Traits>
-    friend std::basic_ostream<Elem, Traits> & operator << (std::basic_ostream<Elem, Traits> & s, const array<T> & value);
+    bool Equals(const array<Elem> & other) const
+    {
+        return _data == other._data;
+    }
 
 protected:
     static constexpr size_t MinimumSize = 16;
     std::vector<T> _data;
 };
+
+template<class T>
+const size_t array<T>::ValuesPerRow = 8;
+template<class T>
+const size_t array<T>::MaxValuesToDisplay = 128;
 
 template<class T>
 constexpr array<T>::array()
@@ -237,55 +270,29 @@ void array<T>::set(size_t offset, const array<T> & data)
     set(offset, data.data(), data.size());
 }
 
-template<class T>
-bool operator == (const array<T> & lhs, const array<T> & rhs)
-{
-    return lhs._data == rhs._data;
-}
-
-template<class T>
-bool operator != (const array<T> & lhs, const array<T> & rhs)
-{
-    return !(lhs == rhs);
-}
-
 template <class Elem, class Traits, class T>
-typename std::enable_if<!std::is_integral<Elem>::value, void>::type PrintTo(std::basic_ostream<Elem, Traits> & stream, T value)
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const array<T> & value)
 {
-    stream << value << " ";
-}
-
-template <class Elem, class Traits, class T>
-typename std::enable_if<std::is_integral<Elem>::value, void>::type PrintTo(std::basic_ostream<Elem, Traits> & stream, T value)
-{
-    stream << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
-}
-
-template <class Elem, class Traits, class T>
-std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const array<T> & value)
-{
-    s << OSAL::System::TypeName(value)
-      << " Item size: " << sizeof(T) << " Size: " << value.size() << std::endl;
-    size_t maxValuesToDisplay = std::min(value.size(), array<T>::MaxValuesToDisplay);
-    for (size_t offset = 0; offset < maxValuesToDisplay; offset += array<T>::ValuesPerRow)
-    {
-        for (size_t i = 0; i < array<T>::ValuesPerRow; i++)
-        {
-            if (i + offset < maxValuesToDisplay)
-            {
-                T elementValue = value[i + offset];
-                OSAL::PrintTo(s, elementValue);
-            }
-        }
-        s << std::endl;
-    }
-    return s << std::endl << std::flush;
-}
-
-template <class Elem, class Traits, class T>
-std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & stream, const array<T> & value)
-{
-    return value.PrintTo(stream);
+    return value.PrintTo(s);
 }
 
 } // namespace OSAL
+
+template<class Elem>
+bool operator == (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
+{
+    return lhs.Equals(rhs);
+}
+
+template<class Elem>
+bool operator != (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
+{
+    return !lhs.Equals(rhs);
+}
+
+template <class Elem, class Traits, class T>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const T & value)
+{
+    return value.PrintTo(s);
+}
+

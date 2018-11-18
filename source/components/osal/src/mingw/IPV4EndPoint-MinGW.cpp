@@ -111,15 +111,15 @@ size_t IPV4EndPoint::Size() const
     return sizeof(sockaddr_in);
 }
 
-OSAL::ByteArray IPV4EndPoint::GetBytes() const
+OSAL::bytearray IPV4EndPoint::GetBytes() const
 {
-    OSAL::ByteArray result;
+    OSAL::bytearray result;
     sockaddr_in address {};
     address.sin_family = AF_INET;
     uint32_t ipAddress = _ipAddress.GetUInt32();
     memcpy(&(address.sin_addr.s_addr), &ipAddress, sizeof(ipAddress));
     address.sin_port = _port;
-    result.Set(0, reinterpret_cast<const uint8_t *>(&address), sizeof(address));
+    result.set(0, reinterpret_cast<const uint8_t *>(&address), sizeof(address));
     return result;
 }
 

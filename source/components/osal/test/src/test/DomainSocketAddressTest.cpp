@@ -57,7 +57,7 @@ TEST_SUITE(osal)
 TEST_FIXTURE(DomainSocketAddressTest, Constructor)
 {
     OSAL::Network::DomainSocketAddress target;
-    OSAL::ByteArray reference(OSAL::Network::DomainSocketAddress::AddressSize);
+    OSAL::bytearray reference(OSAL::Network::DomainSocketAddress::AddressSize);
     const std::string expected = "";
     EXPECT_TRUE(reference == target.GetBytes());
     ostringstream stream;
@@ -67,10 +67,10 @@ TEST_FIXTURE(DomainSocketAddressTest, Constructor)
 
 TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArray)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(domainAddress);
     const std::string expected = "123456";
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
@@ -80,10 +80,10 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArray)
 
 TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffset)
 {
-    OSAL::ByteArray reference({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray reference({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target({0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36}, 1);
     const std::string expected = "123456";
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, reference.Size());
     EXPECT_EQ(reference, expectedAddress);
     ostringstream stream;
@@ -93,25 +93,25 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffset)
 
 TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffsetTooLarge)
 {
-    OSAL::ByteArray reference(OSAL::Network::DomainSocketAddress::AddressSize);
-    OSAL::ByteArray data(OSAL::Network::DomainSocketAddress::AddressSize + 1);
+    OSAL::bytearray reference(OSAL::Network::DomainSocketAddress::AddressSize);
+    OSAL::bytearray data(OSAL::Network::DomainSocketAddress::AddressSize + 1);
 
     EXPECT_FALSE(_hadAssertion);
     OSAL::Network::DomainSocketAddress target(data, 0);
     EXPECT_TRUE(_hadAssertion);
 
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, reference.Size());
     EXPECT_EQ(reference, expectedAddress);
 }
 
 TEST_FIXTURE(DomainSocketAddressTest, ConstructorCopy)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress other(domainAddress);
     OSAL::Network::DomainSocketAddress target(other);
     const std::string expected = "123456";
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
@@ -121,12 +121,12 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorCopy)
 
 TEST_FIXTURE(DomainSocketAddressTest, Assign)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress other(domainAddress);
     OSAL::Network::DomainSocketAddress target;
     target = other;
     const std::string expected = "123456";
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
@@ -138,7 +138,7 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateDefault)
 {
     OSAL::Network::EndPointPtr target = OSAL::Network::DomainSocketAddress::Create();
     ASSERT_NOT_NULL(target);
-    OSAL::ByteArray reference(OSAL::Network::DomainSocketAddress::AddressSize);
+    OSAL::bytearray reference(OSAL::Network::DomainSocketAddress::AddressSize);
     const std::string expected = "";
     EXPECT_EQ(reference, target->GetBytes());
     ostringstream stream;
@@ -148,12 +148,12 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateDefault)
 
 TEST_FIXTURE(DomainSocketAddressTest, CreateFromEndPointDomainSocketAddress)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress other(domainAddress);
     OSAL::Network::EndPointPtr target = OSAL::Network::DomainSocketAddress::Create(other);
     ASSERT_NOT_NULL(target);
     const std::string expected = "123456";
-    OSAL::ByteArray expectedAddress;
+    OSAL::bytearray expectedAddress;
     target->GetBytes().Get(0, expectedAddress, domainAddress.Size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
@@ -171,7 +171,7 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateFromEndPointIPV4EndPoint)
 TEST_FIXTURE(DomainSocketAddressTest, CreateFromString)
 {
     const std::string text = "/abc/def";
-    OSAL::ByteArray domainAddress(text);
+    OSAL::bytearray domainAddress(text);
     OSAL::Network::DomainSocketAddress expected(domainAddress);
     OSAL::Network::EndPointPtr actual = OSAL::Network::DomainSocketAddress::Create(text);
     EXPECT_EQ(expected, *actual);
@@ -179,7 +179,7 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateFromString)
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorIndex)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(domainAddress);
     EXPECT_EQ(domainAddress[size_t{0}], target[0]);
     EXPECT_EQ(domainAddress[size_t{1}], target[1]);
@@ -198,7 +198,7 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorIndex)
 TEST_FIXTURE(DomainSocketAddressTest, Parse)
 {
     const std::string text = "/abc/def";
-    OSAL::ByteArray domainAddress(text);
+    OSAL::bytearray domainAddress(text);
     OSAL::Network::DomainSocketAddress expected(domainAddress);
     const OSAL::Network::DomainSocketAddress & actual = OSAL::Network::DomainSocketAddress::Parse(text);
     EXPECT_EQ(expected, actual);
@@ -214,7 +214,7 @@ TEST_FIXTURE(DomainSocketAddressTest, ParseInvalid)
 TEST_FIXTURE(DomainSocketAddressTest, TryParse)
 {
     const std::string text = "/abc/def";
-    OSAL::ByteArray domainAddress(text);
+    OSAL::bytearray domainAddress(text);
     OSAL::Network::DomainSocketAddress actual;
     OSAL::Network::DomainSocketAddress expected(domainAddress);
     EXPECT_TRUE(OSAL::Network::DomainSocketAddress::TryParse(text, actual));
@@ -231,10 +231,10 @@ TEST_FIXTURE(DomainSocketAddressTest, TryParseInvalid)
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorEqualEndPoint)
 {
-    OSAL::ByteArray ipAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray ipAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(ipAddress);
     const OSAL::Network::EndPoint &ref1 = IPV4EndPoint::Parse("127.0.0.1");
-    OSAL::Network::DomainSocketAddress ref2(OSAL::ByteArray({0, 0, 0, 0, 0, 0}));
+    OSAL::Network::DomainSocketAddress ref2(OSAL::bytearray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(ipAddress);
     EXPECT_FALSE(target == ref1);
     EXPECT_FALSE(target == ref2);
@@ -249,10 +249,10 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorEqualEndPoint)
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqualEndPoint)
 {
-    OSAL::ByteArray ipAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray ipAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(ipAddress);
     const OSAL::Network::EndPoint &ref1 = IPV4EndPoint::Parse("127.0.0.1");
-    OSAL::Network::DomainSocketAddress ref2(OSAL::ByteArray({0, 0, 0, 0, 0, 0}));
+    OSAL::Network::DomainSocketAddress ref2(OSAL::bytearray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(ipAddress);
     EXPECT_TRUE(target != ref1);
     EXPECT_TRUE(target != ref2);
@@ -267,10 +267,10 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqualEndPoint)
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorEqual)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(domainAddress);
     OSAL::Network::DomainSocketAddress ref1;
-    OSAL::Network::DomainSocketAddress ref2(OSAL::ByteArray({0, 0, 0, 0, 0, 0}));
+    OSAL::Network::DomainSocketAddress ref2(OSAL::bytearray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(domainAddress);
     EXPECT_FALSE(target == ref1);
     EXPECT_FALSE(target == ref2);
@@ -288,10 +288,10 @@ TEST_FIXTURE(DomainSocketAddressTest, OperatorEqual)
 
 TEST_FIXTURE(DomainSocketAddressTest, OperatorNotEqual)
 {
-    OSAL::ByteArray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
+    OSAL::bytearray domainAddress({0x31, 0x32, 0x33, 0x34, 0x35, 0x36});
     OSAL::Network::DomainSocketAddress target(domainAddress);
     OSAL::Network::DomainSocketAddress ref1;
-    OSAL::Network::DomainSocketAddress ref2(OSAL::ByteArray({0, 0, 0, 0, 0, 0}));
+    OSAL::Network::DomainSocketAddress ref2(OSAL::bytearray({0, 0, 0, 0, 0, 0}));
     OSAL::Network::DomainSocketAddress ref3(domainAddress);
     EXPECT_TRUE(target != ref1);
     EXPECT_TRUE(target != ref2);

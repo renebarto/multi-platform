@@ -4,7 +4,7 @@
 
 #include "osal/osal.h"
 #include "osal/Assert.h"
-#include "osal/ByteArray.h"
+#include "osal/bytearray.h"
 
 namespace OSAL {
 
@@ -57,12 +57,12 @@ public:
         : _uuid(other._uuid)
     {
     }
-    UUID(OSAL::ByteArray uuid)
+    UUID(OSAL::bytearray uuid)
         : _uuid(std::move(uuid))
     {
-        ASSERT(_uuid.Size() == UUIDSize);
-        if (_uuid.Size() != UUIDSize)
-            _uuid.Size(UUIDSize);
+        ASSERT(_uuid.size() == UUIDSize);
+        if (_uuid.size() != UUIDSize)
+            _uuid.resize(UUIDSize);
     }
     virtual ~UUID() {}
 
@@ -82,11 +82,11 @@ public:
     uint8_t & operator[] (size_t offset);
     const uint8_t & operator[] (size_t offset) const;
 
-    virtual OSAL::ByteArray GetBytes() const;
+    virtual OSAL::bytearray GetBytes() const;
     virtual std::ostream & PrintTo(std::ostream & stream) const;
 
 private:
-    ByteArray _uuid;
+    bytearray _uuid;
     static const size_t UUIDSize = 16;
 
     static bool TryParse(const std::string & text, uint8_t & value);

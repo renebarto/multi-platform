@@ -128,7 +128,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8ArrayPort)
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
-    EXPECT_EQ(OSAL::ByteArray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
+    EXPECT_EQ(OSAL::bytearray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
     EXPECT_EQ(port, target.GetPort());
     EXPECT_EQ(uint32_t{0}, target.GetFlowInfo());
     EXPECT_EQ(uint32_t{0}, target.GetScopeID());
@@ -144,7 +144,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8ArrayPortFlowInfo)
     uint32_t flowInfo = 12345678;
     IPV6EndPoint target(ipAddress, port, flowInfo);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
-    EXPECT_EQ(OSAL::ByteArray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
+    EXPECT_EQ(OSAL::bytearray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
     EXPECT_EQ(port, target.GetPort());
     EXPECT_EQ(flowInfo, target.GetFlowInfo());
     EXPECT_EQ(uint32_t{0}, target.GetScopeID());
@@ -161,7 +161,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8ArrayPortFlowInfoScopeID
     uint32_t scopeID = 87654321;
     IPV6EndPoint target(ipAddress, port, flowInfo, scopeID);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234%87654321";
-    EXPECT_EQ(OSAL::ByteArray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
+    EXPECT_EQ(OSAL::bytearray(ipAddress, sizeof(ipAddress)), target.GetIPAddress().GetData());
     EXPECT_EQ(port, target.GetPort());
     EXPECT_EQ(flowInfo, target.GetFlowInfo());
     EXPECT_EQ(scopeID, target.GetScopeID());
