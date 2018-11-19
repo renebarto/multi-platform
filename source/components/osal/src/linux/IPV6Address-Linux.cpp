@@ -102,7 +102,7 @@ OSAL::bytearray IPV6Address::GetData() const
 
 void IPV6Address::SetData(const OSAL::bytearray & value)
 {
-    _ipAddress.Set(0, value);
+    _ipAddress.set(0, value);
 }
 
 OSAL::bytearray IPV6Address::GetBytes() const
@@ -121,7 +121,7 @@ std::ostream & IPV6Address::PrintTo(std::ostream & stream) const
     bool inZeroSequence = false;
     for (size_t i = 0; i < NumWords; ++i)
     {
-        words[i] = _ipAddress.GetUInt16BE(i * 2);
+        words[i] = _ipAddress.getUInt16BE(i * 2);
         if (words[i] == 0)
         {
             if (!inZeroSequence)
@@ -180,6 +180,6 @@ std::ostream & IPV6Address::PrintTo(std::ostream & stream) const
 
 void IPV6Address::SetData(const OSAL::bytearray & data, size_t offset)
 {
-    ASSERT(offset + AddressSize <= data.Size());
-    _ipAddress.Set(0, data.Data() + offset, AddressSize);
+    ASSERT(offset + AddressSize <= data.size());
+    _ipAddress.set(0, data.data() + offset, AddressSize);
 }

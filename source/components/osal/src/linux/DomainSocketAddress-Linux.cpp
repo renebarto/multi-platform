@@ -57,7 +57,7 @@ DomainSocketAddress DomainSocketAddress::Parse(const string & text)
                << AddressSize << "bytes, string is " << text;
         throw OSAL::ArgumentException(__func__, __FILE__, __LINE__, "text", stream.str());
     }
-    address._address.Set(0, reinterpret_cast<const uint8_t *>(text.c_str()), text.size());
+    address._address.set(0, reinterpret_cast<const uint8_t *>(text.c_str()), text.size());
     return address;
 }
 
@@ -122,8 +122,8 @@ string DomainSocketAddress::GetData() const
 
 void DomainSocketAddress::SetData(const string & value)
 {
-    _address.Size(AddressSize);
-    _address.Set(0, reinterpret_cast<const uint8_t *>(value.c_str()), value.length());
+    _address.resize(AddressSize);
+    _address.set(0, reinterpret_cast<const uint8_t *>(value.c_str()), value.length());
 }
 
 OSAL::bytearray DomainSocketAddress::GetBytes() const
@@ -133,14 +133,14 @@ OSAL::bytearray DomainSocketAddress::GetBytes() const
 
 std::ostream & DomainSocketAddress::PrintTo(std::ostream & stream) const
 {
-    stream << reinterpret_cast<const char *>(_address.Data());
+    stream << reinterpret_cast<const char *>(_address.data());
     return stream;
 }
 
 void DomainSocketAddress::SetData(const OSAL::bytearray & data, size_t offset)
 {
-    ASSERT(data.Size() - offset <= AddressSize);
+    ASSERT(data.size() - offset <= AddressSize);
     size_t safeOffset = std::min(AddressSize, offset);
-    size_t safeCount = std::min(AddressSize, data.Size() - safeOffset);
-    _address.Set(0, data.Data() + safeOffset, safeCount);
+    size_t safeCount = std::min(AddressSize, data.size() - safeOffset);
+    _address.set(0, data.data() + safeOffset, safeCount);
 }

@@ -16,7 +16,7 @@ UUID UUID::Generate()
 {
     UUID uuid;
 
-    uuid_generate(uuid._uuid.Data());
+    uuid_generate(uuid._uuid.data());
 
     return uuid;
 }
@@ -25,7 +25,7 @@ UUID UUID::GenerateRandom()
 {
     UUID uuid;
 
-    uuid_generate_random(uuid._uuid.Data());
+    uuid_generate_random(uuid._uuid.data());
 
     return uuid;
 }
@@ -34,7 +34,7 @@ UUID UUID::GenerateTime()
 {
     UUID uuid;
 
-    uuid_generate_time(uuid._uuid.Data());
+    uuid_generate_time(uuid._uuid.data());
 
     return uuid;
 }
@@ -43,7 +43,7 @@ UUID UUID::GenerateTimeSafe()
 {
     UUID uuid;
 
-    uuid_generate_time_safe(uuid._uuid.Data());
+    uuid_generate_time_safe(uuid._uuid.data());
 
     return uuid;
 }
@@ -51,18 +51,18 @@ UUID UUID::GenerateTimeSafe()
 timeval UUID::GetTime() const
 {
     timeval result;
-    uuid_time(_uuid.Data(), &result);
+    uuid_time(_uuid.data(), &result);
     return result;
 }
 
 UUIDVersion UUID::GetVersion() const
 {
-    return static_cast<UUIDVersion>(uuid_type(_uuid.Data()));
+    return static_cast<UUIDVersion>(uuid_type(_uuid.data()));
 }
 
 UUIDVariant UUID::GetVariant() const
 {
-    return static_cast<UUIDVariant>(uuid_variant(_uuid.Data()));
+    return static_cast<UUIDVariant>(uuid_variant(_uuid.data()));
 }
 
 extern void uuid_generate(uuid_t out);

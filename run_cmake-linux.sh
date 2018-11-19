@@ -1,3 +1,5 @@
+#!/bin/bash
+
 mkdir cmake-linux-debug
 pushd cmake-linux-debug
 rm CMakeCache.txt

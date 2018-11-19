@@ -144,8 +144,6 @@ std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &
     return s;
 }
 
-} // namespace OSAL
-
 inline bool operator == (const OSAL::bytearray & lhs, const OSAL::bytearray & rhs)
 {
     return lhs.Equals(rhs);
@@ -155,4 +153,6 @@ inline bool operator != (const OSAL::bytearray & lhs, const OSAL::bytearray & rh
 {
     return !lhs.Equals(rhs);
 }
+
+} // namespace OSAL
 
