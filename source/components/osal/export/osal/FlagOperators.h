@@ -10,7 +10,7 @@ struct is_flag
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator | (flags lhs, flags rhs)
+inline operator | (flags lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -19,7 +19,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator | (flags lhs, typename std::underlying_type<flags>::type rhs)
+inline operator | (flags lhs, typename std::underlying_type<flags>::type rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -28,7 +28,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator | (typename std::underlying_type<flags>::type lhs, flags rhs)
+inline operator | (typename std::underlying_type<flags>::type lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -37,7 +37,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<is_flag<flags>::value, flags &>::type
-    inline operator |= (flags & lhs, flags rhs)
+inline operator |= (flags & lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -47,7 +47,7 @@ typename std::enable_if<is_flag<flags>::value, flags &>::type
 
 template<typename flags>
 typename std::enable_if<is_flag<flags>::value, flags &>::type
-    inline operator |= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+inline operator |= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs | rhs;
     return lhs;
@@ -92,7 +92,7 @@ typename std::enable_if<is_flag<flags>::value, flags &>::type
 
 template<typename flags>
 typename std::enable_if<is_flag<flags>::value, flags &>::type
-    inline operator &= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+inline operator &= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs & rhs;
     return lhs;
@@ -100,7 +100,7 @@ typename std::enable_if<is_flag<flags>::value, flags &>::type
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator ^ (flags lhs, flags rhs)
+inline operator ^ (flags lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -109,7 +109,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator ^ (flags lhs, typename std::underlying_type<flags>::type rhs)
+inline operator ^ (flags lhs, typename std::underlying_type<flags>::type rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -118,7 +118,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator ^ (typename std::underlying_type<flags>::type lhs, flags rhs)
+inline operator ^ (typename std::underlying_type<flags>::type lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -127,7 +127,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<is_flag<flags>::value, flags &>::type
-    inline operator ^= (flags & lhs, flags rhs)
+inline operator ^= (flags & lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -137,7 +137,7 @@ typename std::enable_if<is_flag<flags>::value, flags &>::type
 
 template<typename flags>
 typename std::enable_if<is_flag<flags>::value, flags &>::type
-    inline operator ^= (flags &lhs, typename std::underlying_type<flags>::type rhs)
+inline operator ^= (flags &lhs, typename std::underlying_type<flags>::type rhs)
 {
     lhs = lhs ^ rhs;
     return lhs;
@@ -145,7 +145,7 @@ typename std::enable_if<is_flag<flags>::value, flags &>::type
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, flags>::type
-    inline operator ~ (flags rhs)
+inline operator ~ (flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -154,7 +154,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, fla
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator ! (flags rhs)
+inline operator ! (flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -163,7 +163,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator == (flags lhs, flags rhs)
+inline operator == (flags lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -172,7 +172,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator == (flags lhs, typename std::underlying_type<flags>::type rhs)
+inline operator == (flags lhs, typename std::underlying_type<flags>::type rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -181,7 +181,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator == (typename std::underlying_type<flags>::type lhs, flags rhs)
+inline operator == (typename std::underlying_type<flags>::type lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -190,7 +190,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator != (flags lhs, flags rhs)
+inline operator != (flags lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -199,7 +199,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator != (flags lhs, typename std::underlying_type<flags>::type rhs)
+inline operator != (flags lhs, typename std::underlying_type<flags>::type rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 
@@ -208,7 +208,7 @@ typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, boo
 
 template<typename flags>
 typename std::enable_if<std::is_enum<flags>::value && is_flag<flags>::value, bool>::type
-    inline operator != (typename std::underlying_type<flags>::type lhs, flags rhs)
+inline operator != (typename std::underlying_type<flags>::type lhs, flags rhs)
 {
     typedef typename std::underlying_type<flags>::type underlyingType;
 

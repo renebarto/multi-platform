@@ -71,7 +71,7 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArray)
     OSAL::Network::DomainSocketAddress target(domainAddress);
     const std::string expected = "123456";
     OSAL::bytearray expectedAddress;
-    target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
+    target.GetBytes().get(0, expectedAddress, domainAddress.size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
     target.PrintTo(stream);
@@ -84,7 +84,7 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffset)
     OSAL::Network::DomainSocketAddress target({0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36}, 1);
     const std::string expected = "123456";
     OSAL::bytearray expectedAddress;
-    target.GetBytes().Get(0, expectedAddress, reference.Size());
+    target.GetBytes().get(0, expectedAddress, reference.size());
     EXPECT_EQ(reference, expectedAddress);
     ostringstream stream;
     target.PrintTo(stream);
@@ -101,7 +101,7 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorByteArrayOffsetTooLarge)
     EXPECT_TRUE(_hadAssertion);
 
     OSAL::bytearray expectedAddress;
-    target.GetBytes().Get(0, expectedAddress, reference.Size());
+    target.GetBytes().get(0, expectedAddress, reference.size());
     EXPECT_EQ(reference, expectedAddress);
 }
 
@@ -112,7 +112,7 @@ TEST_FIXTURE(DomainSocketAddressTest, ConstructorCopy)
     OSAL::Network::DomainSocketAddress target(other);
     const std::string expected = "123456";
     OSAL::bytearray expectedAddress;
-    target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
+    target.GetBytes().get(0, expectedAddress, domainAddress.size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
     target.PrintTo(stream);
@@ -127,7 +127,7 @@ TEST_FIXTURE(DomainSocketAddressTest, Assign)
     target = other;
     const std::string expected = "123456";
     OSAL::bytearray expectedAddress;
-    target.GetBytes().Get(0, expectedAddress, domainAddress.Size());
+    target.GetBytes().get(0, expectedAddress, domainAddress.size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
     target.PrintTo(stream);
@@ -154,7 +154,7 @@ TEST_FIXTURE(DomainSocketAddressTest, CreateFromEndPointDomainSocketAddress)
     ASSERT_NOT_NULL(target);
     const std::string expected = "123456";
     OSAL::bytearray expectedAddress;
-    target->GetBytes().Get(0, expectedAddress, domainAddress.Size());
+    target->GetBytes().get(0, expectedAddress, domainAddress.size());
     EXPECT_EQ(domainAddress, expectedAddress);
     ostringstream stream;
     target->PrintTo(stream);

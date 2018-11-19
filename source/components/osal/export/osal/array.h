@@ -216,7 +216,7 @@ size_t array<T>::get(size_t offset, T * data, size_t length) const
     ASSERT(offset + length <= size());
     if (offset + length > size())
         return 0;
-    std::copy_n(this->data(), length, data);
+    std::copy_n(this->data() + offset, length, data);
     return length;
 }
 
@@ -276,8 +276,6 @@ std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s,
     return value.PrintTo(s);
 }
 
-} // namespace OSAL
-
 template<class Elem>
 bool operator == (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
 {
@@ -289,6 +287,8 @@ bool operator != (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
 {
     return !lhs.Equals(rhs);
 }
+
+} // namespace OSAL
 
 template <class Elem, class Traits, class T>
 std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const T & value)
