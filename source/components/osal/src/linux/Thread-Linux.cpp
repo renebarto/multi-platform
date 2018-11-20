@@ -31,7 +31,7 @@ bool IsThreadSelf(std::thread & thread)
     return thread.native_handle() == pthread_self();
 }
 
-Thread::Priority Thread::GetPriority()
+Priority GetPriority()
 {
     int policy;
     struct sched_param sched;
