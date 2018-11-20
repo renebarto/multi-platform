@@ -19,5 +19,21 @@ inline bool SetSignalMask(const OSAL::Signal::SignalSet & signalMaskSet)
     return (SetSignalMask(OSAL::Signal::SignalHow::Block, &(signalMaskSet.get()), nullptr) == 0);
 }
 
+enum class Priority : uint8_t
+{
+    IDLE     = 0x00,
+    LOWEST   = 0x1F,
+    LOW      = 0x3F,
+    NORMAL   = 0x7F,
+    HIGH     = 0x9F,
+    HIGHEST  = 0xBF,
+    REALTIME = 0xFF
+};
+
+Priority GetPriority();
+Priority GetPriority(const std::thread& thread);
+void SetPriority(Priority priority);
+void SetPriority(std::thread & thread, Priority priority);
+
 } // namespace Thread
 } // namespace OSAL
