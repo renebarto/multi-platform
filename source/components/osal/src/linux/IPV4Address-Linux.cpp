@@ -66,7 +66,7 @@ in_addr & in_addr::operator = (const ::in_addr & other)
     return *this;
 }
 
-in_addr_t in_addr::value() const
+    uint32_t in_addr::value() const
 {
     return s_addr;
 }

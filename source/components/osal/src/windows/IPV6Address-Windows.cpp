@@ -20,8 +20,8 @@ in6_addr::in6_addr()
 in6_addr::in6_addr(const std::initializer_list<uint8_t> & other)
     : ::in6_addr()
 {
-    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
-    copy(other.begin(), other.end(), __in6_u.__u6_addr8);
+    ASSERT(other.size() == sizeof(u.Byte));
+    copy(other.begin(), other.end(), u.Byte);
 }
 
 in6_addr::in6_addr(const in6_addr & other)
@@ -32,8 +32,8 @@ in6_addr::in6_addr(const in6_addr & other)
 in6_addr::in6_addr(const bytearray & other)
     : ::in6_addr()
 {
-    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
-    copy_n(other.data(), other.size(), __in6_u.__u6_addr8);
+    ASSERT(other.size() == sizeof(u.Byte));
+    copy_n(other.data(), other.size(), u.Byte);
 }
 
 in6_addr::in6_addr(const ::in6_addr & other)
@@ -45,27 +45,27 @@ in6_addr & in6_addr::operator = (const in6_addr & other)
 {
     if (&other != this)
     {
-        copy(begin(other.__in6_u.__u6_addr8), end(other.__in6_u.__u6_addr8), __in6_u.__u6_addr8);
+        copy(begin(other.u.Byte), end(other.u.Byte), u.Byte);
     }
     return *this;
 }
 
 in6_addr & in6_addr::operator = (const bytearray & other)
 {
-    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
-    copy_n(other.data(), other.size(), __in6_u.__u6_addr8);
+    ASSERT(other.size() == sizeof(u.Byte));
+    copy_n(other.data(), other.size(), u.Byte);
     return *this;
 }
 
 in6_addr & in6_addr::operator = (const ::in6_addr & other)
 {
-    copy(begin(other.__in6_u.__u6_addr8), end(other.__in6_u.__u6_addr8), __in6_u.__u6_addr8);
+    copy(begin(other.u.Byte), end(other.u.Byte), u.Byte);
     return *this;
 }
 
 bytearray in6_addr::value() const
 {
-    return bytearray(__in6_u.__u6_addr8, sizeof(__in6_u.__u6_addr8));
+    return bytearray(u.Byte, sizeof(u.Byte));
 }
 
 } // namespace Network
@@ -79,6 +79,11 @@ IPV6Address const IPV6Address::Broadcast = IPV6Address({255, 255, 255, 255, 255,
                                                         255, 255, 255, 255, 255, 255, 255, 255, });
 IPV6Address const IPV6Address::LocalHost = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
                                                         0, 0, 0, 0, 0, 0, 0, 1});
+
+IPV6Address::IPV6Address(const OSAL::Network::in6_addr & address)
+    : _ipAddress(address.value())
+{
+}
 
 IPV6Address::~IPV6Address()
 {

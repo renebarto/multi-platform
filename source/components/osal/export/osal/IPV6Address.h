@@ -5,14 +5,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #else
-#include <inaddr6.h>
+#include <in6addr.h>
 #endif
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
 
-struct in6_addr : public ::in6_addr
+struct OSAL_EXPORT in6_addr : public ::in6_addr
 {
     in6_addr();
     in6_addr(const std::initializer_list<uint8_t> & other);

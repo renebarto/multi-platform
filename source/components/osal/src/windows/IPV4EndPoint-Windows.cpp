@@ -48,7 +48,7 @@ sockaddr_in & sockaddr_in::operator = (const sockaddr_in & other)
         sin_family = other.sin_family;
         sin_port = other.sin_port;
         sin_addr = other.sin_addr;
-        fill(begin(sin_zero), end(sin_zero), 0);
+        fill(begin(sin_zero), end(sin_zero), uint8_t{ 0 });
     }
     return *this;
 }
@@ -58,7 +58,7 @@ sockaddr_in & sockaddr_in::operator = (const ::sockaddr_in & other)
     sin_family = other.sin_family;
     sin_port = other.sin_port;
     sin_addr = other.sin_addr;
-    fill(begin(sin_zero), end(sin_zero), 0);
+    fill(begin(sin_zero), end(sin_zero), uint8_t{ 0 });
     return *this;
 }
 
@@ -67,7 +67,7 @@ sockaddr_in & sockaddr_in::operator = (const in_addr & address)
     sin_family = AF_INET;
     sin_port = 0;
     sin_addr = address;
-    fill(begin(sin_zero), end(sin_zero), 0);
+    fill(begin(sin_zero), end(sin_zero), uint8_t{ 0 });
     return *this;
 }
 

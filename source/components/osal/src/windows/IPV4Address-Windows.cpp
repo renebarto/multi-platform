@@ -64,7 +64,7 @@ in_addr & in_addr::operator = (const ::in_addr & other)
     return *this;
 }
 
-in_addr_t in_addr::value() const
+uint32_t in_addr::value() const
 {
     return s_addr;
 }
@@ -77,6 +77,12 @@ IPV4Address const IPV4Address::Any = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
 IPV4Address const IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
 static string LocalHostName = "localhost";
+
+IPV4Address::IPV4Address(const OSAL::Network::in_addr & address)
+    : _ipAddress(AddressSize)
+{
+    SetUInt32(address.value());
+}
 
 IPV4Address::~IPV4Address()
 {

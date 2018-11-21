@@ -8,7 +8,7 @@
 namespace OSAL {
 namespace Network {
 
-struct sockaddr_in6 : public ::sockaddr_in6
+struct OSAL_EXPORT sockaddr_in6 : public ::sockaddr_in6
 {
     using PortType = uint16_t;
 

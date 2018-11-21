@@ -13,7 +13,7 @@
 namespace OSAL {
 namespace Network {
 
-struct in_addr : public ::in_addr
+struct OSAL_EXPORT in_addr : public ::in_addr
 {
     in_addr();
     in_addr(const std::initializer_list<uint8_t> & other);
@@ -25,7 +25,7 @@ struct in_addr : public ::in_addr
     in_addr & operator = (const bytearray & other);
     in_addr & operator = (const ::in_addr & other);
 
-    in_addr_t value() const;
+    uint32_t value() const;
 };
 
 class OSAL_EXPORT IPV4Address
