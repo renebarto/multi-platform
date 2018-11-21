@@ -8,6 +8,88 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+namespace OSAL {
+namespace Network {
+
+sockaddr_in::sockaddr_in()
+    : ::sockaddr_in()
+{
+}
+
+sockaddr_in::sockaddr_in(const sockaddr_in & other)
+    : ::sockaddr_in(other)
+{
+}
+
+sockaddr_in::sockaddr_in(const ::sockaddr_in & other)
+    : ::sockaddr_in(other)
+{
+}
+
+sockaddr_in::sockaddr_in(const in_addr & address)
+    : ::sockaddr_in()
+{
+    sin_family = AF_INET;
+    sin_port = 0;
+    sin_addr = address;
+}
+
+sockaddr_in::sockaddr_in(const in_addr & address, PortType port)
+    : ::sockaddr_in()
+{
+    sin_family = AF_INET;
+    sin_port = port;
+    sin_addr = address;
+}
+
+sockaddr_in & sockaddr_in::operator = (const sockaddr_in & other)
+{
+    if (&other != this)
+    {
+        sin_family = other.sin_family;
+        sin_port = other.sin_port;
+        sin_addr = other.sin_addr;
+        fill(begin(sin_zero), end(sin_zero), 0);
+    }
+    return *this;
+}
+
+sockaddr_in & sockaddr_in::operator = (const ::sockaddr_in & other)
+{
+    sin_family = other.sin_family;
+    sin_port = other.sin_port;
+    sin_addr = other.sin_addr;
+    fill(begin(sin_zero), end(sin_zero), 0);
+    return *this;
+}
+
+sockaddr_in & sockaddr_in::operator = (const in_addr & address)
+{
+    sin_family = AF_INET;
+    sin_port = 0;
+    sin_addr = address;
+    fill(begin(sin_zero), end(sin_zero), 0);
+    return *this;
+}
+
+SocketFamily sockaddr_in::family() const
+{
+    return static_cast<SocketFamily>(sin_family);
+}
+
+in_addr sockaddr_in::address() const
+{
+    return sin_addr;
+}
+
+sockaddr_in::PortType sockaddr_in::port() const
+{
+    return sin_port;
+}
+
+} // namespace Network
+} // namespace OSAL
+
 const IPV4EndPoint::PortType IPV4EndPoint::AnyPort = 0;
 
 IPV4EndPoint::~IPV4EndPoint()

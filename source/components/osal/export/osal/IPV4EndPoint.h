@@ -8,6 +8,25 @@
 namespace OSAL {
 namespace Network {
 
+struct sockaddr_in : public ::sockaddr_in
+{
+    using PortType = uint16_t;
+
+    sockaddr_in();
+    sockaddr_in(const sockaddr_in & other);
+    sockaddr_in(const ::sockaddr_in & other);
+    sockaddr_in(const in_addr & address);
+    sockaddr_in(const in_addr & address, PortType port);
+
+    sockaddr_in & operator = (const sockaddr_in & other);
+    sockaddr_in & operator = (const ::sockaddr_in & other);
+    sockaddr_in & operator = (const in_addr & address);
+
+    SocketFamily family() const;
+    in_addr address() const;
+    PortType port() const;
+};
+
 class OSAL_EXPORT IPV4EndPoint : public OSAL::Network::EndPoint
 {
 public:
@@ -67,7 +86,7 @@ public:
     {
     }
     IPV4EndPoint(sockaddr_in * address)
-        : IPV4EndPoint(address->sin_addr, address->sin_port)
+        : IPV4EndPoint(address->address(), address->port())
     {
     }
 

@@ -14,8 +14,8 @@ namespace Network {
 
 struct in6_addr : public ::in6_addr
 {
-public:
     in6_addr();
+    in6_addr(const std::initializer_list<uint8_t> & other);
     in6_addr(const in6_addr & other);
     in6_addr(const bytearray & other);
     in6_addr(const ::in6_addr & other);

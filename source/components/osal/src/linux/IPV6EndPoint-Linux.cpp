@@ -9,6 +9,111 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+namespace OSAL {
+namespace Network {
+
+sockaddr_in6::sockaddr_in6()
+    : ::sockaddr_in6()
+{
+}
+
+sockaddr_in6::sockaddr_in6(const sockaddr_in6 & other)
+    : ::sockaddr_in6(other)
+{
+}
+
+sockaddr_in6::sockaddr_in6(const ::sockaddr_in6 & other)
+    : ::sockaddr_in6(other)
+{
+}
+
+sockaddr_in6::sockaddr_in6(const in6_addr & address)
+    : ::sockaddr_in6()
+{
+    sin6_family = AF_INET6;
+    sin6_port = 0;
+    sin6_addr = address;
+}
+
+sockaddr_in6::sockaddr_in6(const in6_addr & address, PortType port)
+    : ::sockaddr_in6()
+{
+    sin6_family = AF_INET6;
+    sin6_port = port;
+    sin6_addr = address;
+}
+
+sockaddr_in6::sockaddr_in6(const in6_addr & address, PortType port, uint32_t flowinfo, uint32_t scopeid)
+    : ::sockaddr_in6()
+{
+    sin6_family = AF_INET6;
+    sin6_port = port;
+    sin6_addr = address;
+    sin6_flowinfo = flowinfo;
+    sin6_scope_id = scopeid;
+}
+
+sockaddr_in6 & sockaddr_in6::operator = (const sockaddr_in6 & other)
+{
+    if (&other != this)
+    {
+        sin6_family = other.sin6_family;
+        sin6_port = other.sin6_port;
+        sin6_addr = other.sin6_addr;
+        sin6_flowinfo = other.sin6_flowinfo;
+        sin6_scope_id = other.sin6_scope_id;
+    }
+    return *this;
+}
+
+sockaddr_in6 & sockaddr_in6::operator = (const ::sockaddr_in6 & other)
+{
+    sin6_family = other.sin6_family;
+    sin6_port = other.sin6_port;
+    sin6_addr = other.sin6_addr;
+    sin6_flowinfo = other.sin6_flowinfo;
+    sin6_scope_id = other.sin6_scope_id;
+    return *this;
+}
+
+sockaddr_in6 & sockaddr_in6::operator = (const in6_addr & address)
+{
+    sin6_family = AF_INET6;
+    sin6_port = 0;
+    sin6_addr = address;
+    sin6_flowinfo = 0;
+    sin6_scope_id = 0;
+    return *this;
+}
+
+SocketFamily sockaddr_in6::family() const
+{
+    return static_cast<SocketFamily>(sin6_family);
+}
+
+in6_addr sockaddr_in6::address() const
+{
+    return sin6_addr;
+}
+
+sockaddr_in6::PortType sockaddr_in6::port() const
+{
+    return sin6_port;
+}
+
+uint32_t sockaddr_in6::flowinfo() const
+{
+    return sin6_flowinfo;
+}
+
+uint32_t sockaddr_in6::scopeid() const
+{
+    return sin6_scope_id;
+}
+
+} // namespace Network
+} // namespace OSAL
+
 const IPV6EndPoint::PortType IPV6EndPoint::AnyPort = 0;
 
 IPV6EndPoint::~IPV6EndPoint()

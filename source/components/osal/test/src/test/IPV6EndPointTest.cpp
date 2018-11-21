@@ -209,7 +209,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorSockAddr)
 {
-    sockaddr_in6 address = { AF_INET6, 1234, 12345678, { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, 87654321 };
+    sockaddr_in6 address({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, 1234, 12345678, 87654321);
     IPV6EndPoint target(&address);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234%87654321";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());

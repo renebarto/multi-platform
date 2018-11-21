@@ -156,7 +156,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorSockAddr)
 {
-    sockaddr_in address = { AF_INET, 1234, { 1, 2, 3, 4 }, { 0 } };
+    sockaddr_in address({1, 2, 3, 4}, 1234);
     IPV4EndPoint target(&address);
     const string expected = "1.2.3.4:1234";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());

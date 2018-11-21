@@ -11,6 +11,68 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+namespace OSAL {
+namespace Network {
+
+in6_addr::in6_addr()
+    : ::in6_addr()
+{
+}
+
+in6_addr::in6_addr(const std::initializer_list<uint8_t> & other)
+    : ::in6_addr()
+{
+    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
+    copy(other.begin(), other.end(), __in6_u.__u6_addr8);
+}
+
+in6_addr::in6_addr(const in6_addr & other)
+    : ::in6_addr(other)
+{
+}
+
+in6_addr::in6_addr(const bytearray & other)
+    : ::in6_addr()
+{
+    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
+    copy_n(other.data(), other.size(), __in6_u.__u6_addr8);
+}
+
+in6_addr::in6_addr(const ::in6_addr & other)
+    : ::in6_addr(other)
+{
+}
+
+in6_addr & in6_addr::operator = (const in6_addr & other)
+{
+    if (&other != this)
+    {
+        copy(begin(other.__in6_u.__u6_addr8), end(other.__in6_u.__u6_addr8), __in6_u.__u6_addr8);
+    }
+    return *this;
+}
+
+in6_addr & in6_addr::operator = (const bytearray & other)
+{
+    ASSERT(other.size() == sizeof(__in6_u.__u6_addr8));
+    copy_n(other.data(), other.size(), __in6_u.__u6_addr8);
+    return *this;
+}
+
+in6_addr & in6_addr::operator = (const ::in6_addr & other)
+{
+    copy(begin(other.__in6_u.__u6_addr8), end(other.__in6_u.__u6_addr8), __in6_u.__u6_addr8);
+    return *this;
+}
+
+bytearray in6_addr::value() const
+{
+    return bytearray(__in6_u.__u6_addr8, sizeof(__in6_u.__u6_addr8));
+}
+
+} // namespace Network
+} // namespace OSAL
+
 IPV6Address const IPV6Address::None = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
                                                    0, 0, 0, 0, 0, 0, 0, 0, });
 IPV6Address const IPV6Address::Any = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,

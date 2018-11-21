@@ -8,6 +8,28 @@
 namespace OSAL {
 namespace Network {
 
+struct sockaddr_in6 : public ::sockaddr_in6
+{
+    using PortType = uint16_t;
+
+    sockaddr_in6();
+    sockaddr_in6(const sockaddr_in6 & other);
+    sockaddr_in6(const ::sockaddr_in6 & other);
+    sockaddr_in6(const in6_addr & address);
+    sockaddr_in6(const in6_addr & address, PortType port);
+    sockaddr_in6(const in6_addr & address, PortType port, uint32_t flowinfo, uint32_t scopeid);
+
+    sockaddr_in6 & operator = (const sockaddr_in6 & other);
+    sockaddr_in6 & operator = (const ::sockaddr_in6 & other);
+    sockaddr_in6 & operator = (const in6_addr & address);
+
+    SocketFamily family() const;
+    in6_addr address() const;
+    PortType port() const;
+    uint32_t flowinfo() const;
+    uint32_t scopeid() const;
+};
+
 class OSAL_EXPORT IPV6EndPoint : public OSAL::Network::EndPoint
 {
 public:
@@ -76,10 +98,10 @@ public:
     {
     }
     IPV6EndPoint(sockaddr_in6 * address)
-        : _ipAddress(address->sin6_addr)
-        , _port(address->sin6_port)
-        , _flowInformation(address->sin6_flowinfo)
-        , _scopeIdentifier(address->sin6_scope_id)
+        : _ipAddress(address->address())
+        , _port(address->port())
+        , _flowInformation(address->flowinfo())
+        , _scopeIdentifier(address->scopeid())
     {
     }
 

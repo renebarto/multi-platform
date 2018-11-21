@@ -11,6 +11,69 @@ using namespace std;
 using namespace OSAL;
 using namespace Network;
 
+namespace OSAL {
+namespace Network {
+
+in_addr::in_addr()
+    : ::in_addr()
+{
+}
+
+in_addr::in_addr(const std::initializer_list<uint8_t> & other)
+    : ::in_addr()
+{
+    ASSERT(other.size() == sizeof(s_addr));
+    bytearray address(other);
+    memcpy(&s_addr, address.data(), address.size());
+}
+
+in_addr::in_addr(const in_addr & other)
+    : ::in_addr(other)
+{
+}
+
+in_addr::in_addr(const bytearray & other)
+    : ::in_addr()
+{
+    ASSERT(other.size() == sizeof(s_addr));
+    memcpy(&s_addr, other.data(), other.size());
+}
+
+in_addr::in_addr(const ::in_addr & other)
+    : ::in_addr(other)
+{
+}
+
+in_addr & in_addr::operator = (const in_addr & other)
+{
+    if (&other != this)
+    {
+        s_addr = other.s_addr;
+    }
+    return *this;
+}
+
+in_addr & in_addr::operator = (const bytearray & other)
+{
+    ASSERT(other.size() == sizeof(s_addr));
+    copy_n(other.data(), other.size(), &s_addr);
+    return *this;
+}
+
+in_addr & in_addr::operator = (const ::in_addr & other)
+{
+    s_addr = other.s_addr;
+    return *this;
+}
+
+in_addr_t in_addr::value() const
+{
+    return s_addr;
+}
+
+} // namespace Network
+} // namespace OSAL
+
 IPV4Address const IPV4Address::None = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Any = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
