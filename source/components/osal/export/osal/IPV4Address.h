@@ -1,5 +1,6 @@
 #pragma once
 
+#include "osal/osal.h"
 #include <inaddr.h>
 #include "osal/bytearray.h"
 #include "osal/NetworkEndPoint.h"

@@ -13,7 +13,7 @@
 #pragma warning(disable: 4668)
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
+//#include <windows.h>
 #include <rpc.h>
 // Include after winsock2.h
 #include <iphlpapi.h>

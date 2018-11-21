@@ -106,7 +106,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorByteArrayPort)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorInAddr)
 {
-    in_addr ipAddress({ 1, 2, 3, 4 });
+    in_addr ipAddress = { 1, 2, 3, 4 };
     IPV4EndPoint target(ipAddress);
     const string expected = "1.2.3.4:0";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());
@@ -118,7 +118,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorInAddr)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorInAddrPort)
 {
-    in_addr ipAddress({ 1, 2, 3, 4 });
+    in_addr ipAddress = { 1, 2, 3, 4 };
     uint16_t port = 1234;
     IPV4EndPoint target(ipAddress, port);
     const string expected = "1.2.3.4:1234";
@@ -156,10 +156,7 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
 
 TEST_FIXTURE(IPV4EndPointTest, ConstructorSockAddr)
 {
-    sockaddr_in address {};
-    address.sin_family = AF_INET;
-    address.sin_port = 1234;
-    address.sin_addr = { 1, 2, 3, 4};
+    sockaddr_in address = { AF_INET, 1234, { 1, 2, 3, 4 }, { 0 } };
     IPV4EndPoint target(&address);
     const string expected = "1.2.3.4:1234";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());

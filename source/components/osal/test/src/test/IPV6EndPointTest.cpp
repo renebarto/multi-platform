@@ -124,7 +124,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressPortFlowInfoScopeID)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorInAddr)
 {
-    in_addr6 ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    in_addr6 ipAddress = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
     IPV6EndPoint target(ipAddress);
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());
@@ -136,7 +136,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorInAddr)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorInAddrPort)
 {
-    in_addr6 ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    in_addr6 ipAddress = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
     uint16_t port = 1234;
     IPV6EndPoint target(ipAddress, port);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
@@ -209,12 +209,7 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
 
 TEST_FIXTURE(IPV6EndPointTest, ConstructorSockAddr)
 {
-    sockaddr_in6 address {};
-    address.sin6_family = AF_INET6;
-    address.sin6_port = 1234;
-    address.sin6_addr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-    address.sin6_flowinfo = 12345678;
-    address.sin6_scope_id = 87654321;
+    sockaddr_in6 address = { AF_INET6, 1234, 12345678, { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, 87654321 };
     IPV6EndPoint target(&address);
     const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234%87654321";
     EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());

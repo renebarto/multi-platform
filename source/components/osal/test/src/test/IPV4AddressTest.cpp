@@ -83,8 +83,8 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorUInt32)
 
 TEST_FIXTURE(IPV4AddressTest, ConstructorInAddr)
 {
-    in_addr ipAddress({1, 2, 3, 4});
-    OSAL::Network::IPV4Address target({1, 2, 3, 4});
+    in_addr ipAddress = {1, 2, 3, 4};
+    OSAL::Network::IPV4Address target(ipAddress);
     const string expected = "1.2.3.4";
     EXPECT_TRUE(OSAL::bytearray({1, 2, 3, 4}) == target.GetBytes());
     ostringstream stream;

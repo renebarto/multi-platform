@@ -20,6 +20,7 @@ std::thread ThreadTest::theThread;
 
 void ThreadFunction()
 {
+    this_thread::sleep_for(std::chrono::milliseconds(100));
     ThreadTest::thisThread = IsThreadSelf(ThreadTest::theThread);
 }
 TEST_SUITE(osal)
@@ -32,7 +33,7 @@ TEST_FIXTURE(ThreadTest, ThreadSelf)
     EXPECT_FALSE(thisThread);
 
     theThread = std::thread(ThreadFunction);
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     EXPECT_TRUE(thisThread);
 

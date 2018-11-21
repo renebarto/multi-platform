@@ -1,5 +1,6 @@
 #pragma once
 
+#include "osal/osal.h"
 #include <in6addr.h>
 #include "osal/NetworkEndPoint.h"
 
