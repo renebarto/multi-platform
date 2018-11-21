@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fcntl.h>
+#include <unistd.h>
 #include "osal/NetworkEndPoint.h"
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
@@ -93,15 +94,15 @@ inline OSAL_EXPORT int Fcntl(SocketHandle socketHandle, int cmd, int flag)
 inline OSAL_EXPORT int Bind(SocketHandle socketHandle, EndPointPtr address)
 {
     return ::bind(socketHandle,
-                  reinterpret_cast<const sockaddr *>(address->GetBytes().Data()),
-                  static_cast<socklen_t>(address->GetBytes().Size()));
+                  reinterpret_cast<const sockaddr *>(address->GetBytes().data()),
+                  static_cast<socklen_t>(address->GetBytes().size()));
 }
 
 inline OSAL_EXPORT int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress)
 {
     return ::connect(socketHandle,
-                     reinterpret_cast<const sockaddr *>(serverAddress->GetBytes().Data()),
-                     static_cast<socklen_t>(serverAddress->GetBytes().Size()));
+                     reinterpret_cast<const sockaddr *>(serverAddress->GetBytes().data()),
+                     static_cast<socklen_t>(serverAddress->GetBytes().size()));
 }
 
 inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress)
@@ -121,9 +122,9 @@ inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily f
             return InvalidHandleValue;
     }
 
-    socklen_t size = static_cast<socklen_t>(clientAddress->GetBytes().Size());
-    SocketHandle result = ::accept(socketHandle, reinterpret_cast<sockaddr *>(clientAddress->GetBytes().Data()), &size);
-    assert(size == clientAddress->GetBytes().Size());
+    socklen_t size = static_cast<socklen_t>(clientAddress->GetBytes().size());
+    SocketHandle result = ::accept(socketHandle, reinterpret_cast<sockaddr *>(clientAddress->GetBytes().data()), &size);
+    ASSERT(size == clientAddress->GetBytes().size());
     return result;
 }
 
@@ -144,9 +145,9 @@ inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily famil
             return EINVAL;
     }
 
-    socklen_t size = static_cast<socklen_t>(address->GetBytes().Size());
-    int result = ::getsockname(socketHandle, reinterpret_cast<sockaddr *>(address->GetBytes().Data()), &size);
-    assert(size == address->GetBytes().Size());
+    socklen_t size = static_cast<socklen_t>(address->GetBytes().size());
+    int result = ::getsockname(socketHandle, reinterpret_cast<sockaddr *>(address->GetBytes().data()), &size);
+    ASSERT(size == address->GetBytes().size());
     return result;
 }
 
@@ -167,9 +168,9 @@ inline OSAL_EXPORT int GetPeerName(SocketHandle socketHandle, SocketFamily famil
             return EINVAL;
     }
 
-    socklen_t size = static_cast<socklen_t>(address->GetBytes().Size());
-    int result = ::getpeername(socketHandle, reinterpret_cast<sockaddr *>(address->GetBytes().Data()), &size);
-    assert(size == address->GetBytes().Size());
+    socklen_t size = static_cast<socklen_t>(address->GetBytes().size());
+    int result = ::getpeername(socketHandle, reinterpret_cast<sockaddr *>(address->GetBytes().data()), &size);
+    ASSERT(size == address->GetBytes().size());
     return result;
 }
 
@@ -200,17 +201,17 @@ inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data
             return EINVAL;
     }
 
-    socklen_t size = static_cast<socklen_t>(address->GetBytes().Size());
+    socklen_t size = static_cast<socklen_t>(address->GetBytes().size());
     ssize_t result = ::recvfrom(socketHandle, data, bufferSize, flags,
-                            reinterpret_cast<sockaddr *>(address->GetBytes().Data()), &size);
+                            reinterpret_cast<sockaddr *>(address->GetBytes().data()), &size);
     return result;
 }
 
 inline OSAL_EXPORT ssize_t SendTo(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags, const EndPointPtr & address)
 {
     return ::sendto(socketHandle, data, bufferSize, flags,
-                    reinterpret_cast<const sockaddr *>(address->GetBytes().Data()),
-                    static_cast<socklen_t>(address->GetBytes().Size()));
+                    reinterpret_cast<const sockaddr *>(address->GetBytes().data()),
+                    static_cast<socklen_t>(address->GetBytes().size()));
 }
 
 } // namespace Network

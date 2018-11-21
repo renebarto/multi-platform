@@ -1,4 +1,6 @@
 #include "osal/NetworkEndPoint.h"
+#include "osal/IPV4EndPoint.h"
+#include "osal/IPV6EndPoint.h"
 
 using namespace std;
 

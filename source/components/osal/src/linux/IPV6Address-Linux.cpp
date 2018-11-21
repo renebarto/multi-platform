@@ -20,6 +20,12 @@ IPV6Address const IPV6Address::Broadcast = IPV6Address({255, 255, 255, 255, 255,
 IPV6Address const IPV6Address::LocalHost = IPV6Address({0, 0, 0, 0, 0, 0, 0, 0,
                                                         0, 0, 0, 0, 0, 0, 0, 1});
 
+IPV6Address::IPV6Address(const in6_addr & address)
+    : _ipAddress(AddressSize)
+{
+    SetData(OSAL::bytearray(address.__in6_u.__u6_addr8, sizeof(address.__in6_u.__u6_addr8)));
+}
+
 IPV6Address::~IPV6Address()
 {
 }

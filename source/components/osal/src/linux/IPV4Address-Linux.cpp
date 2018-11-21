@@ -16,6 +16,12 @@ IPV4Address const IPV4Address::Any = IPV4Address({0, 0, 0, 0});
 IPV4Address const IPV4Address::Broadcast = IPV4Address({255, 255, 255, 255});
 IPV4Address const IPV4Address::LocalHost = IPV4Address({127, 0, 0, 1});
 
+IPV4Address::IPV4Address(const in_addr & address)
+    : _ipAddress(AddressSize)
+{
+    SetUInt32(address.s_addr);
+}
+
 IPV4Address::~IPV4Address()
 {
 }

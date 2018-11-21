@@ -1,12 +1,32 @@
 #pragma once
 
 #include "osal/osal.h"
+#if defined(LINUX) || defined(APPLE)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#else
 #include <inaddr.h>
+#endif
 #include "osal/bytearray.h"
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
+
+struct in_addr : public ::in_addr
+{
+public:
+    in_addr();
+    in_addr(const in_addr & other);
+    in_addr(const bytearray & other);
+    in_addr(const ::in_addr & other);
+
+    in_addr & operator = (const in_addr & other);
+    in_addr & operator = (const bytearray & other);
+    in_addr & operator = (const ::in_addr & other);
+
+    in_addr_t value() const;
+};
 
 class OSAL_EXPORT IPV4Address
 {
@@ -45,11 +65,7 @@ public:
     {
         SetUInt32(ipAddress);
     }
-    explicit IPV4Address(const in_addr & address)
-        : _ipAddress(AddressSize)
-    {
-        SetUInt32(address.S_un.S_addr);
-    }
+    explicit IPV4Address(const in_addr & address);
 
     virtual ~IPV4Address();
 

@@ -1,11 +1,31 @@
 #pragma once
 
 #include "osal/osal.h"
-#include <in6addr.h>
+#if defined(LINUX) || defined(APPLE)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#else
+#include <inaddr6.h>
+#endif
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
 namespace Network {
+
+struct in6_addr : public ::in6_addr
+{
+public:
+    in6_addr();
+    in6_addr(const in6_addr & other);
+    in6_addr(const bytearray & other);
+    in6_addr(const ::in6_addr & other);
+
+    in6_addr & operator = (const in6_addr & other);
+    in6_addr & operator = (const bytearray & other);
+    in6_addr & operator = (const ::in6_addr & other);
+
+    bytearray value() const;
+};
 
 class OSAL_EXPORT IPV6Address
 {
@@ -44,11 +64,7 @@ public:
     {
         SetData(OSAL::bytearray(ipAddress, 16));
     }
-    explicit IPV6Address(const in_addr6 & address)
-        : _ipAddress(AddressSize)
-    {
-        SetData(OSAL::bytearray(address.u.Byte, sizeof(address.u.Byte)));
-    }
+    explicit IPV6Address(const in6_addr & address);
 
     virtual ~IPV6Address();
 

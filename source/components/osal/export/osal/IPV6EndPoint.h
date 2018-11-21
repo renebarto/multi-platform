@@ -45,14 +45,14 @@ public:
         , _scopeIdentifier(scopeIdentifier)
     {
     }
-    IPV6EndPoint(const in_addr6 & ipAddress)
+    IPV6EndPoint(const in6_addr & ipAddress)
             : _ipAddress(ipAddress)
             , _port(AnyPort)
             , _flowInformation()
             , _scopeIdentifier()
     {
     }
-    IPV6EndPoint(const in_addr6 & ipAddress, PortType port,
+    IPV6EndPoint(const in6_addr & ipAddress, PortType port,
                  uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
             : _ipAddress(ipAddress)
             , _port(port)

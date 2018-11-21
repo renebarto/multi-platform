@@ -8,7 +8,8 @@
 #include <osal/NetworkAdapter.h>
 //#include <core/Core.h>
 //#include <core/DefaultLogger.h>
-#include <osal/NetworkEndPoint.h>
+//#include <osal/NetworkEndPoint.h>
+#include <osal/Exception.h>
 #include <osal/IPV4EndPoint.h>
 #include <osal/IPV6EndPoint.h>
 #include <osal/linux/DomainSocketAddress.h>
@@ -100,7 +101,7 @@ bool AdapterList::ReScan()
                 break;
             case AF_PACKET:
                 sockaddr_ll * address = reinterpret_cast<sockaddr_ll *>(currentAdapter->ifa_addr);
-                localAddress = make_shared<MACAddress>(OSAL::ByteArray(address->sll_addr, address->sll_halen));
+                localAddress = make_shared<MACAddress>(OSAL::bytearray(address->sll_addr, address->sll_halen));
                 break;
         }
         _adapters.push_back(make_shared<Adapter>(currentAdapter->ifa_name, localAddress, netmaskaddress, broadcastAddress, destAddress, static_cast<AdapterFlags>(currentAdapter->ifa_flags)));

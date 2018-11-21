@@ -84,7 +84,7 @@ TEST_FIXTURE(IPV6AddressTest, ConstructorUInt8Array)
 
 TEST_FIXTURE(IPV6AddressTest, ConstructorInAddr)
 {
-    in_addr6 ipAddress = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    in6_addr ipAddress = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     OSAL::Network::IPV6Address target(ipAddress);
     const string expected = "102:304:506:708:90a:b0c:d0e:f10";
     EXPECT_TRUE(OSAL::bytearray({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}) == target.GetBytes());

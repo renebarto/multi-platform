@@ -28,11 +28,15 @@ enum class AdapterFlags : unsigned int
     Dynamic = IFF_DYNAMIC,        // The addresses are lost when the interface goes down.
 };
 
+} // namespace Network
+
 template<>
 struct is_flag<OSAL::Network::AdapterFlags>
 {
     static constexpr bool value = true;
 };
+
+namespace Network {
 
 class OSAL_EXPORT Adapter
 {
