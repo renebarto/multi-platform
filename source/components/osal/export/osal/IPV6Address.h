@@ -1,5 +1,6 @@
 #pragma once
 
+#include <in6addr.h>
 #include "osal/NetworkEndPoint.h"
 
 namespace OSAL {
@@ -22,10 +23,15 @@ public:
         : _ipAddress(other._ipAddress)
     {
     }
-    IPV6Address(const OSAL::bytearray & ipAddress)
+    explicit IPV6Address(const OSAL::bytearray & ipAddress)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
+    }
+    explicit IPV6Address(const std::initializer_list<uint8_t> & ipAddress)
+        : _ipAddress(AddressSize)
+    {
+        SetData(OSAL::bytearray(ipAddress), 0);
     }
     IPV6Address(const OSAL::bytearray & ipAddress, size_t offset)
         : _ipAddress(AddressSize)
@@ -35,7 +41,12 @@ public:
     IPV6Address(uint8_t ipAddress[16])
         : _ipAddress(AddressSize)
     {
-        SetData(OSAL::bytearray(ipAddress, 16), 0);
+        SetData(OSAL::bytearray(ipAddress, 16));
+    }
+    explicit IPV6Address(const in_addr6 & address)
+        : _ipAddress(AddressSize)
+    {
+        SetData(OSAL::bytearray(address.u.Byte, sizeof(address.u.Byte)));
     }
 
     virtual ~IPV6Address();

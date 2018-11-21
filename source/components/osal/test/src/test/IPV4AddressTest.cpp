@@ -45,7 +45,7 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorCopy)
     OSAL::Network::IPV4Address ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4Address target(ipAddress);
     const string expected = "1.2.3.4";
-    EXPECT_TRUE(ipAddress == target.GetBytes());
+    EXPECT_TRUE(ipAddress == target);
     ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
@@ -73,34 +73,23 @@ TEST_FIXTURE(IPV4AddressTest, ConstructorByteArrayOffset)
     EXPECT_EQ(expected, stream.str());
 }
 
-TEST_FIXTURE(IPV4AddressTest, CreateByteArray)
-{
-    OSAL::bytearray ipAddress({1, 2, 3, 4});
-    OSAL::Network::IPV4Address target({1, 2, 3, 4});
-    const string expected = "1.2.3.4";
-    EXPECT_TRUE(ipAddress == target.GetBytes());
-    ostringstream stream;
-    target.PrintTo(stream);
-    EXPECT_EQ(expected, stream.str());
-}
-
-TEST_FIXTURE(IPV4AddressTest, CreateByteArrayOffset)
-{
-    OSAL::bytearray ipAddress({1, 2, 3, 4});
-    OSAL::Network::IPV4Address target({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 1);
-    const string expected = "1.2.3.4";
-    EXPECT_TRUE(ipAddress == target.GetBytes());
-    ostringstream stream;
-    target.PrintTo(stream);
-    EXPECT_EQ(expected, stream.str());
-}
-
-TEST_FIXTURE(IPV4AddressTest, CreateUInt32)
+TEST_FIXTURE(IPV4AddressTest, ConstructorUInt32)
 {
     OSAL::bytearray expected({255, 254, 253, 252});
     OSAL::Network::IPV4Address target(0xFCFDFEFF);
     OSAL::bytearray actual = target.GetBytes();
     EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(IPV4AddressTest, ConstructorInAddr)
+{
+    in_addr ipAddress({1, 2, 3, 4});
+    OSAL::Network::IPV4Address target({1, 2, 3, 4});
+    const string expected = "1.2.3.4";
+    EXPECT_TRUE(OSAL::bytearray({1, 2, 3, 4}) == target.GetBytes());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(IPV4AddressTest, OperatorIndex)

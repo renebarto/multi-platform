@@ -49,7 +49,8 @@ if (WIN_MSVC OR MINGW)
     list(APPEND PACKAGE_DEPENDENCIES
         Dbghelp.lib
         Ws2_32.lib
-        Rpcrt4.dll)
+        Rpcrt4.dll
+        IpHlpApi.lib)
 elseif (LINUX OR APPLE)
     list(APPEND PACKAGE_DEPENDENCIES
         dl)

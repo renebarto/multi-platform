@@ -81,9 +81,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_PUBLIC include/*.h)
 file(GLOB_RECURSE PACKAGE_SOURCES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/osal/test/include/osal/*.h)
 
-#file(GLOB_RECURSE PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
-#file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
-#
+file(GLOB_RECURSE PACKAGE_SOURCES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_CORE ${CMAKE_SOURCE_DIR}/source/components/core/test/include/core/*.h)
+
 #file(GLOB_RECURSE PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
 #file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/include/regex/*.h)
 #
@@ -116,7 +116,7 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_OSAL ${CMAKE_SOURCE_DIR}/source/components/os
 
 list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_OSAL}
-#    ${PACKAGE_SOURCES_CORE}
+    ${PACKAGE_SOURCES_CORE}
 #    ${PACKAGE_SOURCES_RE}
 #    ${PACKAGE_SOURCES_PARSER}
 #    ${PACKAGE_SOURCES_JSON}
@@ -129,7 +129,7 @@ list(APPEND PACKAGE_SOURCES
     )
 list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_OSAL}
-#    ${PACKAGE_INCLUDES_CORE}
+    ${PACKAGE_INCLUDES_CORE}
 #    ${PACKAGE_INCLUDES_RE}
 #    ${PACKAGE_INCLUDES_PARSER}
 #    ${PACKAGE_INCLUDES_JSON}

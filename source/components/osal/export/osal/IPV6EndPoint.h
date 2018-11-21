@@ -45,6 +45,21 @@ public:
         , _scopeIdentifier(scopeIdentifier)
     {
     }
+    IPV6EndPoint(const in_addr6 & ipAddress)
+            : _ipAddress(ipAddress)
+            , _port(AnyPort)
+            , _flowInformation()
+            , _scopeIdentifier()
+    {
+    }
+    IPV6EndPoint(const in_addr6 & ipAddress, PortType port,
+                 uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
+            : _ipAddress(ipAddress)
+            , _port(port)
+            , _flowInformation(flowInformation)
+            , _scopeIdentifier(scopeIdentifier)
+    {
+    }
     IPV6EndPoint(uint8_t ipAddress[16], PortType port,
                  uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
         : _ipAddress(ipAddress)
@@ -58,6 +73,13 @@ public:
         , _port(port)
         , _flowInformation()
         , _scopeIdentifier()
+    {
+    }
+    IPV6EndPoint(sockaddr_in6 * address)
+        : _ipAddress(address->sin6_addr)
+        , _port(address->sin6_port)
+        , _flowInformation(address->sin6_flowinfo)
+        , _scopeIdentifier(address->sin6_scope_id)
     {
     }
 

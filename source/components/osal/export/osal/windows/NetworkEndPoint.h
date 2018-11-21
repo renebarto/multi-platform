@@ -21,7 +21,7 @@ enum class SocketFamily
     Packet = AF_UNSPEC,
 };
 
-std::ostream & operator << (std::ostream & stream, SocketFamily socketFamily);
+OSAL_EXPORT std::ostream & operator << (std::ostream & stream, SocketFamily socketFamily);
 
 class OSAL_EXPORT EndPoint
 {
@@ -33,8 +33,11 @@ public:
     virtual size_t Size() const = 0;
     virtual bytearray GetBytes() const = 0;
     virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
+
 };
 using EndPointPtr = std::shared_ptr<EndPoint>;
+
+EndPointPtr OSAL_EXPORT Create(sockaddr * address);
 
 inline void PrintTo(const EndPoint & value, std::ostream & stream)
 {

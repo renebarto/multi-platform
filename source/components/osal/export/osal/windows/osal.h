@@ -15,6 +15,9 @@
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <rpc.h>
+// Include after winsock2.h
+#include <iphlpapi.h>
+
 #undef min
 #undef max
 #pragma warning(pop)

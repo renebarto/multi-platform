@@ -122,6 +122,31 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressPortFlowInfoScopeID)
     EXPECT_EQ(expected, stream.str());
 }
 
+TEST_FIXTURE(IPV6EndPointTest, ConstructorInAddr)
+{
+    in_addr6 ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    IPV6EndPoint target(ipAddress);
+    const string expected = "102:304:506:708:90a:b0c:d0e:f10";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(IPV6EndPoint::AnyPort, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV6EndPointTest, ConstructorInAddrPort)
+{
+    in_addr6 ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+    uint16_t port = 1234;
+    IPV6EndPoint target(ipAddress, port);
+    const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(port, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
 TEST_FIXTURE(IPV6EndPointTest, ConstructorIPAddressUInt8ArrayPort)
 {
     uint8_t ipAddress[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
@@ -177,6 +202,23 @@ TEST_FIXTURE(IPV6EndPointTest, ConstructorPort)
     const string expected = "[::]:1234";
     EXPECT_TRUE(OSAL::Network::IPV6Address::None == target.GetIPAddress());
     EXPECT_TRUE(port == target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV6EndPointTest, ConstructorSockAddr)
+{
+    sockaddr_in6 address {};
+    address.sin6_family = AF_INET6;
+    address.sin6_port = 1234;
+    address.sin6_addr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    address.sin6_flowinfo = 12345678;
+    address.sin6_scope_id = 87654321;
+    IPV6EndPoint target(&address);
+    const string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234%87654321";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(address.sin6_port, target.GetPort());
     ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());

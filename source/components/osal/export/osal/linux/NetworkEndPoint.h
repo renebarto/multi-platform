@@ -36,6 +36,8 @@ public:
 };
 using EndPointPtr = std::shared_ptr<EndPoint>;
 
+EndPointPtr OSAL_EXPORT Create(sockaddr * address);
+
 inline void PrintTo(const EndPoint & value, std::ostream & stream)
 {
     value.PrintTo(stream);

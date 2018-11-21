@@ -25,7 +25,7 @@ public:
         , _port(other._port)
     {
     }
-    IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress)
+    explicit IPV4EndPoint(const OSAL::Network::IPV4Address & ipAddress)
         : _ipAddress(ipAddress)
         , _port(AnyPort)
     {
@@ -35,6 +35,27 @@ public:
         , _port(port)
     {
     }
+    explicit IPV4EndPoint(const OSAL::bytearray & ipAddress)
+        : _ipAddress(ipAddress)
+        , _port(AnyPort)
+    {
+    }
+    IPV4EndPoint(const OSAL::bytearray & ipAddress, PortType port)
+        : _ipAddress(ipAddress)
+        , _port(port)
+    {
+    }
+    explicit IPV4EndPoint(const in_addr & ipAddress)
+        : _ipAddress(ipAddress)
+        , _port(AnyPort)
+    {
+    }
+    IPV4EndPoint(const in_addr & ipAddress, PortType port)
+        : _ipAddress(ipAddress)
+        , _port(port)
+    {
+    }
+
     IPV4EndPoint(uint32_t ipAddress, PortType port)
         : _ipAddress(ipAddress)
         , _port(port)
@@ -43,6 +64,10 @@ public:
     IPV4EndPoint(PortType port)
         : _ipAddress(OSAL::Network::IPV4Address::None)
         , _port(port)
+    {
+    }
+    IPV4EndPoint(sockaddr_in * address)
+        : IPV4EndPoint(address->sin_addr, address->sin_port)
     {
     }
 

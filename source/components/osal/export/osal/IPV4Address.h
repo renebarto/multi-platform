@@ -1,5 +1,6 @@
 #pragma once
 
+#include <inaddr.h>
 #include "osal/bytearray.h"
 #include "osal/NetworkEndPoint.h"
 
@@ -23,10 +24,15 @@ public:
         : _ipAddress(other._ipAddress)
     {
     }
-    IPV4Address(const OSAL::bytearray & ipAddress)
+    explicit IPV4Address(const OSAL::bytearray & ipAddress)
         : _ipAddress(AddressSize)
     {
         SetData(ipAddress, 0);
+    }
+    explicit IPV4Address(const std::initializer_list<uint8_t> & ipAddress)
+        : _ipAddress(AddressSize)
+    {
+        SetData(OSAL::bytearray(ipAddress), 0);
     }
     IPV4Address(const OSAL::bytearray & ipAddress, size_t offset)
         : _ipAddress(AddressSize)
@@ -37,6 +43,11 @@ public:
         : _ipAddress(AddressSize)
     {
         SetUInt32(ipAddress);
+    }
+    explicit IPV4Address(const in_addr & address)
+        : _ipAddress(AddressSize)
+    {
+        SetUInt32(address.S_un.S_addr);
     }
 
     virtual ~IPV4Address();

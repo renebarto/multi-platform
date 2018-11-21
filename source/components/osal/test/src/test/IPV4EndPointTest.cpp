@@ -79,6 +79,56 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressPort)
     EXPECT_EQ(expected, stream.str());
 }
 
+TEST_FIXTURE(IPV4EndPointTest, ConstructorByteArray)
+{
+    OSAL::bytearray ipAddress({ 1, 2, 3, 4 });
+    IPV4EndPoint target(ipAddress);
+    const string expected = "1.2.3.4:0";
+    EXPECT_EQ(ipAddress, target.GetIPAddress().GetBytes());
+    EXPECT_EQ(IPV4EndPoint::AnyPort, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV4EndPointTest, ConstructorByteArrayPort)
+{
+    OSAL::bytearray ipAddress({ 1, 2, 3, 4 });
+    uint16_t port = 1234;
+    IPV4EndPoint target(ipAddress, port);
+    const string expected = "1.2.3.4:1234";
+    EXPECT_EQ(ipAddress, target.GetIPAddress().GetBytes());
+    EXPECT_EQ(port, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV4EndPointTest, ConstructorInAddr)
+{
+    in_addr ipAddress({ 1, 2, 3, 4 });
+    IPV4EndPoint target(ipAddress);
+    const string expected = "1.2.3.4:0";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(IPV4EndPoint::AnyPort, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV4EndPointTest, ConstructorInAddrPort)
+{
+    in_addr ipAddress({ 1, 2, 3, 4 });
+    uint16_t port = 1234;
+    IPV4EndPoint target(ipAddress, port);
+    const string expected = "1.2.3.4:1234";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(port, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
 TEST_FIXTURE(IPV4EndPointTest, ConstructorIPAddressUInt32Port)
 {
     uint32_t ipAddress = 0x04030201;
@@ -99,6 +149,21 @@ TEST_FIXTURE(IPV4EndPointTest, ConstructorPort)
     const string expected = "0.0.0.0:1234";
     EXPECT_EQ(OSAL::Network::IPV4Address::None, target.GetIPAddress());
     EXPECT_EQ(port, target.GetPort());
+    ostringstream stream;
+    target.PrintTo(stream);
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST_FIXTURE(IPV4EndPointTest, ConstructorSockAddr)
+{
+    sockaddr_in address {};
+    address.sin_family = AF_INET;
+    address.sin_port = 1234;
+    address.sin_addr = { 1, 2, 3, 4};
+    IPV4EndPoint target(&address);
+    const string expected = "1.2.3.4:1234";
+    EXPECT_EQ(OSAL::bytearray({ 1, 2, 3, 4 }), target.GetIPAddress().GetBytes());
+    EXPECT_EQ(address.sin_port, target.GetPort());
     ostringstream stream;
     target.PrintTo(stream);
     EXPECT_EQ(expected, stream.str());
