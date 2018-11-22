@@ -25,7 +25,7 @@ TEST_FIXTURE(ConsoleTest, Constructor)
 
 TEST_FIXTURE(ConsoleTest, ConstructorStdOut)
 {
-    const char * termVar = OSAL::System::GetEnvironmentVariable("TERM");
+    const char * termVar = OSAL::System::GetEnvironment("TERM");
     string term = termVar ? termVar : "";
     const bool terminalSupportsColor = (term == "xterm") || (term == "xterm-color")
                                      || (term == "xterm-256color") || (term == "screen") || (term == "screen-256color")

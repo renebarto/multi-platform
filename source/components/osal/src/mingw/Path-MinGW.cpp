@@ -10,6 +10,7 @@
 #include "osal/osal.h"
 //#include "osal/Exception.h"
 #include "osal/Path.h"
+#include "osal/System.h"
 
 using namespace std;
 
@@ -180,11 +181,11 @@ bool OSAL::Path::MakeSureFileDoesNotExist(const string & path)
 //    return "/usr/lib";
 //}
 //
-//string OSAL::Path::TempPath()
-//{
-//    const char * tempFolder = OSAL::System::GetEnvironmentVariable("TMP");
-//    return tempFolder ? tempFolder : "";
-//}
+string OSAL::Path::TempPath()
+{
+    const char * tempFolder = OSAL::System::GetEnvironment("TMP");
+    return tempFolder ? tempFolder : "";
+}
 
 std::string OSAL::Path::ResolveSymbolicLink(const std::string & path)
 {

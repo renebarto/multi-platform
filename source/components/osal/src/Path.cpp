@@ -8,7 +8,7 @@ namespace OSAL {
 namespace Path {
 
 static const char _Dot = '.';
-//static const char * _CurrentDir = ".";
+static const char * _CurrentDir = ".";
 
 static string ReplaceWithPathSeparator(const std::string & path)
 {
@@ -98,17 +98,17 @@ string LastPartOfPath(const string & path)
 //    return ReplaceWithPathSeparator(pathOrFileName);
 //}
 //
-//string CombinePath(const string & basePath, const string & subPath)
-//{
-//    string result = ReplaceWithPathSeparator(basePath);
-//    if (result.empty())
-//        result += _CurrentDir;
-//    if (result[result.length() - 1] != PathSeparator())
-//        result += PathSeparator();
-//    result += ReplaceWithPathSeparator(subPath);
-//    return result;
-//}
-//
+string CombinePath(const string & basePath, const string & subPath)
+{
+    string result = ReplaceWithPathSeparator(basePath);
+    if (result.empty())
+        result += _CurrentDir;
+    if (result[result.length() - 1] != PathSeparator())
+        result += PathSeparator();
+    result += ReplaceWithPathSeparator(subPath);
+    return result;
+}
+
 //string StripPathToSubDirectory(const string & path, const string & subDirectoryName)
 //{
 //    string strippedPath = ReplaceWithPathSeparator(path);

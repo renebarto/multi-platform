@@ -179,11 +179,11 @@ bool OSAL::Path::MakeSureFileDoesNotExist(const string & path)
 //    return "/usr/lib";
 //}
 //
-//string OSAL::Path::TempPath()
-//{
-//    const char * tempFolder = P_tmpdir;
-//    return tempFolder ? tempFolder : "";
-//}
+string OSAL::Path::TempPath()
+{
+    const char * tempFolder = P_tmpdir;
+    return tempFolder ? tempFolder : "";
+}
 
 std::string OSAL::Path::ResolveSymbolicLink(const std::string & path)
 {

@@ -34,13 +34,13 @@ public:
 //    static std::string TstSubSubDirPath() { return OSAL::Path::CombinePath(TstSubDirPath(), TstSubSubDirName()); }
 //    static std::string EmptyDirPath() { return OSAL::Path::CombinePath(TestDirectoryOSAL(), "EmptyDir"); }
 //    static std::string HiddenDirPath() { return OSAL::Path::CombinePath(FilledDirPath(), "HiddenDir"); }
-    static std::string DummyDirName() { return "Dummy"; }
-    static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryOSAL(), DummyDirName()); }
+    //static std::string DummyDirName() { return "Dummy"; }
+    //static std::string DummyDirPath() { return OSAL::Path::CombinePath(TestDirectoryOSAL(), DummyDirName()); }
 
-    static std::string RegularFileNameNoExtension() { return "a"; }
-    static std::string RegularFileExtension() { return ".tst"; }
-    static std::string RegularFileName() { return RegularFileNameNoExtension() + RegularFileExtension(); }
-    static std::string RegularFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFileName()); }
+    //static std::string RegularFileNameNoExtension() { return "a"; }
+    //static std::string RegularFileExtension() { return ".tst"; }
+    //static std::string RegularFileName() { return RegularFileNameNoExtension() + RegularFileExtension(); }
+    //static std::string RegularFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), RegularFileName()); }
 //    static std::string HiddenFileName() { return ".hidden.txt"; }
 //    static std::string HiddenFilePath() { return OSAL::Path::CombinePath(FilledDirPath(), HiddenFileName()); }
     static std::string DummyFileName() { return "dummy.txt"; }

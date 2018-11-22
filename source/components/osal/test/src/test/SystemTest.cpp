@@ -195,67 +195,67 @@ TEST_FIXTURE(SystemTest, LookupClass)
     }
 #endif // defined(WIN_MSVC)
 
-TEST_FIXTURE(SystemTest, GetEnvironmentVariable)
+TEST_FIXTURE(SystemTest, GetEnvironment)
 {
-    const char * ptr = System::GetEnvironmentVariable("PATH");
+    const char * ptr = System::GetEnvironment("PATH");
     std::string path(ptr ? ptr : "");
 
     EXPECT_NE("", path);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     std::string dummy(ptr ? ptr : "");
 
     EXPECT_EQ("", dummy);
 }
 
-TEST_FIXTURE(SystemTest, SetEnvironmentVariable)
+TEST_FIXTURE(SystemTest, SetEnvironment)
 {
-    const char * ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    const char * ptr = System::GetEnvironment("SOME_DUMMY");
     std::string dummy(ptr ? ptr : "");
     EXPECT_EQ("", dummy);
 
-    int result = System::SetEnvironmentVariable("SOME_DUMMY", "1234");
+    int result = System::SetEnvironment("SOME_DUMMY", "1234");
     EXPECT_EQ(0, result);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     dummy = ptr ? ptr : "";
     EXPECT_EQ("1234", dummy);
 
-    result = System::SetEnvironmentVariable("SOME_DUMMY", "2345", false);
+    result = System::SetEnvironment("SOME_DUMMY", "2345", false);
     EXPECT_EQ(0, result);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     dummy = ptr ? ptr : "";
     EXPECT_EQ("1234", dummy);
 
-    result = System::SetEnvironmentVariable("SOME_DUMMY", "2345", true);
+    result = System::SetEnvironment("SOME_DUMMY", "2345", true);
     EXPECT_EQ(0, result);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     dummy = ptr ? ptr : "";
     EXPECT_EQ("2345", dummy);
 
-    result = System::UnSetEnvironmentVariable("SOME_DUMMY");
+    result = System::UnSetEnvironment("SOME_DUMMY");
     EXPECT_EQ(0, result);
 }
 
 TEST_FIXTURE(SystemTest, UnsSetEnvironmentVariable)
 {
-    const char * ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    const char * ptr = System::GetEnvironment("SOME_DUMMY");
     std::string dummy(ptr ? ptr : "");
     EXPECT_EQ("", dummy);
 
-    int result = System::SetEnvironmentVariable("SOME_DUMMY", "1234");
+    int result = System::SetEnvironment("SOME_DUMMY", "1234");
     EXPECT_EQ(0, result);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     dummy = ptr ? ptr : "";
     EXPECT_EQ("1234", dummy);
 
-    result = System::UnSetEnvironmentVariable("SOME_DUMMY");
+    result = System::UnSetEnvironment("SOME_DUMMY");
     EXPECT_EQ(0, result);
 
-    ptr = System::GetEnvironmentVariable("SOME_DUMMY");
+    ptr = System::GetEnvironment("SOME_DUMMY");
     dummy = ptr ? ptr : "";
     EXPECT_EQ("", dummy);
 }

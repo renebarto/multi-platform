@@ -26,7 +26,7 @@ inline std::string TypeName(const T & x)
 }
 WARNING_POP
 
-inline const char * GetEnvironmentVariable(const char * name)
+inline const char * GetEnvironment(const char * name)
 {
     static char buffer[4096];
     if (::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) == 0)
@@ -35,14 +35,14 @@ inline const char * GetEnvironmentVariable(const char * name)
     }
     return buffer;
 }
-inline int SetEnvironmentVariable(const char * name, const char * value, bool overwrite = true)
+inline int SetEnvironment(const char * name, const char * value, bool overwrite = true)
 {
     static char buffer[4096];
     if (!overwrite && ::GetEnvironmentVariableA(name, buffer, sizeof(buffer)) != 0)
         return 0;
     return ::SetEnvironmentVariableA(name, value) ? 0 : EINVAL;
 }
-inline int UnSetEnvironmentVariable(const char * name)
+inline int UnSetEnvironment(const char * name)
 {
     return ::SetEnvironmentVariableA(name, nullptr) ? 0 : EINVAL;
 }
