@@ -1,8 +1,9 @@
 #pragma once
 
 #include <sys/socket.h>
+#include <netatalk/at.h>
+#include <linux/irda.h>
 #include <memory>
-//#include "osal/OSAL.h"
 #include "osal/exports.h"
 #include "osal/bytearray.h"
 
@@ -19,6 +20,10 @@ enum class SocketFamily
     IPX = AF_IPX,
     Netlink = AF_NETLINK,
     Packet = AF_PACKET,
+    AppleTalk = AF_APPLETALK,
+    NetBIOS = AF_UNSPEC,
+    IrDA = AF_IRDA,
+    Bluetooth = AF_UNSPEC,
 };
 
 std::ostream & operator << (std::ostream & stream, SocketFamily socketFamily);

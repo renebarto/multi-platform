@@ -19,6 +19,10 @@ enum class SocketFamily
     IPX = AF_UNSPEC,
     Netlink = AF_UNSPEC,
     Packet = AF_UNSPEC,
+    AppleTalk = AF_APPLETALK,
+    NetBIOS = AF_NETBIOS,
+    IrDA = AF_IRDA,
+    Bluetooth = AF_BTH,
 };
 
 std::ostream & OSAL_EXPORT operator << (std::ostream & stream, SocketFamily socketFamily);

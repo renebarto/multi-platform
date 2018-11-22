@@ -3,8 +3,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "osal/NetworkEndPoint.h"
-#include <osal/IPV4Address.h>
-#include <osal/IPV6Address.h>
 #include <osal/linux/DomainSocketAddress.h>
 #include <osal/IPV4EndPoint.h>
 #include <osal/IPV6EndPoint.h>
@@ -21,6 +19,8 @@ enum class SocketType
     Datagram = SOCK_DGRAM,
     Raw = SOCK_RAW,
     SeqPacket = SOCK_SEQPACKET,
+    DatagramReliable = SOCK_RDM,
+    Packet = SOCK_PACKET,
 };
 
 enum class SocketOptionLevel
@@ -81,12 +81,12 @@ inline OSAL_EXPORT int GetSocketOption(SocketHandle socketHandle,
                         optionValue, reinterpret_cast<socklen_t *>(&optionLength));
 }
 
-inline OSAL_EXPORT int Fcntl(SocketHandle socketHandle, int cmd)
+inline OSAL_EXPORT int FileControl(SocketHandle socketHandle, int cmd)
 {
     return fcntl(socketHandle, cmd);
 }
 
-inline OSAL_EXPORT int Fcntl(SocketHandle socketHandle, int cmd, int flag)
+inline OSAL_EXPORT int FileControl(SocketHandle socketHandle, int cmd, int flag)
 {
     return fcntl(socketHandle, cmd, flag);
 }

@@ -3,7 +3,7 @@
 namespace OSAL {
 namespace Network {
 
-const SocketHandle InvalidHandleValue = -1;
+const SocketHandle InvalidHandleValue = INVALID_SOCKET;
 const SocketTimeout InfiniteTimeout = -1;
 
 } // namespace Network
