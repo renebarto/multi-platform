@@ -86,7 +86,7 @@ TEST_FIXTURE(NetworkEndPointTest, PrintToNonMemberIPV4SocketAddress)
     ASSERT_NOT_NULL(target);
     string expected = "1.2.3.4:1234";
     ostringstream stream;
-    PrintTo(*target, stream);
+    PrintTo(stream, *target);
     EXPECT_EQ(expected, stream.str());
 }
 
@@ -97,7 +97,7 @@ TEST_FIXTURE(NetworkEndPointTest, PrintToNonMemberIPV6SocketAddress)
     ASSERT_NOT_NULL(target);
     string expected = "[102:304:506:708:90a:b0c:d0e:f10]:1234%87654321";
     ostringstream stream;
-    PrintTo(*target, stream);
+    PrintTo(stream, *target);
     EXPECT_EQ(expected, stream.str());
 }
 

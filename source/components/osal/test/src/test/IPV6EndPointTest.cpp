@@ -486,7 +486,7 @@ TEST_FIXTURE(IPV6EndPointTest, PrintToNonMemberNoScopeID)
     OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     OSAL::Network::IPV6EndPoint endPoint(ipAddress, 1234);
     ostringstream stream;
-    PrintTo(endPoint, stream);
+    PrintTo(stream, endPoint);
     EXPECT_EQ("[102:304:506:708:90a:b0c:d0e:f10]:1234", stream.str());
 }
 
@@ -495,7 +495,7 @@ TEST_FIXTURE(IPV6EndPointTest, PrintToNonMember)
     OSAL::Network::IPV6Address ipAddress({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
     OSAL::Network::IPV6EndPoint endPoint(ipAddress, 1234, 0, 2);
     ostringstream stream;
-    PrintTo(endPoint, stream);
+    PrintTo(stream, endPoint);
     EXPECT_EQ("[102:304:506:708:90a:b0c:d0e:f10]:1234%2", stream.str());
 }
 

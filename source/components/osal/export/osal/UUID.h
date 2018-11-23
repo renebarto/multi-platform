@@ -83,7 +83,8 @@ public:
     const uint8_t & operator[] (size_t offset) const;
 
     virtual OSAL::bytearray GetBytes() const;
-    virtual std::ostream & PrintTo(std::ostream & stream) const;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
 
 private:
     bytearray _uuid;
@@ -92,15 +93,48 @@ private:
     static bool TryParse(const std::string & text, uint8_t & value);
 };
 
-inline void PrintTo(const UUID & value, std::ostream & stream)
+template <class Elem, class Traits>
+inline void Print(std::basic_ostream<Elem, Traits> & stream, uint8_t value)
 {
-    value.PrintTo(stream);
+    stream << std::hex << std::setw(2) << std::nouppercase << std::setfill('0') << int(value);
 }
 
-inline std::ostream & operator << (std::ostream & stream, const UUID & value)
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & UUID::PrintTo(std::basic_ostream<Elem, Traits> & s) const
 {
-    value.PrintTo(stream);
-    return stream;
+    Print(s, _uuid[0]);
+    Print(s, _uuid[1]);
+    Print(s, _uuid[2]);
+    Print(s, _uuid[3]);
+    s << '-';
+    Print(s, _uuid[4]);
+    Print(s, _uuid[5]);
+    s << '-';
+    Print(s, _uuid[6]);
+    Print(s, _uuid[7]);
+    s << '-';
+    Print(s, _uuid[8]);
+    Print(s, _uuid[9]);
+    s << '-';
+    Print(s, _uuid[10]);
+    Print(s, _uuid[11]);
+    Print(s, _uuid[12]);
+    Print(s, _uuid[13]);
+    Print(s, _uuid[14]);
+    Print(s, _uuid[15]);
+    return s;
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const UUID & value)
+{
+    return value.PrintTo(s);
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const UUID & value)
+{
+    return value.PrintTo(s);
 }
 
 } // namespace OSAL

@@ -461,7 +461,7 @@ TEST_FIXTURE(FixedArrayTest, PrintTo)
     expected += "01 02 03 04 05 06 07 08 \n";
     expected += "09 0a 0b 0c 0d 0e 0f 10 \n\n";
     ostringstream stream;
-    PrintTo(target, stream);
+    PrintTo(stream, target);
     string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
@@ -817,7 +817,7 @@ TEST_FIXTURE(FixedArrayTest, ToStringInt32)
     expected += "00000001 00000002 00000003 00000004 00000005 00000006 00000007 00000008 \n";
     expected += "00000009 0000000a 0000000b 0000000c 0000000d 0000000e 0000000f 00000010 \n\n";
     ostringstream stream;
-    PrintTo(target, stream);
+    PrintTo(stream, target);
     string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }

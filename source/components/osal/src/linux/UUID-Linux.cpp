@@ -166,34 +166,4 @@ OSAL::bytearray UUID::GetBytes() const
     return _uuid;
 }
 
-static void Print(std::ostream & stream, uint8_t value)
-{
-    stream << hex << setw(2) << nouppercase << setfill('0') << int(value);
-}
-
-std::ostream & UUID::PrintTo(std::ostream & stream) const
-{
-    Print(stream, _uuid[0]);
-    Print(stream, _uuid[1]);
-    Print(stream, _uuid[2]);
-    Print(stream, _uuid[3]);
-    stream << '-';
-    Print(stream, _uuid[4]);
-    Print(stream, _uuid[5]);
-    stream << '-';
-    Print(stream, _uuid[6]);
-    Print(stream, _uuid[7]);
-    stream << '-';
-    Print(stream, _uuid[8]);
-    Print(stream, _uuid[9]);
-    stream << '-';
-    Print(stream, _uuid[10]);
-    Print(stream, _uuid[11]);
-    Print(stream, _uuid[12]);
-    Print(stream, _uuid[13]);
-    Print(stream, _uuid[14]);
-    Print(stream, _uuid[15]);
-    return stream;
-}
-
 #endif // defined(LINUX)

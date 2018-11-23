@@ -228,7 +228,7 @@ TEST_FIXTURE(IPV4AddressTest, PrintToNonMember)
 {
     OSAL::Network::IPV4Address ipAddress({1, 2, 3, 4});
     ostringstream stream;
-    PrintTo(ipAddress, stream);
+    PrintTo(stream, ipAddress);
     EXPECT_EQ("1.2.3.4", stream.str());
 }
 

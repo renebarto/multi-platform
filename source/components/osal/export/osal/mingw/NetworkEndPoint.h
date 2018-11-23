@@ -36,18 +36,21 @@ public:
     virtual SocketFamily Family() const = 0;
     virtual size_t Size() const = 0;
     virtual bytearray GetBytes() const = 0;
-    virtual std::ostream & PrintTo(std::ostream & stream) const = 0;
+    virtual std::basic_ostream<char, std::char_traits<char>> & PrintTo(std::basic_ostream<char, std::char_traits<char>> & s) const = 0;
+    virtual std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & PrintTo(std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & s) const = 0;
 };
 using EndPointPtr = std::shared_ptr<EndPoint>;
 
 EndPointPtr OSAL_EXPORT Create(sockaddr * address);
 
-inline void PrintTo(const EndPoint & value, std::ostream & stream)
+template <class Elem, class Traits>
+inline void PrintTo(std::basic_ostream<Elem, Traits> & stream, const EndPoint & value)
 {
     value.PrintTo(stream);
 }
 
-inline std::ostream & operator << (std::ostream & stream, const EndPoint & value)
+template <class Elem, class Traits>
+inline std::basic_ostream<Elem, Traits> & operator << (std::basic_ostream<Elem, Traits> & stream, const EndPoint & value)
 {
     value.PrintTo(stream);
     return stream;

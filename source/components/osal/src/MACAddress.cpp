@@ -139,18 +139,6 @@ OSAL::bytearray MACAddress::GetBytes() const
     return _macAddress;
 }
 
-std::ostream & MACAddress::PrintTo(std::ostream & stream) const
-{
-    stream << hex << setfill('0');
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{0}] << "-";
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{1}] << "-";
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{2}] << "-";
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{3}] << "-";
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{4}] << "-";
-    stream << uppercase << setw(2) << (int)_macAddress[size_t{5}];
-    return stream;
-}
-
 void MACAddress::SetData(const OSAL::bytearray & data, size_t offset)
 {
     ASSERT(data.size() - offset >= AddressSize);

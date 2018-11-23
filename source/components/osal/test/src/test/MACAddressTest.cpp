@@ -326,7 +326,7 @@ TEST_FIXTURE(MACAddressTest, PrintToNonMember)
     OSAL::Network::MACAddress target({1, 2, 3, 4, 5, 6});
     const string expected = "01-02-03-04-05-06";
     ostringstream stream;
-    PrintTo(target, stream);
+    PrintTo(stream, target);
     EXPECT_EQ(expected, stream.str());
 }
 

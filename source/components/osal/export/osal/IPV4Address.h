@@ -82,7 +82,8 @@ public:
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV4; }
     virtual size_t Size() const { return AddressSize; }
     virtual OSAL::bytearray GetBytes() const;
-    virtual std::ostream & PrintTo(std::ostream & stream) const;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
 
 private:
     OSAL::bytearray _ipAddress;
@@ -90,15 +91,26 @@ private:
     void SetData(const OSAL::bytearray & data, size_t offset);
 };
 
-inline void PrintTo(const IPV4Address & value, std::ostream & stream)
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & IPV4Address::PrintTo(std::basic_ostream<Elem, Traits> & s) const
 {
-    value.PrintTo(stream);
+    s << (int)_ipAddress[size_t{0}] << ".";
+    s << (int)_ipAddress[size_t{1}] << ".";
+    s << (int)_ipAddress[size_t{2}] << ".";
+    s << (int)_ipAddress[size_t{3}];
+    return s;
 }
 
-inline std::ostream & operator << (std::ostream & stream, const IPV4Address & value)
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const IPV4Address & value)
 {
-    value.PrintTo(stream);
-    return stream;
+    return value.PrintTo(s);
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const IPV4Address & value)
+{
+    return value.PrintTo(s);
 }
 
 } // namespace Network

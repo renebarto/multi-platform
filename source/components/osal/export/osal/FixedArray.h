@@ -57,7 +57,8 @@ public:
     bool operator != (const FixedArray<T> & other) const;
     T& operator[] (size_t offset);
     const T& operator[] (size_t offset) const;
-    virtual std::ostream & PrintTo(std::ostream & stream) const;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
 
 protected:
     void AllocateSize(size_t size);
@@ -258,19 +259,10 @@ const T& FixedArray<T>::operator[] (size_t offset) const
 }
 
 template<class T>
-typename std::enable_if<!std::is_integral<T>::value, void>::type PrintTo(std::ostream & stream, T value)
+template<class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & FixedArray<T>::PrintTo(std::basic_ostream<Elem, Traits> & s) const
 {
-    stream << value << " ";
-}
-template<class T>
-typename std::enable_if<std::is_integral<T>::value, void>::type PrintTo(std::ostream & stream, T value)
-{
-    stream << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
-}
-template<class T>
-std::ostream & FixedArray<T>::PrintTo(std::ostream & stream) const
-{
-    stream << OSAL::System::TypeName(*this)
+    s << OSAL::System::TypeName(*this)
            << " Item size: " << sizeof(T) << " Size: " << _size << std::endl;
     size_t maxValuesToDisplay = std::min(_size, MaxValuesToDisplay);
     for (size_t offset = 0; offset < maxValuesToDisplay; offset += ValuesPerRow)
@@ -280,13 +272,16 @@ std::ostream & FixedArray<T>::PrintTo(std::ostream & stream) const
             if (i + offset < maxValuesToDisplay)
             {
                 T value = _data[i + offset];
-                OSAL::PrintTo(stream, value);
+                if (std::is_integral<T>::value)
+                    s << std::hex << std::setw(2 * sizeof(T)) << std::setfill('0') << (long long)value << " ";
+                else
+                    s << value << " ";
             }
         }
-        stream << std::endl;
+        s << std::endl;
     }
-    stream << std::endl << std::flush;
-    return stream;
+    s << std::endl << std::flush;
+    return s;
 }
 
 template<class T>
@@ -326,17 +321,16 @@ void FixedArray<T>::Move(FixedArray<T> && other)
     other._data = nullptr;
 }
 
-template<class T>
-void PrintTo(const FixedArray<T> & value, std::ostream & stream)
+template <class Elem, class Traits, class T>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const FixedArray<T> & value)
 {
-    value.PrintTo(stream);
+    return value.PrintTo(s);
 }
 
-template<class T>
-std::ostream & operator << (std::ostream & stream, const FixedArray<T> & value)
+template <class Elem, class Traits, class T>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const FixedArray<T> & value)
 {
-    value.PrintTo(stream);
-    return stream;
+    return value.PrintTo(s);
 }
 
 } // namespace OSAL

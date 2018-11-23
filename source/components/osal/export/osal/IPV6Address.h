@@ -82,7 +82,8 @@ public:
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const { return AddressSize; }
     virtual OSAL::bytearray GetBytes() const;
-    virtual std::ostream & PrintTo(std::ostream & stream) const;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
 
 private:
     OSAL::bytearray _ipAddress;
@@ -90,15 +91,85 @@ private:
     void SetData(const OSAL::bytearray & data, size_t offset);
 };
 
-inline void PrintTo(const IPV6Address & value, std::ostream & stream)
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & IPV6Address::PrintTo(std::basic_ostream<Elem, Traits> & s) const
 {
-    value.PrintTo(stream);
+    static const size_t NumWords = AddressSize / 2;
+    uint16_t words[NumWords];
+    size_t zeroSequenceStartMax = 0;
+    size_t zeroSequenceLengthMax = 0;
+    size_t zeroSequenceStart = 0;
+    size_t zeroSequenceLength = 0;
+    bool inZeroSequence = false;
+    for (size_t i = 0; i < NumWords; ++i)
+    {
+        words[i] = _ipAddress.getUInt16BE(i * 2);
+        if (words[i] == 0)
+        {
+            if (!inZeroSequence)
+            {
+                zeroSequenceStart = i;
+                inZeroSequence = true;
+            }
+        }
+        else
+        {
+            if (inZeroSequence)
+            {
+                zeroSequenceLength = i - zeroSequenceStart;
+                inZeroSequence = false;
+                if (zeroSequenceLength > zeroSequenceLengthMax)
+                {
+                    zeroSequenceStartMax = zeroSequenceStart;
+                    zeroSequenceLengthMax = zeroSequenceLength;
+                }
+                zeroSequenceStart = static_cast<size_t>(-1);
+                zeroSequenceLength = 0;
+            }
+        }
+    }
+    if (inZeroSequence)
+    {
+        zeroSequenceLength = NumWords - zeroSequenceStart;
+        if (zeroSequenceLength > zeroSequenceLengthMax)
+        {
+            zeroSequenceStartMax = zeroSequenceStart;
+            zeroSequenceLengthMax = zeroSequenceLength;
+        }
+
+    }
+    s << std::hex;
+    for (size_t i = 0; i < NumWords; ++i)
+    {
+        if ((i == zeroSequenceStartMax) && (zeroSequenceLengthMax > 1))
+        {
+            s << "::";
+        }
+        else if ((i == zeroSequenceStartMax) && (zeroSequenceLengthMax == 1))
+        {
+            s << ":0:";
+        }
+        else if ((i < zeroSequenceStartMax) || (i >= zeroSequenceStartMax + zeroSequenceLengthMax))
+        {
+            s << words[i];
+            if (((i + 1) < NumWords) && ((i + 1) != zeroSequenceStartMax))
+                s << ":";
+        }
+    }
+    s << std::dec;
+    return s;
 }
 
-inline std::ostream & operator << (std::ostream & stream, const IPV6Address & value)
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const IPV6Address & value)
 {
-    value.PrintTo(stream);
-    return stream;
+    return value.PrintTo(s);
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const IPV6Address & value)
+{
+    return value.PrintTo(s);
 }
 
 } // namespace Network

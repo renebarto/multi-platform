@@ -60,13 +60,26 @@ public:
     virtual OSAL::Network::SocketFamily Family() const { return OSAL::Network::SocketFamily::Unix; }
     virtual size_t Size() const override { return AddressSize; }
     virtual OSAL::bytearray GetBytes() const override;
-    virtual std::ostream & PrintTo(std::ostream & stream) const override;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
 
 private:
     OSAL::bytearray _address;
 
     void SetData(const OSAL::bytearray & data, size_t offset);
 };
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const DomainSocketAddress & value)
+{
+    return value.PrintTo(s);
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const DomainSocketAddress & value)
+{
+    return value.PrintTo(s);
+}
 
 } // namespace Network
 } // namespace OSAL

@@ -362,7 +362,7 @@ TEST_FIXTURE(UUIDTest, PrintToNonMember)
                        0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00});
     const std::string expected = "0f0e0d0c-0b0a-0908-0706-050403020100";
     ostringstream stream;
-    PrintTo(target, stream);
+    PrintTo(stream, target);
     EXPECT_EQ(expected, stream.str());
 }
 

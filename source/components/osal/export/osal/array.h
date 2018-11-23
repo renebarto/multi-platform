@@ -276,6 +276,12 @@ std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s,
     return value.PrintTo(s);
 }
 
+template <class Elem, class Traits, class T>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const array<T> & value)
+{
+    return value.PrintTo(s);
+}
+
 template<class Elem>
 bool operator == (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
 {
@@ -290,9 +296,4 @@ bool operator != (const OSAL::array<Elem> & lhs, const OSAL::array<Elem> & rhs)
 
 } // namespace OSAL
 
-template <class Elem, class Traits, class T>
-std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const T & value)
-{
-    return value.PrintTo(s);
-}
 

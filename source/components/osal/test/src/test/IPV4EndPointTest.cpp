@@ -400,7 +400,7 @@ TEST_FIXTURE(IPV4EndPointTest, PrintToNonMember)
     OSAL::Network::IPV4Address ipAddress({1, 2, 3, 4});
     OSAL::Network::IPV4EndPoint endPoint(ipAddress, 1234);
     ostringstream stream;
-    PrintTo(endPoint, stream);
+    PrintTo(stream, endPoint);
     EXPECT_EQ("1.2.3.4:1234", stream.str());
 }
 

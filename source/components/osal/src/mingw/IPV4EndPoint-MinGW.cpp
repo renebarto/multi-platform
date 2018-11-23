@@ -205,9 +205,3 @@ OSAL::bytearray IPV4EndPoint::GetBytes() const
     return result;
 }
 
-std::ostream & IPV4EndPoint::PrintTo(std::ostream & stream) const
-{
-    stream << _ipAddress << ":";
-    stream << _port;
-    return stream;
-}

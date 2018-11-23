@@ -101,7 +101,34 @@ public:
     template <class Elem, class Traits>
     std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
     {
-        return s << *this;
+        s << OSAL::System::TypeName(*this) << " Size: " << size() << std::endl;
+        size_t maxValuesToDisplay = std::min<size_t>(size(), MaxBytesToDisplay);
+        for (size_t offset = 0; offset < maxValuesToDisplay; offset += BytesPerRow)
+        {
+            for (size_t i = 0; i < BytesPerRow; i++)
+            {
+                if (i + offset < maxValuesToDisplay)
+                {
+                    uint8_t byteValue = _data[i + offset];
+                    s << std::hex << std::setw(2) << std::setfill('0') << (int)byteValue << " ";
+                }
+                else
+                {
+                    s << "   ";
+                }
+            }
+            for (size_t i = 0; i < BytesPerRow; i++)
+            {
+                if (i + offset < maxValuesToDisplay)
+                {
+                    uint8_t byteValue = _data[i + offset];
+                    s << static_cast<char>(((byteValue >= 32) && (byteValue < 128)) ? byteValue : '?') << " ";
+                }
+            }
+            s << std::endl;
+        }
+        s << std::endl << std::flush;
+        return s;
     }
 };
 
@@ -114,34 +141,7 @@ std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s,
 template <class Elem, class Traits>
 std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const bytearray & value)
 {
-    s << OSAL::System::TypeName(value) << " Size: " << value.size() << std::endl;
-    size_t maxValuesToDisplay = std::min<size_t>(value.size(), bytearray::MaxBytesToDisplay);
-    for (size_t offset = 0; offset < maxValuesToDisplay; offset += bytearray::BytesPerRow)
-    {
-        for (size_t i = 0; i < bytearray::BytesPerRow; i++)
-        {
-            if (i + offset < maxValuesToDisplay)
-            {
-                uint8_t byteValue = value[i + offset];
-                s << std::hex << std::setw(2) << std::setfill('0') << (int)byteValue << " ";
-            }
-            else
-            {
-                s << "   ";
-            }
-        }
-        for (size_t i = 0; i < bytearray::BytesPerRow; i++)
-        {
-            if (i + offset < maxValuesToDisplay)
-            {
-                uint8_t byteValue = value[i + offset];
-                s << static_cast<char>(((byteValue >= 32) && (byteValue < 128)) ? byteValue : '?') << " ";
-            }
-        }
-        s << std::endl;
-    }
-    s << std::endl << std::flush;
-    return s;
+    return value.PrintTo(s);
 }
 
 inline bool operator == (const OSAL::bytearray & lhs, const OSAL::bytearray & rhs)

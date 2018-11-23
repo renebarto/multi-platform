@@ -127,7 +127,10 @@ public:
     virtual OSAL::Network::SocketFamily Family() const override { return OSAL::Network::SocketFamily::InternetV6; }
     virtual size_t Size() const override;
     virtual OSAL::bytearray GetBytes() const override;
-    virtual std::ostream & PrintTo(std::ostream & stream) const override;
+    template <class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & Print(std::basic_ostream<Elem, Traits> & s) const;
+    virtual std::basic_ostream<char, std::char_traits<char>> & PrintTo(std::basic_ostream<char, std::char_traits<char>> & s) const override { return Print(s); }
+    virtual std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & PrintTo(std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & s) const override { return Print(s); }
 
 private:
     OSAL::Network::IPV6Address _ipAddress;
@@ -135,6 +138,37 @@ private:
     uint32_t _flowInformation;
     uint32_t _scopeIdentifier;
 };
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & IPV6EndPoint::Print(std::basic_ostream<Elem, Traits> & s) const
+{
+    if (_port != 0)
+    {
+        s << "[" << _ipAddress << "]:";
+        s << _port;
+    }
+    else
+    {
+        s << _ipAddress;
+    }
+    if (_scopeIdentifier != 0)
+    {
+        s << '%' << _scopeIdentifier;
+    }
+    return s;
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const IPV6EndPoint & value)
+{
+    return value.PrintTo(s);
+}
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & operator<<(std::basic_ostream<Elem, Traits> &s, const IPV6EndPoint & value)
+{
+    return value.PrintTo(s);
+}
 
 } // namespace Network
 } // namespace OSAL

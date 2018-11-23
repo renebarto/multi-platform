@@ -275,20 +275,3 @@ OSAL::bytearray IPV6EndPoint::GetBytes() const
     return result;
 }
 
-std::ostream & IPV6EndPoint::PrintTo(std::ostream & stream) const
-{
-    if (_port != 0)
-    {
-        stream << "[" << _ipAddress << "]:";
-        stream << _port;
-    }
-    else
-    {
-        stream << _ipAddress;
-    }
-    if (_scopeIdentifier != 0)
-    {
-        stream << '%' << _scopeIdentifier;
-    }
-    return stream;
-}
