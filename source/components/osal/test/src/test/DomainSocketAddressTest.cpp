@@ -323,7 +323,7 @@ TEST_FIXTURE(DomainSocketAddressTest, PrintToNonMember)
     OSAL::Network::DomainSocketAddress target(path);
     const std::string expected = path;
     ostringstream stream;
-    PrintTo(target, stream);
+    PrintTo(stream, target);
     EXPECT_EQ(expected, stream.str());
 }
 
