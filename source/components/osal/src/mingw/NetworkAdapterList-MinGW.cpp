@@ -117,9 +117,9 @@ bool AdapterList::ReScan()
                 int i;
                 for (i = 0; pAnycast != nullptr; i++)
                     pAnycast = pAnycast->Next;
-                printf("\tNumber of Anycast Addresses: %d\n", i);
+                cout << "Number of Anycast Addresses: " << i << endl;
             } else
-                printf("\tNo Anycast Addresses\n");
+                cout << "No Anycast Addresses" << endl;
 
             pMulticast = pCurrAddresses->FirstMulticastAddress;
             if (pMulticast)
@@ -127,9 +127,9 @@ bool AdapterList::ReScan()
                 int i;
                 for (i = 0; pMulticast != nullptr; i++)
                     pMulticast = pMulticast->Next;
-                printf("\tNumber of Multicast Addresses: %d\n", i);
+                cout << "Number of Multicast Addresses: %d" << i << endl;
             } else
-                printf("\tNo Multicast Addresses\n");
+                cout << "No Multicast Addresses" << endl;
 
             pDnServer = pCurrAddresses->FirstDnsServerAddress;
             if (pDnServer)
@@ -137,35 +137,34 @@ bool AdapterList::ReScan()
                 int i;
                 for (i = 0; pDnServer != nullptr; i++)
                     pDnServer = pDnServer->Next;
-                printf("\tNumber of DNS Server Addresses: %d\n", i);
+                cout << "Number of DNS Server Addresses: " << i << endl;
             } else
-                printf("\tNo DNS Server Addresses\n");
+                cout << "No DNS Server Addresses" << endl;
 
-            printf("\tDNS Suffix: %s\n", OSAL::Strings::WStringToString(pCurrAddresses->DnsSuffix).c_str());
-            printf("\tDescription: %s\n", OSAL::Strings::WStringToString(pCurrAddresses->Description).c_str());
-            printf("\tFriendly name: %s\n", OSAL::Strings::WStringToString(pCurrAddresses->FriendlyName).c_str());
+            cout << "DNS Suffix: " << OSAL::Strings::WStringToString(pCurrAddresses->DnsSuffix).c_str() << endl;
+            cout << "Description: " << OSAL::Strings::WStringToString(pCurrAddresses->Description).c_str() << endl;
+            cout << "Friendly name: " << OSAL::Strings::WStringToString(pCurrAddresses->FriendlyName).c_str() << endl;
 
             if (pCurrAddresses->PhysicalAddressLength != 0)
             {
-                printf("\tPhysical address: ");
-                for (int i = 0; i < pCurrAddresses->PhysicalAddressLength; i++)
+                cout << "Physical address: ";
+                for (unsigned i = 0; i < pCurrAddresses->PhysicalAddressLength; i++)
                 {
                     if (i == (pCurrAddresses->PhysicalAddressLength - 1))
-                        printf("%.2X\n", (int) pCurrAddresses->PhysicalAddress[i]);
+                        cout << hex << setw(2) << setfill('0') << (int) pCurrAddresses->PhysicalAddress[i] << endl << dec;
                     else
-                        printf("%.2X-", (int) pCurrAddresses->PhysicalAddress[i]);
+                        cout << hex << setw(2) << setfill('0') << (int) pCurrAddresses->PhysicalAddress[i] << "-";
                 }
             }
-            printf("\tFlags: %ld\n", pCurrAddresses->Flags);
-            printf("\tMtu: %lu\n", pCurrAddresses->Mtu);
-            printf("\tIfType: %ld\n", pCurrAddresses->IfType);
-            printf("\tOperStatus: %ld\n", pCurrAddresses->OperStatus);
-            printf("\tIpv6IfIndex (IPv6 interface): %u\n",
-                   pCurrAddresses->Ipv6IfIndex);
-            printf("\tZoneIndices (hex): ");
+            cout << "Flags: " << pCurrAddresses->Flags << endl;
+            cout << "Mtu: " << pCurrAddresses->Mtu << endl;
+            cout << "IfType: " << pCurrAddresses->IfType << endl;
+            cout << "OperStatus: " << (int)pCurrAddresses->OperStatus << endl;
+            cout << "Ipv6IfIndex (IPv6 interface): " << pCurrAddresses->Ipv6IfIndex << endl;
+            cout << "ZoneIndices (hex): ";
             for (int i = 0; i < 16; i++)
                 printf("%lx ", pCurrAddresses->ZoneIndices[i]);
-            printf("\n");
+            cout << endl;
 
             pPrefix = pCurrAddresses->FirstPrefix;
             if (pPrefix)
@@ -173,11 +172,11 @@ bool AdapterList::ReScan()
                 int i;
                 for (i = 0; pPrefix != nullptr; i++)
                     pPrefix = pPrefix->Next;
-                printf("\tNumber of IP Adapter Prefix entries: %d\n", i);
+                cout << "Number of IP Adapter Prefix entries: " << i << endl;
             } else
-                printf("\tNo IP Adapter Prefix entries\n");
+                cout << "No IP Adapter Prefix entries" << endl;
 
-            printf("\n");
+            cout << endl;
 
             _adapters.push_back(make_shared<Adapter>(name, localAddress, netmaskaddress, broadcastAddress, destAddress, static_cast<AdapterFlags>(flags)));
 
