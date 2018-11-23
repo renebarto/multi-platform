@@ -70,6 +70,13 @@ private:
 };
 
 template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & DomainSocketAddress::PrintTo(std::basic_ostream<Elem, Traits> & s) const
+{
+    s << reinterpret_cast<const char *>(_address.data());
+    return s;
+}
+
+template <class Elem, class Traits>
 std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s, const DomainSocketAddress & value)
 {
     return value.PrintTo(s);

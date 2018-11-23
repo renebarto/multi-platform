@@ -131,12 +131,6 @@ OSAL::bytearray DomainSocketAddress::GetBytes() const
     return _address;
 }
 
-std::ostream & DomainSocketAddress::PrintTo(std::ostream & stream) const
-{
-    stream << reinterpret_cast<const char *>(_address.data());
-    return stream;
-}
-
 void DomainSocketAddress::SetData(const OSAL::bytearray & data, size_t offset)
 {
     ASSERT(data.size() - offset <= AddressSize);
