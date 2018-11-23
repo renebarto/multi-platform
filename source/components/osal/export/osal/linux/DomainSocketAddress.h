@@ -61,7 +61,9 @@ public:
     virtual size_t Size() const override { return AddressSize; }
     virtual OSAL::bytearray GetBytes() const override;
     template <class Elem, class Traits>
-    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const;
+    std::basic_ostream<Elem, Traits> & Print(std::basic_ostream<Elem, Traits> & s) const;
+    virtual std::basic_ostream<char, std::char_traits<char>> & PrintTo(std::basic_ostream<char, std::char_traits<char>> & s) const override { return Print(s); }
+    virtual std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & PrintTo(std::basic_ostream<wchar_t, std::char_traits<wchar_t>> & s) const override { return Print(s); }
 
 private:
     OSAL::bytearray _address;
@@ -70,7 +72,7 @@ private:
 };
 
 template <class Elem, class Traits>
-std::basic_ostream<Elem, Traits> & DomainSocketAddress::PrintTo(std::basic_ostream<Elem, Traits> & s) const
+std::basic_ostream<Elem, Traits> & DomainSocketAddress::Print(std::basic_ostream<Elem, Traits> & s) const
 {
     s << reinterpret_cast<const char *>(_address.data());
     return s;
