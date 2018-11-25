@@ -142,7 +142,7 @@ inline int SetBlockingMode(SocketHandle socketHandle, bool value)
                                                value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
     if (errorCode == -1)
     {
-        return errno
+        return errno;
     }
     return 0;
 }
