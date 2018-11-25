@@ -59,7 +59,7 @@ public:
     {
         SetData(ipAddress, offset);
     }
-    IPV6Address(uint8_t ipAddress[16])
+    IPV6Address(const uint8_t ipAddress[16])
         : _ipAddress(AddressSize)
     {
         SetData(OSAL::bytearray(ipAddress, 16));

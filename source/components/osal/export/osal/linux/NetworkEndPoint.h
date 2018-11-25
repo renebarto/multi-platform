@@ -42,7 +42,12 @@ public:
 };
 using EndPointPtr = std::shared_ptr<EndPoint>;
 
-EndPointPtr OSAL_EXPORT Create(sockaddr * address);
+class IPV4Address;
+class IPV6Address;
+
+EndPointPtr OSAL_EXPORT Create(const sockaddr * address);
+EndPointPtr OSAL_EXPORT Create(const IPV4Address & address, uint16_t port);
+EndPointPtr OSAL_EXPORT Create(const IPV6Address & address, uint16_t port);
 
 template <class Elem, class Traits>
 inline void PrintTo(std::basic_ostream<Elem, Traits> & stream, const EndPoint & value)

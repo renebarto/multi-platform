@@ -63,7 +63,7 @@ inline int GetSocketError()
 inline std::string GetSocketErrorMessage(int errorCode)
 {
     char buffer[1024];
-    ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errorCode, 0, buffer, sizeof(buffer), nullptr);
+    ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, static_cast<DWORD>(errorCode), 0, buffer, sizeof(buffer), nullptr);
     return std::string(buffer);
 }
 
@@ -163,7 +163,7 @@ inline int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress,
 
         if (errorCode == WSAEWOULDBLOCK)
         {
-            fd_set socketHandleSet;
+            fd_set socketHandleSet {};
             FD_SET(socketHandle, &socketHandleSet);
             timeval timeVal { timeout / 1000, (timeout % 1000) * 1000 };
 

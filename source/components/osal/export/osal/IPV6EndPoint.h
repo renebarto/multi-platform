@@ -82,7 +82,7 @@ public:
             , _scopeIdentifier(scopeIdentifier)
     {
     }
-    IPV6EndPoint(uint8_t ipAddress[16], PortType port,
+    IPV6EndPoint(const uint8_t ipAddress[16], PortType port,
                  uint32_t flowInformation = 0, uint32_t scopeIdentifier = 0)
         : _ipAddress(ipAddress)
         , _port(port)
@@ -97,7 +97,7 @@ public:
         , _scopeIdentifier()
     {
     }
-    IPV6EndPoint(sockaddr_in6 * address)
+    IPV6EndPoint(const sockaddr_in6 * address)
         : _ipAddress(address->address())
         , _port(address->port())
         , _flowInformation(address->flowinfo())

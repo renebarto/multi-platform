@@ -13,7 +13,8 @@ namespace Network {
 
 const OSAL::Network::SocketTimeout socket::TimeWait = 10;
 
-static size_t BufferSize = 4096;
+static constexpr size_t BufferSize = 4096;
+using ssize_t = int64_t;
 
 socket::socket()
     : _socketFamily(OSAL::Network::SocketFamily::Any)
@@ -78,7 +79,6 @@ void socket::SetHandle(OSAL::Network::SocketHandle handle)
 void socket::Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::SocketType socketType)
 {
     Close();
-    Lock lock(_mutex);
     OSAL::Network::SocketHandle handle {};
     int result = OSAL::Network::CreateSocket(socketFamily, socketType, handle);
     if (result == 0)
@@ -96,7 +96,6 @@ void socket::Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::Socke
 
 void socket::Close()
 {
-    Lock lock(_mutex);
     int result = 0;
     if (GetHandle() != OSAL::Network::InvalidHandleValue)
     {
@@ -408,7 +407,7 @@ size_t socket::Receive(uint8_t *data, size_t bufferSize, int flags)
             Close();
         } else
         {
-            numBytes = result;
+            numBytes = static_cast<size_t>(result);
         }
     }
     catch (const OSAL::SystemError &e)
@@ -429,12 +428,12 @@ bool socket::Send(OSAL::bytearray &data, size_t bytesToSend, int flags)
 
 bool socket::Send(const uint8_t *data, size_t bytesToSend, int flags)
 {
-    ssize_t numBytesLeftToSend = bytesToSend;
+    ssize_t numBytesLeftToSend = static_cast<ssize_t>(bytesToSend);
     size_t offset = 0;
 
     while (numBytesLeftToSend > 0)
     {
-        ssize_t numBytes = OSAL::Network::Send(GetHandle(), data + offset, numBytesLeftToSend, flags);
+        ssize_t numBytes = OSAL::Network::Send(GetHandle(), data + offset, static_cast<size_t>(numBytesLeftToSend), flags);
         if (numBytes == -1)
         {
             int errorCode = errno;
@@ -460,8 +459,8 @@ bool socket::Send(const uint8_t *data, size_t bytesToSend, int flags)
 
 void socket::SendTo(const OSAL::Network::EndPointPtr &address, const uint8_t *data, size_t bytesToSend)
 {
-    int errorCode = OSAL::Network::SendTo(GetHandle(), data, bytesToSend, 0, address);
-    if (errorCode == -1)
+    ssize_t result = OSAL::Network::SendTo(GetHandle(), data, bytesToSend, 0, address);
+    if (result == -1)
     {
         int errorCode = errno;
 
@@ -493,7 +492,7 @@ size_t socket::ReceiveFrom(OSAL::Network::EndPointPtr &address, uint8_t *data, s
         numBytes = 0;
     }
 
-    return numBytes;
+    return static_cast<size_t>(numBytes);
 }
 
 } // namespace Network

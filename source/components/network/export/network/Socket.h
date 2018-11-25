@@ -81,10 +81,6 @@ protected:
     OSAL::Network::SocketFamily _socketFamily;
     OSAL::Network::SocketHandle _socketHandle;
     bool _isBlocking;
-
-    typedef std::recursive_mutex Mutex;
-    typedef std::lock_guard<Mutex> Lock;
-    Mutex _mutex;
 };
 
 template <class Elem, class Traits>

@@ -24,20 +24,30 @@ ostream & operator<<(ostream & stream, SocketFamily socketFamily)
     return stream;
 }
 
-EndPointPtr Create(sockaddr * address)
+EndPointPtr Create(const sockaddr * address)
 {
     if (address == nullptr)
         return nullptr;
     switch (static_cast<SocketFamily>(address->sa_family))
     {
-        case SocketFamily ::InternetV4:
-            return make_shared<IPV4EndPoint>(reinterpret_cast<sockaddr_in *>(address));
-        case SocketFamily ::InternetV6:
-            return make_shared<IPV6EndPoint>(reinterpret_cast<sockaddr_in6 *>(address));
+        case SocketFamily::InternetV4:
+            return make_shared<IPV4EndPoint>(reinterpret_cast<const sockaddr_in *>(address));
+        case SocketFamily::InternetV6:
+            return make_shared<IPV6EndPoint>(reinterpret_cast<const sockaddr_in6 *>(address));
         default:
             break;
     }
     return nullptr;
+}
+
+EndPointPtr Create(const IPV4Address & address, uint16_t port)
+{
+    return make_shared<IPV4EndPoint>(address, port);
+}
+
+EndPointPtr Create(const IPV6Address & address, uint16_t port)
+{
+    return make_shared<IPV6EndPoint>(address, port);
 }
 
 } // namespace Network

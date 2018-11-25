@@ -85,7 +85,7 @@ public:
         , _port(port)
     {
     }
-    IPV4EndPoint(sockaddr_in * address)
+    IPV4EndPoint(const sockaddr_in * address)
         : IPV4EndPoint(address->address(), address->port())
     {
     }
