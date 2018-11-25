@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Network/Socket.h"
+#include "network/Socket.h"
 
 #if defined(LINUX) || defined(APPLE)
 
