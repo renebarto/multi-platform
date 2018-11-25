@@ -1,10 +1,10 @@
 #pragma once
 
+#include <thread>
 #include <osal/NetworkEndPoint.h>
 #include <osal/IPV4EndPoint.h>
 #include <osal/IPV6EndPoint.h>
 #include <osal/Unused.h>
-#include <thread>
 
 namespace OSAL {
 namespace Network {

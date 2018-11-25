@@ -1,7 +1,6 @@
 #include <unittest-cpp/UnitTestC++.h>
-#include "network/socket.h"
-#include "core/Core.h"
-//#include <ifaddrs.h>
+#include "network/Socket.h"
+#include "core/core.h"
 
 using namespace std;
 

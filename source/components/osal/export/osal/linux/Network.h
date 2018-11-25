@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <poll.h>
+#include <thread>
 #include <osal/NetworkEndPoint.h>
 #include <osal/linux/DomainSocketAddress.h>
 #include <osal/IPV4EndPoint.h>
@@ -205,6 +206,60 @@ inline int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress,
     if (result == 0)
         SetBlockingMode(socketHandle, true);
     return result;
+}
+
+inline int Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress, SocketHandle & acceptHandle,
+                  SocketTimeout timeout = InfiniteTimeout)
+{
+    acceptHandle = InvalidHandleValue;
+    const SocketTimeout TimeWait = 10;
+
+    SetBlockingMode(socketHandle, timeout == InfiniteTimeout);
+
+    OSAL::Network::SocketTimeout waitTime = 0;
+    if (timeout != OSAL::Network::InfiniteTimeout)
+    {
+        waitTime = timeout;
+    }
+
+    OSAL::Network::SocketHandle result = 0;
+    do
+    {
+        switch (family)
+        {
+            case SocketFamily ::InternetV4:
+                clientAddress = std::make_shared<IPV4EndPoint>();
+                break;
+            case SocketFamily ::InternetV6:
+                clientAddress = std::make_shared<IPV6EndPoint>();
+                break;
+            default:
+                return EINVAL;
+        }
+        socklen_t size = static_cast<socklen_t>(clientAddress->GetBytes().size());
+        result = ::accept(socketHandle, reinterpret_cast<sockaddr *>(clientAddress->GetBytes().data()), &size);
+        ASSERT(size == static_cast<socklen_t>(clientAddress->GetBytes().size()));
+
+        if (acceptHandle == OSAL::Network::InvalidHandleValue)
+        {
+            int errorCode = errno;
+
+            if (((errorCode == EWOULDBLOCK) || (errorCode == EAGAIN)) && (waitTime > 0))
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(TimeWait));
+                waitTime -= std::min(waitTime, TimeWait);
+            } else
+            {
+                return errorCode;
+            }
+        }
+    } while ((result == OSAL::Network::InvalidHandleValue) && (waitTime > 0));
+
+    int errorCode = SetBlockingMode(socketHandle, true);
+    if (errorCode != 0)
+        return errorCode;
+    acceptHandle = result;
+    return 0;
 }
 
 inline SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress)
