@@ -156,7 +156,7 @@ inline int Bind(SocketHandle socketHandle, EndPointPtr address)
 
 inline int Listen(SocketHandle socketHandle, int numListeners)
 {
-    return (::listen(socketHandle, numListeners) == SOCKET_ERROR) ? GetSocketError() : 0;
+    return (::listen(socketHandle, numListeners) == -1) ? GetSocketError() : 0;
 }
 
 inline int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress, bool & connected, SocketTimeout timeout = InfiniteTimeout)
