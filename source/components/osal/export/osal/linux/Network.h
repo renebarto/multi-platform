@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <poll.h>
 #include <osal/NetworkEndPoint.h>
 #include <osal/linux/DomainSocketAddress.h>
 #include <osal/IPV4EndPoint.h>
