@@ -47,6 +47,7 @@ set(PACKAGE_LINK_OPTIONS
     ${LINK_RPATH})
 
 set(PACKAGE_DEPENDENCIES
+    osal
     core
     network
     )

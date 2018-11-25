@@ -1,87 +1,100 @@
 #include "network/Socket.h"
 
-#include <poll.h>
-#include "core/DefaultLogger.h"
-#include "core/Core.h"
-#include "core/Util.h"
+//#include <poll.h>
+#include <thread>
+#include <osal/Exception.h>
+//#include "core/DefaultLogger.h"
+//#include "core/Core.h"
+//#include "core/Util.h"
 
 using namespace std;
-using namespace Network;
 
-const uint32_t Socket::TimeWait = 10;
+namespace Network {
+
+const OSAL::Network::SocketTimeout socket::TimeWait = 10;
 
 static size_t BufferSize = 4096;
 
-Socket::Socket()
-    : _socketHandle(OSAL::Network::InvalidHandleValue)
+socket::socket()
+    : _socketFamily(OSAL::Network::SocketFamily::Any)
+    , _socketHandle(OSAL::Network::InvalidHandleValue)
+    , _isBlocking(true)
 {
 }
 
-Socket::Socket(Socket const & other)
-    : _socketHandle(other._socketHandle)
+socket::socket(socket const &other)
+    : _socketFamily(other._socketFamily)
+    , _socketHandle(other._socketHandle)
+    , _isBlocking(other._isBlocking)
 {
 }
 
-Socket::Socket(Socket && other)
-    : _socketHandle(other._socketHandle)
+socket::socket(socket &&other)
+    : _socketFamily(other._socketFamily)
+    , _socketHandle(other._socketHandle)
+    , _isBlocking(other._isBlocking)
 {
+    other._socketFamily = OSAL::Network::SocketFamily::Any;
     other._socketHandle = OSAL::Network::InvalidHandleValue;
 }
 
-Socket::~Socket()
+socket::~socket()
 {
     Close();
 }
 
-Socket & Socket::operator = (Socket const & other)
+socket &socket::operator=(socket const &other)
 {
-    if (this != & other)
+    if (this != &other)
     {
+        _socketFamily = other._socketFamily;
         _socketHandle = other._socketHandle;
+        _isBlocking = other._isBlocking;
     }
     return *this;
 }
 
-Socket & Socket::operator = (Socket && other)
+socket &socket::operator=(socket &&other)
 {
-    if (this != & other)
-    {
+    if (this != &other) {
+        _socketFamily = other._socketFamily;
         _socketHandle = other._socketHandle;
+        other._socketFamily = OSAL::Network::SocketFamily::Any;
         other._socketHandle = OSAL::Network::InvalidHandleValue;
     }
     return *this;
 }
 
-OSAL::Network::SocketHandle Socket::GetHandle() const
+OSAL::Network::SocketHandle socket::GetHandle() const
 {
     return _socketHandle;
 }
 
-void Socket::SetHandle(OSAL::Network::SocketHandle handle)
+void socket::SetHandle(OSAL::Network::SocketHandle handle)
 {
     _socketHandle = handle;
 }
 
-void Socket::Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::SocketType socketType)
+void socket::Open(OSAL::Network::SocketFamily socketFamily, OSAL::Network::SocketType socketType)
 {
     Close();
     Lock lock(_mutex);
-    int result = OSAL::Network::CreateSocket(socketFamily, socketType);
-    if (result != -1)
-        SetHandle(result);
-    if (result == -1)
+    OSAL::Network::SocketHandle handle {};
+    int result = OSAL::Network::CreateSocket(socketFamily, socketType, handle);
+    if (result == 0)
+        SetHandle(handle);
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "socket() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << OSAL::Network::GetSocketErrorMessage(result).c_str();
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("socket() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-void Socket::Close()
+void socket::Close()
 {
     Lock lock(_mutex);
     int result = 0;
@@ -90,72 +103,70 @@ void Socket::Close()
         result = OSAL::Network::CloseSocket(GetHandle());
         SetHandle(OSAL::Network::InvalidHandleValue);
     }
-    if (result == -1)
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "close() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << OSAL::Network::GetSocketErrorMessage(result).c_str();
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("close() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-bool Socket::IsClosed()
+bool socket::IsClosed()
 {
     return (GetHandle() == OSAL::Network::InvalidHandleValue);
 }
 
-void Socket::SetSocketOption(OSAL::Network::SocketOptionLevel level,
+void socket::SetSocketOption(OSAL::Network::SocketOptionLevel level,
                              OSAL::Network::SocketOption socketOption,
-                             void * optionValue, unsigned int optionLength)
+                             void *optionValue, socklen_t optionLength)
 {
     int result = OSAL::Network::SetSocketOption(this->GetHandle(), level, socketOption, optionValue, optionLength);
-    if (result == -1)
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "setsockopt() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("setsockopt() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-void Socket::GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength)
+void socket::GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption,
+                             void *optionValue, socklen_t &optionLength)
 {
     int result = OSAL::Network::GetSocketOption(this->GetHandle(), level, socketOption, optionValue, optionLength);
-    if (result == -1)
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "getsockopt() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("getsockopt() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-void Socket::SetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength)
+void socket::SetSocketOption(OSAL::Network::SocketOption socketOption, void *optionValue, socklen_t optionLength)
 {
     SetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
 }
 
-void Socket::GetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength)
+void socket::GetSocketOption(OSAL::Network::SocketOption socketOption, void *optionValue, socklen_t &optionLength)
 {
     GetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, optionValue, optionLength);
 }
 
-void Socket::SetSocketOptionBool(OSAL::Network::SocketOption socketOption, bool value)
+void socket::SetSocketOptionBool(OSAL::Network::SocketOption socketOption, bool value)
 {
     int optionValue = value ? 1 : 0;
     SetSocketOption(socketOption, &optionValue, sizeof(optionValue));
 }
 
-bool Socket::GetSocketOptionBool(OSAL::Network::SocketOption socketOption)
+bool socket::GetSocketOptionBool(OSAL::Network::SocketOption socketOption)
 {
     int optionValue;
     socklen_t optionLength = sizeof(optionValue);
@@ -163,12 +174,12 @@ bool Socket::GetSocketOptionBool(OSAL::Network::SocketOption socketOption)
     return optionValue != 0;
 }
 
-void Socket::SetSocketOptionInt(OSAL::Network::SocketOption socketOption, int optionValue)
+void socket::SetSocketOptionInt(OSAL::Network::SocketOption socketOption, int optionValue)
 {
     SetSocketOption(OSAL::Network::SocketOptionLevel::Socket, socketOption, &optionValue, sizeof(optionValue));
 }
 
-int Socket::GetSocketOptionInt(OSAL::Network::SocketOption socketOption)
+int socket::GetSocketOptionInt(OSAL::Network::SocketOption socketOption)
 {
     int optionValue;
     socklen_t optionLength = sizeof(optionValue);
@@ -176,277 +187,188 @@ int Socket::GetSocketOptionInt(OSAL::Network::SocketOption socketOption)
     return optionValue;
 }
 
-bool Socket::GetBroadcastOption()
+bool socket::GetBroadcastOption()
 {
     return GetSocketOptionBool(OSAL::Network::SocketOption::Broadcast);
 }
 
-void Socket::SetBroadcastOption(bool value)
+void socket::SetBroadcastOption(bool value)
 {
     SetSocketOptionBool(OSAL::Network::SocketOption::Broadcast, value);
 }
 
-bool Socket::GetReuseAddress()
+bool socket::GetBlockingMode()
+{
+    bool blockingMode {};
+    int result = OSAL::Network::GetBlockingMode(GetHandle(), blockingMode);
+    if (result == EINVAL) // In Windows, GetBlockingMode does not work
+    {
+        return _isBlocking;
+    } else if (result != 0)
+    {
+        ostringstream stream;
+        stream << "fcntl() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
+    }
+    return blockingMode;
+}
+
+void socket::SetBlockingMode(bool value)
+{
+    int result = OSAL::Network::SetBlockingMode(GetHandle(), value);
+    if (result != 0)
+    {
+        ostringstream stream;
+        stream << "fcntl() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
+    }
+    _isBlocking = value;
+}
+
+bool socket::GetReuseAddress()
 {
     return GetSocketOptionBool(OSAL::Network::SocketOption::ReuseAddress);
 }
 
-void Socket::SetReuseAddress(bool value)
+void socket::SetReuseAddress(bool value)
 {
     SetSocketOptionBool(OSAL::Network::SocketOption::ReuseAddress, value);
 }
 
-int Socket::GetReceiveTimeout()
+int socket::GetReceiveTimeout()
 {
     timeval tv;
-    bzero(&tv, sizeof(tv));
+    memset(&tv, 0, sizeof(tv));
     socklen_t optionLength = sizeof(tv);
     GetSocketOption(OSAL::Network::SocketOption::ReceiveTimeout, &tv, optionLength);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-void Socket::SetReceiveTimeout(int timeoutMS)
+void socket::SetReceiveTimeout(int timeoutMS)
 {
     timeval tv;
-    bzero(&tv, sizeof(tv));
+    memset(&tv, 0, sizeof(tv));
     tv.tv_sec = timeoutMS / 1000;
     tv.tv_usec = (timeoutMS % 1000) * 1000;
     SetSocketOption(OSAL::Network::SocketOption::ReceiveTimeout, &tv, sizeof(tv));
 }
 
-int Socket::GetSendTimeout()
+int socket::GetSendTimeout()
 {
     timeval tv;
-    bzero(&tv, sizeof(tv));
+    memset(&tv, 0, sizeof(tv));
     socklen_t optionLength = sizeof(tv);
     GetSocketOption(OSAL::Network::SocketOption::SendTimeout, &tv, optionLength);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-void Socket::SetSendTimeout(int timeoutMS)
+void socket::SetSendTimeout(int timeoutMS)
 {
     timeval tv;
-    bzero(&tv, sizeof(tv));
+    memset(&tv, 0, sizeof(tv));
     tv.tv_sec = timeoutMS / 1000;
     tv.tv_usec = (timeoutMS % 1000) * 1000;
     SetSocketOption(OSAL::Network::SocketOption::SendTimeout, &tv, sizeof(tv));
 }
 
-bool Socket::GetBlockingMode()
+void socket::Bind(OSAL::Network::EndPointPtr address)
 {
-    int flags = OSAL::Network::Fcntl(this->GetHandle(), F_GETFL);
-    if (flags == -1)
+    int result = OSAL::Network::Bind(this->GetHandle(), address);
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "bind() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-    }
-    return (flags & O_NONBLOCK) == 0;
-}
-
-void Socket::SetBlockingMode(bool value)
-{
-    int flags = OSAL::Network::Fcntl(this->GetHandle(), F_GETFL);
-    if (flags == -1)
-    {
-        int errorCode = errno;
-
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-    }
-    int errorCode = OSAL::Network::Fcntl(this->GetHandle(), F_SETFL, value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
-    if (errorCode == -1)
-    {
-        int errorCode = errno;
-
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("fcntl() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-void Socket::Bind(OSAL::Network::EndPointPtr address)
+bool socket::Connect(OSAL::Network::EndPointPtr serverAddress, OSAL::Network::SocketTimeout timeout)
 {
-
-    int errorCode = OSAL::Network::Bind(this->GetHandle(), address);
-    if (errorCode == -1)
+    bool connected;
+    int result = OSAL::Network::Connect(this->GetHandle(), serverAddress, connected, timeout);
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "connect() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
+    }
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("bind() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+    return connected;
+}
 
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+void socket::Listen(int numListeners)
+{
+    int result = OSAL::Network::Listen(this->GetHandle(), numListeners);
+    if (result != 0)
+    {
+        ostringstream stream;
+        stream << "listen() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-bool Socket::Connect(OSAL::Network::EndPointPtr serverAddress, OSAL::Network::SocketTimeout timeout)
+bool socket::Accept(socket &connectionSocket, OSAL::Network::EndPointPtr &clientAddress,
+                    OSAL::Network::SocketTimeout timeout)
 {
-    if (timeout != OSAL::Network::InfiniteTimeout)
+    OSAL::Network::SocketHandle acceptHandle {};
+    connectionSocket = {};
+    int result = OSAL::Network::Accept(this->GetHandle(), _socketFamily, clientAddress, acceptHandle, timeout);
+    if (result != 0)
     {
-        SetBlockingMode(false);
-    }
-    else
+        ostringstream stream;
+        stream << "connect() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
+    } else
     {
-        SetBlockingMode(true);
-    }
-
-    int result = OSAL::Network::Connect(GetHandle(), serverAddress);
-    if (result == -1)
-    {
-        int errorCode = errno;
-
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("connect() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
-
-        if ((errorCode == EINPROGRESS) || (errorCode == EALREADY))
-        {
-            pollfd descriptor;
-            descriptor.fd = GetHandle();
-            descriptor.events = POLLIN | POLLOUT;
-            descriptor.revents = 0;
-            int pollResult = ::poll(&descriptor, 1, timeout);
-            if (pollResult == -1)
-            {
-                errorCode = errno;
-
-                basic_ostringstream<OSAL::Char> stream;
-                stream << _("poll() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-                Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
-            }
-            else if (pollResult == 0)
-            {
-                return false;
-            }
-            else
-            {
-                if ((descriptor.revents & POLLHUP))
-                    return false;
-                result = 0;
-            }
-        }
-        else if ((errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
-            OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        connectionSocket.SetHandle(acceptHandle);
     }
 
-    SetBlockingMode(true);
-    return (result != -1);
+    return acceptHandle != OSAL::Network::InvalidHandleValue;
 }
 
-void Socket::Listen(int numListeners)
+void socket::GetLocalAddress(OSAL::Network::EndPointPtr &address)
 {
-    int result = ::listen(GetHandle(), numListeners);
-    if (result == -1)
+    int result = OSAL::Network::GetSockName(GetHandle(), _socketFamily, address);
+    if (result != 0)
     {
-        int errorCode = errno;
+        ostringstream stream;
+        stream << "getsockname() failed, errorcode " << dec << result << " (" << hex << setw(2)
+               << setfill('0') << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("listen() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-bool Socket::Accept(Socket & connectionSocket, OSAL::Network::EndPointPtr & clientAddress, OSAL::Network::SocketTimeout timeout)
+void socket::GetRemoteAddress(OSAL::Network::EndPointPtr &address)
 {
-    Lock lock(_mutex);
-    if (timeout != OSAL::Network::InfiniteTimeout)
+    int result = OSAL::Network::GetPeerName(GetHandle(), _socketFamily, address);
+    if (result != 0)
     {
-        SetBlockingMode(false);
-    }
-    else
-    {
-        SetBlockingMode(true);
-    }
+        ostringstream stream;
+        stream << "getpeername() failed, errorcode " << dec << result << " (" << hex << setw(2) << setfill('0')
+               << result << "): " << strerror(result);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
-    uint32_t waitTime = 0;
-    if (timeout != OSAL::Network::InfiniteTimeout)
-    {
-        waitTime = timeout;
-    }
-
-    int result = 0;
-    do
-    {
-        result = OSAL::Network::Accept(GetHandle(), _socketFamily, clientAddress);
-        if (result == -1)
-        {
-            int errorCode = errno;
-
-            basic_ostringstream<OSAL::Char> stream;
-            stream << _("accept() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-            Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
-
-            if (((errorCode == EWOULDBLOCK) || (errorCode == EAGAIN)) && (waitTime > 0))
-            {
-                Core::Util::Sleep(TimeWait);
-                waitTime -= min(waitTime, TimeWait);
-            }
-            else if (errorCode == EBADF)
-            {
-                return false;
-            }
-            else
-                OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-        }
-    }
-    while ((result == -1) && (waitTime > 0));
-
-    SetBlockingMode(true);
-    if (result != -1)
-    {
-        connectionSocket.SetHandle(result);
-    }
-    else
-    {
-        connectionSocket.Close();
-    }
-    return (result != -1);
-}
-
-void Socket::GetLocalAddress(OSAL::Network::EndPointPtr & address)
-{
-    int errorCode = OSAL::Network::GetSockName(GetHandle(), _socketFamily, address);
-    if (errorCode == -1)
-    {
-        int errorCode = errno;
-
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("getsockname() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
+        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, result);
     }
 }
 
-void Socket::GetRemoteAddress(OSAL::Network::EndPointPtr & address)
-{
-    int errorCode = OSAL::Network::GetPeerName(GetHandle(), _socketFamily, address);
-    if (errorCode == -1)
-    {
-        int errorCode = errno;
-
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("getpeername() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
-
-        OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-    }
-}
-
-size_t Socket::Receive(OSAL::ByteArray & data, int flags)
+size_t socket::Receive(OSAL::bytearray &data, int flags)
 {
     uint8_t buffer[BufferSize];
     size_t numBytes = 0;
@@ -456,14 +378,13 @@ size_t Socket::Receive(OSAL::ByteArray & data, int flags)
     {
         numBytes = Receive(buffer, BufferSize, flags);
 
-        data.Set(offset, buffer, numBytes);
+        data.set(offset, buffer, numBytes);
         offset += numBytes;
-    }
-    while (numBytes > 0);
+    } while (numBytes > 0);
     return offset;
 }
 
-size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
+size_t socket::Receive(uint8_t *data, size_t bufferSize, int flags)
 {
     size_t numBytes = 0;
     try
@@ -471,28 +392,26 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
         ssize_t result = 0;
 
         result = OSAL::Network::Receive(GetHandle(), data, bufferSize, flags);
-        if (result == -1)
+        if (result != 0)
         {
             int errorCode = errno;
 
 #ifdef TRACE
-            basic_ostringstream<OSAL::Char> stream;
-            stream << _("recv() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-            Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
+            ostringstream stream;
+            stream << "recv() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+//            Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 #endif
             if ((errorCode != EINTR) && (errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
                 OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-        }
-        else if (result == 0)
+        } else if (result == 0)
         {
             Close();
-        }
-        else
+        } else
         {
             numBytes = result;
         }
     }
-    catch (const OSAL::SystemError & e)
+    catch (const OSAL::SystemError &e)
     {
         if (e.GetErrorCode() == EBADF)
         {
@@ -502,13 +421,13 @@ size_t Socket::Receive(uint8_t * data, size_t bufferSize, int flags)
     return numBytes;
 }
 
-bool Socket::Send(OSAL::ByteArray & data, size_t bytesToSend, int flags)
+bool socket::Send(OSAL::bytearray &data, size_t bytesToSend, int flags)
 {
-    assert(bytesToSend <= data.Size());
-    return Send(data.Data(), bytesToSend, flags);
+    ASSERT(bytesToSend <= data.size());
+    return Send(data.data(), bytesToSend, flags);
 }
 
-bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
+bool socket::Send(const uint8_t *data, size_t bytesToSend, int flags)
 {
     ssize_t numBytesLeftToSend = bytesToSend;
     size_t offset = 0;
@@ -520,17 +439,17 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
         {
             int errorCode = errno;
 
-            basic_ostringstream<OSAL::Char> stream;
-            stream << _("send() failed, errorcode ") << dec << errorCode << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-            Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+            ostringstream stream;
+            stream << "send() failed, errorcode " << dec << errorCode << " (" << hex << setw(2) << setfill('0')
+                   << errorCode << "): " << strerror(errorCode);
+//            Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
             if ((errorCode == EPIPE) || (errorCode == ECONNRESET))
             {
                 return false;
             }
             OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
-        }
-        else
+        } else
         {
             offset += numBytes;
             numBytesLeftToSend -= numBytes;
@@ -539,23 +458,23 @@ bool Socket::Send(const uint8_t * data, size_t bytesToSend, int flags)
     return true;
 }
 
-void Socket::SendTo(const OSAL::Network::EndPointPtr & address, const uint8_t * data, size_t bytesToSend)
+void socket::SendTo(const OSAL::Network::EndPointPtr &address, const uint8_t *data, size_t bytesToSend)
 {
     int errorCode = OSAL::Network::SendTo(GetHandle(), data, bytesToSend, 0, address);
     if (errorCode == -1)
     {
         int errorCode = errno;
 
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("sendto() failed, errorcode ") << dec << errorCode 
-               << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
+        ostringstream stream;
+        stream << "sendto() failed, errorcode " << dec << errorCode
+               << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+//        Core::TheLogger().Error(OSAL::OS::TypeName(*this), stream.str());
 
         OSAL::ThrowOnError(__func__, __FILE__, __LINE__, errorCode);
     }
 }
 
-size_t Socket::ReceiveFrom(OSAL::Network::EndPointPtr & address, uint8_t * data, size_t bufferSize)
+size_t socket::ReceiveFrom(OSAL::Network::EndPointPtr &address, uint8_t *data, size_t bufferSize)
 {
     ssize_t numBytes = OSAL::Network::ReceiveFrom(GetHandle(), data, bufferSize, 0, _socketFamily, address);
     if (numBytes == -1)
@@ -563,10 +482,10 @@ size_t Socket::ReceiveFrom(OSAL::Network::EndPointPtr & address, uint8_t * data,
         int errorCode = errno;
 
 #ifdef TRACE
-        basic_ostringstream<OSAL::Char> stream;
-        stream << _("recvfrom() failed, errorcode ") << dec << errorCode 
-               << _(" (") << hex << setw(2) << setfill(_('0')) << errorCode << _("): ") << strerror(errorCode);
-        Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
+        ostringstream stream;
+        stream << "recvfrom() failed, errorcode " << dec << errorCode
+               << " (" << hex << setw(2) << setfill('0') << errorCode << "): " << strerror(errorCode);
+//        Core::TheLogger().Debug(OSAL::OS::TypeName(*this), stream.str());
 #endif
 
         if ((errorCode != EINTR) && (errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
@@ -577,8 +496,4 @@ size_t Socket::ReceiveFrom(OSAL::Network::EndPointPtr & address, uint8_t * data,
     return numBytes;
 }
 
-std::ostream & Socket::PrintTo(std::ostream & stream) const
-{
-    stream << OSAL::OS::TypeName(*this) << _(" handle = ") << GetHandle();
-    return stream;
-}
+} // namespace Network

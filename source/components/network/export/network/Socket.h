@@ -40,10 +40,10 @@ public:
     void            Close();
     bool            IsClosed();
 
-    void            SetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength);
-    void            GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength);
-    void            SetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int optionLength);
-    void            GetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, unsigned int & optionLength);
+    void            SetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, socklen_t optionLength);
+    void            GetSocketOption(OSAL::Network::SocketOptionLevel level, OSAL::Network::SocketOption socketOption, void * optionValue, socklen_t & optionLength);
+    void            SetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, socklen_t optionLength);
+    void            GetSocketOption(OSAL::Network::SocketOption socketOption, void * optionValue, socklen_t & optionLength);
 
     bool            GetSocketOptionBool(OSAL::Network::SocketOption socketOption);
     void            SetSocketOptionBool(OSAL::Network::SocketOption socketOption, bool value);
@@ -83,11 +83,19 @@ public:
 protected:
     OSAL::Network::SocketFamily _socketFamily;
     OSAL::Network::SocketHandle _socketHandle;
+    bool _isBlocking;
 
     typedef std::recursive_mutex Mutex;
     typedef std::lock_guard<Mutex> Lock;
     Mutex _mutex;
 };
+
+template <class Elem, class Traits>
+std::basic_ostream<Elem, Traits> & socket::PrintTo(std::basic_ostream<Elem, Traits> & s) const
+{
+    s << OSAL::System::TypeName(*this) << " handle = " << static_cast<long>(GetHandle());
+    return s;
+}
 
 template <class Elem, class Traits>
 std::basic_ostream<Elem, Traits> & PrintTo(const socket & value, std::basic_ostream<Elem, Traits> & s)
