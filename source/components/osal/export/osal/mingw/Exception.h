@@ -3,30 +3,30 @@
 namespace OSAL
 {
 
-class SystemErrorWindows : public Exception
+class SystemError : public Exception
 {
 protected:
-    DWORD errorCode;
+    int errorCode;
 
 public:
-    SystemErrorWindows(char const * functionName, char const * fileName, int line, DWORD errorCode)
+    SystemError(char const * functionName, char const * fileName, int line, int errorCode)
         : Exception(functionName, fileName, line)
         , errorCode(errorCode)
     {
     }
-    SystemErrorWindows(char const * functionName,
-                       char const * fileName,
-                       int line,
-                       DWORD errorCode,
-                       std::string message)
+    SystemError(char const * functionName,
+                char const * fileName,
+                int line,
+                int errorCode,
+                std::string message)
         : Exception(functionName, fileName, line, message)
         , errorCode(errorCode)
     {
     }
-    ~SystemErrorWindows()
+    ~SystemError()
     {
     }
-    DWORD GetErrorCode() const
+    int GetErrorCode() const
     {
         return errorCode;
     }
@@ -41,11 +41,11 @@ public:
     }
 };
 
-inline void ThrowOnError(const char * functionName, const char * fileName, int line, DWORD errorCode)
+inline void ThrowOnError(const char * functionName, const char * fileName, int line, int errorCode)
 {
     if (errorCode != 0)
     {
-        throw SystemErrorWindows(functionName, fileName, line, errorCode);
+        throw SystemError(functionName, fileName, line, errorCode);
     }
 }
 

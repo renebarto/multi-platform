@@ -3,30 +3,30 @@
 namespace OSAL
 {
 
-class SystemErrorWindows : public Exception
+class SystemError : public Exception
 {
 protected:
-    DWORD errorCode;
+    int errorCode;
 
 public:
-    SystemErrorWindows(char const * functionName, char const * fileName, int line, DWORD errorCode)
+    SystemError(char const * functionName, char const * fileName, int line, int errorCode)
         : Exception(functionName, fileName, line)
         , errorCode(errorCode)
     {
     }
-    SystemErrorWindows(char const * functionName,
+    SystemError(char const * functionName,
                        char const * fileName,
                        int line,
-                       DWORD errorCode,
+                int errorCode,
                        std::string message)
         : Exception(functionName, fileName, line, message)
         , errorCode(errorCode)
     {
     }
-    ~SystemErrorWindows()
+    ~SystemError()
     {
     }
-    DWORD GetErrorCode() const
+    int GetErrorCode() const
     {
         return errorCode;
     }
@@ -34,18 +34,18 @@ public:
     {
         std::ostringstream stream;
         char buffer[1024];
-        ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, errorCode, 0, buffer, sizeof(buffer), nullptr);
+        ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, static_cast<DWORD>(errorCode), 0, buffer, sizeof(buffer), nullptr);
         stream << Exception::BuildMessage() << " errno=" << errorCode << " (0x" << std::hex
             << std::setw(8) << std::setfill('0') << errorCode << "): \"" << buffer << "\"";
         return stream.str();
     }
 };
 
-inline void ThrowOnError(const char * functionName, const char * fileName, int line, DWORD errorCode)
+inline void ThrowOnError(const char * functionName, const char * fileName, int line, int errorCode)
 {
     if (errorCode != 0)
     {
-        throw SystemErrorWindows(functionName, fileName, line, errorCode);
+        throw SystemError(functionName, fileName, line, errorCode);
     }
 }
 

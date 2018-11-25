@@ -2,7 +2,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
-#include "osal/NetworkEndPoint.h"
+#include <osal/NetworkEndPoint.h>
 #include <osal/linux/DomainSocketAddress.h>
 #include <osal/IPV4EndPoint.h>
 #include <osal/IPV6EndPoint.h>
@@ -55,24 +55,51 @@ enum class SocketOption
 OSAL_EXPORT extern const SocketHandle InvalidHandleValue;
 OSAL_EXPORT extern const SocketTimeout InfiniteTimeout;
 
-inline OSAL_EXPORT SocketHandle CreateSocket(SocketFamily socketFamily, SocketType socketType)
+inline int GetSocketError()
 {
-    return ::socket(static_cast<int>(socketFamily), static_cast<int>(socketType), 0);
+    return errno;
 }
 
-inline OSAL_EXPORT int CloseSocket(SocketHandle socketHandle)
+inline std::string GetSocketErrorMessage(int errorCode)
+{
+    return strerror(errorCode);
+}
+
+inline int InitializeSocketLibrary()
+{
+    return 0;
+}
+
+inline int UninitializeSocketLibrary()
+{
+    return 0;
+}
+
+inline int CreateSocket(SocketFamily socketFamily, SocketType socketType, SocketHandle & handle)
+{
+    handle = InvalidHandleValue;
+    SocketHandle result = ::socket(static_cast<int>(socketFamily), static_cast<int>(socketType), 0);
+    if (result == -1)
+    {
+        return GetSocketError();
+    }
+    handle = result;
+    return 0;
+}
+
+inline int CloseSocket(SocketHandle socketHandle)
 {
     return ::close(socketHandle);
 }
 
-inline OSAL_EXPORT int SetSocketOption(SocketHandle socketHandle,
+inline int SetSocketOption(SocketHandle socketHandle,
                                        SocketOptionLevel level, SocketOption socketOption,
                                        void * optionValue, unsigned int optionLength)
 {
     return ::setsockopt(socketHandle, static_cast<int>(level), static_cast<int>(socketOption), optionValue, optionLength);
 }
 
-inline OSAL_EXPORT int GetSocketOption(SocketHandle socketHandle,
+inline int GetSocketOption(SocketHandle socketHandle,
                                        SocketOptionLevel level, SocketOption socketOption,
                                        void * optionValue, unsigned int & optionLength)
 {
@@ -81,31 +108,105 @@ inline OSAL_EXPORT int GetSocketOption(SocketHandle socketHandle,
                         optionValue, reinterpret_cast<socklen_t *>(&optionLength));
 }
 
-inline OSAL_EXPORT int FileControl(SocketHandle socketHandle, int cmd)
+inline int FileControl(SocketHandle socketHandle, int cmd)
 {
     return fcntl(socketHandle, cmd);
 }
 
-inline OSAL_EXPORT int FileControl(SocketHandle socketHandle, int cmd, int flag)
+inline int FileControl(SocketHandle socketHandle, int cmd, int flag)
 {
     return fcntl(socketHandle, cmd, flag);
 }
 
-inline OSAL_EXPORT int Bind(SocketHandle socketHandle, EndPointPtr address)
+inline int GetBlockingMode(SocketHandle socketHandle, bool & blockingMode)
+{
+    blockingMode = false;
+    int flags = FileControl(socketHandle, F_GETFL);
+    if (flags == -1)
+    {
+        return errno;
+    }
+    blockingMode = (flags & O_NONBLOCK) == 0;
+    return 0;
+}
+
+inline int SetBlockingMode(SocketHandle socketHandle, bool value)
+{
+    int flags = OSAL::Network::FileControl(socketHandle, F_GETFL);
+    if (flags == -1)
+    {
+        return errno;
+
+    }
+    int errorCode = OSAL::Network::FileControl(socketHandle, F_SETFL,
+                                               value ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK));
+    if (errorCode == -1)
+    {
+        return errno
+    }
+    return 0;
+}
+
+inline int Bind(SocketHandle socketHandle, EndPointPtr address)
 {
     return ::bind(socketHandle,
                   reinterpret_cast<const sockaddr *>(address->GetBytes().data()),
                   static_cast<socklen_t>(address->GetBytes().size()));
 }
 
-inline OSAL_EXPORT int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress)
+inline int Listen(SocketHandle socketHandle, int numListeners)
 {
-    return ::connect(socketHandle,
-                     reinterpret_cast<const sockaddr *>(serverAddress->GetBytes().data()),
-                     static_cast<socklen_t>(serverAddress->GetBytes().size()));
+    return (::listen(socketHandle, numListeners) == SOCKET_ERROR) ? GetSocketError() : 0;
 }
 
-inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress)
+inline int Connect(SocketHandle socketHandle, const EndPointPtr & serverAddress, bool & connected, SocketTimeout timeout = InfiniteTimeout)
+{
+    connected = false;
+    if (timeout != OSAL::Network::InfiniteTimeout)
+    {
+        SetBlockingMode(socketHandle, false);
+    } else
+    {
+        SetBlockingMode(socketHandle, true);
+    }
+
+    int result = ::connect(socketHandle,
+                           reinterpret_cast<const sockaddr *>(serverAddress->GetBytes().data()),
+                           static_cast<socklen_t>(serverAddress->GetBytes().size()));
+    if (result == -1)
+    {
+        int errorCode = errno;
+
+        if ((errorCode == EINPROGRESS) || (errorCode == EALREADY))
+        {
+            pollfd descriptor;
+            descriptor.fd = socketHandle;
+            descriptor.events = POLLIN | POLLOUT;
+            descriptor.revents = 0;
+            int pollResult = ::poll(&descriptor, 1, timeout);
+            if (pollResult == -1)
+            {
+                return errno;
+            } else if (pollResult == 0)
+            {
+                connected = false;
+                result = 0;
+            } else
+            {
+                connected = !(descriptor.revents & POLLHUP);
+                result = 0;
+            }
+        } else
+        if ((errorCode != EWOULDBLOCK) && (errorCode != EAGAIN))
+            return errorCode;
+    }
+
+    if (result == 0)
+        SetBlockingMode(socketHandle, true);
+    return result;
+}
+
+inline SocketHandle Accept(SocketHandle socketHandle, SocketFamily family, EndPointPtr & clientAddress)
 {
     switch (family)
     {
@@ -128,7 +229,7 @@ inline OSAL_EXPORT SocketHandle Accept(SocketHandle socketHandle, SocketFamily f
     return result;
 }
 
-inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
+inline int GetSockName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
 {
     switch (family)
     {
@@ -151,7 +252,7 @@ inline OSAL_EXPORT int GetSockName(SocketHandle socketHandle, SocketFamily famil
     return result;
 }
 
-inline OSAL_EXPORT int GetPeerName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
+inline int GetPeerName(SocketHandle socketHandle, SocketFamily family, EndPointPtr & address)
 {
     switch (family)
     {
@@ -174,17 +275,17 @@ inline OSAL_EXPORT int GetPeerName(SocketHandle socketHandle, SocketFamily famil
     return result;
 }
 
-inline OSAL_EXPORT ssize_t Receive(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags)
+inline ssize_t Receive(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags)
 {
     return ::recv(socketHandle, data, bufferSize, flags);
 }
 
-inline OSAL_EXPORT ssize_t Send(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags)
+inline ssize_t Send(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags)
 {
     return ::send(socketHandle, data, bufferSize, flags);
 }
 
-inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags, SocketFamily family, EndPointPtr &address)
+inline ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data, size_t bufferSize, int flags, SocketFamily family, EndPointPtr &address)
 {
     switch (family)
     {
@@ -207,7 +308,7 @@ inline OSAL_EXPORT ssize_t ReceiveFrom(SocketHandle socketHandle, uint8_t * data
     return result;
 }
 
-inline OSAL_EXPORT ssize_t SendTo(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags, const EndPointPtr & address)
+inline ssize_t SendTo(SocketHandle socketHandle, const uint8_t * data, size_t bufferSize, int flags, const EndPointPtr & address)
 {
     return ::sendto(socketHandle, data, bufferSize, flags,
                     reinterpret_cast<const sockaddr *>(address->GetBytes().data()),

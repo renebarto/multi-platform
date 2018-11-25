@@ -53,6 +53,8 @@ TEST_FIXTURE(ExceptionTest, ExceptionConstructorFunctionFileLineMessageInner)
     EXPECT_EQ(expectedMessage, actualMessage);
 }
 
+#if defined(LINUX) || defined(APPLE)
+
 TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCode)
 {
     OSAL::SystemError target("function", "file", 123, ENOENT);
@@ -65,6 +67,24 @@ TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCode)
     EXPECT_EQ(expectedMessage, actualMessage);
 }
 
+#else
+
+TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCode)
+{
+    OSAL::SystemError target("function", "file", 123, ENOENT);
+    const std::string expectedWhat = "OSAL::SystemError - in function [file:123] errno=2 (0x00000002): \"The system cannot find the file specified.\r\n\"";
+    const std::string expectedMessage = "";
+    const char * what = target.what();
+    const std::string actualWhat = what ? what : "";
+    const std::string actualMessage = target.GetMessage();
+    EXPECT_EQ(expectedWhat, actualWhat);
+    EXPECT_EQ(expectedMessage, actualMessage);
+}
+
+#endif
+
+#if defined(LINUX) || defined(APPLE)
+
 TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCodeMessage)
 {
     const std::string expectedMessage = "message";
@@ -76,6 +96,22 @@ TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCodeMessa
     EXPECT_EQ(expectedWhat, actualWhat);
     EXPECT_EQ(expectedMessage, actualMessage);
 }
+
+#else
+
+TEST_FIXTURE(ExceptionTest, SystemErrorConstructorFunctionFileLineErrorCodeMessage)
+{
+    const std::string expectedMessage = "message";
+    OSAL::SystemError target("function", "file", 123, ENOENT, expectedMessage);
+    const std::string expectedWhat = "OSAL::SystemError - in function [file:123] errno=2 (0x00000002): \"The system cannot find the file specified.\r\n\": message";
+    const char * what = target.what();
+    const std::string actualWhat = what ? what : "";
+    const std::string actualMessage = target.GetMessage();
+    EXPECT_EQ(expectedWhat, actualWhat);
+    EXPECT_EQ(expectedMessage, actualMessage);
+}
+
+#endif
 
 TEST_FIXTURE(ExceptionTest, RuntimeErrorConstructorFunctionFileLineMessage)
 {
@@ -120,6 +156,8 @@ TEST_FIXTURE(ExceptionTest, ThrowOnErrorNoError)
     EXPECT_NOTHROW(OSAL::ThrowOnError("function", "file", 123, 0));
 }
 
+#if defined(LINUX) || defined(APPLE)
+
 TEST_FIXTURE(ExceptionTest, ThrowOnErrorNoFileError)
 {
     try
@@ -138,6 +176,29 @@ TEST_FIXTURE(ExceptionTest, ThrowOnErrorNoFileError)
         EXPECT_EQ(expectedMessage, actualMessage);
     }
 }
+
+#else
+
+TEST_FIXTURE(ExceptionTest, ThrowOnErrorNoFileError)
+{
+    try
+    {
+        OSAL::ThrowOnError("function", "file", 123, ENOENT);
+    }
+    catch (std::exception & e)
+    {
+        SystemError * systemError = dynamic_cast<SystemError *>(&e);
+        const std::string expectedWhat = "OSAL::SystemError - in function [file:123] errno=2 (0x00000002): \"The system cannot find the file specified.\r\n\"";
+        const std::string expectedMessage = "";
+        const char * what = systemError->what();
+        const std::string actualWhat = what ? what : "";
+        const std::string actualMessage = systemError->GetMessage();
+        EXPECT_EQ(expectedWhat, actualWhat);
+        EXPECT_EQ(expectedMessage, actualMessage);
+    }
+}
+
+#endif
 
 } // TEST_SUITE(osal)
 
