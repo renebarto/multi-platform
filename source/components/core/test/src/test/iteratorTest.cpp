@@ -1,7 +1,6 @@
 #include <unittest-cpp/UnitTestC++.h>
 
 #include "core/iterator.h"
-//#include "core/Util.h"
 
 using namespace std;
 
@@ -12,7 +11,6 @@ TEST_SUITE(core) {
 
 class iteratorTest : public UnitTestCpp::TestFixture
 {
-public:
 };
 
 TEST_FIXTURE(iteratorTest, Construct)

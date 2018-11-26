@@ -1,14 +1,14 @@
 #pragma once
 
-//#include <osal/linux/DomainSocketAddress.h>
-//#include <osal/IPV4Address.h>
-//#include <osal/IPV6Address.h>
-//#include <osal/MACAddress.h>
-#include <osal/bytearray.h>
+#if defined(LINUX) || defined(APPLE)
+#include <osal/linux/DomainSocketAddress.h>
+#endif
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
+#include <osal/MACAddress.h>
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
 #include "core/nullable.h"
-//#include "core/Util.h"
 
 namespace Core {
 
@@ -37,16 +37,17 @@ CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, float & value, OSAL::
 CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, double & value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
 CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, long double & value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
 CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, std::string & value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//#if !defined(WIN_MSVC)
-//CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::DomainSocketAddress & value);
-//CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::DomainSocketAddress & value);
-//#endif
-//CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::IPV4Address & value);
-//CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::IPV6Address & value);
-//CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::MACAddress & value);
-//CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::IPV4Address & value);
-//CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::IPV6Address & value);
-//CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::MACAddress & value);
+#if defined(LINUX) || defined(APPLE)
+CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::DomainSocketAddress & value);
+CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::DomainSocketAddress & value);
+#endif
+CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::IPV4Address & value);
+CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::IPV6Address & value);
+CORE_EXPORT bool Deserialize(const std::string & text, OSAL::Network::MACAddress & value);
+CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::IPV4Address & value);
+CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::IPV6Address & value);
+CORE_EXPORT bool Deserialize(const OSAL::bytearray & text, OSAL::Network::MACAddress & value);
+
 inline bool Deserialize(const std::string & text, std::string & value)
 {
     value = text;

@@ -9,18 +9,7 @@ TEST_SUITE(core) {
 
 class observableTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
 };
-
-void observableTest::SetUp()
-{
-}
-
-void observableTest::TearDown()
-{
-}
 
 using Value = int;
 

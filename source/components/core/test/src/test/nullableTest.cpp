@@ -1,7 +1,6 @@
 #include <unittest-cpp/UnitTestC++.h>
 
 #include "core/nullable.h"
-//#include "core/Util.h"
 
 namespace Core {
 namespace Test {
@@ -10,19 +9,7 @@ TEST_SUITE(core) {
 
 class nullableTest : public UnitTestCpp::TestFixture
 {
-public:
-    virtual void SetUp();
-    virtual void TearDown();
-
 };
-
-void nullableTest::SetUp()
-{
-}
-
-void nullableTest::TearDown()
-{
-}
 
 class Value
 {
