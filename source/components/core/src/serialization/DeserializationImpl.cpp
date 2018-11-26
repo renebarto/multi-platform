@@ -271,3 +271,5 @@ bool Core::Deserialize(const std::string & text, OSAL::Network::MACAddress & val
 {
     return OSAL::Network::MACAddress::TryParse(text, value);
 }
+
+// TODO: Implement bytearray deserialization
