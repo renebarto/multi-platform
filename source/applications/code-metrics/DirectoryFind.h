@@ -16,7 +16,7 @@ public:
     virtual bool OnDirectoryFound(const std::string & path) = 0;
 };
 
-class DirectoryFind : public Core::Observable<IDirectoryFindCallback>, public ICancellable
+class DirectoryFind : public Core::observable<IDirectoryFindCallback>, public ICancellable
 {
 public:
 

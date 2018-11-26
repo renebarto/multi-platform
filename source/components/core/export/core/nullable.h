@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cassert>
+#include <osal/Assert.h>
 
 namespace Core
 {
@@ -72,12 +72,12 @@ protected:
 
     T & GetValue()
     {
-        assert(_hasValue);
+        ASSERT(_hasValue);
         return _value;
     }
     const T & GetValue() const
     {
-        assert(_hasValue);
+        ASSERT(_hasValue);
         return _value;
     }
 };

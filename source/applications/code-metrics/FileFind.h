@@ -16,7 +16,7 @@ public:
     virtual bool OnFileFound(const std::string & path) = 0;
 };
 
-class FileFind : public Observable<IFileFindCallback>, public ICancellable
+class FileFind : public observable<IFileFindCallback>, public ICancellable
 {
 public:
     enum class Options : int
