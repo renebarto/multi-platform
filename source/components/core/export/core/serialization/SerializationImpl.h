@@ -2,7 +2,7 @@
 
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
-#include "core/Nullable.h"
+#include "core/nullable.h"
 //#include "core/Util.h"
 
 namespace Core {
@@ -42,7 +42,7 @@ std::string Serialize(const EnumType & value)
 
 
 template<class T>
-std::string Serialize(const Nullable<T> & value)
+std::string Serialize(const nullable<T> & value)
 {
     if (value.HasValue())
         return Core::Serialize(value.Value());

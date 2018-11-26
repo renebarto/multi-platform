@@ -7,7 +7,7 @@
 #include <osal/bytearray.h>
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
-#include "core/Nullable.h"
+#include "core/nullable.h"
 //#include "core/Util.h"
 
 namespace Core {
@@ -58,7 +58,7 @@ inline bool Deserialize(const OSAL::bytearray & text, OSAL::bytearray & value)
     return true;
 }
 template<class T>
-bool Deserialize(const std::string &text, Nullable<T> &value)
+bool Deserialize(const std::string &text, nullable<T> &value)
 {
     T parsedValue;
     if (Core::Deserialize(text, parsedValue)) {
