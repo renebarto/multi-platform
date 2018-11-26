@@ -1,6 +1,5 @@
 #include <core/serialization/DeserializationImpl.h>
 
-#include <climits>
 #include <cfloat>
 #include <ctgmath>
 

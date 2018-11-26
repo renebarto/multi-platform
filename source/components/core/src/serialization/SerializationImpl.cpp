@@ -1,9 +1,7 @@
 #include <core/serialization/SerializationImpl.h>
 
-//#include <climits>
 #include <sstream>
 #include <bitset>
-//#include <iomanip>
 #include <osal/Assert.h>
 
 std::string Core::Serialize(bool value)
