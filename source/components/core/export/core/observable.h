@@ -4,10 +4,6 @@
 #include <list>
 #include <mutex>
 #include <osal/osal.h>
-WARNING_PUSH
-WARNING_DISABLE(4265)
-
-WARNING_POP
 #include "core/IObservable.h"
 
 namespace Core

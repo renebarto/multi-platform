@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <osal/Strings.h>
-#include "core/Core.h"
+#include "core/core.h"
 #include "core/TimeSpan.h"
 
 using namespace std;

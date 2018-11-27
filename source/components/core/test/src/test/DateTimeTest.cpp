@@ -1,7 +1,8 @@
 #include <unittest-cpp/UnitTestC++.h>
+
 #include "osal/exports.h"
 #include "core/DateTime.h"
-#include "core/Core.h"
+#include "core/core.h"
 #include "core/TimeSpan.h"
 
 using namespace std;

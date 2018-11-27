@@ -1,9 +1,6 @@
 #include "core/Stopwatch.h"
 
-#include <iomanip>
-#include <sstream>
 #include "osal/Exception.h"
-#include "osal/Time.h"
 
 using namespace std;
 using namespace Core;

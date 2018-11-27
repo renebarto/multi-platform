@@ -1,15 +1,8 @@
 #include "core/CommandLineParser.h"
 
-#include <algorithm>
-#include <cstring>
 #include <deque>
-#include <iostream>
-#include <limits>
 #include <sstream>
-#include <string>
-#include <osal/osal.h>
 #include <osal/Path.h>
-#include <osal/Strings.h>
 
 using namespace std;
 using namespace Core;
