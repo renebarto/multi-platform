@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <string>
-#include "core/Core.h"
+#include "core/core.h"
 
 namespace Core
 {

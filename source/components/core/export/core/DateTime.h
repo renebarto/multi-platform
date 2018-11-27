@@ -5,7 +5,7 @@
 #include "osal/Assert.h"
 #include "osal/Strings.h"
 #include "osal/Time.h"
-#include "core/Core.h"
+#include "core/core.h"
 
 namespace Core
 {
