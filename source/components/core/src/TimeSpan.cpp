@@ -1,7 +1,8 @@
 #include "core/TimeSpan.h"
+
 #include <iomanip>
 #include <sstream>
-#include <osal/OSAL.h>
+#include <osal/osal.h>
 
 using namespace std;
 using namespace Core;
