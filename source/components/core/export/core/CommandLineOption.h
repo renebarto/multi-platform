@@ -5,13 +5,11 @@
 #include <vector>
 #include <osal/osal.h>
 #include "core/exports.h"
-#include "core/serialization/Serialization.h"
 #include "core/serialization/DeserializationImpl.h"
 #include "core/serialization/SerializationImpl.h"
 #include "core/core.h"
 
 namespace Core {
-
 
 enum class CommandLineArgumentType
 {
@@ -19,11 +17,8 @@ enum class CommandLineArgumentType
     RequiredArgument,
     OptionalArgument,
 };
-inline std::ostream & operator << (std::ostream & stream, const CommandLineArgumentType & value)
-{
-    stream << Serialize(value);
-    return stream;
-}
+
+CORE_EXPORT std::ostream & operator << (std::ostream & stream, const CommandLineArgumentType & value);
 
 class CORE_EXPORT CommandLineOption
 {

@@ -33,13 +33,6 @@ CORE_EXPORT void Serialize(OSAL::bytearray & result, double value, OSAL::Endiann
 CORE_EXPORT void Serialize(OSAL::bytearray & result, long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
 CORE_EXPORT void Serialize(OSAL::bytearray & result, std::string value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
 
-template<typename EnumType>
-std::string Serialize(const EnumType & value)
-{
-    return EnumSerializationInfo<EnumType>::Serialize(value);
-}
-
-
 template<class T>
 std::string Serialize(const nullable<T> & value)
 {

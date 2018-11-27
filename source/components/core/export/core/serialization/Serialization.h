@@ -58,33 +58,5 @@ public:
     virtual void Serialize(OSAL::bytearray & text, const T & result) = 0;
 };
 
-template<typename EnumType>
-struct EnumConversion
-{
-    EnumType value;
-    const char * name;
-};
-
-template<typename EnumType>
-struct EnumSerializationInfo
-{
-public:
-    EnumSerializationInfo() {}
-    EnumSerializationInfo(const EnumSerializationInfo &) = delete;
-    EnumSerializationInfo & operator = (const EnumSerializationInfo &) = delete;
-
-    static std::string Serialize(EnumType value)
-    {
-        for (const auto & item : Info)
-        {
-            if (item.value == value)
-                return item.name;
-        }
-        return std::string{};
-    }
-private:
-    static std::vector<EnumConversion<EnumType>> Info;
-};
-
 } // namespace Core
 

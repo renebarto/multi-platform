@@ -2,7 +2,9 @@
 
 #include <deque>
 #include <sstream>
+#include <algorithm>
 #include <osal/Path.h>
+#include <osal/Strings.h>
 
 using namespace std;
 using namespace Core;

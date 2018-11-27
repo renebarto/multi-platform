@@ -4,6 +4,7 @@
 #include <osal/FlagOperators.h>
 #include <core/serialization/Serialization.h>
 #include <core/serialization/SerializationImpl.h>
+#include <core/serialization/EnumSerialization.h>
 
 using namespace std;
 
@@ -32,11 +33,10 @@ struct is_flag<Test::MyFlags>
 
 } // namespace OSAL
 
-
 WARNING_PUSH
 WARNING_DISABLE(4592)
 template<>
-std::vector<Core::EnumConversion<OSAL::Test::MyFlags>> Core::EnumSerializationInfo<OSAL::Test::MyFlags>::Info =
+const std::vector<Core::EnumConversion<OSAL::Test::MyFlags>> Core::EnumSerializationInfo<OSAL::Test::MyFlags>::Info =
 {
     { OSAL::Test::MyFlags::ZERO, "ZERO" },
     { OSAL::Test::MyFlags::ONE, "ONE" },

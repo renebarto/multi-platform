@@ -31,10 +31,10 @@ public:
     {}
     virtual ~nullable() {}
 
-    nullable & operator =(const T & _value)
+    nullable & operator =(const T & value)
     {
         this->_hasValue = true;
-        this->_value = _value;
+        this->_value = value;
         return *this;
     }
     nullable & operator =(const nullable & other)
