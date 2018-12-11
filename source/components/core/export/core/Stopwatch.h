@@ -10,11 +10,11 @@
 namespace Core
 {
 
-class CORE_EXPORT Stopwatch
+class CORE_EXPORT Stopwatch final
 {
 public:
     Stopwatch();
-    virtual ~Stopwatch();
+    ~Stopwatch();
 
     void Start();
     void Lap();
@@ -26,15 +26,15 @@ public:
     template <class Elem, class Traits>
     std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
     {
-        s << "start = " << startTime.tv_sec << "." << std::setfill('0') << std::setw(9) << startTime.tv_nsec
-          << " lap = " << lapTime.tv_sec << "." << std::setfill('0') << std::setw(9) << lapTime.tv_nsec;
+        s << "start = " << _startTime.tv_sec << "." << std::setfill('0') << std::setw(9) << _startTime.tv_nsec
+          << " lap = " << _lapTime.tv_sec << "." << std::setfill('0') << std::setw(9) << _lapTime.tv_nsec;
         return s;
     }
 
 protected:
-    OSAL::Time::timespec startTime;
-    OSAL::Time::timespec lapTime;
-    OSAL::Time::timespec freq;
+    OSAL::Time::timespec _startTime;
+    OSAL::Time::timespec _lapTime;
+    OSAL::Time::timespec _freq;
 };
 
 template <class Elem, class Traits>

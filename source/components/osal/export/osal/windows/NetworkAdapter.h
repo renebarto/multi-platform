@@ -1,6 +1,6 @@
 #pragma once
 
-#include <net/if.h>
+//#include <net/if.h>
 #include <memory>
 #include "osal/exports.h"
 #include "osal/NetworkAddress-Linux.h"

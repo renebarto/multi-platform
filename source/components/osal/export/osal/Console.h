@@ -66,17 +66,17 @@ namespace OSAL {
 
 struct OSAL_EXPORT _SetForegroundColor
 {
-        ConsoleColor color;
+    ConsoleColor color;
 };
 
 struct OSAL_EXPORT _SetBackgroundColor
 {
-        ConsoleColor color;
+    ConsoleColor color;
 };
 
 class OSAL_EXPORT Console
 {
-private:
+protected:
     // The type of basic IO manipulators (endl, ends, and flush) for narrow
     // streams.
     typedef std::ostream & (* BasicIoManip)(std::ostream &);
@@ -88,18 +88,27 @@ public:
     Console(FILE * file);
     Console(std::ostream & stream);
 
-    void SetForegroundColor(ConsoleColor foregroundColor);
-    void SetBackgroundColor(ConsoleColor backgroundColor);
+    void SetForegroundColor(ConsoleColor foregroundColor)
+    {
+        SetTerminalColor(foregroundColor, _currentBackgroundColor);
+    }
+    void SetBackgroundColor(ConsoleColor backgroundColor)
+    {
+        SetTerminalColor(_currentForegroundColor, backgroundColor);
+    }
     void SetTerminalColor(ConsoleColor foregroundColor = ConsoleColor::Default,
                           ConsoleColor backgroundColor = ConsoleColor::Default);
-    void ResetTerminalColor();
+    void ResetTerminalColor()
+    {
+        SetTerminalColor();
+    }
     bool ShouldUseColor() const;
     bool ForceUseColor() const;
     void ForceUseColor(bool value);
 
     // Streams a non-pointer _value to this object.
     template <typename T>
-    inline Console & operator << (const T & val)
+    Console & operator << (const T & val)
     {
         using ::operator <<;
         if (_stream)
@@ -114,8 +123,16 @@ public:
         return *this;
     }
 
-    Console & operator << (_SetForegroundColor color);
-    Console & operator << (_SetBackgroundColor color);
+    Console & operator << (_SetForegroundColor color)
+    {
+        SetForegroundColor(color.color);
+        return *this;
+    }
+    Console & operator << (_SetBackgroundColor color)
+    {
+        SetBackgroundColor(color.color);
+        return *this;
+    }
 
 protected:
     Files::FileDescriptor _handle;
@@ -128,33 +145,6 @@ protected:
     WORD _defaultColorAttributes;
 #endif
 };
-
-inline void Console::SetForegroundColor(ConsoleColor foregroundColor)
-{
-    SetTerminalColor(foregroundColor, _currentBackgroundColor);
-}
-
-inline void Console::SetBackgroundColor(ConsoleColor backgroundColor)
-{
-    SetTerminalColor(_currentForegroundColor, backgroundColor);
-}
-
-inline void Console::ResetTerminalColor()
-{
-    SetTerminalColor();
-}
-
-inline Console & Console::operator<<(_SetForegroundColor color)
-{
-    SetForegroundColor(color.color);
-    return *this;
-}
-
-inline Console & Console::operator<<(_SetBackgroundColor color)
-{
-    SetBackgroundColor(color.color);
-    return *this;
-}
 
 } // namespace OSAL
 

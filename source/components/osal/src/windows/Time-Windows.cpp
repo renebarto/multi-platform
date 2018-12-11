@@ -86,32 +86,34 @@ static LARGE_INTEGER GetFileTimeOffset()
 
 int clock_gettime(int X, class timespec * tv)
 {
-    static LARGE_INTEGER offset{};
-    static double frequencyToNanoseconds;
-    static bool initialized{};
-    static BOOL usePerformanceCounter{};
+    static LARGE_INTEGER _offsetAtInitialization{};
+    static double _frequencyToNanoseconds;
+    static bool _initialized{};
+    static BOOL _usePerformanceCounter{};
+    static time_t _timeAtInitialization;
 
     if (!tv)
         return EFAULT;
     if (X != CLOCK_REALTIME)
         return EINVAL;
-    if (!initialized)
+    if (!_initialized)
     {
         LARGE_INTEGER performanceFrequency;
-        initialized = true;
-        usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
-        if (usePerformanceCounter)
+        _initialized = true;
+        _usePerformanceCounter = QueryPerformanceFrequency(&performanceFrequency);
+        if (_usePerformanceCounter)
         {
-            QueryPerformanceCounter(&offset);
-            frequencyToNanoseconds = (double) performanceFrequency.QuadPart / 1000000000.0;
+            QueryPerformanceCounter(&_offsetAtInitialization);
+            _frequencyToNanoseconds = (double) performanceFrequency.QuadPart / 1000000000.0;
         } else
         {
-            offset = GetFileTimeOffset();
-            frequencyToNanoseconds = 10000.;
+            _offsetAtInitialization = GetFileTimeOffset();
+            _frequencyToNanoseconds = 10000.;
         }
+        _timeAtInitialization = time(nullptr);
     }
     LARGE_INTEGER t;
-    if (usePerformanceCounter)
+    if (_usePerformanceCounter)
         QueryPerformanceCounter(&t);
     else
     {
@@ -122,14 +124,12 @@ int clock_gettime(int X, class timespec * tv)
         t.QuadPart |= f.dwLowDateTime;
     }
 
-    t.QuadPart -= offset.QuadPart;
-    double nanoseconds = (double) t.QuadPart / frequencyToNanoseconds;
+    t.QuadPart -= _offsetAtInitialization.QuadPart;
+    double nanoseconds = (double) t.QuadPart / _frequencyToNanoseconds;
     t.QuadPart = LONGLONG(nanoseconds);
     tv->tv_sec = long(t.QuadPart / 1000000000);
     tv->tv_nsec = long(t.QuadPart % 1000000000);
-    time_t timeSeconds;
-    timeSeconds = time(nullptr);
-    tv->tv_sec += long(timeSeconds);
+    tv->tv_sec += long(_timeAtInitialization);
     return (0);
 }
 

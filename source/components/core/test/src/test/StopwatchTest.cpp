@@ -49,9 +49,9 @@ TEST_FIXTURE(StopwatchTest, StartLap)
 {
     Stopwatch stopwatch;
     stopwatch.Start();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     stopwatch.Lap();
-    EXPECT_NEAR(0.1, stopwatch.GetElapsedTime(), 0.01);
+    EXPECT_NEAR(1.0, stopwatch.GetElapsedTime(), 0.1);
     OSAL::Time::timespec expectedStartTime{};
     EXPECT_NE(expectedStartTime, stopwatch.GetStartTime());
     OSAL::Time::timespec expectedLapTime{};
