@@ -110,7 +110,7 @@ TEST_FIXTURE(SerializationImplTest, SerializeFloat)
     value = 5.0E-37F;
 #if defined(LINUX) || defined(APPLE)
     EXPECT_EQ("5.000000179695649e-37", Serialize(value));
-    EXPECT_EQ("5e-37", Serialize(value, 1));
+    EXPECT_EQ("5e-37", Serialize(value, 0, 1));
 #elif defined(WIN_MSVC)
     EXPECT_EQ("5.000000179695649e-37", Serialize(value));
     EXPECT_EQ("5e-37", Serialize(value, 0, 1));

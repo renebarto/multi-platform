@@ -3,11 +3,11 @@
 #include <osal/exports.h>
 
 #if defined(WIN_MSVC)
-#include "osal/windows/timer.h"
+#include "osal/windows/Timer.h"
 #elif defined(WIN_MINGW)
-#include "osal/mingw/timer.h"
+#include "osal/mingw/Timer.h"
 #elif defined(DARWIN)
-#include "osal/darwin/timer.h"
+#include "osal/darwin/Timer.h"
 #elif defined(LINUX)
-#include "osal/linux/timer.h"
+#include "osal/linux/Timer.h"
 #endif

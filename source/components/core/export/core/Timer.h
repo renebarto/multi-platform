@@ -18,10 +18,10 @@ public:
     ~Timer();
 
     template<class Rep, class Period>
-    void StartTimer(std::chrono::duration<Rep, Period> interval, CallbackFunction callback);
+    void Start(std::chrono::duration<Rep, Period> interval, CallbackFunction callback);
     template<class Rep, class Period>
-    void StartTimer(std::chrono::duration<Rep, Period> interval, size_t repeatCount, CallbackFunction callback);
-    void StopTimer();
+    void Start(std::chrono::duration<Rep, Period> interval, size_t repeatCount, CallbackFunction callback);
+    void Stop();
 
     template<class Elem, class Traits>
     std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
@@ -38,7 +38,7 @@ protected:
 };
 
 template<class Rep, class Period>
-void Timer::StartTimer(std::chrono::duration<Rep, Period> interval, std::function<void()> callback)
+void Timer::Start(std::chrono::duration<Rep, Period> interval, std::function<void()> callback)
 {
     _interval = interval;
     _callback = callback;
@@ -47,7 +47,7 @@ void Timer::StartTimer(std::chrono::duration<Rep, Period> interval, std::functio
 }
 
 template<class Rep, class Period>
-void Timer::StartTimer(std::chrono::duration<Rep, Period> interval, size_t repeatCount, std::function<void()> callback)
+void Timer::Start(std::chrono::duration<Rep, Period> interval, size_t repeatCount, std::function<void()> callback)
 {
     _interval = interval;
     _callback = callback;

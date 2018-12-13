@@ -46,7 +46,7 @@ void TraceHandler::SetTraceTarget(std::ostream * stream)
         _stream = &_null;
 }
 
-bool TraceHandler::DoOutput(TraceClass traceClass) const
+bool TraceHandler::DoOutput(TraceClass UNUSED(traceClass)) const
 {
     return true;
 }

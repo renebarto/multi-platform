@@ -19,7 +19,7 @@ Timer::~Timer()
 {
 }
 
-void Timer::StopTimer()
+void Timer::Stop()
 {
 
 }

@@ -22,11 +22,11 @@ public:
     ~Timer()
     {
         if (_winTimer != INVALID_HANDLE_VALUE)
-            StopTimer();
+            Stop();
     }
 
     template<class Rep, class Period>
-    bool StartTimer(std::chrono::duration<Rep, Period> interval, Callback callback)
+    bool Start(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
         _callback = callback;
 
@@ -41,7 +41,7 @@ public:
         return true;
     };
 
-    void StopTimer()
+    void Stop()
     {
         DeleteTimerQueueTimer(nullptr, _winTimer, INVALID_HANDLE_VALUE);
         _winTimer = INVALID_HANDLE_VALUE;
