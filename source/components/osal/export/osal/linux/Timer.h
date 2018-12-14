@@ -41,14 +41,37 @@ public:
     template<class Rep, class Period>
     bool Start(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
+        return Start(interval, std::chrono::duration<Rep, Period>(0), callback);
+    };
+
+    template<class Rep, class Period>
+    bool StartRepeat(std::chrono::duration<Rep, Period> interval, Callback callback)
+    {
+        return Start(interval, interval, callback);
+    };
+
+    void Stop()
+    {
+        _isSet = false;
+        timer_delete(_timer);
+        sigaction(SIGRTMIN, &_oldHandler, nullptr);
+    }
+
+    bool IsExpired() const { return _isExpired; }
+
+private:
+    template<class Rep, class Period>
+    bool Start(std::chrono::duration<Rep, Period> interval, std::chrono::duration<Rep, Period> repeat, Callback callback)
+    {
         constexpr int64_t NanoSecondsPerSecond = 1000000000;
         _callback = callback;
 
-        size_t nanoSeconds = std::chrono::nanoseconds(interval).count();
-        _timerSpec.it_interval.tv_sec = nanoSeconds / NanoSecondsPerSecond;
-        _timerSpec.it_interval.tv_nsec = nanoSeconds % NanoSecondsPerSecond;
-        _timerSpec.it_value.tv_sec = _timerSpec.it_interval.tv_sec;
-        _timerSpec.it_value.tv_nsec = _timerSpec.it_interval.tv_nsec;
+        size_t nanoSecondsInterval = static_cast<size_t>(std::chrono::nanoseconds(interval).count());
+        size_t nanoSecondsRepeat = static_cast<size_t>(std::chrono::nanoseconds(repeat).count());
+        _timerSpec.it_interval.tv_sec = nanoSecondsRepeat / NanoSecondsPerSecond;
+        _timerSpec.it_interval.tv_nsec = nanoSecondsRepeat % NanoSecondsPerSecond;
+        _timerSpec.it_value.tv_sec = nanoSecondsInterval / NanoSecondsPerSecond;
+        _timerSpec.it_value.tv_nsec = nanoSecondsInterval % NanoSecondsPerSecond;
 
         _newHandler.sa_sigaction = TimerSignalHandler;
         _newHandler.sa_flags = SA_SIGINFO;
@@ -72,16 +95,6 @@ public:
         return true;
     };
 
-    void Stop()
-    {
-        _isSet = false;
-        timer_delete(_timer);
-        sigaction(SIGRTMIN, &_oldHandler, nullptr);
-    }
-
-    bool IsExpired() const { return _isExpired; }
-
-private:
     static void TimerSignalHandler(int signal, siginfo_t* signalInfo, void* UNUSED(context))
     {
         ASSERT(signal == SIGRTMIN);

@@ -3,6 +3,7 @@
 #include <thread>
 #include <sys/poll.h>
 #include "osal/Timer.h"
+#include "osal/Time.h"
 #include "osal/Util.h"
 
 using namespace std;
@@ -28,6 +29,35 @@ public:
 TEST_SUITE(osal)
 {
 
+// Implementation for dependable sleep. Due to timers firing, the normal sleep is interrupted,
+// and it is advised to use clock_nanosleep with an absolute time to correctly wait without stalling.
+void Sleep(int ms)
+{
+    timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    timespec requested;
+    requested.tv_sec = now.tv_sec + (ms / 1000);
+    requested.tv_nsec = now.tv_nsec + ((ms % 1000) * 1000000);
+    requested.tv_sec += requested.tv_nsec / 1000000000;
+    requested.tv_nsec = requested.tv_nsec % 1000000000;
+
+    bool done = false;
+    int result {};
+    do
+    {
+        result = ::clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &requested, nullptr);
+        if (result == 0)
+        {
+            done = true;
+            continue;
+        }
+        if (result == EINTR)
+            continue;
+        return;
+    }
+    while (!done);
+
+}
 TEST_FIXTURE(TimerTest, Construct)
 {
     Timer timer;
@@ -42,9 +72,21 @@ TEST_FIXTURE(TimerTest, Start)
     timer.Start(std::chrono::milliseconds(100), std::bind(&TimerTest::TimerHandler, this));
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
-    this_thread::sleep_for(std::chrono::milliseconds(2000));
+    Sleep(1000);
     EXPECT_TRUE(timer.IsExpired());
     EXPECT_EQ(1, _callbackInvoked);
+}
+
+TEST_FIXTURE(TimerTest, StartRepeat)
+{
+    Timer timer;
+
+    timer.StartRepeat(std::chrono::milliseconds(100), std::bind(&TimerTest::TimerHandler, this));
+    EXPECT_FALSE(timer.IsExpired());
+    EXPECT_EQ(0, _callbackInvoked);
+    Sleep(1000);
+    EXPECT_TRUE(timer.IsExpired());
+    EXPECT_EQ(10, _callbackInvoked);
 }
 
 TEST_FIXTURE(TimerTest, StartStop)
@@ -54,11 +96,11 @@ TEST_FIXTURE(TimerTest, StartStop)
     timer.Start(std::chrono::milliseconds(500), std::bind(&TimerTest::TimerHandler, this));
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
-    this_thread::sleep_for(std::chrono::milliseconds(200));
+    Sleep(200);
     timer.Stop();
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    Sleep(500);
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
 }
@@ -73,14 +115,34 @@ TEST_FIXTURE(TimerTest, MultipleTimers)
     EXPECT_FALSE(timer1.IsExpired());
     EXPECT_FALSE(timer2.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
-    this_thread::sleep_for(std::chrono::milliseconds(600));
+    Sleep(600);
     EXPECT_TRUE(timer1.IsExpired());
     EXPECT_FALSE(timer2.IsExpired());
     EXPECT_EQ(1, _callbackInvoked);
-    this_thread::sleep_for(std::chrono::milliseconds(500));
+    Sleep(500);
     EXPECT_TRUE(timer1.IsExpired());
     EXPECT_TRUE(timer2.IsExpired());
     EXPECT_EQ(2, _callbackInvoked);
+}
+
+TEST_FIXTURE(TimerTest, MultipleTimersRepeat)
+{
+    Timer timer1;
+    Timer timer2;
+
+    timer1.StartRepeat(std::chrono::milliseconds(500), std::bind(&TimerTest::TimerHandler, this));
+    timer2.StartRepeat(std::chrono::milliseconds(1000), std::bind(&TimerTest::TimerHandler, this));
+    EXPECT_FALSE(timer1.IsExpired());
+    EXPECT_FALSE(timer2.IsExpired());
+    EXPECT_EQ(0, _callbackInvoked);
+    Sleep(600);
+    EXPECT_TRUE(timer1.IsExpired());
+    EXPECT_FALSE(timer2.IsExpired());
+    EXPECT_EQ(1, _callbackInvoked);
+    Sleep(500);
+    EXPECT_TRUE(timer1.IsExpired());
+    EXPECT_TRUE(timer2.IsExpired());
+    EXPECT_EQ(3, _callbackInvoked);
 }
 
 } // TEST_SUITE(osal)
