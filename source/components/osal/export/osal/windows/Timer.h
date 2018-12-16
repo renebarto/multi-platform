@@ -4,6 +4,7 @@
 #include <osal/Unused.h>
 
 #include <chrono>
+#include <functional>
 #include <windows.h>
 
 namespace OSAL {
@@ -28,13 +29,27 @@ public:
     template<class Rep, class Period>
     bool Start(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
-        constexpr int64_t MilliSecondsPerSecond = 1000;
         _callback = callback;
 
         DWORD milliSeconds = static_cast<DWORD>(std::chrono::milliseconds(interval).count());
 
         if (CreateTimerQueueTimer(&_winTimer, nullptr, (WAITORTIMERCALLBACK)TimerSignalHandler, this,
-                                  milliSeconds, milliSeconds, WT_EXECUTEINTIMERTHREAD) == 0)
+                                  milliSeconds, 0, WT_EXECUTEINTIMERTHREAD) == 0)
+        {
+            return false;
+        }
+
+        return true;
+    };
+    template<class Rep, class Period>
+    bool StartRepeat(std::chrono::duration<Rep, Period> interval, Callback callback)
+    {
+        _callback = callback;
+
+        DWORD milliSeconds = static_cast<DWORD>(std::chrono::milliseconds(interval).count());
+
+        if (CreateTimerQueueTimer(&_winTimer, nullptr, (WAITORTIMERCALLBACK)TimerSignalHandler, this,
+            milliSeconds, milliSeconds, WT_EXECUTEINTIMERTHREAD) == 0)
         {
             return false;
         }

@@ -1,7 +1,6 @@
 #include "unittest-cpp/UnitTestC++.h"
 
 #include <thread>
-#include <sys/poll.h>
 #include "osal/Timer.h"
 #include "osal/Time.h"
 #include "osal/Util.h"
@@ -31,6 +30,7 @@ TEST_SUITE(osal)
 
 // Implementation for dependable sleep. Due to timers firing, the normal sleep is interrupted,
 // and it is advised to use clock_nanosleep with an absolute time to correctly wait without stalling.
+#if defined(LINUX) || defined(DARWIN)
 void Sleep(int ms)
 {
     timespec now;
@@ -58,6 +58,13 @@ void Sleep(int ms)
     while (!done);
 
 }
+#elif defined(WIN_MSVC) || defined(WIN_MINGW)
+void Sleep(int ms)
+{
+    OSAL::Time::usleep(ms * 1000);
+}
+#endif
+
 TEST_FIXTURE(TimerTest, Construct)
 {
     Timer timer;
