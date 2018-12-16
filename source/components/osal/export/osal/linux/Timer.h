@@ -21,6 +21,8 @@ public:
 
     Timer()
         : _callback()
+        , _interval()
+        , _repeat()
         , _timer()
         , _timerEvent()
         , _timerSpec()
@@ -42,13 +44,13 @@ public:
     bool Start(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
         return Start(interval, std::chrono::duration<Rep, Period>(0), callback);
-    };
+    }
 
     template<class Rep, class Period>
     bool StartRepeat(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
         return Start(interval, interval, callback);
-    };
+    }
 
     void Stop()
     {
@@ -58,6 +60,13 @@ public:
     }
 
     bool IsExpired() const { return _isExpired; }
+
+    template<class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
+    {
+        s << "timer interval = " <<  _interval << " ns, repeat interval = " << _repeat << " ns,  timed out = " << _isExpired;
+        return s;
+    }
 
 private:
     template<class Rep, class Period>
@@ -93,7 +102,7 @@ private:
         _isSet = true;
 
         return true;
-    };
+    }
 
     static void TimerSignalHandler(int signal, siginfo_t* signalInfo, void* UNUSED(context))
     {
@@ -111,6 +120,8 @@ private:
     }
 
     Callback _callback;
+    size_t _interval;
+    size_t _repeat;
     timer_t _timer;
     sigevent _timerEvent;
     struct itimerspec _timerSpec;
@@ -121,6 +132,18 @@ private:
     static std::map<timer_t *, Timer *> _timerMap;
 };
 
+template <class Elem, class Traits>
+inline void PrintTo(std::basic_ostream<Elem, Traits> & stream, const Timer & value)
+{
+    value.PrintTo(stream);
+}
+
+template <class Elem, class Traits>
+inline std::basic_ostream<Elem, Traits> & operator << (std::basic_ostream<Elem, Traits> & stream, const Timer & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Time
 } // namespace OSAL

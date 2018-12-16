@@ -70,6 +70,10 @@ TEST_FIXTURE(TimerTest, Construct)
     Timer timer;
 
     EXPECT_FALSE(timer.IsExpired());
+    std::string expected = "timer interval = 0 ns, repeat interval = 0 ns,  timed out = 0";
+    std::ostringstream stream;
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TimerTest, Start)
@@ -79,9 +83,17 @@ TEST_FIXTURE(TimerTest, Start)
     timer.Start(std::chrono::milliseconds(100), std::bind(&TimerTest::TimerHandler, this));
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
+    std::string expected = "timer interval = 100000000 ns, repeat interval = 0 ns,  timed out = 0";
+    std::ostringstream stream;
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
     Sleep(1000);
     EXPECT_TRUE(timer.IsExpired());
     EXPECT_EQ(1, _callbackInvoked);
+    expected = "timer interval = 100000000 ns, repeat interval = 0 ns,  timed out = 1";
+    stream.str("");
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TimerTest, StartRepeat)
@@ -91,9 +103,17 @@ TEST_FIXTURE(TimerTest, StartRepeat)
     timer.StartRepeat(std::chrono::milliseconds(100), std::bind(&TimerTest::TimerHandler, this));
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
+    std::string expected = "timer interval = 100000000 ns, repeat interval = 100000000 ns,  timed out = 0";
+    std::ostringstream stream;
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
     Sleep(1000);
     EXPECT_TRUE(timer.IsExpired());
     EXPECT_EQ(10, _callbackInvoked);
+    expected = "timer interval = 100000000 ns, repeat interval = 100000000 ns,  timed out = 1";
+    stream.str("");
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TimerTest, StartStop)
@@ -107,9 +127,17 @@ TEST_FIXTURE(TimerTest, StartStop)
     timer.Stop();
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
+    std::string expected = "timer interval = 500000000 ns, repeat interval = 0 ns,  timed out = 0";
+    std::ostringstream stream;
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
     Sleep(500);
     EXPECT_FALSE(timer.IsExpired());
     EXPECT_EQ(0, _callbackInvoked);
+    expected = "timer interval = 500000000 ns, repeat interval = 0 ns,  timed out = 0";
+    stream.str("");
+    stream << timer;
+    EXPECT_EQ(expected, stream.str());
 }
 
 TEST_FIXTURE(TimerTest, MultipleTimers)

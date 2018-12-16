@@ -17,6 +17,8 @@ public:
 
     Timer()
         : _callback()
+        , _interval()
+        , _repeat()
         , _winTimer(INVALID_HANDLE_VALUE)
         , _isExpired()
     {}
@@ -29,33 +31,13 @@ public:
     template<class Rep, class Period>
     bool Start(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
-        _callback = callback;
-
-        DWORD milliSeconds = static_cast<DWORD>(std::chrono::milliseconds(interval).count());
-
-        if (CreateTimerQueueTimer(&_winTimer, nullptr, (WAITORTIMERCALLBACK)TimerSignalHandler, this,
-                                  milliSeconds, 0, WT_EXECUTEINTIMERTHREAD) == 0)
-        {
-            return false;
-        }
-
-        return true;
-    };
+        return Start(interval, std::chrono::duration<Rep, Period>(0), callback);
+    }
     template<class Rep, class Period>
     bool StartRepeat(std::chrono::duration<Rep, Period> interval, Callback callback)
     {
-        _callback = callback;
-
-        DWORD milliSeconds = static_cast<DWORD>(std::chrono::milliseconds(interval).count());
-
-        if (CreateTimerQueueTimer(&_winTimer, nullptr, (WAITORTIMERCALLBACK)TimerSignalHandler, this,
-            milliSeconds, milliSeconds, WT_EXECUTEINTIMERTHREAD) == 0)
-        {
-            return false;
-        }
-
-        return true;
-    };
+        return Start(interval, interval, callback);
+    }
 
     void Stop()
     {
@@ -64,6 +46,13 @@ public:
     }
 
     bool IsExpired() const { return _isExpired; }
+
+    template<class Elem, class Traits>
+    std::basic_ostream<Elem, Traits> & PrintTo(std::basic_ostream<Elem, Traits> & s) const
+    {
+        s << "timer interval = " <<  _interval << " ns, repeat interval = " << _repeat << " ns,  timed out = " << _isExpired;
+        return s;
+    }
 
 private:
     static void __stdcall TimerSignalHandler(void * instance, BOOLEAN UNUSED(y))
@@ -74,9 +63,42 @@ private:
     }
 
     Callback _callback;
+    DWORD _interval;
+    DWORD _repeat;
     HANDLE _winTimer;
     bool _isExpired;
+
+    template<class Rep, class Period>
+    bool Start(std::chrono::duration<Rep, Period> interval, std::chrono::duration<Rep, Period> repeat, Callback callback)
+    {
+        _callback = callback;
+
+        _interval = static_cast<DWORD>(std::chrono::nanoseconds(interval).count());
+        _repeat = static_cast<DWORD>(std::chrono::nanoseconds(repeat).count());
+        constexpr DWORD NanoSecondsPerMilliSecond = 1000000;
+
+        if (CreateTimerQueueTimer(&_winTimer, nullptr, (WAITORTIMERCALLBACK)TimerSignalHandler, this,
+                                  _interval / NanoSecondsPerMilliSecond, _repeat / NanoSecondsPerMilliSecond, WT_EXECUTEINTIMERTHREAD) == 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
 };
+
+template <class Elem, class Traits>
+inline void PrintTo(std::basic_ostream<Elem, Traits> & stream, const Timer & value)
+{
+    value.PrintTo(stream);
+}
+
+template <class Elem, class Traits>
+inline std::basic_ostream<Elem, Traits> & operator << (std::basic_ostream<Elem, Traits> & stream, const Timer & value)
+{
+    value.PrintTo(stream);
+    return stream;
+}
 
 } // namespace Time
 } // namespace OSAL
