@@ -6,7 +6,7 @@
 #include <mutex>
 #include <sstream>
 
-namespace Core
+namespace OSAL
 {
 
 class ManualEvent
@@ -63,4 +63,4 @@ protected:
     std::condition_variable _cond;
 };
 
-} // namespace Core
+} // namespace OSAL

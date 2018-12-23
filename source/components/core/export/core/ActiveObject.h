@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Core.h"
+#include "core/core.h"
 #include "core/Trace.h"
 #include "core/WorkerThread.h"
 

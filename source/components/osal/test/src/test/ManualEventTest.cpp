@@ -2,9 +2,9 @@
 
 #include <thread>
 #include "osal/Time.h"
-#include "core/ManualEvent.h"
+#include "osal/ManualEvent.h"
 
-namespace Core
+namespace OSAL
 {
 
 namespace Test
@@ -148,4 +148,4 @@ TEST_FIXTURE(ManualEventTest, WaitEvent)
 
 } // namespace Test
 
-} // namespace Core
+} // namespace OSAL

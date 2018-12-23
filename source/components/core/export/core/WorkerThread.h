@@ -7,7 +7,7 @@ WARNING_DISABLE(4355)
 WARNING_POP
 #include "osal/Exception.h"
 #include "osal/Signal.h"
-#include "core/ManualEvent.h"
+#include "osal/ManualEvent.h"
 #include "core/Thread.h"
 
 namespace Core
