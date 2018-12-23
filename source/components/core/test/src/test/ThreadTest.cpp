@@ -1,7 +1,7 @@
 #include <unittest-cpp/UnitTestC++.h>
 
 #include "osal/Time.h"
-#include "core/Core.h"
+#include "core/core.h"
 #include "core/Thread.h"
 
 using namespace std;
