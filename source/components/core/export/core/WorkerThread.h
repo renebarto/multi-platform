@@ -49,7 +49,7 @@ public:
     virtual Result Thread() = 0;
 
 protected:
-    Core::ManualEvent _birthEvent;
+    OSAL::ManualEvent _birthEvent;
     static Result ThreadStarter(WorkerThread * arg)
     {
         WorkerThread * pThis = reinterpret_cast<WorkerThread *>(arg);
