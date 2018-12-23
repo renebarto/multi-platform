@@ -92,7 +92,7 @@ void Sleep(std::chrono::duration<Rep, Period> sleep)
     timespec now;
     clock_gettime(CLOCK_REALTIME, &now);
     timespec requested;
-    uint64_t nanoSeconds = std::chrono::nanoseconds(sleep);
+    uint64_t nanoSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(sleep).count();
     requested.tv_sec = now.tv_sec + (nanoSeconds / NanoSecondsPerSecond);
     requested.tv_nsec = now.tv_nsec + (nanoSeconds % NanoSecondsPerSecond);
     requested.tv_sec += requested.tv_nsec / NanoSecondsPerSecond;
