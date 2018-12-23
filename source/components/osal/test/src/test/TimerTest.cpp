@@ -107,7 +107,7 @@ TEST_FIXTURE(TimerTest, StartRepeat)
     std::ostringstream stream;
     stream << timer;
     EXPECT_EQ(expected, stream.str());
-    Sleep(1000);
+    Sleep(1020);
     EXPECT_TRUE(timer.IsExpired());
     EXPECT_EQ(10, _callbackInvoked);
     expected = "timer interval = 100000000 ns, repeat interval = 100000000 ns,  timed out = 1";
