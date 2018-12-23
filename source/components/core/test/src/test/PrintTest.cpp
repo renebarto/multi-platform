@@ -74,7 +74,7 @@ TEST_FIXTURE(PrintTest, PrintNoFormat)
     EXPECT_EQ(text, stream.str());
     ASSERT_NE("", _traceStream.str());
     std::string message = _traceStream.str().substr(_traceStream.str().find('|'));
-    EXPECT_EQ("|Warn|Not all parameters have been used. Parameters not used: 0\n", message);
+    EXPECT_EQ("|Warn |Not all parameters have been used. Parameters not used: 0\n", message);
 }
 
 TEST_FIXTURE(PrintTest, PrintSimple)

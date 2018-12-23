@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <cstdint>
+#include <chrono>
 #include "osal/mingw/osal.h"
 #include "osal/Strings.h"
 #include "osal/Unused.h"
@@ -93,6 +94,12 @@ inline int usleep(int64_t microSeconds)
 
     ft.QuadPart = -(10 * microSeconds); // Convert to 100 nanosecond interval, negative value indicates relative time
     return sleep(ft) ? 0 : -1;
+}
+
+template<class Rep, class Period>
+void Sleep(std::chrono::duration<Rep, Period> sleep)
+{
+    OSAL::Time::usleep(std::chrono::duration_cast<std::chrono::milliseconds>(sleep).count());
 }
 
 inline int nanosleep(const timespec * req, timespec * UNUSED(rem))

@@ -82,6 +82,39 @@ inline int nanosleep(const timespec * req, timespec * rem)
     return ::nanosleep(req, rem);
 }
 
+// Implementation for dependable sleep. Due to timers firing, the normal sleep is interrupted,
+// and it is advised to use clock_nanosleep with an absolute time to correctly wait without stalling.
+template<class Rep, class Period>
+void Sleep(std::chrono::duration<Rep, Period> sleep)
+{
+    uint64_t NanoSecondsPerSecond = 1000000000;
+    timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    timespec requested;
+    uint64_t nanoSeconds = std::chrono::nanoseconds(sleep);
+    requested.tv_sec = now.tv_sec + (nanoSeconds / NanoSecondsPerSecond);
+    requested.tv_nsec = now.tv_nsec + (nanoSeconds % NanoSecondsPerSecond);
+    requested.tv_sec += requested.tv_nsec / NanoSecondsPerSecond;
+    requested.tv_nsec = requested.tv_nsec % NanoSecondsPerSecond;
+
+    bool done = false;
+    int result {};
+    do
+    {
+        result = ::clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &requested, nullptr);
+        if (result == 0)
+        {
+            done = true;
+            continue;
+        }
+        if (result == EINTR)
+            continue;
+        return;
+    }
+    while (!done);
+
+}
+
 using TimeValSeconds = long;
 using TimeValMicroSeconds = long;
 

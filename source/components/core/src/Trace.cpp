@@ -11,11 +11,11 @@ WARNING_DISABLE(4592)
 template<>
 const std::vector<Core::EnumConversion<Core::TraceClass>> Core::EnumSerializationInfo<Core::TraceClass>::Info =
 {
-    {Core::TraceClass::FunctionEntry, "Entry"},
+    {Core::TraceClass::FunctionEnter, "Enter"},
     {Core::TraceClass::FunctionLeave, "Leave"},
     {Core::TraceClass::Debug,         "Debug"},
-    {Core::TraceClass::Info,          "Info"},
-    {Core::TraceClass::Warning,       "Warn"},
+    {Core::TraceClass::Info,          "Info "},
+    {Core::TraceClass::Warning,       "Warn "},
     {Core::TraceClass::Error,         "Error"},
 };
 
@@ -31,7 +31,6 @@ namespace Core {
 
 std::ostream * TraceHandler::_stream = nullptr;
 DateTime TraceHandler::_lastTimestamp;
-std::ostringstream TraceHandler::_null;
 TraceHandler TraceHandler::_trace;
 
 TraceHandler::TraceHandler()
@@ -40,10 +39,7 @@ TraceHandler::TraceHandler()
 
 void TraceHandler::SetTraceTarget(std::ostream * stream)
 {
-    if (stream != nullptr)
-        _stream = stream;
-    else
-        _stream = &_null;
+    _stream = stream;
 }
 
 bool TraceHandler::DoOutput(TraceClass UNUSED(traceClass)) const
@@ -73,14 +69,34 @@ TraceHandler & GetTraceHandler()
     return TraceHandler::Instance();
 }
 
+void TraceError(const std::string & text)
+{
+    TraceHandler::Instance().Send(TraceClass::Error, text);
+}
+
 void TraceWarning(const std::string & text)
 {
     TraceHandler::Instance().Send(TraceClass::Warning, text);
 }
 
-void TraceError(const std::string & text)
+void TraceInfo(const std::string & text)
 {
-    TraceHandler::Instance().Send(TraceClass::Error, text);
+    TraceHandler::Instance().Send(TraceClass::Info, text);
+}
+
+void TraceDebug(const std::string & text)
+{
+    TraceHandler::Instance().Send(TraceClass::Debug, text);
+}
+
+void TraceFunctionEnter(const std::string & text)
+{
+    TraceHandler::Instance().Send(TraceClass::FunctionEnter, text);
+}
+
+void TraceFunctionLeave(const std::string & text)
+{
+    TraceHandler::Instance().Send(TraceClass::FunctionLeave, text);
 }
 
 } // namespace Core

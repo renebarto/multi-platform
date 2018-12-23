@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <chrono>
 #include <time.h>
 #include "osal/Unused.h"
 #include "osal/windows/OSAL.h"
@@ -115,6 +116,12 @@ inline int nanosleep(const timespec * req, timespec * UNUSED(rem))
                     100); // Convert to 100 nanosecond interval, negative value indicates relative time
 
     return sleep(ft) ? 0 : -1;
+}
+
+template<class Rep, class Period>
+void Sleep(std::chrono::duration<Rep, Period> sleep)
+{
+    OSAL::Time::usleep(std::chrono::duration_cast<std::chrono::milliseconds>(sleep).count());
 }
 
 using TimeValSeconds = long;

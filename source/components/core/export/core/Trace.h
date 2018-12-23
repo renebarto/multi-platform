@@ -11,7 +11,7 @@ namespace Core {
 
 enum class TraceClass
 {
-    FunctionEntry,
+    FunctionEnter,
     FunctionLeave,
     Debug,
     Info,
@@ -42,22 +42,29 @@ private:
 
     static std::ostream * _stream;
     static DateTime _lastTimestamp;
-    static std::ostringstream _null;
     static TraceHandler _trace;
 
     friend CORE_EXPORT void InitializeTrace(std::ostream * stream);
     friend CORE_EXPORT void DeinitializeTrace();
     friend CORE_EXPORT TraceHandler & GetTraceHandler();
-    friend CORE_EXPORT void TraceWarning(const std::string & text);
     friend CORE_EXPORT void TraceError(const std::string & text);
+    friend CORE_EXPORT void TraceWarning(const std::string & text);
+    friend CORE_EXPORT void TraceInfo(const std::string & format);
+    friend CORE_EXPORT void TraceDebug(const std::string & format);
+    friend CORE_EXPORT void TraceFunctionEnter(const std::string & format);
+    friend CORE_EXPORT void TraceFunctionLeave(const std::string & format);
 };
 
 extern CORE_EXPORT void InitializeTrace(std::ostream * stream);
 extern CORE_EXPORT void DeinitializeTrace();
 extern CORE_EXPORT TraceHandler & GetTraceHandler();
 
-void CORE_EXPORT TraceWarning(const std::string & format);
-void CORE_EXPORT TraceError(const std::string & format);
+CORE_EXPORT void TraceError(const std::string & format);
+CORE_EXPORT void TraceWarning(const std::string & format);
+CORE_EXPORT void TraceInfo(const std::string & format);
+CORE_EXPORT void TraceDebug(const std::string & format);
+CORE_EXPORT void TraceFunctionEnter(const std::string & format);
+CORE_EXPORT void TraceFunctionLeave(const std::string & format);
 
 template <typename ... Args>
 void Trace(TraceClass traceClass, char const * const format,
@@ -76,7 +83,7 @@ template <typename ... Args>
 void TraceFunctionBegin(char const * const format,
                         Args const & ... args) noexcept
 {
-    Trace(TraceClass::FunctionEntry, format, args ...);
+    Trace(TraceClass::FunctionEnter, format, args ...);
 }
 
 template <typename ... Args>

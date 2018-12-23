@@ -10,9 +10,19 @@ TEST_SUITE(core) {
 
 class TraceTest : public UnitTestCpp::TestFixture
 {
+public:
+    void SetUp() override
+    {
+        InitializeTrace(&stream);
+    }
+    void TearDown() override
+    {
+        DeinitializeTrace();
+    }
+    std::ostringstream stream;
 };
 
-TEST_FIXTURE(TraceTest, ConstructionDefault)
+TEST_FIXTURE(TraceTest, TraceWithError)
 {
     std::ostringstream stream;
     InitializeTrace(&stream);
@@ -22,94 +32,136 @@ TEST_FIXTURE(TraceTest, ConstructionDefault)
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Error|Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
-
-//    OSAL::Console console;
-//    refTimeStamp.PrintTo(console);
 }
 
-//TEST_FIXTURE(TraceTest, SendWithString)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::Send(TraceClass::Error, "Test") << "Hello";
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Entry|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendFunctionEntry)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendFunctionEntry("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Entry|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendFunctionLeave)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendFunctionLeave("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Leave|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendDebug)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendDebug("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Debug|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendInfo)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendInfo("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Info|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendWarning)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendWarning("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Warn|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
-//
-//TEST_FIXTURE(TraceTest, SendError)
-//{
-//    std::ostringstream stream;
-//    TraceHandler target(&stream);
-//
-//    TraceHandler::SendError("Test");
-//    DateTime refTimeStamp = DateTime::NowUTC();
-//    std::ostringstream refStream;
-//    refStream << refTimeStamp << "|Error|Test" << std::endl;
-//    EXPECT_EQ(refStream.str(), stream.str());
-//}
+TEST_FIXTURE(TraceTest, TraceWithWarning)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    Trace(TraceClass::Warning , "Test");
+    const DateTime & refTimeStamp = GetTraceHandler().LastTimeStamp();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Warn |Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceWithInfo)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    Trace(TraceClass::Info, "Test");
+    const DateTime & refTimeStamp = GetTraceHandler().LastTimeStamp();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Info |Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceWithDebug)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    Trace(TraceClass::Debug, "Test");
+    const DateTime & refTimeStamp = GetTraceHandler().LastTimeStamp();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Debug|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceWithFunctionEnter)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    Trace(TraceClass::FunctionEnter, "Test");
+    const DateTime & refTimeStamp = GetTraceHandler().LastTimeStamp();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Enter|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceWithFunctionLeave)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    Trace(TraceClass::FunctionLeave, "Test");
+    const DateTime & refTimeStamp = GetTraceHandler().LastTimeStamp();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Leave|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceFunctionEnter)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    TraceFunctionEnter("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Enter|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceFunctionLeave)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    TraceFunctionLeave("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Leave|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceDebug)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    TraceDebug("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Debug|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceInfo)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    TraceInfo("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Info |Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceWarning)
+{
+    std::ostringstream stream;
+    InitializeTrace(&stream);
+
+    TraceWarning("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Warn |Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
+
+TEST_FIXTURE(TraceTest, TraceError)
+{
+    TraceError("Test");
+    DateTime refTimeStamp = DateTime::NowUTC();
+    std::ostringstream refStream;
+    refStream << refTimeStamp << "|Error|Test" << std::endl;
+    EXPECT_EQ(refStream.str(), stream.str());
+}
 
 } // TEST_SUITE(core)
 
