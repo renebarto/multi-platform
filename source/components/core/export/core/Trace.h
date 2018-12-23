@@ -26,7 +26,7 @@ class CORE_EXPORT TraceHandler
 public:
     bool DoOutput(TraceClass traceClass) const;
     void Send(TraceClass traceClass, const std::string message);
-    const DateTime & LastTimeStamp() const { return _lastTimestamp; }
+    static const DateTime & LastTimeStamp() { return _lastTimestamp; }
 
 private:
     TraceHandler();

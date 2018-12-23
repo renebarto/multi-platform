@@ -100,7 +100,7 @@ TEST_FIXTURE(TraceTest, TraceFunctionEnter)
     InitializeTrace(&stream);
 
     TraceFunctionEnter("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Enter|Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
@@ -112,7 +112,7 @@ TEST_FIXTURE(TraceTest, TraceFunctionLeave)
     InitializeTrace(&stream);
 
     TraceFunctionLeave("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Leave|Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
@@ -124,7 +124,7 @@ TEST_FIXTURE(TraceTest, TraceDebug)
     InitializeTrace(&stream);
 
     TraceDebug("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Debug|Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
@@ -136,7 +136,7 @@ TEST_FIXTURE(TraceTest, TraceInfo)
     InitializeTrace(&stream);
 
     TraceInfo("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Info |Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
@@ -148,7 +148,7 @@ TEST_FIXTURE(TraceTest, TraceWarning)
     InitializeTrace(&stream);
 
     TraceWarning("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Warn |Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
@@ -157,7 +157,7 @@ TEST_FIXTURE(TraceTest, TraceWarning)
 TEST_FIXTURE(TraceTest, TraceError)
 {
     TraceError("Test");
-    DateTime refTimeStamp = DateTime::NowUTC();
+    DateTime refTimeStamp = TraceHandler::LastTimeStamp();
     std::ostringstream refStream;
     refStream << refTimeStamp << "|Error|Test" << std::endl;
     EXPECT_EQ(refStream.str(), stream.str());
