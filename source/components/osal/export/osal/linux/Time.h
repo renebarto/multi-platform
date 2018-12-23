@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <cstdint>
+#include <chrono>
 #include <iostream>
 #include "osal/Strings.h"
 
