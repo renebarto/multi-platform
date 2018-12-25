@@ -22,6 +22,37 @@ public:
     std::ostringstream _traceStream;
 };
 
+template <class T>
+std::ostream & PrintStandard(std::ostream & stream, std::string::size_type width, std::string::size_type UNUSED(integralDigits), std::string::size_type UNUSED(fractionalDigits), T value)
+{
+    std::ostringstream valuePrint;
+    valuePrint << setfill('0') << setprecision(width) << value;
+    if (width > valuePrint.str().length())
+        stream << std::string(width - valuePrint.str().length(), ' ');
+    stream << valuePrint.str();
+    return stream;
+}
+template <class T>
+std::ostream & PrintFixed(std::ostream & stream, std::string::size_type width, std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream valuePrint;
+    valuePrint << fixed << setfill('0') << setw(integralDigits + fractionalDigits + 1) << setprecision(fractionalDigits) << value;
+    if (width > valuePrint.str().length())
+        stream << std::string(width - valuePrint.str().length(), ' ');
+    stream << valuePrint.str();
+    return stream;
+}
+template <class T>
+std::ostream & PrintScientific(std::ostream & stream, std::string::size_type width, std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream valuePrint;
+    valuePrint << scientific << setfill('0') << setw(integralDigits + fractionalDigits + 1) << setprecision(fractionalDigits) << value;
+    if (width > valuePrint.str().length())
+        stream << std::string(width - valuePrint.str().length(), ' ');
+    stream << valuePrint.str();
+    return stream;
+}
+
 TEST_FIXTURE(PrintTest, PrintCharPtrNarrow)
 {
     const char * text = "Hello";
@@ -121,17 +152,32 @@ TEST_FIXTURE(PrintTest, PrintIntegralWithFormat)
 TEST_FIXTURE(PrintTest, PrintFloatingPointWithFormat)
 {
     // Apparently there is a difference between MinGW and Windows in how they print floating point numbers
-#if defined(WIN_MINGW)
-    const char * text = " 1234.5678  1234.5678  1234.5678   1234.568  01234.56780 1.2346e+003  1234.5678";
-#else
-    const char * text = " 1234.5678  1234.5678  1234.5678   1234.568  01234.56780 1.2346e+03  1234.5678";
-#endif
+    std::ostringstream refStream;
+//#if defined(WIN_MINGW)
+//    const char * text = " 1234.5678  1234.5678  1234.5678   1234.568  01234.56780 1.2346e+003  1234.5678";
+//#else
+//    const char * text = " 1234.5678  1234.5678  1234.5678   1234.568  01234.56780 1.2346e+03  1234.5678";
+//#endif
     std::ostringstream stream;
     OSAL::Console console(stream);
     double value = 1234.5678;
     Print(console, "{0,10} {0,10:F4.4} {0,10:F3.4} {0,10:F3.3} {0,12:F5.5} {0,10:E4.4} {0,10:G5.4}", value);
 
-    EXPECT_EQ(text, stream.str().c_str());
+    PrintStandard<double>(refStream, 10, 0, 0, value);
+    refStream << ' ';
+    PrintFixed<double>(refStream, 10, 4, 4, value);
+    refStream << ' ';
+    PrintFixed<double>(refStream, 10, 3, 4, value);
+    refStream << ' ';
+    PrintFixed<double>(refStream, 10, 3, 3, value);
+    refStream << ' ';
+    PrintFixed<double>(refStream, 12, 5, 5, value);
+    refStream << ' ';
+    PrintScientific<double>(refStream, 10, 4, 4, value);
+    refStream << ' ';
+    PrintStandard<double>(refStream, 10, 5, 4, value);
+
+    EXPECT_EQ(refStream.str(), stream.str());
 }
 
 TEST_FIXTURE(PrintTest, PrintInvalidIndex)

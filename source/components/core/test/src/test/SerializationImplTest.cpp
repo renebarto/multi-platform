@@ -7,6 +7,52 @@ using namespace std;
 namespace Core {
 namespace Test {
 
+template <class T>
+std::ostream & PrintStandard(std::ostream & stream, std::string::size_type UNUSED(integralDigits), std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream valuePrint;
+    valuePrint << setfill('0') << setprecision(fractionalDigits) << value;
+    stream << valuePrint.str();
+    return stream;
+}
+template <class T>
+std::ostream & PrintFixed(std::ostream & stream, std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream valuePrint;
+    valuePrint << fixed << setfill('0') << setw(integralDigits + fractionalDigits + 1) << setprecision(fractionalDigits) << value;
+    stream << valuePrint.str();
+    return stream;
+}
+template <class T>
+std::ostream & PrintScientific(std::ostream & stream, std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+    {
+    std::ostringstream valuePrint;
+    valuePrint << scientific << setfill('0') << setw(integralDigits + fractionalDigits + 1) << setprecision(fractionalDigits) << value;
+    stream << valuePrint.str();
+    return stream;
+}
+template <class T>
+std::string SerializeStandard(std::string::size_type width, T value)
+{
+    std::ostringstream stream;
+    PrintStandard(stream, 0, width, value);
+    return stream.str();
+}
+template <class T>
+std::string SerializeFixed(std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream stream;
+    PrintFixed(stream, integralDigits, fractionalDigits, value);
+    return stream.str();
+}
+template <class T>
+std::string SerializeScientific(std::string::size_type integralDigits, std::string::size_type fractionalDigits, T value)
+{
+    std::ostringstream stream;
+    PrintScientific(stream, integralDigits, fractionalDigits, value);
+    return stream.str();
+}
+
 TEST_SUITE(core)
 {
 
@@ -101,23 +147,27 @@ TEST_FIXTURE(SerializationImplTest, SerializeFloat)
     EXPECT_EQ("   10002", Serialize(value, 8));
     EXPECT_EQ("10002.0000", Serialize(value, 0, 4, FloatingPointRepresentation::Fixed));
     EXPECT_EQ("0010002.0000", Serialize(value, 12, 4, FloatingPointRepresentation::Fixed));
-#if defined(WIN_MINGW)
-    EXPECT_EQ("1.0002e+004", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#else
-    EXPECT_EQ("1.0002e+04", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#endif
+    EXPECT_EQ(SerializeScientific(0, 4, value), Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+
+//#if defined(WIN_MINGW)
+//    EXPECT_EQ("1.0002e+004", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#else
+//    EXPECT_EQ("1.0002e+04", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#endif
     EXPECT_EQ("10002", Serialize(value, 0, 8, FloatingPointRepresentation::Mixed));
     value = 5.0E-37F;
-#if defined(LINUX) || defined(APPLE)
-    EXPECT_EQ("5.000000179695649e-37", Serialize(value));
-    EXPECT_EQ("5e-37", Serialize(value, 0, 1));
-#elif defined(WIN_MSVC)
-    EXPECT_EQ("5.000000179695649e-37", Serialize(value));
-    EXPECT_EQ("5e-37", Serialize(value, 0, 1));
-#else
-    EXPECT_EQ("5.000000179695649e-037", Serialize(value));
-    EXPECT_EQ("5e-037", Serialize(value, 0, 1));
-#endif
+    EXPECT_EQ(SerializeStandard(16, value), Serialize(value));
+    EXPECT_EQ(SerializeScientific(1, 0, value), Serialize(value, 0, 1));
+//#if defined(LINUX) || defined(APPLE)
+//    EXPECT_EQ("5.000000179695649e-37", Serialize(value));
+//    EXPECT_EQ("5e-37", Serialize(value, 0, 1));
+//#elif defined(WIN_MSVC)
+//    EXPECT_EQ("5.000000179695649e-37", Serialize(value));
+//    EXPECT_EQ("5e-37", Serialize(value, 0, 1));
+//#else
+//    EXPECT_EQ("5.000000179695649e-037", Serialize(value));
+//    EXPECT_EQ("5e-037", Serialize(value, 0, 1));
+//#endif
 }
 
 TEST_FIXTURE(SerializationImplTest, SerializeDouble)
@@ -127,11 +177,12 @@ TEST_FIXTURE(SerializationImplTest, SerializeDouble)
     EXPECT_EQ("  100002", Serialize(value, 8));
     EXPECT_EQ("100002.0000", Serialize(value, 0, 4, FloatingPointRepresentation::Fixed));
     EXPECT_EQ("0100002.0000", Serialize(value, 12, 4, FloatingPointRepresentation::Fixed));
-#if defined(WIN_MINGW)
-    EXPECT_EQ("1.0000e+005", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#else
-    EXPECT_EQ("1.0000e+05", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#endif
+    EXPECT_EQ(SerializeScientific(0, 4, value), Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#if defined(WIN_MINGW)
+//    EXPECT_EQ("1.0000e+005", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#else
+//    EXPECT_EQ("1.0000e+05", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#endif
     EXPECT_EQ("100002", Serialize(value, 0, 8, FloatingPointRepresentation::Mixed));
     value = 1e-200;
     EXPECT_EQ("1e-200", Serialize(value));
@@ -147,11 +198,12 @@ TEST_FIXTURE(SerializationImplTest, SerializeLongDouble)
     EXPECT_EQ("  100002", Serialize(value, 8));
     EXPECT_EQ("100002.0000", Serialize(value, 0, 4, FloatingPointRepresentation::Fixed));
     EXPECT_EQ("0100002.0000", Serialize(value, 12, 4, FloatingPointRepresentation::Fixed));
-#if defined(WIN_MINGW)
-    EXPECT_EQ("1.0000e+005", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#else
-    EXPECT_EQ("1.0000e+05", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
-#endif
+    EXPECT_EQ(SerializeScientific(0, 4, value), Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#if defined(WIN_MINGW)
+//    EXPECT_EQ("1.0000e+005", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#else
+//    EXPECT_EQ("1.0000e+05", Serialize(value, 0, 4, FloatingPointRepresentation::Exponential));
+//#endif
     EXPECT_EQ("100002", Serialize(value, 0, 8, FloatingPointRepresentation::Mixed));
     value = 1e-200;
     EXPECT_EQ("1e-200", Serialize(value));

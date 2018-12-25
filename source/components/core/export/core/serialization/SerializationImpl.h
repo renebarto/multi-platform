@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <ios>
+#include <sstream>
 #include <string>
 #include "core/core.h"
 #include "core/serialization/Serialization.h"

@@ -1,15 +1,13 @@
 #include <unittest-cpp/UnitTestC++.h>
 
 #include <fstream>
+#include "osal/OSAL.h"
 #include "osal/Console.h"
-#include "core/Trace.h"
+#include <core/Trace.h>
 #include <unittest-cpp/ConsoleGoogleTestReporter.h>
 #include "CommandLineOptionsParser.h"
-#include "osal/TestData.h"
 
-using namespace std;
-
-static const std::string moduleName = "osal";
+static const std::string moduleName = "json";
 
 int main(int argc, const char * argv[])
 {
@@ -39,7 +37,6 @@ int main(int argc, const char * argv[])
 
     int result = 0;
 
-    OSAL::Test::Data::ApplicationName(applicationName);
     if (!parser.xmlOutput.empty())
     {
         std::basic_ofstream<char> outputFile;

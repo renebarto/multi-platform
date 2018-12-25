@@ -165,7 +165,7 @@ bool Core::Deserialize(const std::string & text, uint32_t & value, int base /*= 
     if (!HasValidCharactersForBase(text, base, false))
         return false;
 
-    unsigned long result = OSAL::Strings::strtoul(text.c_str(), nullptr, base);
+    unsigned long long result = OSAL::Strings::strtoull(text.c_str(), nullptr, base);
     if ((base == 10) && (result > UINT_MAX))
         return false;
     value = static_cast<uint32_t>(result);

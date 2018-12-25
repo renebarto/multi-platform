@@ -88,6 +88,8 @@ public:
     Console(FILE * file);
     Console(std::ostream & stream);
 
+    std::ostream * GetStream() { return _stream; }
+
     void SetForegroundColor(ConsoleColor foregroundColor)
     {
         SetTerminalColor(foregroundColor, _currentBackgroundColor);

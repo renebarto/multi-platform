@@ -3,8 +3,7 @@
 #include <fstream>
 #include "osal/osal.h"
 #include "osal/Console.h"
-//#include <core/ConsoleLogger.h>
-//#include <core/DefaultLogger.h>
+#include "core/Trace.h"
 #include <unittest-cpp/ConsoleGoogleTestReporter.h>
 #include "CommandLineOptionsParser.h"
 
@@ -19,7 +18,7 @@ int main(int argc, const char * argv[])
     console << fgcolor(OSAL::ConsoleColor::Magenta | OSAL::ConsoleColor::Intensity);
     console << "Running tests for: " << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
-//    Core::ConsoleLogger logger(Core::TheLogger(), console);
+    Core::InitializeTrace(console.GetStream());
 
     CommandLineOptionsParser parser(console);
     string applicationName = argv[0];
