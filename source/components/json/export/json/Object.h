@@ -2,7 +2,7 @@
 
 #include <map>
 #include <vector>
-#include <core/Iterator.h>
+#include <core/iterator.h>
 #include "json/Value.h"
 
 namespace JSON {
