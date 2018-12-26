@@ -45,16 +45,19 @@ set(PACKAGE_DEPENDENCIES
     json)
 if(WIN_MSVC OR MINGW)
     set(PACKAGE_DEPENDENCIES
-            ${PACKAGE_DEPENDENCIES}
-            unittest-cpp)
+    ${PACKAGE_DEPENDENCIES}
+    unittest-cpp)
 endif()
 
 set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
-    ${LIB_CLANG_LIB}
-    ${UNITTEST_CPP_LIBRARIES}
     ${LINKER_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
+if(LINUX OR DARWIN)
+    set(PACKAGE_LIBS
+        ${PACKAGE_LIBS}
+        ${UNITTEST_CPP_LIBRARIES})
+endif()
 
 file(GLOB PACKAGE_SOURCES src/*.cpp)
 file(GLOB PACKAGE_SOURCES_TEST src/test/*.cpp)

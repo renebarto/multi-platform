@@ -2,15 +2,9 @@
 
 #include <osal/osal.h>
 #include <osal/NetworkAdapter.h>
-//#include <core/Core.h>
-//#include <core/DefaultLogger.h>
 #include <osal/NetworkEndPoint.h>
-//#include <osal/IPV4Address.h>
 #include <osal/IPV4EndPoint.h>
 #include <inaddr.h>
-//#include <osal/IPV6EndPoint.h>
-//#include <osal/linux/DomainSocketAddress.h>
-//#include <osal/MACAddress.h>
 
 using namespace std;
 using namespace OSAL;

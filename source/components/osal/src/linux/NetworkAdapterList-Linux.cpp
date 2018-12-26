@@ -6,9 +6,6 @@
 #include <linux/if_packet.h>
 #include <sys/un.h>
 #include <osal/NetworkAdapter.h>
-//#include <core/Core.h>
-//#include <core/DefaultLogger.h>
-//#include <osal/NetworkEndPoint.h>
 #include <osal/Exception.h>
 #include <osal/IPV4EndPoint.h>
 #include <osal/IPV6EndPoint.h>
