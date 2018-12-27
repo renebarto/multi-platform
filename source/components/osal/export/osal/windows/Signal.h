@@ -1,7 +1,7 @@
 #pragma once
 
 #include <signal.h>
-#include "osal/OSAL.h"
+#include "osal/osal.h"
 #include "osal/Unused.h"
 WARNING_PUSH
 WARNING_DISABLE(4265)

@@ -2,7 +2,7 @@
 
 #include <pthread.h>
 #include <string>
-#include "osal/OSAL.h"
+#include "osal/osal.h"
 
 using namespace std;
 

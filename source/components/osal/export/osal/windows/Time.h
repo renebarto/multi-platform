@@ -4,7 +4,7 @@
 #include <chrono>
 #include <time.h>
 #include "osal/Unused.h"
-#include "osal/windows/OSAL.h"
+#include "osal/windows/osal.h"
 #include "osal/Strings.h"
 
 namespace OSAL {

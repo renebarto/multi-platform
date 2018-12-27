@@ -1,7 +1,7 @@
 #include <unittest-cpp/UnitTestC++.h>
 
 #include <fstream>
-#include "osal/OSAL.h"
+#include "osal/osal.h"
 #include "osal/Console.h"
 #include <core/Trace.h>
 #include <unittest-cpp/ConsoleGoogleTestReporter.h>
