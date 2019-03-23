@@ -8,15 +8,15 @@
 namespace OSAL
 {
 
-typedef void * AutoEventHandle;
+using AutoEventHandle =  void *;
 
 class OSAL_EXPORT AutoEvent
 {
 public:
-    typedef std::shared_ptr<AutoEvent> Ptr;
+    using Ptr = std::shared_ptr<AutoEvent>;
 
     AutoEvent();
-    AutoEvent(const AutoEvent &event);
+    AutoEvent(const AutoEvent & event);
     AutoEvent(AutoEventHandle handle);
     virtual ~AutoEvent();
     bool Get();
