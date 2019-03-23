@@ -27,9 +27,9 @@ TEST_FIXTURE(ConsoleTest, ConstructorStdOut)
 {
     const char * termVar = OSAL::System::GetEnvironment("TERM");
     string term = termVar ? termVar : "";
-    const bool terminalSupportsColor = (term == "xterm") || (term == "xterm-color")
-                                     || (term == "xterm-256color") || (term == "screen") || (term == "screen-256color")
-                                     || (term == "linux") || (term == "cygwin");
+    bool terminalSupportsColor = (term == "xterm") || (term == "xterm-color") ||
+                                 (term == "xterm-256color") || (term == "screen") || 
+                                 (term == "screen-256color") || (term == "linux") || (term == "cygwin");
     OSAL::Console console(cout);
     auto handle = OSAL::Files::GetFileDescriptor(stdout);
     terminalSupportsColor &= OSAL::Files::IsTTY(handle);
