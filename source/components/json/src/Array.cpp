@@ -32,7 +32,6 @@ void Array::AddValue(ValuePtr value)
 
 bool Array::Deserialize(std::basic_istream<char> & stream)
 {
-    std::string key;
     Token token = GetToken(stream);
     if (token.type != TokenType::SquareBracketOpen)
         return false;

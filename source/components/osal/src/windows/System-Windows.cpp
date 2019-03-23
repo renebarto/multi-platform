@@ -190,7 +190,7 @@ string System::DemangleName(const string & mangledName)
     {
         result = demangledName;
     }
-    if (result.find(ClassLiteral, 0) == 0)
+    if (result.compare(0, ClassLiteral.length(), ClassLiteral) == 0)
     {
         result = result.substr(ClassLiteral.length());
     }
