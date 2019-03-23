@@ -31,6 +31,8 @@ TEST_FIXTURE(ConsoleTest, ConstructorStdOut)
                                      || (term == "xterm-256color") || (term == "screen") || (term == "screen-256color")
                                      || (term == "linux") || (term == "cygwin");
     OSAL::Console console(cout);
+    auto handle = OSAL::Files::GetFileDescriptor(stdout);
+    terminalSupportsColor &= OSAL::Files::IsTTY(handle);
     EXPECT_EQ(terminalSupportsColor, console.ShouldUseColor());
     EXPECT_FALSE(console.ForceUseColor());
 }
