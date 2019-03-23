@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iosfwd": "cpp",
+			"locale": "cpp",
+			"xstring": "cpp",
+			"chrono": "cpp",
+			"ratio": "cpp",
+			"system_error": "cpp",
+			"type_traits": "cpp",
+			"xlocmon": "cpp",
+			"xstddef": "cpp",
+			"xtr1common": "cpp"
+		}
+	}
+}
