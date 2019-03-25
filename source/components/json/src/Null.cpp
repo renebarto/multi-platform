@@ -2,6 +2,7 @@
 #include "Parse.h"
 #include <core/serialization/DeserializationImpl.h>
 #include <core/serialization/SerializationImpl.h>
+#include <core/Trace.h>
 
 namespace JSON
 {
@@ -34,6 +35,17 @@ void Null::Serialize(std::basic_ostream<char> & stream, int indentDepth, bool in
         }
     }
     stream << "null";
+}
+
+bool Null::EqualTo(std::shared_ptr<Value> other) const
+{
+    std::shared_ptr<Null> otherAsThis = std::dynamic_pointer_cast<Null>(other);
+    if (!otherAsThis)
+    {
+        Core::TraceError("other value is not convertible to Boolean");
+        return false;
+    }
+    return true;
 }
 
 } // namespace JSON

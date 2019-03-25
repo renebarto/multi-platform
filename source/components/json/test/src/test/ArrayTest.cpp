@@ -37,6 +37,8 @@ TEST_FIXTURE(ArrayTest, Construct)
 
     EXPECT_EQ(ValueType::Array, target.Type());
     EXPECT_EQ(size_t {0}, target.Size());
+    EXPECT_NULL(target[std::string("A")]);
+    EXPECT_NULL(target[0]);
 }
 
 TEST_FIXTURE(ArrayTest, ConstructInitializerSingleValue)
@@ -49,6 +51,8 @@ TEST_FIXTURE(ArrayTest, ConstructInitializerSingleValue)
     ASSERT_EQ(size_t {1}, target.Size());
     auto iterator = target.GetIterator();
     EXPECT_EQ(value, (*iterator));
+    EXPECT_NULL(target["A"]);
+    EXPECT_EQ(value, target[0]);
 }
 
 TEST_FIXTURE(ArrayTest, ConstructInitializerMultipleValues)

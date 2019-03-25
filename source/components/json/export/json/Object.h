@@ -118,12 +118,19 @@ public:
     virtual void Serialize(std::basic_ostream<char> & stream, int indentDepth = 0, bool indentInitial = true) const override;
 
     virtual ValueType Type() const override { return ValueType::Object; }
+    virtual void Set(ValuePtr other) override;
+    virtual std::shared_ptr<Value> Clone() const;
     bool AddPair(const KVPair & pair);
     ValuePtr Find(const std::string & name);
     const ValuePtr Find(const std::string & name) const;
     size_t Size() const { return _elements.size(); }
+    JSON::ValuePtr operator [] (const std::string & key) override;
+
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }
+    KVList GetValue() const { return _elements; }
+
+    bool EqualTo(std::shared_ptr<Value> other) const override;
 
 private:
     KVList _elements;

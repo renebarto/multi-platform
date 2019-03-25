@@ -130,7 +130,7 @@ public:
     const CommandLineOptionGroup::List & Groups() const { return _groups; }
     bool IsInGroups(const CommandLineOptionGroup::Ptr group) const;
 
-    bool Parse(int argc, const char * argv[]);
+    bool Parse(int argc, char * argv[]);
 
     bool AutoHandleHelp() const
     {
@@ -203,16 +203,16 @@ private:
     CommandLineOption::List _options;
     GetOptData _getOptData;
 
-    bool InternalParse(int argc, const char * argv[]);
-    void ExchangeOption(const char ** argv);
-    bool AtNonOption(size_t argCount, const char ** argv) const;
-    bool AtLongOption(size_t argCount, const char ** argv) const;
-    int HandleLongOption(size_t argCount, const char ** argv, const char * optionString,
+    bool InternalParse(int argc, char * argv[]);
+    void ExchangeOption(char ** argv);
+    bool AtNonOption(size_t argCount, char ** argv) const;
+    bool AtLongOption(size_t argCount, char ** argv) const;
+    int HandleLongOption(size_t argCount, char ** argv, const char * optionString,
                          size_t & optionIndex, bool printErrors);
     void SetArgument();
-    int HandleShortOption(size_t argCount, const char ** argv, const char * optionString,
+    int HandleShortOption(size_t argCount, char ** argv, const char * optionString,
                           bool printErrors);
-    int GetOpt(size_t argCount, const char ** argv, const std::string & optionString,
+    int GetOpt(size_t argCount, char ** argv, const std::string & optionString,
                size_t & optionIndex);
     void ShowHelp(const std::string & applicationName);
     size_t MatchShortOption(char name) const;

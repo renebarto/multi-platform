@@ -50,6 +50,7 @@ set(PACKAGE_DEPENDENCIES
     osal
     network
     json
+    settings
 #    regex
 #    parser
 #    database
@@ -88,7 +89,10 @@ file(GLOB_RECURSE PACKAGE_SOURCES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/
 file(GLOB_RECURSE PACKAGE_INCLUDES_NETWORK ${CMAKE_SOURCE_DIR}/source/components/network/test/include/network/*.h)
 
 file(GLOB_RECURSE PACKAGE_SOURCES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/src/test/*.cpp)
-file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/crypto/*.h)
+file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/json/test/include/json/*.h)
+
+file(GLOB_RECURSE PACKAGE_SOURCES_SETTINGS ${CMAKE_SOURCE_DIR}/source/components/settings/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_SETTINGS ${CMAKE_SOURCE_DIR}/source/components/settings/test/include/settings/*.h)
 
 #file(GLOB_RECURSE PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
 #file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/include/regex/*.h)
@@ -119,6 +123,7 @@ list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_CORE}
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_JSON}
+    ${PACKAGE_SOURCES_SETTINGS}
 #    ${PACKAGE_SOURCES_RE}
 #    ${PACKAGE_SOURCES_PARSER}
 #    ${PACKAGE_SOURCES_DATABASE}
@@ -132,6 +137,7 @@ list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_CORE}
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_JSON}
+    ${PACKAGE_INCLUDES_SETTINGS}
 #    ${PACKAGE_INCLUDES_RE}
 #    ${PACKAGE_INCLUDES_PARSER}
 #    ${PACKAGE_INCLUDES_DATABASE}
@@ -147,6 +153,7 @@ list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/core/test/include
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/json/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/settings/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/regex/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/database/test/include

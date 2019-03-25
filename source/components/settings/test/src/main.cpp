@@ -3,25 +3,23 @@
 #include <fstream>
 #include "osal/osal.h"
 #include "osal/Console.h"
+#include <core/Trace.h>
 #include <unittest-cpp/ConsoleGoogleTestReporter.h>
 #include "CommandLineOptionsParser.h"
-#include "osal/TestData.h"
 
-using namespace std;
+static const std::string moduleName = "json";
 
-static const string moduleName = "run-all-tests";
-
-int main(int argc, char * argv[])
+int main(int argc, const char * argv[])
 {
     OSAL::Console console;
 
     console << fgcolor(OSAL::ConsoleColor::Magenta | OSAL::ConsoleColor::Intensity);
     console << "Running tests for: " << moduleName << std::endl;
     console << fgcolor(OSAL::ConsoleColor::Default);
-//    Core::ConsoleLogger logger(Core::TheLogger(), console);
+    Core::InitializeTrace(console.GetStream());
 
     CommandLineOptionsParser parser(console);
-    string applicationName = argv[0];
+    std::string applicationName = argv[0];
 
     if (!parser.Parse(argc, argv))
     {
@@ -39,10 +37,9 @@ int main(int argc, char * argv[])
 
     int result = 0;
 
-    OSAL::Test::Data::ApplicationName(applicationName);
     if (!parser.xmlOutput.empty())
     {
-        std::ofstream outputFile;
+        std::basic_ofstream<char> outputFile;
 
         outputFile.open(parser.xmlOutput);
         UnitTestCpp::XMLTestReporter reporter(outputFile);
