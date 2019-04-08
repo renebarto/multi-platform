@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <sscfts1.h>
+#include <remotingts1.h>
 
-#define SSCFTS1_DECLARE_INTERFACE
+#define REMOTINGTS1_DECLARE_INTERFACE
 #include "ITest.hpp"
-#undef SSCFTS1_DECLARE_INTERFACE
-#define SSCFTS1_DECLARE_PROXY
+#undef REMOTINGTS1_DECLARE_INTERFACE
+#define REMOTINGTS1_DECLARE_PROXY
 #include "ITest.hpp"
-#undef SSCFTS1_DECLARE_PROXY
+#undef REMOTINGTS1_DECLARE_PROXY
 
 extern const std::string ITestUrn;

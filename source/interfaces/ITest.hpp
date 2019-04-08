@@ -4,19 +4,19 @@
 
 // All units are SI base units (m, s, A) or directly derived (V, Gy, °C)
 
-#include <sscfts1/interface.begin.h>
-#ifdef SSCFTS1_BEGIN_INTERFACE
+#include <remotingts1/interface.begin.h>
+#ifdef REMOTINGTS1_BEGIN_INTERFACE
 
-SSCFTS1_BEGIN_INTERFACE(ITest)
-    SSCFTS1_BEGIN_METHODS(ITest)
-        SSCFTS1_INTERFACE_METHOD_0(int, ITest, Start)
-        SSCFTS1_INTERFACE_METHOD_0(int, ITest, Stop)
-    SSCFTS1_END_METHODS
+REMOTINGTS1_BEGIN_INTERFACE(ITest)
+    REMOTINGTS1_BEGIN_METHODS(ITest)
+        REMOTINGTS1_INTERFACE_METHOD_0(int, ITest, Start)
+        REMOTINGTS1_INTERFACE_METHOD_0(int, ITest, Stop)
+    REMOTINGTS1_END_METHODS
 
-    SSCFTS1_BEGIN_EVENTS(ITest)
-        SSCFTS1_INTERFACE_EVENT_0(ITest, Callback)
-    SSCFTS1_END_EVENTS
-SSCFTS1_END_INTERFACE
+    REMOTINGTS1_BEGIN_EVENTS(ITest)
+        REMOTINGTS1_INTERFACE_EVENT_0(ITest, Callback)
+    REMOTINGTS1_END_EVENTS
+REMOTINGTS1_END_INTERFACE
 
 #endif
-#include <sscfts1/interface.end.h>
+#include <remotingts1/interface.end.h>
