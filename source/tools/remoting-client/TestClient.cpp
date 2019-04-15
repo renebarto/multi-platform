@@ -123,7 +123,7 @@ int TestClient::Start()
     {
         result = proxy_->Start();
     }
-    catch (const std::exception & UNUSED(e))
+    catch (const std::exception & /*e*/)
     { 
         result = -1;
     }
@@ -139,7 +139,7 @@ int TestClient::Stop()
     {
         result = proxy_->Stop();
     }
-    catch (const std::exception & UNUSED(e))
+    catch (const std::exception & /*e*/)
     { 
         result = -1;
     }
