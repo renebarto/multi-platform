@@ -51,6 +51,7 @@ set(PACKAGE_DEPENDENCIES
     network
     json
     settings
+    remoting
 #    regex
 #    parser
 #    database
@@ -94,6 +95,9 @@ file(GLOB_RECURSE PACKAGE_INCLUDES_JSON ${CMAKE_SOURCE_DIR}/source/components/js
 file(GLOB_RECURSE PACKAGE_SOURCES_SETTINGS ${CMAKE_SOURCE_DIR}/source/components/settings/test/src/test/*.cpp)
 file(GLOB_RECURSE PACKAGE_INCLUDES_SETTINGS ${CMAKE_SOURCE_DIR}/source/components/settings/test/include/settings/*.h)
 
+file(GLOB_RECURSE PACKAGE_SOURCES_REMOTING ${CMAKE_SOURCE_DIR}/source/components/remoting/test/src/test/*.cpp)
+file(GLOB_RECURSE PACKAGE_INCLUDES_REMOTING ${CMAKE_SOURCE_DIR}/source/components/remoting/test/include/remoting/*.h)
+
 #file(GLOB_RECURSE PACKAGE_SOURCES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/src/test/*.cpp)
 #file(GLOB_RECURSE PACKAGE_INCLUDES_RE ${CMAKE_SOURCE_DIR}/source/components/regex/test/include/regex/*.h)
 #
@@ -124,6 +128,7 @@ list(APPEND PACKAGE_SOURCES
     ${PACKAGE_SOURCES_NETWORK}
     ${PACKAGE_SOURCES_JSON}
     ${PACKAGE_SOURCES_SETTINGS}
+    ${PACKAGE_SOURCES_REMOTING}
 #    ${PACKAGE_SOURCES_RE}
 #    ${PACKAGE_SOURCES_PARSER}
 #    ${PACKAGE_SOURCES_DATABASE}
@@ -138,6 +143,7 @@ list(APPEND PACKAGE_INCLUDES_PUBLIC
     ${PACKAGE_INCLUDES_NETWORK}
     ${PACKAGE_INCLUDES_JSON}
     ${PACKAGE_INCLUDES_SETTINGS}
+    ${PACKAGE_INCLUDES_REMOTING}
 #    ${PACKAGE_INCLUDES_RE}
 #    ${PACKAGE_INCLUDES_PARSER}
 #    ${PACKAGE_INCLUDES_DATABASE}
@@ -154,6 +160,7 @@ list(APPEND PACKAGE_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/source/components/network/test/include
     ${CMAKE_SOURCE_DIR}/source/components/json/test/include
     ${CMAKE_SOURCE_DIR}/source/components/settings/test/include
+    ${CMAKE_SOURCE_DIR}/source/components/remoting/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/regex/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/parser/test/include
 #    ${CMAKE_SOURCE_DIR}/source/components/database/test/include
