@@ -251,8 +251,13 @@ std::string GetIpAddress(const std::string& interfaceName)
                 printf("%lx ", currentAddress->ZoneIndices[i]);
             printf("\n");
 
+#if defined(WIN_MSVC)
             printf("\tTransmit link speed: %I64u\n", currentAddress->TransmitLinkSpeed);
             printf("\tReceive link speed: %I64u\n", currentAddress->ReceiveLinkSpeed);
+#else
+            printf("\tTransmit link speed: %llu\n", currentAddress->TransmitLinkSpeed);
+            printf("\tReceive link speed: %llu\n", currentAddress->ReceiveLinkSpeed);
+#endif
 
             auto prefix = currentAddress->FirstPrefix;
             if (prefix) {

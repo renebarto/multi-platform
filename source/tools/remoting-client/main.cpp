@@ -81,7 +81,7 @@ private:
 
 REMOTINGClient<TestClient> client;
 
-int main(int UNUSED(argc), char * UNUSED(argv)[])
+int main(int UNUSED(argc), char ** UNUSED(argv))
 {
 #ifdef __linux__
     const std::string ipAddress = GetIpAddress("eth0");

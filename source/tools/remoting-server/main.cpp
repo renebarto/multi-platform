@@ -154,7 +154,7 @@ void OnCtrlC(int signal, siginfo_t * info, void * data)
 }
 #endif
 
-int main(int UNUSED(argc), char * UNUSED(argv)[])
+int main(int UNUSED(argc), char ** UNUSED(argv))
 {
 #ifdef __linux__
     const std::string ipAddress = GetIpAddress("eth0");
