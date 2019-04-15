@@ -31,6 +31,8 @@ public:
         {
             if (!AtEnd())
                 ++_current;
+            if (AtEnd())
+                return nullptr;
             return operator *();
         }
         ValuePtr operator++(int)
@@ -99,11 +101,18 @@ public:
     virtual void Serialize(std::basic_ostream<char> & stream, int indentDepth = 0, bool indentInitial = true) const override;
 
     virtual ValueType Type() const override { return ValueType::Array; }
+    virtual void Set(ValuePtr other) override;
+    virtual std::shared_ptr<Value> Clone() const;
 
     void AddValue(ValuePtr value);
     size_t Size() const { return _elements.size(); }
+    using Value::operator[];
+    JSON::ValuePtr operator [] (size_t index) override;
+
     Iterator GetIterator() { return Iterator(_elements); }
     ConstIterator GetIterator() const { return ConstIterator(_elements); }
+
+    bool EqualTo(std::shared_ptr<Value> other) const override;
 
 private:
     ValueList _elements;

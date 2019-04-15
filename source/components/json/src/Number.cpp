@@ -2,6 +2,7 @@
 #include "Parse.h"
 #include <core/serialization/DeserializationImpl.h>
 #include <core/serialization/SerializationImpl.h>
+#include <core/Trace.h>
 
 namespace JSON
 {
@@ -219,6 +220,17 @@ void Number::Serialize(std::basic_ostream<char> & stream, int indentDepth, bool 
         }
     }
     stream << _value;
+}
+
+bool Number::EqualTo(std::shared_ptr<Value> other) const
+{
+    std::shared_ptr<Number> otherAsThis = std::dynamic_pointer_cast<Number>(other);
+    if (!otherAsThis)
+    {
+        Core::TraceError("other value is not convertible to Number");
+        return false;
+    }
+    return _value == otherAsThis->_value;
 }
 
 } // namespace JSON

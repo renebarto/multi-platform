@@ -4,6 +4,7 @@
 #include "json/Null.h"
 #include "json/Number.h"
 #include "json/String.h"
+#include "core/Trace.h"
 
 namespace JSON
 {
@@ -164,6 +165,67 @@ void Object::Serialize(std::basic_ostream<char> & stream, int indentDepth, bool 
         stream << std::string(IndentSize, ' ');
     }
     stream << '}';
+}
+
+void Object::Set(ValuePtr other)
+{
+    if (other->Type() == ValueType::Object)
+    {
+        _elements.clear();
+        auto otherObject = std::dynamic_pointer_cast<const Object>(other);
+        ConstIterator iterator = otherObject->GetIterator();
+        while (!iterator.AtEnd())
+        {
+            Find((*iterator).GetKey())->Set((*iterator).GetValue());
+            iterator++;
+        }
+    }
+}
+
+std::shared_ptr<Value> Object::Clone() const
+{
+    auto result = std::make_shared<Object>();
+    ConstIterator iterator = GetIterator();
+    while (!iterator.AtEnd())
+    {
+        result->AddPair(KVPair((*iterator).GetKey(), (*iterator).GetValue()->Clone()));
+        iterator++;
+    }
+    return result;
+}
+
+std::shared_ptr<Value> Object::operator[] (const std::string & key)
+{
+    if (_elements.find(key) == _elements.end())
+    {
+        Core::TraceError("Object lookup operator []: element not found: {}", key);
+        return nullptr;
+    }
+    return _elements[key];
+}
+
+bool Object::EqualTo(std::shared_ptr<Value> other) const
+{
+    std::shared_ptr<Object> otherAsThis = std::dynamic_pointer_cast<Object>(other);
+    if (!otherAsThis)
+    {
+        Core::TraceError("other value is not convertible to Number");
+        return false;
+    }
+    auto iteratorThis = GetIterator();
+    auto iteratorOther = otherAsThis->GetIterator();
+    while (!iteratorThis.AtEnd() && !iteratorOther.AtEnd())
+    {
+        if (((*iteratorThis).GetKey() != (*iteratorOther).GetKey()) ||
+            ((*iteratorThis).GetValue()->Type() != (*iteratorOther).GetValue()->Type()))
+            break;
+        if (!(*iteratorThis).GetValue()->EqualTo((*iteratorOther).GetValue()))
+            return false;
+
+        iteratorThis++;
+        iteratorOther++;
+    }
+    return (iteratorThis.AtEnd() && iteratorOther.AtEnd());
 }
 
 } // namespace JSON

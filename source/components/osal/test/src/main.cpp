@@ -11,7 +11,7 @@ using namespace std;
 
 static const std::string moduleName = "osal";
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
     OSAL::Console console;
 
@@ -28,53 +28,37 @@ int main(int argc, const char * argv[])
         exit(1);
     }
 
-    console << "Application : " << applicationName << std::endl;
-    console << "XML output  : " << parser.xmlOutput << std::endl;
-    console << "Suite       : " << parser.testSuiteName << std::endl;
-    console << "Fixture     : " << parser.testFixtureName << std::endl;
-    console << "Test        : " << parser.testName << std::endl;
-    console << "GTest filter: " << parser.testFilter << std::endl;
-    console << "GTest color : " << parser.testColor << std::endl;
-    console << "Test data   : " << TEST_DATA_ROOT << std::endl;
-
-    int result = 0;
+    console << "Application           : " << applicationName << std::endl;
+    console << "XML output            : " << parser.XmlOutput() << std::endl;
+    console << "Google Test emulation : " << (parser.GoogleTestEmulation() ? "Yes" : "No") << std::endl;
+    console << "Test filter           : " << parser.Filter() << std::endl;
+    console << "Test lists            : " << (parser.List() ? "Yes" : "No") << std::endl;
+    console << "Test color            : " << (parser.Color() ? "Yes" : "No") << std::endl;
+    console << "Test data             : " << TEST_DATA_ROOT << std::endl;
 
     OSAL::Test::Data::ApplicationName(applicationName);
-    if (!parser.xmlOutput.empty())
+    UnitTestCpp::True nonFiltering;
+    UnitTestCpp::InSelectionFilter filtering(parser.Filter());
+    UnitTestCpp::Selector * filter = &nonFiltering;
+    if (!parser.Filter().empty())
+        filter = &filtering;
+    if (!parser.XmlOutput().empty())
     {
         std::basic_ofstream<char> outputFile;
 
-        outputFile.open(parser.xmlOutput);
+        outputFile.open(parser.XmlOutput());
         UnitTestCpp::XMLTestReporter reporter(outputFile);
-        const char * suiteName = parser.testSuiteName.empty() ? 0 : parser.testSuiteName.c_str();
-        const char * fixtureName = parser.testFixtureName.empty() ? 0 : parser.testFixtureName.c_str();
-        const char * testName = parser.testName.empty() ? 0 : parser.testName.c_str();
-        if ((suiteName != 0) || (fixtureName != 0) || (testName != 0))
-        {
-            return RunSelectedTests(reporter, UnitTestCpp::InSelection(suiteName, fixtureName, testName));
-        }
-        result = RunAllTests(reporter);
+        return RunSelectedTests(reporter, *filter);
     }
-    else
+
+    UnitTestCpp::ConsoleGoogleTestReporter reporterGoogleEmulation(parser.Color());
+    UnitTestCpp::ConsoleTestReporter reporter(parser.Color());
+
+    UnitTestCpp::ITestReporter * reporterInstance = &reporter;
+    if (parser.GoogleTestEmulation())
     {
-        UnitTestCpp::ConsoleGoogleTestReporter reporterGoogleEmulation;
-        UnitTestCpp::ConsoleTestReporter reporter;
-
-        UnitTestCpp::ITestReporter * reporterInstance = &reporter;
-        if (!parser.testFilter.empty() || !parser.testColor.empty())
-        {
-            reporterInstance = &reporterGoogleEmulation;
-        }
-
-        const char * suiteName = parser.testSuiteName.empty() ? nullptr : parser.testSuiteName.c_str();
-        const char * fixtureName = parser.testFixtureName.empty() ? nullptr : parser.testFixtureName.c_str();
-        const char * testName = parser.testName.empty() ? nullptr : parser.testName.c_str();
-        if ((suiteName != nullptr) || (fixtureName != nullptr) || (testName != nullptr))
-        {
-            return RunSelectedTests(*reporterInstance, UnitTestCpp::InSelection(suiteName, fixtureName, testName));
-        }
-        result = RunAllTests(*reporterInstance);
+        reporterInstance = &reporterGoogleEmulation;
     }
 
-    return result;
+    return RunSelectedTests(*reporterInstance, *filter);
 }

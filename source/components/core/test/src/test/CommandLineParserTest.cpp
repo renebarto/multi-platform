@@ -261,7 +261,7 @@ void CommandLineParserTest::TearDown()
 {
 }
 
-static const std::string ApplicationName = "CommandLineParserTest";
+static const char * ApplicationName = "CommandLineParserTest";
 
 TEST_FIXTURE(CommandLineParserTest, Construct)
 {
@@ -539,8 +539,9 @@ TEST_FIXTURE(CommandLineParserTest, SetupMultipleOptions)
 TEST_FIXTURE(CommandLineParserTest, ParseNoArguments)
 {
     int argc = 1;
-    const char ** argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
+    char ** argv = new char *[static_cast<size_t>(argc)];
+
+    argv[0] = const_cast<char *>(ApplicationName);
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -575,9 +576,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseNoArguments)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValue)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--verbose";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--verbose");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -612,9 +613,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValue)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--add";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--add");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -649,9 +650,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-ab";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-ab");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -686,9 +687,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-d";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-d");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -723,9 +724,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--delete";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--delete");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -760,9 +761,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentEqualsSign)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-d=abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-d=abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -797,9 +798,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentEqualsS
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentEqualsSign)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--delete=abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--delete=abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -834,10 +835,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentEqu
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-d";
-    argv[2]= "abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-d");
+    argv[2] = const_cast<char *>("abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -873,10 +874,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--delete";
-    argv[2] = "abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--delete");
+    argv[2] = const_cast<char *>("abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -912,9 +913,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-f";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-f");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -949,9 +950,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredNoArgument)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--file";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--file");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -986,10 +987,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredNoArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgument)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-f";
-    argv[2] = "abc";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-f");
+    argv[2] = const_cast<char *>("abc");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1024,10 +1025,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgument)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--file";
-    argv[2] = "abc";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--file");
+    argv[2] = const_cast<char *>("abc");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1062,9 +1063,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgument)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsSign)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-f=abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-f=abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1099,9 +1100,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqualsSign)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--file=abc"; // Optional arguments require = sign
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--file=abc"); // Optional arguments require = sign
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1136,9 +1137,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
 TEST_FIXTURE(CommandLineParserTest, ParseNonOption)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1174,10 +1175,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseNonOption)
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValueExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--verbose";
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--verbose");
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1213,10 +1214,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentValueExtraNonOpti
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--add";
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--add");
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1252,10 +1253,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionNoArgumentExtraNonOption)
 TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-ab";
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-ab");
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1291,10 +1292,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseMultipleOptionsNoArgumentExtraNonOption
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-d";
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-d");
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1330,10 +1331,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalNoArgumentExtraNonO
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--delete";
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--delete");
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1369,10 +1370,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalNoArgumentExtra
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-d=abc"; // Optional arguments require = sign
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-d=abc"); // Optional arguments require = sign
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1408,10 +1409,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionOptionalWithArgumentExtraNo
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--delete=abc"; // Optional arguments require = sign
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--delete=abc"); // Optional arguments require = sign
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1447,11 +1448,11 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongOptionalWithArgumentExt
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentExtraNonOption)
 {
     int argc = 4;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-f";
-    argv[2] = "abc";
-    argv[3] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-f");
+    argv[2] = const_cast<char *>("abc");
+    argv[3] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1487,11 +1488,11 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentExtraNo
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentExtraNonOption)
 {
     int argc = 4;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--file";
-    argv[2] = "abc";
-    argv[3] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--file");
+    argv[2] = const_cast<char *>("abc");
+    argv[3] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1527,10 +1528,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentExt
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsSignExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-f=abc"; // Optional arguments require = sign
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-f=abc"); // Optional arguments require = sign
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1566,10 +1567,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionRequiredWithArgumentEqualsS
 TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqualsSignExtraNonOption)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--file=abc"; // Optional arguments require = sign
-    argv[2] = "test";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--file=abc"); // Optional arguments require = sign
+    argv[2] = const_cast<char *>("test");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1605,15 +1606,15 @@ TEST_FIXTURE(CommandLineParserTest, ParseSingleOptionLongRequiredWithArgumentEqu
 TEST_FIXTURE(CommandLineParserTest, ParseMoreComplexArguments)
 {
     int argc = 8;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-a";
-    argv[2] = "test";
-    argv[3] = "-bf";
-    argv[4] = "abc";
-    argv[5] = "-dc=";
-    argv[6] = "def";
-    argv[7] = "--brief";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-a");
+    argv[2] = const_cast<char *>("test");
+    argv[3] = const_cast<char *>("-bf");
+    argv[4] = const_cast<char *>("abc");
+    argv[5] = const_cast<char *>("-dc=");
+    argv[6] = const_cast<char *>("def");
+    argv[7] = const_cast<char *>("--brief");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1656,11 +1657,11 @@ TEST_FIXTURE(CommandLineParserTest, ParseMoreComplexArguments)
 TEST_FIXTURE(CommandLineParserTest, ParseQuotedString)
 {
     int argc = 4;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "-a";
-    argv[2] = "\"a b\"";
-    argv[3] = "-c=\"d e f\"";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("-a");
+    argv[2] = const_cast<char *>("\"a b\"");
+    argv[3] = const_cast<char *>("-c=\"d e f\"");
     OSAL::Console console;
     CommandLineParser parser(console);
     int verboseFlag {};
@@ -1702,9 +1703,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseQuotedString)
 TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableBrief)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--brief";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--brief");
     OSAL::Console console;
     CommandLineParser parser(console);
     bool verboseFlag = true;
@@ -1725,9 +1726,9 @@ TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableBrief)
 TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableVerbose)
 {
     int argc = 2;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--verbose";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--verbose");
     OSAL::Console console;
     CommandLineParser parser(console);
     bool verboseFlag {};
@@ -1748,10 +1749,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseSwitchWithBoolVariableVerbose)
 TEST_FIXTURE(CommandLineParserTest, ParseOptionWithIntVariableEqualsSign)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--x=1234";
-    argv[2] = "-y=5678";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--x=1234");
+    argv[2] = const_cast<char *>("-y=5678");
     OSAL::Console console;
     CommandLineParser parser(console);
     int x {};
@@ -1775,10 +1776,10 @@ TEST_FIXTURE(CommandLineParserTest, ParseOptionWithIntVariableEqualsSign)
 TEST_FIXTURE(CommandLineParserTest, ParseOptionWithIntVariable)
 {
     int argc = 3;
-    const char * * argv = new const char *[static_cast<size_t>(argc)];
-    argv[0] = ApplicationName.c_str();
-    argv[1] = "--y";
-    argv[2] = "5678";
+    char * * argv = new char *[static_cast<size_t>(argc)];
+    argv[0] = const_cast<char *>(ApplicationName);
+    argv[1] = const_cast<char *>("--y");
+    argv[2] = const_cast<char *>("5678");
     OSAL::Console console;
     CommandLineParser parser(console);
     int x {};

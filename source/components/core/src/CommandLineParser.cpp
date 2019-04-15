@@ -71,7 +71,7 @@ string CommandLineParser::GetOption(string longName) const
     return (index < numeric_limits<size_t>::max()) ? _options[index]->Argument() : string();
 }
 
-bool CommandLineParser::Parse(int argc, const char * argv[])
+bool CommandLineParser::Parse(int argc, char * argv[])
 {
     try
     {
@@ -97,7 +97,7 @@ bool CommandLineParser::Parse(int argc, const char * argv[])
     return true;
 }
 
-bool CommandLineParser::InternalParse(int argc, const char * argv[])
+bool CommandLineParser::InternalParse(int argc, char * argv[])
 {
     size_t argCount = size_t(argc);
     FillOptionsList();
@@ -174,12 +174,12 @@ bool CommandLineParser::InternalParse(int argc, const char * argv[])
     return (result != '?');
 }
 
-void CommandLineParser::ExchangeOption(const char ** argv)
+void CommandLineParser::ExchangeOption(char ** argv)
 {
     size_t bottom = _getOptData.firstNonOption;
     size_t middle = _getOptData.lastNonOption;
     size_t top    = _getOptData.optionIndex;
-    const char * tmp;
+    char * tmp;
     while ((top > middle) && (middle > bottom))
     {
         if ((top - middle) > (middle - bottom))
@@ -209,13 +209,13 @@ void CommandLineParser::ExchangeOption(const char ** argv)
     _getOptData.lastNonOption = _getOptData.optionIndex;
 }
 
-bool CommandLineParser::AtNonOption(size_t argCount, const char ** argv) const
+bool CommandLineParser::AtNonOption(size_t argCount, char ** argv) const
 {
     return (_getOptData.optionIndex < argCount)
         && (('-' != argv[_getOptData.optionIndex][0]) || ('\0' == argv[_getOptData.optionIndex][1]));
 }
 
-bool CommandLineParser::AtLongOption(size_t argCount, const char ** argv) const
+bool CommandLineParser::AtLongOption(size_t argCount, char ** argv) const
 {
     return (_getOptData.optionIndex < argCount)
         && (('-' == argv[_getOptData.optionIndex][0]) && ('-' == argv[_getOptData.optionIndex][1]));
@@ -224,7 +224,7 @@ bool CommandLineParser::AtLongOption(size_t argCount, const char ** argv) const
 using OptionsList = std::deque<CommandLineOption::Ptr>;
 
 int CommandLineParser::HandleLongOption(size_t argCount,
-                                        const char ** argv,
+                                        char ** argv,
                                         const char * optionString,
                                         size_t & optionIndex,
                                         bool printErrors)
@@ -380,7 +380,7 @@ void CommandLineParser::SetArgument()
 }
 
 int CommandLineParser::HandleShortOption(size_t argCount,
-                                         const char ** argv,
+                                         char ** argv,
                                          const char * optionString,
                                          bool printErrors)
 {
@@ -442,7 +442,7 @@ int CommandLineParser::HandleShortOption(size_t argCount,
 }
 
 int CommandLineParser::GetOpt(size_t argCount,
-                              const char ** argv,
+                              char ** argv,
                               const string & optionString,
                               size_t & optionIndex)
 {

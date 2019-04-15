@@ -50,6 +50,17 @@ public:
     void SetValue(float value);
     void SetValue(double value);
     void SetValue(long double value);
+    virtual void Set(ValuePtr other) override
+    {
+        if (other->Type() == ValueType::Number)
+            SetValue(std::dynamic_pointer_cast<Number>(other)->GetValue());
+    }
+    virtual std::shared_ptr<Value> Clone() const
+    {
+        return std::make_shared<Number>(GetValue());
+    }
+
+    bool EqualTo(std::shared_ptr<Value> other) const override;
 
 private:
     std::string _value;
