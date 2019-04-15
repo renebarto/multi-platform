@@ -67,8 +67,8 @@ void ManualEventTest::TearDown()
 
 TEST_FIXTURE(ManualEventTest, Construction)
 {
-    ManualEvent event1;
-    EXPECT_FALSE(event1.GetValue());
+    ManualEvent event;
+    EXPECT_FALSE(event.GetValue());
 }
 
 TEST_FIXTURE(ManualEventTest, SimpleEvent)
