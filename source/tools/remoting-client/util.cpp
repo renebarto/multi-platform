@@ -99,7 +99,6 @@ std::string GetIpAddress(const std::string& interfaceName)
         // SWFATALCHECK(false, RS_LIBCOMMON_GET_LOCALIP_FAILED << "interface:" << interfaceName);
     }
 
-    std::string ipaddress;
     while (ipaddress.empty())
     {
         /* Get IP address */
