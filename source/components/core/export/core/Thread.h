@@ -4,6 +4,7 @@ WARNING_PUSH
 WARNING_DISABLE(4265)
 WARNING_DISABLE(4355)
 #include <future>
+#include <functional>
 #include <mutex>
 #include <thread>
 #include <osal/Strings.h>
