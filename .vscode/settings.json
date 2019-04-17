@@ -10,5 +10,13 @@
         "xlocmon": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp"
+    },
+    "cmake.generator": "Ninja",
+    "cmake.configureSettings": {
+        "CMAKE_MAKE_PROGRAM": "F:/Tools/Ninja.exe"
+        "SCRIPTS_DIR": "${workspaceRoot}/../cmake-scripts",
+        "CMAKE_INSTALL_PREFIX": "${workspaceRoot}/../install-mingw",
+        "PLATFORM_INSTALL": "${workspaceRoot}/../install-mingw",
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceRoot}/mingw.toolchain"
     }
 }
