@@ -4,6 +4,13 @@
 #include <ios>
 #include <sstream>
 #include <string>
+#if defined(LINUX) || defined(APPLE)
+#include <osal/linux/DomainSocketAddress.h>
+#endif
+#include <osal/IPV4Address.h>
+#include <osal/IPV6Address.h>
+#include <osal/MACAddress.h>
+#include <osal/UUID.h>
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
 #include "core/nullable.h"
@@ -54,24 +61,42 @@ template<typename T = char>
 std::basic_string<T> Serialize(const char * value, int width = 0, bool quote = false);
 template<typename T = char>
 std::basic_string<T> Serialize(const wchar_t * value, int width = 0, bool quote = false);
+template<typename T = char>
+std::basic_string<T> Serialize(const OSAL::Network::IPV4Address & value);
+template<typename T = char>
+std::basic_string<T> Serialize(const OSAL::Network::IPV6Address & value);
+template<typename T = char>
+std::basic_string<T> Serialize(const OSAL::Network::MACAddress & value);
+template<typename T = char>
+std::basic_string<T> Serialize(const OSAL::UUID & value);
+#if defined(LINUX) || defined(APPLE)
+template<typename T = char>
+std::basic_string<T> Serialize(const OSAL::Network::DomainSocketAddress & value);
+#endif
 
 // Byte string serialization
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, bool value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, int8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, uint8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, int16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, uint16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, int32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, uint32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, int64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, uint64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, float value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, const std::string &value, bool quote = false);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, const std::wstring & value, bool quote = false, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, const char * value, bool quote = false);
-//CORE_EXPORT void Serialize(OSAL::bytearray & result, const wchar_t * value, bool quote = false, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, bool value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, int8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, uint8_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, int16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, uint16_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, int32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, uint32_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, int64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, uint64_t value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, float value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, long double value, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const std::string &value, bool quote = false);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const std::wstring & value, bool quote = false, OSAL::Endianness endianness = OSAL::Endianness::LittleEndian);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const char * value, bool quote = false);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const OSAL::Network::IPV4Address & value);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const OSAL::Network::IPV6Address & value);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const OSAL::Network::MACAddress & value);
+// CORE_EXPORT void Serialize(OSAL::bytearray & result, const OSAL::Network::UUID & value);
+#if defined(LINUX) || defined(APPLE)
+CORE_EXPORT void Serialize(OSAL::bytearray & result, const OSAL::Network::DomainSocketAddress & value);
+#endif
 
 template<typename T>
 std::basic_string<T> Align(const std::basic_string<T> & text, int width)

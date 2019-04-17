@@ -7,6 +7,7 @@
 #include <osal/IPV4Address.h>
 #include <osal/IPV6Address.h>
 #include <osal/MACAddress.h>
+#include <osal/UUID.h>
 #include "core/core.h"
 #include "core/serialization/Serialization.h"
 #include "core/nullable.h"
