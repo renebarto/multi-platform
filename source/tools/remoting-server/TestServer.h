@@ -11,7 +11,7 @@ class TestServer : public ITest
 public:
     explicit TestServer(RemotingTs1::EventLoop * eventLoop)
         : callbackThread_()
-        , _stopThread()
+        , stopThread_()
         , eventLoop_(eventLoop)
     {}
     int Start() override
