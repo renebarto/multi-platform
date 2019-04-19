@@ -9,8 +9,10 @@
 class TestServer : public ITest
 {
 public:
-    TestServer(RemotingTs1::EventLoop * eventLoop)
-            : eventLoop_(eventLoop)
+    explicit TestServer(RemotingTs1::EventLoop * eventLoop)
+        : callbackThread_()
+        , stopThread_()
+        , eventLoop_(eventLoop)
     {}
     int Start() override
     {

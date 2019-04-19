@@ -1,0 +1,6 @@
+[
+  {
+    "name": "GCC for x86_64-mingw64",
+    "toolchainFile": "mingw.toolchain"
+  }
+]
