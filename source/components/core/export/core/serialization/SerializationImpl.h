@@ -4,6 +4,7 @@
 #include <ios>
 #include <sstream>
 #include <string>
+#include <osal/exports.h>
 #if defined(LINUX) || defined(APPLE)
 #include <osal/linux/DomainSocketAddress.h>
 #endif
